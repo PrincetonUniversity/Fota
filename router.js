@@ -8,4 +8,5 @@ module.exports = (app) => {
   app.get('/restaurant/:restaurantId', Restaurant.getPhotos);
 
   app.post('/photo', Photo.post);
+  app.get('/photo', Photo.get);
 }

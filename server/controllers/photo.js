@@ -13,3 +13,9 @@ module.exports.post = (req, res) => {
     console.log(err);
   })
 }
+
+module.exports.get = (req, res) => {
+  Photo.findAll().then((photos) => {
+    res.status(200).send(photos);
+  });
+}
