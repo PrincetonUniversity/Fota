@@ -7,36 +7,38 @@ const PhotoDetail = ({ photo }) => {
     const { photoStyle,
             voteStyle,
             likeCountContainerStyle,
+            likeCountArrowStyle,
+            likeCountTextStyle,
             likeContainerStyle
          } = styles;
     var userLikes = false;
-    console.log(likecount);
     return (
         <Card>
             <CardSection>
-                <Image
+                <ImageButton
                     style={photoStyle}
                     source={{ uri: link }}
+                    onPress={() => console.log('pressed')}
                 />
             </CardSection>
 
             <CardSection>
                 <View style={likeCountContainerStyle}>
                     <Image
-                        source={require('../img/upvote.jpg')}
-                        style={voteStyle}
+                        source={require('../img/upvote_activated.png')}
+                        style={likeCountArrowStyle}
                     />
-                    <Text>{likecount}</Text>
+                    <Text style={likeCountTextStyle}>{likecount}</Text>
                 </View>
 
                 <View style={likeContainerStyle}>
                     <ImageButton
-                        source={require('../img/upvote.jpg')}
+                        source={require('../img/upvote_unactivated.png')}
                         style={voteStyle}
                         onPress={() => { userLikes = true; }}
                     />
                     <ImageButton
-                        source={require('../img/downvote.jpg')}
+                        source={require('../img/downvote_unactivated.png')}
                         style={voteStyle}
                         onPress={() => { userLikes = true; }}
                     />
@@ -47,23 +49,35 @@ const PhotoDetail = ({ photo }) => {
 };
 
 const styles = {
-    photoStyle: {
+    photoStyle: { // The picture
         height: 300,
         flex: 1,
         width: null
     },
-    voteStyle: {
-        height: 30,
-        width: 30
+    voteStyle: { // Upvote/downvote
+        height: 25,
+        width: 25
     },
-    likeCountContainerStyle: {
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-    likeContainerStyle: {
+    likeCountContainerStyle: { // Upvote arrow + number of likes container
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        marginLeft: 10
+    },
+    likeCountArrowStyle: { // the arrow next to number of likes
+        height: 15,
+        width: 15
+    },
+    likeCountTextStyle: { // Number of likes
+        fontSize: 15,
+        textAlign: 'justify',
+        fontWeight: 'bold',
+        marginLeft: 5
+    },
+    likeContainerStyle: { // Upvote/downvote container
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'stretch',
         marginRight: 10
     },
 };
