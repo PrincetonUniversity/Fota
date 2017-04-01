@@ -15,6 +15,7 @@ module.exports.post = (req, res) => {
 }
 
 module.exports.get = (req, res) => {
+  // geographical data accessible as req.query.lat and req.query.lng
   Photo.findAll().then((photos) => {
     res.status(200).send(photos);
   });
