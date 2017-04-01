@@ -9,4 +9,5 @@ module.exports = (app) => {
 
   app.post('/photo', Photo.post);
   app.get('/photo', Photo.get);
+  app.delete('/photo', Photo.delete);
 }

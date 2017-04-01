@@ -1,5 +1,6 @@
 var Photo = require ('../models').Photo;
 
+// create a new photo with given parameters
 module.exports.post = (req, res) => {
   data = req.body
   Photo.create({
@@ -19,4 +20,15 @@ module.exports.get = (req, res) => {
   Photo.findAll().then((photos) => {
     res.status(200).send(photos);
   });
+}
+
+module.exports.delete = (req, res) => {
+  id = req.body.id;
+  Photo.destroy({where: {
+    id: id
+  }}).then((results) => {
+    res.send("Delete Successful")
+  }).catch((e) => {
+    console.log(e);
+  })
 }
