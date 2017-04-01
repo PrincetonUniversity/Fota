@@ -1,12 +1,17 @@
 import React from 'react';
 import { View, Image } from 'react-native';
-import { Card, CardSection, Button } from './common';
+import { Card, CardSection, ImageButton } from './common';
 
 const PhotoDetail = ({ photo }) => {
-    // const { image } = photo;
     const { link, likeCount } = photo;
-    const { photoStyle } = styles;
+    const { photoStyle,
+            heartStyle,
+            heartContainerStyle,
+            logoStyle,
+            logoContainerStyle,
+            cardStyle } = styles;
     var userLikes = false;
+    console.log(userLikes);
     return (
         <Card>
             <CardSection>
@@ -16,10 +21,21 @@ const PhotoDetail = ({ photo }) => {
                 />
             </CardSection>
 
-            <CardSection>
-                <Button onPress={() => { userLikes = true; }} >
-                    Hot Dog!
-                </Button>
+            <CardSection style={cardStyle}>
+                <View style={heartContainerStyle}>
+                    <ImageButton
+                        source={require('../img/upvote.jpg')}
+                        style={heartStyle}
+                        onPress={() => { userLikes = true; }}
+                    />
+                </View>
+                <View style={logoContainerStyle}>
+                    <ImageButton
+                        source={require('../img/downvote.jpg')}
+                        style={logoStyle}
+                        onPress={() => { userLikes = true; }}
+                    />
+                </View>
             </CardSection>
         </Card>
     );
@@ -30,8 +46,22 @@ const styles = {
         height: 300,
         flex: 1,
         width: null
-        // width: 300
-    }
+    },
+    heartStyle: {
+        height: 30,
+        width: 30
+    },
+    logoStyle: {
+        height: 30,
+        width: 30
+    },
+    heartContainerStyle: {
+        alignItems: 'center'
+    },
+    logoContainerStyle: {
+        alignItems: 'center',
+        marginRight: 10
+    },
 };
 
 export default PhotoDetail;
