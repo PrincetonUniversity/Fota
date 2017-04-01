@@ -7,7 +7,7 @@ class PhotoList extends Component {
     state = { photos: [] }
 
     componentWillMount() {
-        axios.get('https://fotafood.herokuapp.com/photo') //  https://rallycoding.herokuapp.com/api/music_albums
+        axios.get('https://fotafood.herokuapp.com/api/photo?lat=55.1234&lng=-123.551') //  https://rallycoding.herokuapp.com/api/music_albums
             .then(response => this.setState({ photos: response.data }));
     }
 
