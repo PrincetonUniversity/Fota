@@ -1,4 +1,5 @@
 var Photo = require ('../models').Photo;
+var sequelize = require('sequelize');
 
 // create a new photo with given parameters
 module.exports.post = (req, res) => {
@@ -6,7 +7,7 @@ module.exports.post = (req, res) => {
   Photo.create({
     RestaurantId: data.RestaurantId,
     UserId: data.UserId,
-    likeCount: 0,
+    likecount: 0,
     link: data.link
   }).then((photo) => {
     res.status(200).send(photo);
@@ -31,4 +32,33 @@ module.exports.delete = (req, res) => {
   }).catch((e) => {
     console.log(e);
   })
+}
+
+module.exports.patch = (req, res) => {
+  ups = req.body.upvote;
+  downs = req.body.downvote;
+  if (!ups && !downs)
+    return res.status(400).send({error: "no photo id supplied"})
+
+  if (ups) {
+    Photo.update({
+      likecount: sequelize.literal("likecount + 1")
+    }, {where: {
+      id: ups
+    }}).catch((e) => console.log(e))
+  }
+
+  if (downs) {
+    Photo.update({
+      likecount: sequelize.literal("likecount - 1")
+    }, {where: {
+      id: ups
+    }}).catch((e) => console.log(e))
+  }
+
+  response = {
+    message: "Your upvote downvote request has been successfully processed."
+  };
+  return res.send(response);
+
 }

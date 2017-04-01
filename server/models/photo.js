@@ -2,7 +2,7 @@
 module.exports = function(sequelize, DataTypes) {
   var Photo = sequelize.define('Photo', {
     link: {type: DataTypes.STRING, allowNull: false},
-    likeCount: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0}
+    likecount: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0}
 
   }, {
     classMethods: {
