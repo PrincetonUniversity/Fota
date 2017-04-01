@@ -5,12 +5,12 @@ import { createStore } from 'redux';
 import reducers from './reducers';
 import { Header } from './components/common';
 import PhotoList from './components/PhotoList';
-import Navbar from './components/Navbar'
+import Navbar from './components/Navbar';
 
 const App = () => {
     return (
        <Provider store={createStore(reducers)}>
-            <View>
+            <View style={ {flex: 1 }}>
                 <Header headerText='Fota' />
                 <PhotoList />
                 <Navbar />
