@@ -1,4 +1,4 @@
-package com.client;
+package com.fota;
 
 import android.app.Application;
 
