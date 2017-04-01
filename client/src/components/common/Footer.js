@@ -1,6 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
 
+export const footerSize = 45;
+export const circleSize = 55;
+
 const Footer = (props) => (
   <View style={styles.footerStyle}>
     <View style={styles.barStyle} />
@@ -13,7 +16,7 @@ const Footer = (props) => (
 
 const styles = {
   footerStyle: {
-    height: 60,
+    height: circleSize,
     justifyContent: 'flex-end',
     alignItems: 'center',
     elevation: 2,
@@ -24,15 +27,15 @@ const styles = {
   },
   barStyle: {
     backgroundColor: '#f8f8f8',
-    height: 45,
+    height: footerSize,
     position: 'absolute',
     left: 0,
     right: 0
   },
   circleStyle: {
-    width: 55,
-    height: 55,
-    borderRadius: 27.5,
+    width: circleSize,
+    height: circleSize,
+    borderRadius: circleSize / 2,
     backgroundColor: '#f8f8f8',
     position: 'absolute'
   },
@@ -41,7 +44,7 @@ const styles = {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'flex-end',
-    height: 45,
+    height: footerSize,
     paddingBottom: 10
   }
 };

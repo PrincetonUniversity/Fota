@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { ScrollView } from 'react-native';
 import axios from 'axios';
 import PhotoDetail from './PhotoDetail';
+import { footerSize } from './common/Footer';
 
 class PhotoList extends Component {
     state = { photos: [] }
@@ -20,7 +21,7 @@ class PhotoList extends Component {
 
     render() {
         return (
-            <ScrollView>
+            <ScrollView style={{ marginBottom: footerSize }}>
                 {this.renderPhotos()}
             </ScrollView>
         );

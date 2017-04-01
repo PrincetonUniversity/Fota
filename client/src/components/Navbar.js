@@ -1,5 +1,6 @@
 import React from 'react';
 import { ImageButton, Footer } from './common';
+import { footerSize, circleSize } from './common/Footer';
 
 const Navbar = () => (
   <Footer>
@@ -23,12 +24,12 @@ const Navbar = () => (
 
 const styles = {
   imgStyle: {
-    width: 20,
-    height: 20
+    width: footerSize - 25,
+    height: footerSize - 25
   },
   camImgStyle: {
-    width: 30,
-    height: 30
+    width: circleSize - 25,
+    height: circleSize - 25
   }
 };
 
