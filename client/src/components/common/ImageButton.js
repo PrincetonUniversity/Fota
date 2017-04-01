@@ -1,14 +1,14 @@
 import React from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 
-const ImageButton = (props) => (
+const ImageButton = ({ style, onPress, source }) => (
   <TouchableOpacity
-    style={{ width: props.style.width, height: props.style.height, alignItems: 'center' }}
-    onPress={props.onPress}
+    style={{ width: style.width, height: style.height }}
+    onPress={onPress}
   >
     <Image
-       style={{ width: props.style.width, height: props.style.height }}
-       source={props.source}
+       style={{ width: style.width, height: style.height, resizeMode: 'stretch' }}
+       source={source}
     />
   </TouchableOpacity>
 );
