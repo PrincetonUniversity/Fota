@@ -1,17 +1,16 @@
 import React from 'react';
-import { View, Image } from 'react-native';
+import { View, Image, Text } from 'react-native';
 import { Card, CardSection, ImageButton } from './common';
 
 const PhotoDetail = ({ photo }) => {
-    const { link, likeCount } = photo;
+    const { link, likecount } = photo;
     const { photoStyle,
-            heartStyle,
-            heartContainerStyle,
-            logoStyle,
-            logoContainerStyle,
-            cardStyle } = styles;
+            voteStyle,
+            likeCountContainerStyle,
+            likeContainerStyle
+         } = styles;
     var userLikes = false;
-    console.log(userLikes);
+    console.log(likecount);
     return (
         <Card>
             <CardSection>
@@ -21,18 +20,24 @@ const PhotoDetail = ({ photo }) => {
                 />
             </CardSection>
 
-            <CardSection style={cardStyle}>
-                <View style={heartContainerStyle}>
+            <CardSection>
+                <View style={likeCountContainerStyle}>
+                    <Image
+                        source={require('../img/upvote.jpg')}
+                        style={voteStyle}
+                    />
+                    <Text>{likecount}</Text>
+                </View>
+
+                <View style={likeContainerStyle}>
                     <ImageButton
                         source={require('../img/upvote.jpg')}
-                        style={heartStyle}
+                        style={voteStyle}
                         onPress={() => { userLikes = true; }}
                     />
-                </View>
-                <View style={logoContainerStyle}>
                     <ImageButton
                         source={require('../img/downvote.jpg')}
-                        style={logoStyle}
+                        style={voteStyle}
                         onPress={() => { userLikes = true; }}
                     />
                 </View>
@@ -47,18 +52,17 @@ const styles = {
         flex: 1,
         width: null
     },
-    heartStyle: {
+    voteStyle: {
         height: 30,
         width: 30
     },
-    logoStyle: {
-        height: 30,
-        width: 30
+    likeCountContainerStyle: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
-    heartContainerStyle: {
-        alignItems: 'center'
-    },
-    logoContainerStyle: {
+    likeContainerStyle: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
         marginRight: 10
     },

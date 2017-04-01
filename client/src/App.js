@@ -10,7 +10,7 @@ import Navbar from './components/Navbar';
 const App = () => {
     return (
        <Provider store={createStore(reducers)}>
-            <View style={ {flex: 1 }}>
+            <View style={{ flex: 1 }}>
                 <Header headerText='Fota' />
                 <PhotoList />
                 <Navbar />
