@@ -1,6 +1,7 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { View, Text } from 'react-native';
 import { Header } from './common';
+import PhotoToggler from './PhotoToggler';
 //import Searchbar from './Searchbar';
 
 const Headbar = () => (
@@ -8,17 +9,19 @@ const Headbar = () => (
     {/* Searchbar */}
     <Text style={styles.searchStyle}>Search</Text>
     {/*Popular/New*/}
-    <Text style={styles.toggleStyle}>Popular</Text>
+    <View style={styles.toggleStyle}><PhotoToggler /></View>
   </Header>
 );
 
 const styles = {
   searchStyle: {
+    //backgroundColor: '#00f',
     textAlign: 'center',
     flex: 2
   },
   toggleStyle: {
-    textAlign: 'center',
+    //backgroundColor: '#f00',
+    alignItems: 'stretch',
     flex: 1
   }
 };

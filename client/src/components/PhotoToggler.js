@@ -6,11 +6,21 @@ class PhotoToggler extends Component {
 
   render() {
     return (
-      <TouchableOpacity onPress={() => this.setState(!this.state.hot)}>
+      <TouchableOpacity
+        style={styles.containerStyle}
+        onPress={() => this.setState({ hot: !this.state.hot })}
+      >
         <Text>{this.state.hot ? 'Hot' : 'New'}</Text>
       </TouchableOpacity>
     );
   }
 }
+
+const styles = {
+  containerStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  }
+};
 
 export default PhotoToggler;
