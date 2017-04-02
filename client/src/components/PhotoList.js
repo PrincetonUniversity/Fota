@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { ScrollView } from 'react-native';
 import axios from 'axios';
+import Headbar from './Headbar';
 import PhotoDetail from './PhotoDetail';
 import { footerSize } from './common/Footer';
 
@@ -21,11 +22,12 @@ class PhotoList extends Component {
   }
 
   render() {
-      return (
-          <ScrollView style={{ marginBottom: footerSize }}>
-              {this.renderPhotos()}
-          </ScrollView>
-      );
+    return (
+        <ScrollView style={{ marginBottom: footerSize }}>
+          <Headbar />
+          {this.renderPhotos()}
+        </ScrollView>
+    );
   }
 }
 
