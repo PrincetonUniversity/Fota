@@ -36,7 +36,7 @@ module.exports.get = (req, res) => {
     Restaurant.findAll({
     }).then((restaurants) => {
       res.status(200).send({photos, restaurants});
-    })
+    });
   });
 }
 
@@ -45,37 +45,36 @@ module.exports.delete = (req, res) => {
   Photo.destroy({where: {
     id: id
   }}).then((results) => {
-    res.send("Delete Successful")
+    res.send("Delete Successful");
   }).catch((e) => {
     console.log(e);
   })
 }
 
 module.exports.patch = (req, res) => {
-  ups = req.body.upvote;
-  downs = req.body.downvote;
-  if (!ups && !downs)
-    return res.status(400).send({error: "no photo id supplied"})
+  type = req.query.type;
 
-  if (ups) {
+  if (type != "upvote" && type != "downvote")
+    return res.status(400).send({error: "no vote type supplied"})
+
+  if (type == "upvote") {
     Photo.update({
       likecount: sequelize.literal("likecount + 1")
     }, {where: {
-      id: ups
+      id: req.params.id
     }}).catch((e) => console.log(e))
   }
 
-  if (downs) {
+  if (type == "downvote") {
     Photo.update({
       likecount: sequelize.literal("likecount - 1")
     }, {where: {
-      id: ups
+      id: req.params.id
     }}).catch((e) => console.log(e))
   }
 
   response = {
-    message: "Your upvote downvote request has been successfully processed."
+    message: "Your upvote/downvote request has been successfully processed."
   };
   return res.send(response);
-
 }

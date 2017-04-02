@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Image, Text } from 'react-native';
+import axios from 'axios';
 import { Card, CardSection, ImageButton } from './common';
 
 const styles = {
@@ -54,12 +55,22 @@ class PhotoDetail extends Component {
     super(props);
     this.state = { link: props.photo.link,
                     likecount: props.photo.likecount,
+                    id: props.photo.id,
                     userLiked: false,
                     userDisliked: false,
                     upvoteSource: upvoteUnactivated,
                     downvoteSource: downvoteUnactivated,
                     userHasVoted: false
                   };
+  }
+
+  // Sends the update request to the fota server.
+  // type can either be "downvote" or "upvote"
+  sendUpdateRequest(type) {
+    const queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}`;
+    axios.patch(queryString)
+      .then()
+      .catch((e) => { console.log(e); }); // LATER should notify user on failure
   }
 
   renderUpvote() {
@@ -77,6 +88,7 @@ class PhotoDetail extends Component {
         userVoted = false;
         voteSource = upvoteUnactivated;
     }
+    this.sendUpdateRequest('upvote');
     this.setState({ likecount: newLikeCount,
                     userLiked: userNewLike,
                     userDisliked: false,
@@ -101,6 +113,7 @@ class PhotoDetail extends Component {
       userVoted = false;
       voteSource = downvoteUnactivated;
     }
+    this.sendUpdateRequest('downvote');
     this.setState({ likecount: newLikeCount,
                     userLiked: false,
                     userDisliked: userHasDisliked,

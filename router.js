@@ -10,5 +10,5 @@ module.exports = (app) => {
   app.post('/api/photo', Photo.post);
   app.get('/api/photo', Photo.get);
   app.delete('/api/photo', Photo.delete);
-  app.patch('/api/photo', Photo.patch)
+  app.patch('/api/photo/:id', Photo.patch)
 }
