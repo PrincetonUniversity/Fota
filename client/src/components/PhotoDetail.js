@@ -11,7 +11,7 @@ const PhotoDetail = ({ photo }) => {
             likeCountTextStyle,
             likeContainerStyle
          } = styles;
-    var userLikes = false;
+    let userLikes = false;
     return (
         <Card>
             <CardSection>
