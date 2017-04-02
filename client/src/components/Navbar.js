@@ -54,24 +54,5 @@ class Navbar extends Component {
     );
   }
 }
-// const Navbar = () => (
-//   <Footer>
-//     <ImageButton
-//       onPress={() => console.log('Burger!')}
-//       source={require('../img/fota_home_button.png')}
-//       style={styles.imgStyle}
-//     />
-//     <ImageButton
-//       onPress={() => console.log('Coffee!')}
-//       source={require('../img/camera_button.png')}
-//       style={styles.camImgStyle}
-//     />
-//     <ImageButton
-//       onPress={() => console.log('Donut!')}
-//       source={require('../img/account_button.png')}
-//       style={styles.imgStyle}
-//     />
-//   </Footer>
-// );
 
 export default Navbar;
