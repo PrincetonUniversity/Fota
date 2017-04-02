@@ -1,52 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { View, Image, Text } from 'react-native';
 import { Card, CardSection, ImageButton } from './common';
-
-const PhotoDetail = ({ photo }) => {
-    const { link, likecount } = photo;
-    const { photoStyle,
-            voteStyle,
-            likeCountContainerStyle,
-            likeCountArrowStyle,
-            likeCountTextStyle,
-            likeContainerStyle
-         } = styles;
-    var userLikes = false;
-    return (
-        <Card>
-            <CardSection>
-                <ImageButton
-                    style={photoStyle}
-                    source={{ uri: link }}
-                    onPress={() => console.log('pressed')}
-                />
-            </CardSection>
-
-            <CardSection>
-                <View style={likeCountContainerStyle}>
-                    <Image
-                        source={require('../img/upvote_activated.png')}
-                        style={likeCountArrowStyle}
-                    />
-                    <Text style={likeCountTextStyle}>{likecount}</Text>
-                </View>
-
-                <View style={likeContainerStyle}>
-                    <ImageButton
-                        source={require('../img/upvote_unactivated.png')}
-                        style={voteStyle}
-                        onPress={() => { userLikes = true; }}
-                    />
-                    <ImageButton
-                        source={require('../img/downvote_unactivated.png')}
-                        style={voteStyle}
-                        onPress={() => { userLikes = true; }}
-                    />
-                </View>
-            </CardSection>
-        </Card>
-    );
-};
 
 const styles = {
     photoStyle: { // The picture
@@ -81,5 +35,93 @@ const styles = {
         marginRight: 10
     },
 };
+
+const { photoStyle,
+        voteStyle,
+        likeCountContainerStyle,
+        likeCountArrowStyle,
+        likeCountTextStyle,
+        likeContainerStyle
+     } = styles;
+
+class PhotoDetail extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { link: props.photo.link,
+                    likecount: props.photo.likecount,
+                    userLiked: false,
+                    userDisliked: false,
+                    upvoteSource: require('../img/upvote_unactivated.png'),
+                    downvoteSource: require('../img/downvote_unactivated.png'),
+                    userHasVoted: false
+                  };
+  }
+  render() {
+    return (
+      <Card>
+        <CardSection>
+            <ImageButton
+                style={photoStyle}
+                source={{ uri: this.state.link }}
+                onPress={() => console.log('pressed')}
+            />
+        </CardSection>
+
+        <CardSection>
+          <View style={likeCountContainerStyle}>
+              <Image
+                  source={require('../img/upvote_activated.png')}
+                  style={likeCountArrowStyle}
+              />
+              <Text style={likeCountTextStyle}>{this.state.likecount}</Text>
+          </View>
+
+          <View style={likeContainerStyle}>
+            <ImageButton
+                source={this.state.upvoteSource}
+                style={voteStyle}
+                onPress={() => {
+                  var newLikeCount = this.state.likecount;
+                  if (!this.state.userHasVoted) {
+                    newLikeCount += 1;
+                  } else if (this.state.userDisliked) {
+                      newLikeCount += 2;
+                  }
+                  this.setState({ likecount: newLikeCount,
+                                  userLiked: true,
+                                  userDisliked: false,
+                                  userHasVoted: true,
+                                  upvoteSource: require('../img/upvote_activated.png'),
+                                  downvoteSource: require('../img/downvote_unactivated.png')
+                                });
+                  }
+                }
+            />
+            <ImageButton
+                source={this.state.downvoteSource}
+                style={voteStyle}
+                onPress={() => {
+                  var newLikeCount = this.state.likecount;
+                  if (!this.state.userHasVoted) {
+                    newLikeCount -= 1;
+                  } else if (this.state.userLiked) {
+                      newLikeCount -= 2;
+                  }
+                  this.setState({ likecount: newLikeCount,
+                                  userLiked: false,
+                                  userDisliked: true,
+                                  userHasVoted: true,
+                                  upvoteSource: require('../img/upvote_unactivated.png'),
+                                  downvoteSource: require('../img/downvote_activated.png')
+                                });
+                  }
+                }
+            />
+          </View>
+        </CardSection>
+      </Card>
+    );
+  }
+}
 
 export default PhotoDetail;

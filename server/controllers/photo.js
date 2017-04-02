@@ -1,4 +1,5 @@
-var Photo = require ('../models').Photo;
+var Photo = require('../models').Photo;
+var Restaurant = require('../models').Restaurant;
 var sequelize = require('sequelize');
 
 // create a new photo with given parameters
@@ -17,13 +18,25 @@ module.exports.post = (req, res) => {
 }
 
 module.exports.get = (req, res) => {
+  order = req.query.order;
+  if (order == 'hot') {
+    order = ['likecount', 'DESC']
+  } else if (order == 'new') {
+    order = ['createdAt', 'DESC']
+  } else {
+    return res.status(400).send({error: "sorting order incorrect"})
+  }
+
   // geographical data accessible as req.query.lat and req.query.lng
   Photo.findAll({
     order: [
-      ['likecount', 'DESC']
+      order
     ]
   }).then((photos) => {
-    res.status(200).send(photos);
+    Restaurant.findAll({
+    }).then((restaurants) => {
+      res.status(200).send({photos, restaurants});
+    })
   });
 }
 
