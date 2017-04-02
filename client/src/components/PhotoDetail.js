@@ -125,7 +125,7 @@ class PhotoDetail extends Component {
         <CardSection>
           <View style={likeCountContainerStyle}>
               <Image
-                  source={require('../img/upvote_activated.png')}
+                  source={upvoteActivated}
                   style={likeCountArrowStyle}
               />
               <Text style={likeCountTextStyle}>{this.state.likecount}</Text>
