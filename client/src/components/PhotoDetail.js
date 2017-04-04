@@ -65,12 +65,14 @@ class PhotoDetail extends Component {
     super(props);
     this.state = { link: props.photo.link,
                     likecount: props.photo.likecount,
-                    id: props.photo.id,
+                    photoid: props.photo.id,
                     userLiked: false,
                     userDisliked: false,
                     upvoteSource: upvoteUnactivated,
                     downvoteSource: downvoteUnactivated,
                     userHasVoted: false
+                    // Restaurants
+                    //restaurantid: props.restauran
                   };
   }
 

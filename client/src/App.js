@@ -7,14 +7,14 @@ import PhotoList from './components/PhotoList';
 import Navbar from './components/Navbar';
 
 const App = () => {
-    return (
-       <Provider store={createStore(reducers)}>
-            <View style={{ flex: 1 }}>
-                <PhotoList />
-                <Navbar />
-            </View>
-        </Provider>
-    );
+  return (
+      <Provider store={createStore(reducers)}>
+        <View style={{ flex: 1 }}>
+          <PhotoList />
+          <Navbar />
+        </View>
+      </Provider>
+  );
 };
 
 export default App;
