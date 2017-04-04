@@ -42,7 +42,7 @@ const styles = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'stretch',
-    marginRight: 20
+    //marginRight: 20
   },
 };
 
@@ -63,15 +63,16 @@ const downvoteActivated = require('../img/downvote_activated.png');
 class PhotoDetail extends Component {
   constructor(props) {
     super(props);
-    this.state = { link: props.photo.link,
-                    likecount: props.photo.likecount,
-                    id: props.photo.id,
-                    userLiked: false,
-                    userDisliked: false,
-                    upvoteSource: upvoteUnactivated,
-                    downvoteSource: downvoteUnactivated,
-                    userHasVoted: false
-                  };
+    this.state = {
+      link: props.photo.link,
+      likecount: props.photo.likecount,
+      id: props.photo.id,
+      userLiked: false,
+      userDisliked: false,
+      upvoteSource: upvoteUnactivated,
+      downvoteSource: downvoteUnactivated,
+      userHasVoted: false
+    };
   }
 
   // Sends the update request to the fota server.
@@ -101,13 +102,14 @@ class PhotoDetail extends Component {
         voteSource = upvoteUnactivated;
         this.sendUpdateRequest('downvote', '1');
     }
-    this.setState({ likecount: newLikeCount,
-                    userLiked: userNewLike,
-                    userDisliked: false,
-                    userHasVoted: userVoted,
-                    upvoteSource: voteSource,
-                    downvoteSource: downvoteUnactivated
-                  });
+    this.setState({
+      likecount: newLikeCount,
+      userLiked: userNewLike,
+      userDisliked: false,
+      userHasVoted: userVoted,
+      upvoteSource: voteSource,
+      downvoteSource: downvoteUnactivated
+    });
   }
 
   renderDownvote() {
@@ -128,46 +130,47 @@ class PhotoDetail extends Component {
       voteSource = downvoteUnactivated;
       this.sendUpdateRequest('upvote', 1);
     }
-    this.setState({ likecount: newLikeCount,
-                    userLiked: false,
-                    userDisliked: userHasDisliked,
-                    userHasVoted: userVoted,
-                    upvoteSource: upvoteUnactivated,
-                    downvoteSource: voteSource
-                  });
+    this.setState({
+      likecount: newLikeCount,
+      userLiked: false,
+      userDisliked: userHasDisliked,
+      userHasVoted: userVoted,
+      upvoteSource: upvoteUnactivated,
+      downvoteSource: voteSource
+    });
   }
 
   render() {
     return (
       <Card>
         <CardSection>
-            <ImageButton
-                activeOpacity={1}
-                style={photoStyle}
-                source={{ uri: this.state.link }}
-                onPress={() => console.log('pressed')}
-            />
+          <ImageButton
+            activeOpacity={1}
+            style={photoStyle}
+            source={{ uri: this.state.link }}
+            onPress={() => console.log('pressed')}
+          />
         </CardSection>
 
         <CardSection>
           <View style={likeCountContainerStyle}>
-              <Image
-                  source={upvoteUnactivated}
-                  style={likeCountArrowStyle}
-              />
-              <Text style={likeCountTextStyle}>{this.state.likecount}</Text>
+            <Image
+              source={upvoteUnactivated}
+              style={likeCountArrowStyle}
+            />
+            <Text style={likeCountTextStyle}>{this.state.likecount}</Text>
           </View>
 
           <View style={likeContainerStyle}>
             <ImageButton
-                source={this.state.upvoteSource}
-                style={upvoteStyle}
-                onPress={() => this.renderUpvote()}
+              source={this.state.upvoteSource}
+              style={upvoteStyle}
+              onPress={() => this.renderUpvote()}
             />
             <ImageButton
-                source={this.state.downvoteSource}
-                style={downvoteStyle}
-                onPress={() => this.renderDownvote()}
+              source={this.state.downvoteSource}
+              style={downvoteStyle}
+              onPress={() => this.renderDownvote()}
             />
           </View>
         </CardSection>
