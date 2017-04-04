@@ -20,6 +20,7 @@ const styles = {
     justifyContent: 'flex-end',
     alignItems: 'center',
     elevation: 2,
+    marginTop: footerSize,
     position: 'absolute',
     bottom: 0,
     left: 0,
