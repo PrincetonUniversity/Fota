@@ -6,12 +6,12 @@ import { footerSize, circleSize } from './common/Footer';
 
 const styles = {
   imgStyle: {
-    width: footerSize - 23,
-    height: footerSize - 21
+    width: footerSize - 30,
+    height: footerSize - 30
   },
   camImgStyle: {
-    width: circleSize - 15,
-    height: circleSize - 15
+    width: circleSize - 25,
+    height: circleSize - 25
   }
 };
 
@@ -66,8 +66,8 @@ class Navbar extends Component {
     this.setState({
       homeSource: homeUnactivated,
       searchSource: searchUnactivated,
-      accountSource: accountActivated,
-      settingsSource: settingsUnactivated
+      accountSource: accountUnactivated,
+      settingsSource: settingsActivated
     });
   }
 
