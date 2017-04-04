@@ -66,8 +66,8 @@ class PhotoDetail extends Component {
 
   // Sends the update request to the fota server.
   // type can either be "downvote" or "upvote"
-  sendUpdateRequest(type) {
-    const queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}`;
+  sendUpdateRequest(type, amount) {
+    const queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}`;
     axios.patch(queryString)
       .then()
       .catch((e) => { console.log(e); }); // LATER should notify user on failure
@@ -80,15 +80,17 @@ class PhotoDetail extends Component {
     let voteSource = upvoteActivated;
     if (!this.state.userHasVoted) {
       newLikeCount += 1;
+      this.sendUpdateRequest('upvote', '1');
     } else if (this.state.userDisliked) {
         newLikeCount += 2;
+        this.sendUpdateRequest('upvote', '2');
     } else if (this.state.userLiked) {
         newLikeCount -= 1;
         userNewLike = false;
         userVoted = false;
         voteSource = upvoteUnactivated;
+        this.sendUpdateRequest('downvote', '1');
     }
-    this.sendUpdateRequest('upvote');
     this.setState({ likecount: newLikeCount,
                     userLiked: userNewLike,
                     userDisliked: false,
@@ -105,15 +107,17 @@ class PhotoDetail extends Component {
     let voteSource = downvoteActivated;
     if (!this.state.userHasVoted) {
       newLikeCount -= 1;
+      this.sendUpdateRequest('downvote', '1');
     } else if (this.state.userLiked) {
       newLikeCount -= 2;
+      this.sendUpdateRequest('downvote', '2');
     } else if (this.state.userDisliked) {
       newLikeCount += 1;
       userHasDisliked = false;
       userVoted = false;
       voteSource = downvoteUnactivated;
+      this.sendUpdateRequest('upvote', 1);
     }
-    this.sendUpdateRequest('downvote');
     this.setState({ likecount: newLikeCount,
                     userLiked: false,
                     userDisliked: userHasDisliked,
