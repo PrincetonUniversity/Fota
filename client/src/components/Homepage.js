@@ -4,10 +4,10 @@ import Headbar from './Headbar';
 import PhotoList from './PhotoList';
 
 const Homepage = () => (
-    <ScrollView>
-      <Headbar />
-      <PhotoList />
-    </ScrollView>
+  <ScrollView>
+    <Headbar />
+    <PhotoList />
+  </ScrollView>
 );
 
 export default Homepage;

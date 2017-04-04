@@ -14,8 +14,7 @@ const ImageButton = ({ style, onPress, source, activeOpacity }) => (
     activeOpacity={activeOpacity}
   >
     <Image
-      style={{ width: style.width, height: style.height, resizeMode: 'cover'
-      }}
+      style={{ width: style.width, height: style.height, resizeMode: 'cover' }}
       source={source}
     />
   </TouchableOpacity>

@@ -7,14 +7,14 @@ import Homepage from './components/Homepage';
 import Navbar from './components/Navbar';
 
 const App = () => {
-    return (
-       <Provider store={createStore(reducers)}>
-            <View style={{ flex: 1 }}>
-                <Homepage />
-                <Navbar />
-            </View>
-        </Provider>
-    );
+  return (
+   <Provider store={createStore(reducers)}>
+      <View style={{ flex: 1 }}>
+        <Homepage />
+        <Navbar />
+      </View>
+    </Provider>
+  );
 };
 
 export default App;
