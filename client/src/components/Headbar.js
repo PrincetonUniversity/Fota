@@ -1,7 +1,9 @@
+// Header at the top with search and order toggle
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Header } from './common';
-import PhotoToggler from './PhotoToggler';
+import OrderToggler from './OrderToggler';
 //import Searchbar from './Searchbar';
 
 const Headbar = () => (
@@ -9,7 +11,7 @@ const Headbar = () => (
     {/* Searchbar */}
     <Text style={styles.searchStyle}>Search</Text>
     {/*Popular/New*/}
-    <View style={styles.toggleStyle}><PhotoToggler /></View>
+    <View style={styles.toggleStyle}><OrderToggler /></View>
   </Header>
 );
 

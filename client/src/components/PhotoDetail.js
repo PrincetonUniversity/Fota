@@ -1,3 +1,5 @@
+// Visual component for each photo, i.e. photo frame+upvote/downvote/upvote count
+
 import React, { Component } from 'react';
 import { View, Image, Text } from 'react-native';
 import axios from 'axios';

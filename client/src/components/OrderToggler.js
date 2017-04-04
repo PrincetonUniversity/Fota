@@ -1,7 +1,9 @@
+// The hot/new button
+
 import React, { Component } from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 
-class PhotoToggler extends Component {
+class OrderToggler extends Component {
   state = { hot: true }
 
   render() {
@@ -23,4 +25,4 @@ const styles = {
   }
 };
 
-export default PhotoToggler;
+export default OrderToggler;
