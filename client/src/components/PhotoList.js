@@ -27,7 +27,7 @@ class PhotoList extends Component {
     return (
         <ScrollView style={{ marginBottom: footerSize }}>
           <Headbar />
-          <Spinner visible={this.state.spinnerVisible} color="#ff9700" />
+          <Spinner visible={this.state.spinnerVisible} color='#ff9700' />
           {this.renderPhotos()}
         </ScrollView>
     );
