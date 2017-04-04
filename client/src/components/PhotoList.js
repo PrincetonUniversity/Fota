@@ -1,3 +1,5 @@
+// List of all the photos in their visual component PhotoDetail
+
 import React, { Component } from 'react';
 import { ScrollView } from 'react-native';
 import axios from 'axios';
@@ -27,7 +29,7 @@ class PhotoList extends Component {
     return (
         <ScrollView style={{ marginBottom: footerSize }}>
           <Headbar />
-          <Spinner visible={this.state.spinnerVisible} color="#ff9700" />
+          <Spinner visible={this.state.spinnerVisible} color='#ff9700' />
           {this.renderPhotos()}
         </ScrollView>
     );

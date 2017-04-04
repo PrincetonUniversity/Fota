@@ -1,3 +1,5 @@
+// Navigation bar at the bottom
+
 import React, { Component } from 'react';
 import { ImageButton, Footer } from './common';
 import { footerSize, circleSize } from './common/Footer';

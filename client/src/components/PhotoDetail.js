@@ -1,3 +1,5 @@
+// Visual component for each photo, i.e. photo frame+upvote/downvote/upvote count
+
 import React, { Component } from 'react';
 import { View, Image, Text } from 'react-native';
 import axios from 'axios';
@@ -9,9 +11,15 @@ const styles = {
     flex: 1,
     width: null
   },
-  voteStyle: { // Upvote/downvote
-    height: 25,
-    width: 25
+  upvoteStyle: { // Upvote/downvote
+    height: 30,
+    width: 30
+  },
+  downvoteStyle: { // Downvote
+    height: 30,
+    width: 30,
+    marginLeft: 10,
+    marginRight: 10
   },
   likeCountContainerStyle: { // Upvote arrow + number of likes container
     flexDirection: 'row',
@@ -20,11 +28,12 @@ const styles = {
     marginLeft: 10
   },
   likeCountArrowStyle: { // the arrow next to number of likes
-    height: 15,
-    width: 15
+    height: 13,
+    width: 13
   },
   likeCountTextStyle: { // Number of likes
-    fontSize: 15,
+    fontFamily: 'Avenir',
+    fontSize: 13,
     textAlign: 'justify',
     fontWeight: 'bold',
     marginLeft: 5
@@ -33,12 +42,13 @@ const styles = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'stretch',
-    marginRight: 10
+    marginRight: 20
   },
 };
 
 const { photoStyle,
-        voteStyle,
+        upvoteStyle,
+        downvoteStyle,
         likeCountContainerStyle,
         likeCountArrowStyle,
         likeCountTextStyle,
@@ -142,7 +152,7 @@ class PhotoDetail extends Component {
         <CardSection>
           <View style={likeCountContainerStyle}>
               <Image
-                  source={upvoteActivated}
+                  source={upvoteUnactivated}
                   style={likeCountArrowStyle}
               />
               <Text style={likeCountTextStyle}>{this.state.likecount}</Text>
@@ -151,12 +161,12 @@ class PhotoDetail extends Component {
           <View style={likeContainerStyle}>
             <ImageButton
                 source={this.state.upvoteSource}
-                style={voteStyle}
+                style={upvoteStyle}
                 onPress={() => this.renderUpvote()}
             />
             <ImageButton
                 source={this.state.downvoteSource}
-                style={voteStyle}
+                style={downvoteStyle}
                 onPress={() => this.renderDownvote()}
             />
           </View>
