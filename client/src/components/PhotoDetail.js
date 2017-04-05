@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { View, Image, Text } from 'react-native';
 import axios from 'axios';
 import { Card, CardSection, ImageButton } from './common';
+import saveVote from '../helpers/getasyncstorage';
 
 const styles = {
   photoStyle: { // The picture
@@ -63,16 +64,40 @@ const downvoteActivated = require('../img/downvote_activated.png');
 class PhotoDetail extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      link: props.photo.link,
-      likecount: props.photo.likecount,
-      id: props.photo.id,
-      userLiked: false,
-      userDisliked: false,
-      upvoteSource: upvoteUnactivated,
-      downvoteSource: downvoteUnactivated,
-      userHasVoted: false
-    };
+    if (!props.vote) {
+      this.state = {
+        link: props.photo.link,
+        likecount: props.photo.likecount,
+        id: props.photo.id,
+        userLiked: false,
+        userDisliked: false,
+        upvoteSource: upvoteUnactivated,
+        downvoteSource: downvoteUnactivated,
+        userHasVoted: false
+      };
+    } else if (props.vote === 'liked') {
+        this.state = {
+          link: props.photo.link,
+          likecount: props.photo.likecount,
+          id: props.photo.id,
+          userLiked: true,
+          userDisliked: false,
+          upvoteSource: upvoteActivated,
+          downvoteSource: downvoteUnactivated,
+          userHasVoted: true
+        };
+    } else if (props.vote === 'disliked') {
+        this.state = {
+          link: props.photo.link,
+          likecount: props.photo.likecount,
+          id: props.photo.id,
+          userLiked: false,
+          userDisliked: true,
+          upvoteSource: upvoteUnactivated,
+          downvoteSource: downvoteActivated,
+          userHasVoted: true
+        };
+    }
   }
 
   // Sends the update request to the fota server.
@@ -91,15 +116,18 @@ class PhotoDetail extends Component {
     let voteSource = upvoteActivated;
     if (!this.state.userHasVoted) {
       newLikeCount += 1;
+      saveVote(1, this.state.id).done();
       this.sendUpdateRequest('upvote', '1');
     } else if (this.state.userDisliked) {
         newLikeCount += 2;
+        saveVote(4, this.state.id).done();
         this.sendUpdateRequest('upvote', '2');
     } else if (this.state.userLiked) {
         newLikeCount -= 1;
         userNewLike = false;
         userVoted = false;
         voteSource = upvoteUnactivated;
+        saveVote(5, this.state.id).done();
         this.sendUpdateRequest('downvote', '1');
     }
     this.setState({
@@ -119,15 +147,18 @@ class PhotoDetail extends Component {
     let voteSource = downvoteActivated;
     if (!this.state.userHasVoted) {
       newLikeCount -= 1;
+      saveVote(2, this.state.id).done();
       this.sendUpdateRequest('downvote', '1');
     } else if (this.state.userLiked) {
       newLikeCount -= 2;
+      saveVote(3, this.state.id).done();
       this.sendUpdateRequest('downvote', '2');
     } else if (this.state.userDisliked) {
       newLikeCount += 1;
       userHasDisliked = false;
       userVoted = false;
       voteSource = downvoteUnactivated;
+      saveVote(6, this.state.id).done();
       this.sendUpdateRequest('upvote', 1);
     }
     this.setState({
