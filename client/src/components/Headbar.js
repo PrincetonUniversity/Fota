@@ -4,7 +4,6 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { Header } from './common';
 import OrderToggler from './OrderToggler';
-//import Searchbar from './Searchbar';
 
 const Headbar = () => (
   <Header>

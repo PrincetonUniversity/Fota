@@ -1,20 +1,36 @@
-import React from 'react';
-import { View } from 'react-native';
+import React, { Component } from 'react';
+import { Navigator } from 'react-native';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import reducers from './reducers';
-import Homepage from './components/Homepage';
+import HomePage from './components/HomePage';
+import SearchPage from './components/SearchPage';
 import Navbar from './components/Navbar';
 
-const App = () => {
-  return (
-   <Provider store={createStore(reducers)}>
-      <View style={{ flex: 1 }}>
-        <Homepage />
-        <Navbar />
-      </View>
-    </Provider>
-  );
-};
+class App extends Component {
+  renderScene(route, navigator) {
+    switch (route.name) {
+      case 'Home':
+        return <HomePage />;
+      case 'Search':
+        return <SearchPage />;
+      default:
+        return <HomePage />;
+    }
+  }
+
+  render() {
+    return (
+     <Provider store={createStore(reducers)}>
+        <Navigator
+          style={{ flex: 1 }}
+          initialRoute={{ name: 'Home' }}
+          renderScene={this.renderScene}
+          navigationBar={<Navbar />}
+        />
+      </Provider>
+    );
+  }
+}
 
 export default App;
