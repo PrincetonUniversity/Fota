@@ -53,13 +53,14 @@ module.exports.delete = (req, res) => {
 
 module.exports.patch = (req, res) => {
   type = req.query.type;
+  amount = req.query.amount || "1";
 
   if (type != "upvote" && type != "downvote")
     return res.status(400).send({error: "no vote type supplied"})
 
   if (type == "upvote") {
     Photo.update({
-      likecount: sequelize.literal("likecount + 1")
+      likecount: sequelize.literal(`likecount + ${amount}`)
     }, {where: {
       id: req.params.id
     }}).catch((e) => console.log(e))
@@ -67,7 +68,7 @@ module.exports.patch = (req, res) => {
 
   if (type == "downvote") {
     Photo.update({
-      likecount: sequelize.literal("likecount - 1")
+      likecount: sequelize.literal(`likecount - ${amount}`)
     }, {where: {
       id: req.params.id
     }}).catch((e) => console.log(e))

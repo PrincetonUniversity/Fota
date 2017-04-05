@@ -27,14 +27,11 @@ module.exports.getPhotos = (req, res) => {
         message: "Restaurant not Found"
       });
     }
-    rest.getPhotos().then((photos) => {
-      photos.forEach((element) => {
-        console.log(element.dataValues);
-      })
+    rest.getPhotos({
+      order: [['createdAt', 'DESC']]
+    }).then((photos) => {
+      return res.status(200).send(photos);
     });
-
-    return res.status(200).send(rest);
-
   }).catch((err) => {
     console.log(err);
   })

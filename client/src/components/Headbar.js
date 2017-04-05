@@ -9,7 +9,7 @@ import OrderToggler from './OrderToggler';
 const Headbar = () => (
   <Header>
     {/* Searchbar */}
-    <Text style={styles.searchStyle}>Search</Text>
+    <Text style={styles.searchStyle}>Filters</Text>
     {/*Popular/New*/}
     <View style={styles.toggleStyle}><OrderToggler /></View>
   </Header>
