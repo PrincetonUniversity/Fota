@@ -4,11 +4,11 @@ import Headbar from './Headbar';
 import PhotoList from './PhotoList';
 import { footerSize } from './common/Footer';
 
-const Homepage = () => (
+const HomePage = () => (
   <ScrollView style={{ marginBottom: footerSize }} >
     <Headbar />
     <PhotoList />
   </ScrollView>
 );
 
-export default Homepage;
+export default HomePage;

@@ -1,8 +1,8 @@
 import React from 'react';
 import { View } from 'react-native';
 
-export const footerSize = 55;
-export const circleSize = 70;
+export const footerSize = 50;
+export const circleSize = 65;
 
 const Footer = (props) => (
   <View style={styles.footerStyle}>
@@ -47,7 +47,7 @@ const styles = {
     height: footerSize,
     paddingLeft: 5,
     paddingRight: 5,
-    paddingBottom: 15
+    paddingBottom: 12
   }
 };
 

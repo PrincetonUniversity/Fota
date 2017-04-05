@@ -32,8 +32,8 @@ class PhotoList extends Component {
   // given an id of a picutre, returns "liked" if the user has liked it,
   // "disliked" if user has not liked it, and null if neither.
   findVote(id) {
-    if (id === 19) console.log(this.state.liked);
-    if (id === 19) console.log(this.state.disliked);
+    //if (id === 19) console.log(this.state.liked);
+    //if (id === 19) console.log(this.state.disliked);
     if (_.includes(this.state.liked, id)) return 'liked';
     if (_.includes(this.state.disliked, id)) return 'disliked';
     return null;
@@ -47,7 +47,7 @@ class PhotoList extends Component {
   }
 
   render() {
-    console.log(this.state);
+    //console.log(this.state);
     return (
       <View>
         <Spinner visible={this.state.spinnerVisible} color='#ff9700' />
