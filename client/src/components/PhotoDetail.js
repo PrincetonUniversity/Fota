@@ -66,13 +66,12 @@ class PhotoDetail extends Component {
     this.state = { link: props.photo.link,
                     likecount: props.photo.likecount,
                     photoid: props.photo.id,
+                    restaurantid: props.photo.RestaurantId,
                     userLiked: false,
                     userDisliked: false,
                     upvoteSource: upvoteUnactivated,
                     downvoteSource: downvoteUnactivated,
                     userHasVoted: false
-                    // Restaurants
-                    //restaurantid: props.restauran
                   };
   }
 
@@ -133,6 +132,10 @@ class PhotoDetail extends Component {
                     upvoteSource: upvoteUnactivated,
                     downvoteSource: voteSource
                   });
+  }
+
+  renderRestaurantPage() {
+    
   }
 
   render() {
