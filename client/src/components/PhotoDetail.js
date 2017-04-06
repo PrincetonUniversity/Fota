@@ -1,9 +1,10 @@
 // Visual component for each photo, i.e. photo frame+upvote/downvote/upvote count
 
 import React, { Component } from 'react';
-import { View, Image, Text } from 'react-native';
+import { View, Image, Text, Modal } from 'react-native';
 import axios from 'axios';
 import { Card, CardSection, ImageButton } from './common';
+import RestaurantDetail from './RestaurantDetail';
 import saveVote from '../helpers/getasyncstorage';
 
 const styles = {
@@ -73,7 +74,8 @@ class PhotoDetail extends Component {
         userDisliked: false,
         upvoteSource: upvoteUnactivated,
         downvoteSource: downvoteUnactivated,
-        userHasVoted: false
+        userHasVoted: false,
+        modalVisible: false
       };
     } else if (props.vote === 'liked') {
         this.state = {
@@ -84,7 +86,8 @@ class PhotoDetail extends Component {
           userDisliked: false,
           upvoteSource: upvoteActivated,
           downvoteSource: downvoteUnactivated,
-          userHasVoted: true
+          userHasVoted: true,
+          modalVisible: false
         };
     } else if (props.vote === 'disliked') {
         this.state = {
@@ -95,9 +98,14 @@ class PhotoDetail extends Component {
           userDisliked: true,
           upvoteSource: upvoteUnactivated,
           downvoteSource: downvoteActivated,
-          userHasVoted: true
+          userHasVoted: true,
+          modalVisible: false
         };
     }
+  }
+
+  setModalVisible(visible) {
+    this.setState({ modalVisible: visible });
   }
 
   // Sends the update request to the fota server.
@@ -171,45 +179,60 @@ class PhotoDetail extends Component {
     });
   }
 
-  renderRestaurantPage() {
-    
+  closeModal() {
+    this.setState({ modalVisible: false });
   }
+  // renderRestaurantPage() {
+  //   if (this.props.navigator.getCurrentRoutes().pop().name === 'Restaurant Page') return;
+  //   this.props.navigator.push({ name: 'Restaurant Page',
+  //                               restaurant: this.props.restaurant });
+  // }
 
   render() {
     return (
-      <Card>
-        <CardSection>
-          <ImageButton
-            activeOpacity={1}
-            style={photoStyle}
-            source={{ uri: this.state.link }}
-            onPress={() => console.log('pressed')}
-          />
-        </CardSection>
-
-        <CardSection>
-          <View style={likeCountContainerStyle}>
-            <Image
-              source={upvoteUnactivated}
-              style={likeCountArrowStyle}
-            />
-            <Text style={likeCountTextStyle}>{this.state.likecount}</Text>
-          </View>
-
-          <View style={likeContainerStyle}>
+      <View>
+        <Modal
+          animationType={'fade'}
+          transparent
+          visible={this.state.modalVisible}
+          onRequestClose={() => { this.setModalVisible(false); }}
+        >
+          <RestaurantDetail restaurant={this.props.restaurant} close={this.closeModal.bind(this)} />
+        </Modal>
+        <Card>
+          <CardSection>
             <ImageButton
-              source={this.state.upvoteSource}
-              style={upvoteStyle}
-              onPress={() => this.renderUpvote()}
+              activeOpacity={1}
+              style={photoStyle}
+              source={{ uri: this.state.link }}
+              onPress={() => this.setModalVisible()}
             />
-            <ImageButton
-              source={this.state.downvoteSource}
-              style={downvoteStyle}
-              onPress={() => this.renderDownvote()}
-            />
-          </View>
-        </CardSection>
-      </Card>
+          </CardSection>
+
+          <CardSection>
+            <View style={likeCountContainerStyle}>
+              <Image
+                source={upvoteUnactivated}
+                style={likeCountArrowStyle}
+              />
+              <Text style={likeCountTextStyle}>{this.state.likecount}</Text>
+            </View>
+
+            <View style={likeContainerStyle}>
+              <ImageButton
+                source={this.state.upvoteSource}
+                style={upvoteStyle}
+                onPress={() => this.renderUpvote()}
+              />
+              <ImageButton
+                source={this.state.downvoteSource}
+                style={downvoteStyle}
+                onPress={() => this.renderDownvote()}
+              />
+            </View>
+          </CardSection>
+        </Card>
+      </View>
     );
   }
 }

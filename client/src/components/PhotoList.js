@@ -39,9 +39,24 @@ class PhotoList extends Component {
     return null;
   }
 
+  // Returns the restaurant associated with a given id
+  findRestaurant(restaurantid) {
+    for (let i = 0; i < this.state.restaurants.length; i++) {
+      if (restaurantid === this.state.restaurants[i].id) {
+        return this.state.restaurants[i];
+      }
+    }
+    return null;
+  }
+
   renderPhotos() {
     return this.state.photos.map(photo =>
-      <PhotoDetail key={photo.id} photo={photo} vote={this.findVote(photo.id)} />
+      <PhotoDetail
+        key={photo.id}
+        photo={photo}
+        vote={this.findVote(photo.id)}
+        restaurant={this.findRestaurant(photo.RestaurantId)}
+      />
       // Later on key should be id of user who uploaded it
     );
   }
