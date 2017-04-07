@@ -2,6 +2,7 @@
   "extends": "rallycoding",
   "rules": {
     "global-require": "off",
-    "arrow-body-style": ["warn", "as-needed"]
+    "arrow-body-style": ["warn", "as-needed"],
+    "no-mixed-operators": "off"
   }
 }

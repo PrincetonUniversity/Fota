@@ -117,6 +117,10 @@ class PhotoDetail extends Component {
       .catch((e) => { console.log(e); }); // LATER should notify user on failure
   }
 
+  closeModal() {
+    this.setState({ modalVisible: false });
+  }
+  
   renderUpvote() {
     let newLikeCount = this.state.likecount;
     let userNewLike = true;
@@ -178,15 +182,6 @@ class PhotoDetail extends Component {
       downvoteSource: voteSource
     });
   }
-
-  closeModal() {
-    this.setState({ modalVisible: false });
-  }
-  // renderRestaurantPage() {
-  //   if (this.props.navigator.getCurrentRoutes().pop().name === 'Restaurant Page') return;
-  //   this.props.navigator.push({ name: 'Restaurant Page',
-  //                               restaurant: this.props.restaurant });
-  // }
 
   render() {
     return (

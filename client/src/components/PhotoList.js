@@ -50,6 +50,7 @@ class PhotoList extends Component {
   }
 
   renderPhotos() {
+    // this.setState({ spinnerVisible: false });
     return this.state.photos.map(photo =>
       <PhotoDetail
         key={photo.id}

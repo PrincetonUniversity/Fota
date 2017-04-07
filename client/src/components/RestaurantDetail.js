@@ -1,20 +1,41 @@
 import React, { Component } from 'react';
 import { View, Image, Text } from 'react-native';
+import axios from 'axios';
+import Spinner from 'react-native-loading-spinner-overlay';
+import moment from 'moment';
+import { phonecall } from 'react-native-communications';
 import { ImageButton } from './common';
 import { footerSize } from './common/Footer';
 
 const styles = {
-  restaurantCardStyle: {
+  restaurantPageStyle: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
     marginBottom: footerSize,
     marginLeft: 15,
     marginTop: 20,
     marginRight: 15,
-    backgroundColor: '#F8F8F8',
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.2
+    backgroundColor: '#F8F8F8'
+  },
+  restaurantHeaderStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  restaurantTitleFont: {
+    fontFamily: 'Avenir',
+    fontSize: 15,
+    textAlign: 'justify'
+  },
+  restaurantPhotoContainerStyle: {
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
+  restaurantPhotoStyle: {
+    height: 100,
+    width: 100,
+    marginLeft: 5,
+    marginRight: 5
   },
   backButtonStyle: {
     width: 30,
@@ -22,34 +43,102 @@ const styles = {
   }
 };
 
-const { restaurantCardStyle, backButtonStyle } = styles;
+const { restaurantPageStyle,
+        restaurantHeaderStyle,
+        restaurantTitleFont,
+        backButtonStyle,
+        restaurantPhotoContainerStyle,
+        restaurantPhotoStyle
+      } = styles;
+
+const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
 const backButton = require('../img/fota_home_button_activated.png');
 
 class RestaurantDetail extends Component {
+  state = { photos: [], spinnerVisible: true }
 
   componentWillMount() {
-    //axios.get();
+    axios.get(restaurantDetails + this.props.restaurant.id)
+      .then(response => this.setState({ photos: response.data,
+                                        spinnerVisible: false }));
   }
 
-  renderBack() {
-    this.props.navigator.push({ name: 'Photo List' });
+  timeUntilClose(closeTime) { // Calculates how long until the restaurant closes
+    const currentDate = moment(new Date());
+
+    const closeTimeHours = Math.floor(closeTime / 100);
+    const closeTimeMinutes = closeTime - closeTimeHours * 100;
+    const closeDate = moment({ hours: closeTimeHours, minutes: closeTimeMinutes });
+    if (currentDate > closeDate) {
+      closeDate.add(1, 'days');
+    }
+    const timeOpenHours = closeDate.diff(currentDate, 'hours');
+    const timeOpenMinutes = closeDate.diff(currentDate, 'minutes') % 60;
+
+    console.log(timeOpenHours);
+    return [timeOpenHours, timeOpenMinutes];
+  }
+
+  timeUntilCloseLabel(closeTime) {
+    const timeUntilClose = this.timeUntilClose(closeTime);
+    let hoursOpen = timeUntilClose[0]; // Hours in amount of time open.
+    const minutesOpen = timeUntilClose[1]; // Minutes in amount of time open.
+    let closingTimeString = 'Open for ';
+    if (timeUntilClose[0] === 0) {
+      closingTimeString += `${minutesOpen} minutes`;
+    } else {
+      if (minutesOpen > 30) {
+        hoursOpen += 1;
+      }
+      closingTimeString += `${hoursOpen} hours`;
+    }
+    return closingTimeString;
+  }
+
+  renderPhotos() {
+    return this.state.photos.map(photo =>
+      <View key={photo.id}>
+        <Spinner visible={this.state.spinnerVisible} color='#ff9700' />
+        <Image
+          source={{ uri: photo.link }}
+          style={restaurantPhotoStyle}
+        />
+      </View>
+    );
   }
 
   render() {
     const restaurant = this.props.restaurant;
     return (
-      <View style={restaurantCardStyle}>
-        <ImageButton
-          style={backButtonStyle}
-          source={backButton}
-          onPress={() => this.props.close()}
-        />
-        <Text>
-          {restaurant.name}
-        </Text>
-        <Text>
-          {restaurant.phoneNumber}
-        </Text>
+      <View style={restaurantPageStyle}>
+        <View style={restaurantHeaderStyle}>
+          <ImageButton
+            style={backButtonStyle}
+            source={backButton}
+            onPress={() => this.props.close()}
+          />
+          <Text style={restaurantTitleFont}>
+            {restaurant.name}
+          </Text>
+          <Text style={restaurantTitleFont}>
+            {this.timeUntilCloseLabel(this.props.restaurant.closeTime)}
+          </Text>
+          <ImageButton
+            style={backButtonStyle}
+            source={backButton}
+            onPress={() => phonecall(restaurant.phoneNumber)}
+          />
+        </View>
+
+        <View style={restaurantPhotoContainerStyle}>
+          {this.renderPhotos()}
+        </View>
+
+        <View>
+          <Text>
+            Reviews
+          </Text>
+        </View>
       </View>
     );
   }
