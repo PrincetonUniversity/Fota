@@ -196,6 +196,7 @@ class PhotoDetail extends Component {
         >
           <RestaurantDetail restaurant={this.props.restaurant} close={this.closeModal.bind(this)} />
         </Modal>
+
         <Card>
           <CardSection>
             <ImageButton

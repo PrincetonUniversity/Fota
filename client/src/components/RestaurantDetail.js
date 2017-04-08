@@ -5,20 +5,24 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 import { phonecall } from 'react-native-communications';
 import { ImageButton } from './common';
-import { footerSize } from './common/Footer';
 
 const styles = {
-  pageStyle: {
+  modalStyle: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)'
+  },
+  pageStyle: { // Entire restaurant page
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
-    marginBottom: footerSize,
-    marginLeft: 15,
     marginTop: 20,
+    marginBottom: 20,
+    marginLeft: 15,
     marginRight: 15,
-    backgroundColor: '#F8F8F8'
+    backgroundColor: '#F8F8F8',
+    borderRadius: 20,
   },
-  headerStyle: {
+  headerStyle: { // Header including back button, name, time until close, call button
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -27,34 +31,35 @@ const styles = {
     marginLeft: 5,
     marginRight: 5
   },
-  titleFont: {
+  titleFont: { // Restaurant name
     fontFamily: 'Avenir',
     fontSize: 15,
     textAlign: 'justify'
   },
-  timeUntilCloseFont: {
+  timeUntilCloseFont: { // Time until close
     fontFamily: 'Avenir',
     fontSize: 10,
     textAlign: 'justify'
   },
-  photoListStyle: {
+  photoListStyle: { // List of photos (ListView)
     marginLeft: 15,
     marginRight: 15
   },
-  photoStyle: {
-    height: 110,
-    width: 110,
+  photoStyle: { // Individual photos
+    height: 120,
+    width: 120,
     marginLeft: 5,
     marginRight: 5,
     borderRadius: 10
   },
-  backButtonStyle: {
+  backButtonStyle: { // Back button
     width: 30,
     height: 30
   }
 };
 
-const { pageStyle,
+const { modalStyle,
+        pageStyle,
         headerStyle,
         titleFont,
         timeUntilCloseFont,
@@ -125,41 +130,43 @@ class RestaurantDetail extends Component {
             rowHasChanged: (r1, r2) => r1.id !== r2.id
         });
     return (
-      <View style={pageStyle}>
-        <View>
-          <View style={headerStyle}>
-            <ImageButton
-              style={backButtonStyle}
-              source={backButton}
-              onPress={() => this.props.close()}
-            />
-            <Text style={titleFont}>
-              {restaurant.name}
-            </Text>
-            <Text style={timeUntilCloseFont}>
-              {this.timeUntilCloseLabel(this.props.restaurant.closeTime)}
-            </Text>
-            <ImageButton
-              style={backButtonStyle}
-              source={backButton}
-              onPress={() => phonecall(restaurant.phoneNumber)}
-            />
+      <View style={modalStyle}>
+        <View style={pageStyle}>
+          <View>
+            <View style={headerStyle}>
+              <ImageButton
+                style={backButtonStyle}
+                source={backButton}
+                onPress={() => this.props.close()}
+              />
+              <Text style={titleFont}>
+                {restaurant.name}
+              </Text>
+              <Text style={timeUntilCloseFont}>
+                {this.timeUntilCloseLabel(this.props.restaurant.closeTime)}
+              </Text>
+              <ImageButton
+                style={backButtonStyle}
+                source={backButton}
+                onPress={() => phonecall(restaurant.phoneNumber)}
+              />
+            </View>
+
+            <View style={photoListStyle}>
+              <ListView
+                dataSource={dataSource.cloneWithRows(this.state.photos)}
+                renderRow={photo => this.renderPhoto(photo)}
+                horizontal
+                enableEmptySections
+              />
+            </View>
           </View>
 
-          <View style={photoListStyle}>
-            <ListView
-              dataSource={dataSource.cloneWithRows(this.state.photos)}
-              renderRow={photo => this.renderPhoto(photo)}
-              horizontal
-              enableEmptySections
-            />
+          <View style={{ alignItems: 'center' }}>
+            <Text>
+              Reviews
+            </Text>
           </View>
-        </View>
-
-        <View>
-          <Text>
-            Reviews
-          </Text>
         </View>
       </View>
     );
