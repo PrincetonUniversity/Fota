@@ -7,7 +7,7 @@ import OrderToggler from './OrderToggler';
 
 const Headbar = () => (
   <Header>
-    {/* Searchbar */}
+    {/* Filters */}
     <Text style={styles.searchStyle}>Filters</Text>
     {/*Popular/New*/}
     <View style={styles.toggleStyle}><OrderToggler /></View>

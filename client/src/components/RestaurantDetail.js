@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, Text } from 'react-native';
+import { View, Image, Text, ListView } from 'react-native';
 import axios from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
@@ -8,7 +8,7 @@ import { ImageButton } from './common';
 import { footerSize } from './common/Footer';
 
 const styles = {
-  restaurantPageStyle: {
+  pageStyle: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -18,24 +18,35 @@ const styles = {
     marginRight: 15,
     backgroundColor: '#F8F8F8'
   },
-  restaurantHeaderStyle: {
+  headerStyle: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 20,
+    marginLeft: 5,
+    marginRight: 5
   },
-  restaurantTitleFont: {
+  titleFont: {
     fontFamily: 'Avenir',
     fontSize: 15,
     textAlign: 'justify'
   },
-  restaurantPhotoContainerStyle: {
-    flexDirection: 'row',
-    justifyContent: 'center'
+  timeUntilCloseFont: {
+    fontFamily: 'Avenir',
+    fontSize: 10,
+    textAlign: 'justify'
   },
-  restaurantPhotoStyle: {
-    height: 100,
-    width: 100,
+  photoListStyle: {
+    marginLeft: 15,
+    marginRight: 15
+  },
+  photoStyle: {
+    height: 110,
+    width: 110,
     marginLeft: 5,
-    marginRight: 5
+    marginRight: 5,
+    borderRadius: 10
   },
   backButtonStyle: {
     width: 30,
@@ -43,12 +54,13 @@ const styles = {
   }
 };
 
-const { restaurantPageStyle,
-        restaurantHeaderStyle,
-        restaurantTitleFont,
+const { pageStyle,
+        headerStyle,
+        titleFont,
+        timeUntilCloseFont,
         backButtonStyle,
-        restaurantPhotoContainerStyle,
-        restaurantPhotoStyle
+        photoListStyle,
+        photoStyle
       } = styles;
 
 const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
@@ -95,13 +107,13 @@ class RestaurantDetail extends Component {
     return closingTimeString;
   }
 
-  renderPhotos() {
-    return this.state.photos.map(photo =>
+  renderPhoto(photo) {
+    return (
       <View key={photo.id}>
         <Spinner visible={this.state.spinnerVisible} color='#ff9700' />
         <Image
           source={{ uri: photo.link }}
-          style={restaurantPhotoStyle}
+          style={photoStyle}
         />
       </View>
     );
@@ -109,29 +121,39 @@ class RestaurantDetail extends Component {
 
   render() {
     const restaurant = this.props.restaurant;
+    const dataSource = new ListView.DataSource({
+            rowHasChanged: (r1, r2) => r1.id !== r2.id
+        });
     return (
-      <View style={restaurantPageStyle}>
-        <View style={restaurantHeaderStyle}>
-          <ImageButton
-            style={backButtonStyle}
-            source={backButton}
-            onPress={() => this.props.close()}
-          />
-          <Text style={restaurantTitleFont}>
-            {restaurant.name}
-          </Text>
-          <Text style={restaurantTitleFont}>
-            {this.timeUntilCloseLabel(this.props.restaurant.closeTime)}
-          </Text>
-          <ImageButton
-            style={backButtonStyle}
-            source={backButton}
-            onPress={() => phonecall(restaurant.phoneNumber)}
-          />
-        </View>
+      <View style={pageStyle}>
+        <View>
+          <View style={headerStyle}>
+            <ImageButton
+              style={backButtonStyle}
+              source={backButton}
+              onPress={() => this.props.close()}
+            />
+            <Text style={titleFont}>
+              {restaurant.name}
+            </Text>
+            <Text style={timeUntilCloseFont}>
+              {this.timeUntilCloseLabel(this.props.restaurant.closeTime)}
+            </Text>
+            <ImageButton
+              style={backButtonStyle}
+              source={backButton}
+              onPress={() => phonecall(restaurant.phoneNumber)}
+            />
+          </View>
 
-        <View style={restaurantPhotoContainerStyle}>
-          {this.renderPhotos()}
+          <View style={photoListStyle}>
+            <ListView
+              dataSource={dataSource.cloneWithRows(this.state.photos)}
+              renderRow={photo => this.renderPhoto(photo)}
+              horizontal
+              enableEmptySections
+            />
+          </View>
         </View>
 
         <View>

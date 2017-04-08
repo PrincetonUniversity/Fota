@@ -8,7 +8,7 @@ class SearchPage extends Component {
     return (
       <Header>
         <Input
-          label='O='
+          label={require('../img/magnifying_glass.png')}
           placeholder='Search'
           value={this.state.query}
           onChangeText={query => this.setState({ query })}

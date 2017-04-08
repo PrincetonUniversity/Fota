@@ -9,6 +9,7 @@ import saveVote from '../helpers/getasyncstorage';
 
 const styles = {
   photoStyle: { // The picture
+    borderRadius: 20,
     height: 300,
     flex: 1,
     width: null
@@ -35,6 +36,7 @@ const styles = {
   },
   likeCountTextStyle: { // Number of likes
     fontFamily: 'Avenir',
+    color: '#bababa',
     fontSize: 13,
     textAlign: 'justify',
     fontWeight: 'bold',
@@ -120,7 +122,7 @@ class PhotoDetail extends Component {
   closeModal() {
     this.setState({ modalVisible: false });
   }
-  
+
   renderUpvote() {
     let newLikeCount = this.state.likecount;
     let userNewLike = true;
