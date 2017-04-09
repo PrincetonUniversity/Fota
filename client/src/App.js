@@ -5,22 +5,25 @@ import { createStore } from 'redux';
 import reducers from './reducers';
 import HomePage from './components/HomePage';
 import SearchPage from './components/SearchPage';
+import BlankPage from './components/BlankPage';
 import Navbar from './components/Navbar';
 
-const HorizontalSwipeJump = {
-  ...Navigator.SceneConfigs.HorizontalSwipeJump,
-  gestures: {}
-};
-
 class App extends Component {
+  configureScene(route, routeStack) {
+    if (routeStack.length < 2 || route.id > routeStack[routeStack.length - 2].id) {
+      return Navigator.SceneConfigs.HorizontalSwipeJump;
+    }
+    return Navigator.SceneConfigs.HorizontalSwipeJumpFromLeft;
+  }
+
   renderScene(route, navigator) {
-    switch (route.name) {
-      case 'Home':
+    switch (route.id) {
+      case 0:
         return <HomePage />;
-      case 'Search':
+      case 1:
         return <SearchPage />;
       default:
-        return <HomePage />;
+        return <BlankPage />;
     }
   }
 
@@ -29,9 +32,9 @@ class App extends Component {
      <Provider store={createStore(reducers)}>
         <Navigator
           style={{ flex: 1 }}
-          initialRoute={{ name: 'Home' }}
+          initialRoute={{ id: 0 }}
           renderScene={this.renderScene}
-          configureScene={(route, routeStack) => (HorizontalSwipeJump)}
+          configureScene={this.configureScene}
           navigationBar={<Navbar />}
         />
       </Provider>

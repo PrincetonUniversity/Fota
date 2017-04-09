@@ -1,7 +1,6 @@
 // Navigation bar at the bottom
 
 import React, { Component } from 'react';
-import { Navigator } from 'react-native';
 import { ImageButton, Footer } from './common';
 import { footerSize, circleSize } from './common/Footer';
 
@@ -20,8 +19,8 @@ const { imgStyle, camImgStyle } = styles;
 
 const homeActivated = require('../img/fota_home_button_activated.png');
 const homeUnactivated = require('../img/fota_home_button_unactivated.png');
-const searchActivated = require('../img/fota_home_button_activated.png');
-const searchUnactivated = require('../img/magnifying_glass.png');
+const searchActivated = require('../img/magnifying_glass_activated.png');
+const searchUnactivated = require('../img/magnifying_glass_unactivated.png');
 const accountActivated = require('../img/account_button_activated.png');
 const accountUnactivated = require('../img/account_button_unactivated.png');
 const settingsActivated = require('../img/fota_home_button_activated.png');
@@ -36,49 +35,52 @@ class Navbar extends Component {
     settingsSource: settingsUnactivated
   }
 
+  /*getTransition(current, next) {
+    if next > current
+  }*/
+
   renderHome() {
-    if (this.props.navigator.getCurrentRoutes().pop().name === 'Home') return;
+    if (this.props.navigator.getCurrentRoutes().pop().id === 0) return;
     this.setState({
       homeSource: homeActivated,
       searchSource: searchUnactivated,
       accountSource: accountUnactivated,
       settingsSource: settingsUnactivated
     });
-    this.props.navigator.resetTo({ name: 'Home' });
+    this.props.navigator.push({ id: 0 });
   }
 
   renderSearch() {
-    if (this.props.navigator.getCurrentRoutes().pop().name === 'Search') return;
+    if (this.props.navigator.getCurrentRoutes().pop().id === 1) return;
     this.setState({
       homeSource: homeUnactivated,
       searchSource: searchActivated,
       accountSource: accountUnactivated,
       settingsSource: settingsUnactivated
     });
-    console.log(this.props.navigator.getCurrentRoutes());
-    this.props.navigator.push({ name: 'Search' });
+    this.props.navigator.push({ id: 1 });
   }
 
   renderAccount() {
-    if (this.props.navigator.getCurrentRoutes().pop().name === 'Account') return;
+    if (this.props.navigator.getCurrentRoutes().pop().id === 2) return;
     this.setState({
       homeSource: homeUnactivated,
       searchSource: searchUnactivated,
       accountSource: accountActivated,
       settingsSource: settingsUnactivated
     });
-    this.props.navigator.push({ name: 'Account' });
+    this.props.navigator.push({ id: 2 });
   }
 
   renderSettings() {
-    if (this.props.navigator.getCurrentRoutes().pop().name === 'Settings') return;
+    if (this.props.navigator.getCurrentRoutes().pop().id === 3) return;
     this.setState({
       homeSource: homeUnactivated,
       searchSource: searchUnactivated,
       accountSource: accountUnactivated,
       settingsSource: settingsActivated
     });
-    this.props.navigator.push({ name: 'Settings' });
+    this.props.navigator.push({ id: 3 });
   }
 
   render() {
