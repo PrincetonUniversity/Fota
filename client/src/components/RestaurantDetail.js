@@ -15,11 +15,11 @@ const styles = {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
+    backgroundColor: '#F8F8F8',
     marginTop: 20,
     marginBottom: 20,
     marginLeft: 15,
     marginRight: 15,
-    backgroundColor: '#F8F8F8',
     borderRadius: 20,
   },
   headerStyle: { // Header including back button, name, time until close, call button

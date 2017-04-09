@@ -7,6 +7,11 @@ import HomePage from './components/HomePage';
 import SearchPage from './components/SearchPage';
 import Navbar from './components/Navbar';
 
+const HorizontalSwipeJump = {
+  ...Navigator.SceneConfigs.HorizontalSwipeJump,
+  gestures: {}
+};
+
 class App extends Component {
   renderScene(route, navigator) {
     switch (route.name) {
@@ -26,6 +31,7 @@ class App extends Component {
           style={{ flex: 1 }}
           initialRoute={{ name: 'Home' }}
           renderScene={this.renderScene}
+          configureScene={(route, routeStack) => (HorizontalSwipeJump)}
           navigationBar={<Navbar />}
         />
       </Provider>

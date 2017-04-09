@@ -1,6 +1,7 @@
 // Navigation bar at the bottom
 
 import React, { Component } from 'react';
+import { Navigator } from 'react-native';
 import { ImageButton, Footer } from './common';
 import { footerSize, circleSize } from './common/Footer';
 
@@ -20,7 +21,7 @@ const { imgStyle, camImgStyle } = styles;
 const homeActivated = require('../img/fota_home_button_activated.png');
 const homeUnactivated = require('../img/fota_home_button_unactivated.png');
 const searchActivated = require('../img/fota_home_button_activated.png');
-const searchUnactivated = require('../img/fota_home_button_unactivated.png');
+const searchUnactivated = require('../img/magnifying_glass.png');
 const accountActivated = require('../img/account_button_activated.png');
 const accountUnactivated = require('../img/account_button_unactivated.png');
 const settingsActivated = require('../img/fota_home_button_activated.png');
@@ -43,7 +44,7 @@ class Navbar extends Component {
       accountSource: accountUnactivated,
       settingsSource: settingsUnactivated
     });
-    this.props.navigator.push({ name: 'Home' });
+    this.props.navigator.resetTo({ name: 'Home' });
   }
 
   renderSearch() {
@@ -54,6 +55,7 @@ class Navbar extends Component {
       accountSource: accountUnactivated,
       settingsSource: settingsUnactivated
     });
+    console.log(this.props.navigator.getCurrentRoutes());
     this.props.navigator.push({ name: 'Search' });
   }
 
