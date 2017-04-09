@@ -11,9 +11,9 @@ import Navbar from './components/Navbar';
 class App extends Component {
   configureScene(route, routeStack) {
     if (routeStack.length < 2 || route.id > routeStack[routeStack.length - 2].id) {
-      return Navigator.SceneConfigs.HorizontalSwipeJump;
+      return ({ ...Navigator.SceneConfigs.HorizontalSwipeJump, gestures: {} });
     }
-    return Navigator.SceneConfigs.HorizontalSwipeJumpFromLeft;
+    return ({ ...Navigator.SceneConfigs.HorizontalSwipeJumpFromLeft, gestures: {} });
   }
 
   renderScene(route, navigator) {
