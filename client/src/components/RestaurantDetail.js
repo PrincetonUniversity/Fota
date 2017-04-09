@@ -16,11 +16,7 @@ const styles = {
     flexDirection: 'column',
     justifyContent: 'space-between',
     backgroundColor: '#F8F8F8',
-    marginTop: 20,
-    marginBottom: 20,
-    marginLeft: 15,
-    marginRight: 15,
-    borderRadius: 20,
+    borderRadius: 20
   },
   headerStyle: { // Header including back button, name, time until close, call button
     flexDirection: 'row',
@@ -58,8 +54,7 @@ const styles = {
   }
 };
 
-const { modalStyle,
-        pageStyle,
+const { pageStyle,
         headerStyle,
         titleFont,
         timeUntilCloseFont,
@@ -130,43 +125,41 @@ class RestaurantDetail extends Component {
             rowHasChanged: (r1, r2) => r1.id !== r2.id
         });
     return (
-      <View style={modalStyle}>
-        <View style={pageStyle}>
-          <View>
-            <View style={headerStyle}>
-              <ImageButton
-                style={backButtonStyle}
-                source={backButton}
-                onPress={() => this.props.close()}
-              />
-              <Text style={titleFont}>
-                {restaurant.name}
-              </Text>
-              <Text style={timeUntilCloseFont}>
-                {this.timeUntilCloseLabel(this.props.restaurant.closeTime)}
-              </Text>
-              <ImageButton
-                style={backButtonStyle}
-                source={backButton}
-                onPress={() => phonecall(restaurant.phoneNumber)}
-              />
-            </View>
-
-            <View style={photoListStyle}>
-              <ListView
-                dataSource={dataSource.cloneWithRows(this.state.photos)}
-                renderRow={photo => this.renderPhoto(photo)}
-                horizontal
-                enableEmptySections
-              />
-            </View>
-          </View>
-
-          <View style={{ alignItems: 'center' }}>
-            <Text>
-              Reviews
+      <View style={pageStyle}>
+        <View>
+          <View style={headerStyle}>
+            <ImageButton
+              style={backButtonStyle}
+              source={backButton}
+              onPress={() => this.props.close()}
+            />
+            <Text style={titleFont}>
+              {restaurant.name}
             </Text>
+            <Text style={timeUntilCloseFont}>
+              {this.timeUntilCloseLabel(this.props.restaurant.closeTime)}
+            </Text>
+            <ImageButton
+              style={backButtonStyle}
+              source={backButton}
+              onPress={() => phonecall(restaurant.phoneNumber)}
+            />
           </View>
+
+          <View style={photoListStyle}>
+            <ListView
+              dataSource={dataSource.cloneWithRows(this.state.photos)}
+              renderRow={photo => this.renderPhoto(photo)}
+              horizontal
+              enableEmptySections
+            />
+          </View>
+        </View>
+
+        <View style={{ alignItems: 'center' }}>
+          <Text>
+            Reviews
+          </Text>
         </View>
       </View>
     );

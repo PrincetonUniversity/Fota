@@ -14,6 +14,18 @@ const styles = {
     flex: 1,
     width: null
   },
+  modalStyle: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)'
+  },
+  restaurantPageStyle: { // Entire restaurant page
+    flex: 1,
+    marginTop: 20,
+    marginBottom: 20,
+    marginLeft: 15,
+    marginRight: 15,
+    borderRadius: 20,
+  },
   upvoteStyle: { // Upvote/downvote
     height: 30,
     width: 30
@@ -51,6 +63,8 @@ const styles = {
 };
 
 const { photoStyle,
+        modalStyle,
+        restaurantPageStyle,
         upvoteStyle,
         downvoteStyle,
         likeCountContainerStyle,
@@ -194,7 +208,14 @@ class PhotoDetail extends Component {
           visible={this.state.modalVisible}
           onRequestClose={() => { this.setModalVisible(false); }}
         >
-          <RestaurantDetail restaurant={this.props.restaurant} close={this.closeModal.bind(this)} />
+          <View style={modalStyle}>
+            <View style={restaurantPageStyle}>
+              <RestaurantDetail
+                restaurant={this.props.restaurant}
+                close={this.closeModal.bind(this)}
+              />
+            </View>
+          </View>
         </Modal>
 
         <Card>
