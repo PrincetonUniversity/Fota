@@ -2,20 +2,24 @@
 
 import React, { Component } from 'react';
 import { View, AsyncStorage } from 'react-native';
-import axios from 'axios';
 import _ from 'lodash';
+import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import PhotoDetail from './PhotoDetail';
+import { getPhotosAndRests } from '../actions/index';
 
 class PhotoList extends Component {
-  state = { photos: [], restaurants: [], spinnerVisible: true, liked: null, disliked: null };
+  state = { spinnerVisible: true, liked: null, disliked: null };
 
   componentWillMount() {
     this.getLikedAndDisliked().done();
-    axios.get('https://fotafood.herokuapp.com/api/photo?order=hot&lat=55.1234&lng=-123.551')
-      .then(response => this.setState({ photos: response.data.photos,
-                                        restaurants: response.data.restaurants,
-                                        spinnerVisible: false }));
+    this.props.getPhotosAndRests('hot');
+  }
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ spinnerVisible: false });
+    }, 1000);
   }
 
   getLikedAndDisliked = async () => {
@@ -32,8 +36,6 @@ class PhotoList extends Component {
   // given an id of a picutre, returns "liked" if the user has liked it,
   // "disliked" if user has not liked it, and null if neither.
   findVote(id) {
-    //if (id === 19) console.log(this.state.liked);
-    //if (id === 19) console.log(this.state.disliked);
     if (_.includes(this.state.liked, id)) return 'liked';
     if (_.includes(this.state.disliked, id)) return 'disliked';
     return null;
@@ -41,9 +43,9 @@ class PhotoList extends Component {
 
   // Returns the restaurant associated with a given id
   findRestaurant(restaurantid) {
-    for (let i = 0; i < this.state.restaurants.length; i++) {
-      if (restaurantid === this.state.restaurants[i].id) {
-        return this.state.restaurants[i];
+    for (let i = 0; i < this.props.restaurants.length; i++) {
+      if (restaurantid === this.props.restaurants[i].id) {
+        return this.props.restaurants[i];
       }
     }
     return null;
@@ -51,7 +53,8 @@ class PhotoList extends Component {
 
   renderPhotos() {
     // this.setState({ spinnerVisible: false });
-    return this.state.photos.map(photo =>
+    // console.log(this.props.photos);
+    return this.props.photos.map(photo =>
       <PhotoDetail
         key={photo.id}
         photo={photo}
@@ -73,4 +76,8 @@ class PhotoList extends Component {
   }
 }
 
-export default PhotoList;
+function mapStateToProps({ photos, restaurants }) {
+  return { photos, restaurants };
+}
+
+export default connect(mapStateToProps, { getPhotosAndRests })(PhotoList);
