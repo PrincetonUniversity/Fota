@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import promise from 'redux-promise';
 import reducers from './reducers';
-import HomePage from './components/Homepage';
+import HomePage from './components/HomePage';
 import SearchPage from './components/SearchPage';
 import BlankPage from './components/BlankPage';
 import Navbar from './components/Navbar';
