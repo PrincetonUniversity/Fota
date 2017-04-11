@@ -13,13 +13,17 @@ class PhotoList extends Component {
 
   componentWillMount() {
     this.getLikedAndDisliked().done();
-    this.props.getPhotosAndRests('hot');
+    navigator.geolocation.getCurrentPosition(position => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      this.props.getPhotosAndRests('hot', lat, lng);
+    });
   }
 
   componentDidMount() {
     setTimeout(() => {
       this.setState({ spinnerVisible: false });
-    }, 1000);
+    }, 300);
   }
 
   getLikedAndDisliked = async () => {
