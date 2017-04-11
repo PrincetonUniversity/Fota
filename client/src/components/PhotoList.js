@@ -12,6 +12,7 @@ class PhotoList extends Component {
 
   componentWillMount() {
     this.getLikedAndDisliked().done();
+    console.log('here!!!!');
     axios.get('https://fotafood.herokuapp.com/api/photo?order=hot&lat=55.1234&lng=-123.551')
       .then(response => this.setState({ photos: response.data.photos,
                                         restaurants: response.data.restaurants,

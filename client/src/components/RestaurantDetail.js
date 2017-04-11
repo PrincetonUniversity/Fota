@@ -4,7 +4,7 @@ import axios from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 import { phonecall } from 'react-native-communications';
-import { ImageButton } from './common';
+import { ImageButton, FilterDisplay } from './common';
 
 const styles = {
   modalStyle: {
@@ -15,7 +15,7 @@ const styles = {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
-    backgroundColor: '#F8F8F8',
+    backgroundColor: '#FFFFFF', // #F8F8F8
     borderRadius: 20
   },
   headerStyle: { // Header including back button, name, time until close, call button
@@ -23,13 +23,18 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 10,
     marginLeft: 5,
     marginRight: 5
   },
+  backButtonStyle: { // Back button
+    width: 30,
+    height: 30
+  },
   titleFont: { // Restaurant name
     fontFamily: 'Avenir',
-    fontSize: 15,
+    fontSize: 20,
+    fontWeight: 'bold',
     textAlign: 'justify'
   },
   timeUntilCloseFont: { // Time until close
@@ -37,34 +42,45 @@ const styles = {
     fontSize: 10,
     textAlign: 'justify'
   },
+  phoneButtonStyle: {
+    width: 30,
+    height: 30
+  },
+  filterContainerStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginBottom: 20,
+    marginLeft: 5,
+    marginRight: 5
+  },
   photoListStyle: { // List of photos (ListView)
     marginLeft: 15,
-    marginRight: 15
+    marginRight: 15,
   },
   photoStyle: { // Individual photos
-    height: 120,
-    width: 120,
+    height: 150,
+    width: 150,
     marginLeft: 5,
     marginRight: 5,
     borderRadius: 10
-  },
-  backButtonStyle: { // Back button
-    width: 30,
-    height: 30
   }
 };
 
 const { pageStyle,
         headerStyle,
+        backButtonStyle,
         titleFont,
         timeUntilCloseFont,
-        backButtonStyle,
+        phoneButtonStyle,
+        filterContainerStyle,
         photoListStyle,
         photoStyle
       } = styles;
 
 const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
 const backButton = require('../img/fota_home_button_activated.png');
+const phoneButton = require('../img/phone.png');
 
 class RestaurantDetail extends Component {
   state = { photos: [], spinnerVisible: true }
@@ -75,9 +91,25 @@ class RestaurantDetail extends Component {
                                         spinnerVisible: false }));
   }
 
+  isOpen(closeTime, openTime) {
+    const currentDate = moment(new Date());
+    const openTimeHours = Math.floor(openTime / 100);
+    const openTimeMinutes = openTime - openTimeHours * 100;
+    const openDate = moment({ hours: openTimeHours, minutes: openTimeMinutes });
+    const closeTimeHours = Math.floor(closeTime / 100);
+    const closeTimeMinutes = closeTime - closeTimeHours * 100;
+    const closeDate = moment({ hours: closeTimeHours, minutes: closeTimeMinutes });
+    if (currentDate > closeDate) {
+      closeDate.add(1, 'days');
+    }
+    if (currentDate > openDate && currentDate < closeDate) {
+      return true;
+    }
+    return false;
+  }
+
   timeUntilClose(closeTime) { // Calculates how long until the restaurant closes
     const currentDate = moment(new Date());
-
     const closeTimeHours = Math.floor(closeTime / 100);
     const closeTimeMinutes = closeTime - closeTimeHours * 100;
     const closeDate = moment({ hours: closeTimeHours, minutes: closeTimeMinutes });
@@ -87,22 +119,36 @@ class RestaurantDetail extends Component {
     const timeOpenHours = closeDate.diff(currentDate, 'hours');
     const timeOpenMinutes = closeDate.diff(currentDate, 'minutes') % 60;
 
-    console.log(timeOpenHours);
     return [timeOpenHours, timeOpenMinutes];
   }
 
-  timeUntilCloseLabel(closeTime) {
+  timeUntilCloseLabel(closeTime, openTime) {
+    if (!this.isOpen(closeTime, openTime)) {
+      const openTimeHours = Math.floor(openTime / 100);
+      const openTimeMinutes = openTime - openTimeHours * 100;
+      const openDate = moment({ hours: openTimeHours, minutes: openTimeMinutes });
+      const openTimeString = openDate.format('h:mm A');
+      return `Closed until ${openTimeString}`;
+    }
     const timeUntilClose = this.timeUntilClose(closeTime);
     let hoursOpen = timeUntilClose[0]; // Hours in amount of time open.
     const minutesOpen = timeUntilClose[1]; // Minutes in amount of time open.
     let closingTimeString = 'Open for ';
     if (timeUntilClose[0] === 0) {
-      closingTimeString += `${minutesOpen} minutes`;
+      if (minutesOpen === 1) {
+        closingTimeString += `${minutesOpen} minute`;
+      } else {
+        closingTimeString += `${minutesOpen} minutes`;
+      }
     } else {
       if (minutesOpen > 30) {
         hoursOpen += 1;
       }
-      closingTimeString += `${hoursOpen} hours`;
+      if (hoursOpen === 1) {
+        closingTimeString += `${hoursOpen} hour`;
+      } else {
+        closingTimeString += `${hoursOpen} hours`;
+      }
     }
     return closingTimeString;
   }
@@ -133,16 +179,25 @@ class RestaurantDetail extends Component {
               source={backButton}
               onPress={() => this.props.close()}
             />
-            <Text style={titleFont}>
-              {restaurant.name}
-            </Text>
-            <Text style={timeUntilCloseFont}>
-              {this.timeUntilCloseLabel(this.props.restaurant.closeTime)}
-            </Text>
+            <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+              <Text style={titleFont}>
+                {restaurant.name}
+              </Text>
+              <Text style={timeUntilCloseFont}>
+                {this.timeUntilCloseLabel(this.props.restaurant.closeTime,
+                                          this.props.restaurant.openTime)}
+              </Text>
+            </View>
             <ImageButton
-              style={backButtonStyle}
-              source={backButton}
+              style={phoneButtonStyle}
+              source={phoneButton}
               onPress={() => phonecall(restaurant.phoneNumber)}
+            />
+          </View>
+
+          <View style={filterContainerStyle}>
+            <FilterDisplay
+              text={this.props.restaurant.cuisine}
             />
           </View>
 

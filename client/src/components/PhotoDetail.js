@@ -1,7 +1,7 @@
 // Visual component for each photo, i.e. photo frame+upvote/downvote/upvote count
 
 import React, { Component } from 'react';
-import { View, Image, Text, Modal } from 'react-native';
+import { View, Image, Text, Modal, Dimensions } from 'react-native';
 import axios from 'axios';
 import { Card, CardSection, ImageButton } from './common';
 import RestaurantDetail from './RestaurantDetail';
@@ -10,7 +10,7 @@ import saveVote from '../helpers/getasyncstorage';
 const styles = {
   photoStyle: { // The picture
     borderRadius: 20,
-    height: 300,
+    height: Dimensions.get('window').width - 20,
     flex: 1,
     width: null
   },
