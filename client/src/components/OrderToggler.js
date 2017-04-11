@@ -2,15 +2,32 @@
 
 import React, { Component } from 'react';
 import { TouchableOpacity, Text } from 'react-native';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { getPhotosAndRests } from '../actions/index';
 
 class OrderToggler extends Component {
-  state = { hot: true }
+  constructor(props) {
+    super(props);
+    this.onButtonClick = this.onButtonClick.bind(this);
+    this.state = { hot: true };
+  }
+
+  onButtonClick() {
+    if (this.state.hot) {
+      this.state.hot = !this.state.hot;
+      this.props.getPhotosAndRests('new');
+    } else {
+      this.state.hot = !this.state.hot;
+      this.props.getPhotosAndRests('hot');
+    }
+  }
 
   render() {
     return (
       <TouchableOpacity
         style={styles.containerStyle}
-        onPress={() => this.setState({ hot: !this.state.hot })}
+        onPress={this.onButtonClick}
       >
         <Text>{this.state.hot ? 'Hot' : 'New'}</Text>
       </TouchableOpacity>
@@ -25,4 +42,8 @@ const styles = {
   }
 };
 
-export default OrderToggler;
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ getPhotosAndRests }, dispatch);
+}
+
+export default connect(null, mapDispatchToProps)(OrderToggler);

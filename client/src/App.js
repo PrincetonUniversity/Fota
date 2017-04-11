@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Navigator } from 'react-native';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
+import promise from 'redux-promise';
 import reducers from './reducers';
-import HomePage from './components/HomePage';
+import HomePage from './components/Homepage';
 import SearchPage from './components/SearchPage';
 import BlankPage from './components/BlankPage';
 import Navbar from './components/Navbar';
@@ -28,8 +29,9 @@ class App extends Component {
   }
 
   render() {
+    const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
     return (
-     <Provider store={createStore(reducers)}>
+     <Provider store={createStoreWithMiddleware(reducers)}>
         <Navigator
           style={{ flex: 1 }}
           initialRoute={{ id: 0 }}
