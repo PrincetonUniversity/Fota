@@ -14,11 +14,10 @@ class OrderToggler extends Component {
   }
 
   onButtonClick() {
+    this.setState({ hot: !this.state.hot });
     if (this.state.hot) {
-      this.state.hot = !this.state.hot;
       this.props.getPhotosAndRests('new');
     } else {
-      this.state.hot = !this.state.hot;
       this.props.getPhotosAndRests('hot');
     }
   }
@@ -42,8 +41,4 @@ const styles = {
   }
 };
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ getPhotosAndRests }, dispatch);
-}
-
-export default connect(null, mapDispatchToProps)(OrderToggler);
+export default connect(null, { getPhotosAndRests })(OrderToggler);
