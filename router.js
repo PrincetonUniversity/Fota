@@ -6,6 +6,7 @@ module.exports = (app) => {
   app.get('/', (req, res) => { res.send("hello") });
 
   app.post('/api/restaurant', Restaurant.post);
+  app.get('/api/restaurant', Restaurant.getRestaurants);
   app.get('/api/restaurant/:restaurantId', Restaurant.getPhotos);
 
   app.post('/api/photo', Photo.post);
