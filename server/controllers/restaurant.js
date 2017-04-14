@@ -1,4 +1,4 @@
-var Restaurant = require ('../models').Restaurant;
+var Restaurant = require('../models').Restaurant;
 var Photo = require('../models').Photo;
 
 module.exports.post = (req, res) => {
@@ -18,6 +18,13 @@ module.exports.post = (req, res) => {
   }).catch((err) => {
     console.log(err);
   })
+}
+
+module.exports.getRestaurants = (req, res) => {
+  Restaurant.findAll({
+  }).then((restaurants) => {
+    res.status(200).send(restaurants);
+  });
 }
 
 module.exports.getPhotos = (req, res) => {
