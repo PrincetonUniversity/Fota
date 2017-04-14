@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import { TouchableOpacity, Text } from 'react-native';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { getPhotosAndRests } from '../actions/index';
 
@@ -14,13 +13,16 @@ class OrderToggler extends Component {
   }
 
   onButtonClick() {
-    if (this.state.hot) {
-      this.state.hot = !this.state.hot;
-      this.props.getPhotosAndRests('new');
-    } else {
-      this.state.hot = !this.state.hot;
-      this.props.getPhotosAndRests('hot');
-    }
+    this.setState({ hot: !this.state.hot });
+    navigator.geolocation.getCurrentPosition(position => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      if (this.state.hot) {
+        this.props.getPhotosAndRests('hot', lat, lng);
+      } else {
+        this.props.getPhotosAndRests('new', lat, lng);
+      }
+    });
   }
 
   render() {
@@ -42,8 +44,4 @@ const styles = {
   }
 };
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ getPhotosAndRests }, dispatch);
-}
-
-export default connect(null, mapDispatchToProps)(OrderToggler);
+export default connect(null, { getPhotosAndRests })(OrderToggler);
