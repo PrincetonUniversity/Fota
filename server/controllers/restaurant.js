@@ -1,4 +1,4 @@
-var Restaurant = require ('../models').Restaurant;
+var Restaurant = require('../models').Restaurant;
 var Photo = require('../models').Photo;
 
 module.exports.post = (req, res) => {

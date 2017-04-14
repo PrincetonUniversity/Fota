@@ -6,8 +6,8 @@ module.exports = function(sequelize, DataTypes) {
     lat: {type: DataTypes.FLOAT, allowNull: false},
     lng: {type: DataTypes.FLOAT, allowNull: false},
     address: {type: DataTypes.STRING, allowNull: false},
-    website: {type: DataTypes.STRING, allowNull: true},
-    cuisine: {type: DataTypes.STRING, allowNull: false},
+    type: {type: DataTypes.ARRAY(DataTypes.STRING)},
+    website: DataTypes.STRING,
     openTime: DataTypes.INTEGER,
     closeTime: DataTypes.INTEGER
   }, {
