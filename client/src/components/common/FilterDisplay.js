@@ -17,7 +17,9 @@ const styles = {
       borderRadius: 20,
       backgroundColor: '#A9A9A9',
       alignItems: 'center',
-      padding: 8
+      padding: 8,
+      marginLeft: 5,
+      marginRight: 5
     },
     textStyle: {
       color: 'white',
