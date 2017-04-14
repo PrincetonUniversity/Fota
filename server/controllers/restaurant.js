@@ -20,6 +20,13 @@ module.exports.post = (req, res) => {
   })
 }
 
+module.exports.getRestaurants = (req, res) => {
+  Restaurant.findAll({
+  }).then((restaurants) => {
+    res.status(200).send(restaurants);
+  });
+}
+
 module.exports.getPhotos = (req, res) => {
   Restaurant.findById(req.params.restaurantId).then((rest) => {
     if (!rest) {
