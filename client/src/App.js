@@ -17,7 +17,7 @@ class App extends Component {
     return ({ ...Navigator.SceneConfigs.HorizontalSwipeJumpFromLeft, gestures: {} });
   }
 
-  renderScene(route, navigator) {
+  renderScene(route) {
     switch (route.id) {
       case 0:
         return <HomePage />;

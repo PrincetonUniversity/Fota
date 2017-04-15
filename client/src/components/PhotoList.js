@@ -1,7 +1,7 @@
 // List of all the photos in their visual component PhotoDetail
 
 import React, { Component } from 'react';
-import { View, AsyncStorage } from 'react-native';
+import { ListView, View, AsyncStorage } from 'react-native';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -55,26 +55,30 @@ class PhotoList extends Component {
     return null;
   }
 
-  renderPhotos() {
-    // this.setState({ spinnerVisible: false });
-    // console.log(this.props.photos);
-    return this.props.photos.map(photo =>
+  renderPhoto(photo) {
+    return (
       <PhotoDetail
         key={photo.id}
         photo={photo}
         vote={this.findVote(photo.id)}
         restaurant={this.findRestaurant(photo.RestaurantId)}
       />
-      // Later on key should be id of user who uploaded it
     );
   }
 
   render() {
-    //console.log(this.state);
+    const dataSource = new ListView.DataSource({
+            rowHasChanged: (r1, r2) => r1.id !== r2.id
+        });
     return (
       <View>
+        <ListView
+          dataSource={dataSource.cloneWithRows(this.props.photos)}
+          renderRow={photo => this.renderPhoto(photo)}
+          initialListSize={15}
+          enableEmptySections
+        />
         <Spinner visible={this.state.spinnerVisible} color='#ff9700' />
-        {this.renderPhotos()}
       </View>
     );
   }

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { Text, View, ListView } from 'react-native';
+import { View, ScrollView, ListView } from 'react-native';
 import axios from 'axios';
-import { Header, Input, CardSection } from './common';
+import { Header, Input } from './common';
+import RestaurantListing from './RestaurantListing';
+import { footerSize } from './common/Footer';
 
 class SearchPage extends Component {
   state = { query: '', rlist: [], totalList: [] }
@@ -23,9 +25,9 @@ class SearchPage extends Component {
 
   renderRestaurant(restaurant) {
     return (
-      <CardSection>
-        <Text>{restaurant.name}</Text>
-      </CardSection>
+      <RestaurantListing
+        restaurant={restaurant}
+      />
     );
   }
 
@@ -34,7 +36,7 @@ class SearchPage extends Component {
             rowHasChanged: (r1, r2) => r1.id !== r2.id
         });
     return (
-      <View>
+      <View style={{ flex: 1, marginBottom: footerSize }}>
         <Header>
           <Input
             label={require('../img/magnifying_glass_unactivated.png')}
@@ -43,11 +45,14 @@ class SearchPage extends Component {
             onChangeText={query => this.updateQuery(query)}
           />
        </Header>
-       <ListView
-         dataSource={dataSource.cloneWithRows(this.state.rlist)}
-         renderRow={restaurant => this.renderRestaurant(restaurant)}
-         enableEmptySections
-       />
+       <ScrollView>
+         <ListView
+           dataSource={dataSource.cloneWithRows(this.state.rlist)}
+           renderRow={restaurant => this.renderRestaurant(restaurant)}
+           enableEmptySections
+         />
+         <View style={{ flex: 1, backgroundColor: '#A9A9A9' }} />
+      </ScrollView>
      </View>
     );
   }

@@ -7,10 +7,6 @@ import { phonecall } from 'react-native-communications';
 import { ImageButton, FilterDisplay } from './common';
 
 const styles = {
-  modalStyle: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)'
-  },
   pageStyle: { // Entire restaurant page
     flex: 1,
     flexDirection: 'column',
@@ -20,7 +16,7 @@ const styles = {
   headerStyle: { // Header including back button, name, time until close, call button
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10
+    marginBottom: 5
   },
   backButtonStyle: { // Back button
     width: 30,
@@ -51,20 +47,18 @@ const styles = {
   },
   filterContainerStyle: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
     marginLeft: 5,
     marginRight: 5
   },
-  photoListStyle: { // List of photos (ListView)
-    marginLeft: 15,
-    marginRight: 15,
-  },
+  // photoListStyle: { // List of photos (ListView)
+  //
+  // },
   photoStyle: { // Individual photos
     height: 150,
     width: 150,
-    marginLeft: 5,
-    marginRight: 5,
-    borderRadius: 10
+    marginLeft: 2.5,
+    marginRight: 2.5
   }
 };
 
@@ -76,21 +70,23 @@ const { pageStyle,
         timeUntilCloseStyle,
         phoneButtonStyle,
         filterContainerStyle,
-        photoListStyle,
         photoStyle
       } = styles;
 
 const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
+const commentDetails = 'https://fotafood.herokuapp.com/api/comment/';
 const backButton = require('../img/exit_button.png');
 const phoneButton = require('../img/phone.png');
 
 class RestaurantDetail extends Component {
-  state = { photos: [], spinnerVisible: true }
+  state = { photos: [], comments: [], spinnerVisible: true }
 
   componentWillMount() {
     axios.get(restaurantDetails + this.props.restaurant.id)
       .then(response => this.setState({ photos: response.data,
                                         spinnerVisible: false }));
+    axios.get(commentDetails + this.props.restaurant.id)
+      .then(response => this.setState({ comments: response.data }));
   }
 
   isOpen(closeTime, openTime) {
@@ -176,6 +172,18 @@ class RestaurantDetail extends Component {
     );
   }
 
+  renderComment(comment) {
+    const adj = comment.adj.charAt(0).toUpperCase() + comment.adj.slice(1);
+    const noun = comment.noun.charAt(0).toUpperCase() + comment.noun.slice(1);
+    const commentString = `${adj} ${noun}`;
+    return (
+      <FilterDisplay
+        key={commentString}
+        text={commentString}
+      />
+    );
+  }
+
   render() {
     const restaurant = this.props.restaurant;
     const dataSource = new ListView.DataSource({
@@ -218,7 +226,7 @@ class RestaurantDetail extends Component {
             </ScrollView>
           </View>
 
-          <View style={photoListStyle}>
+          <View style={{ marginBottom: 10 }}>
             <ListView
               dataSource={dataSource.cloneWithRows(this.state.photos)}
               renderRow={photo => this.renderPhoto(photo)}
@@ -226,12 +234,25 @@ class RestaurantDetail extends Component {
               enableEmptySections
             />
           </View>
+
+          <Text style={titleStyle}>
+            Consensus!
+          </Text>
+          <View style={{ alignItems: 'center' }}>
+            <ListView
+              dataSource={dataSource.cloneWithRows(this.state.comments)}
+              renderRow={comment => this.renderComment(comment)}
+              enableEmptySections
+            />
+          </View>
         </View>
 
         <View style={{ alignItems: 'center' }}>
-          <Text>
-            Reviews
-          </Text>
+          <ImageButton
+            style={backButtonStyle}
+            source={backButton}
+            onPress={() => this.props.close()}
+          />
         </View>
       </View>
     );

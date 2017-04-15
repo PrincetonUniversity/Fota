@@ -47,7 +47,7 @@ class Navbar extends Component {
       accountSource: accountUnactivated,
       settingsSource: settingsUnactivated
     });
-    this.props.navigator.push({ id: 0 });
+    this.props.navigator.replace({ id: 0 });
   }
 
   renderSearch() {
@@ -58,7 +58,7 @@ class Navbar extends Component {
       accountSource: accountUnactivated,
       settingsSource: settingsUnactivated
     });
-    this.props.navigator.push({ id: 1 });
+    this.props.navigator.replace({ id: 1 });
   }
 
   renderAccount() {
@@ -69,7 +69,7 @@ class Navbar extends Component {
       accountSource: accountActivated,
       settingsSource: settingsUnactivated
     });
-    this.props.navigator.push({ id: 2 });
+    this.props.navigator.replace({ id: 2 });
   }
 
   renderSettings() {
@@ -80,7 +80,7 @@ class Navbar extends Component {
       accountSource: accountUnactivated,
       settingsSource: settingsActivated
     });
-    this.props.navigator.push({ id: 3 });
+    this.props.navigator.replace({ id: 3 });
   }
 
   render() {
