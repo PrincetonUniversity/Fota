@@ -9,7 +9,6 @@ import saveVote from '../helpers/getasyncstorage';
 
 const styles = {
   photoStyle: { // The picture
-    // borderRadius: 20,
     height: Dimensions.get('window').width - 20,
     flex: 1
   },

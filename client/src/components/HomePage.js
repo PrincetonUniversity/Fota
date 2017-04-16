@@ -1,14 +1,14 @@
 import React from 'react';
-import { ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import Headbar from './Headbar';
 import PhotoList from './PhotoList';
 import { footerSize } from './common/Footer';
 
 const HomePage = () => (
-  <ScrollView style={{ marginBottom: footerSize }}>
-    <Headbar />
+  <View style={{ flex: 1, marginBottom: footerSize }}>
+
     <PhotoList />
-  </ScrollView>
+  </View>
 );
 
 export default HomePage;
