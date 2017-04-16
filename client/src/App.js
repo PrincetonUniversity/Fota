@@ -17,7 +17,7 @@ class App extends Component {
     return ({ ...Navigator.SceneConfigs.HorizontalSwipeJumpFromLeft, gestures: {} });
   }
 
-  renderScene(route, navigator) {
+  renderScene(route) {
     switch (route.id) {
       case 0:
         return <HomePage />;
@@ -31,7 +31,7 @@ class App extends Component {
   render() {
     const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
     return (
-     <Provider store={createStoreWithMiddleware(reducers)}>
+      <Provider store={createStoreWithMiddleware(reducers)}>
         <Navigator
           style={{ flex: 1 }}
           initialRoute={{ id: 0 }}

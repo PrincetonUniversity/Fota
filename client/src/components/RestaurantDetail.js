@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, Text, ListView } from 'react-native';
+import { View, Image, Text, ScrollView, ListView } from 'react-native';
 import axios from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
@@ -7,88 +7,86 @@ import { phonecall } from 'react-native-communications';
 import { ImageButton, FilterDisplay } from './common';
 
 const styles = {
-  modalStyle: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)'
-  },
   pageStyle: { // Entire restaurant page
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF', // #F8F8F8
-    borderRadius: 20
+    backgroundColor: '#FFFFFF' // #F8F8F8
   },
   headerStyle: { // Header including back button, name, time until close, call button
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 10,
-    marginLeft: 5,
-    marginRight: 5
+    marginBottom: 5
   },
   backButtonStyle: { // Back button
     width: 30,
-    height: 30
+    height: 30,
+    marginRight: 15,
+    marginBottom: 15
   },
-  titleFont: { // Restaurant name
+  titleContainerStyle: { // Contains a restaurant name and time until close
+    alignItems: 'center',
+    marginTop: 10,
+    justifyContent: 'center',
+    flex: 1
+  },
+  titleStyle: { // Restaurant name
     fontFamily: 'Avenir',
     fontSize: 20,
     fontWeight: 'bold',
-    textAlign: 'justify'
+    textAlign: 'center'
   },
-  timeUntilCloseFont: { // Time until close
+  timeUntilCloseStyle: { // Time until close
     fontFamily: 'Avenir',
     fontSize: 10,
     textAlign: 'justify'
   },
   phoneButtonStyle: {
-    width: 30,
-    height: 30
+    width: 45,
+    height: 45
   },
   filterContainerStyle: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
     marginLeft: 5,
     marginRight: 5
   },
-  photoListStyle: { // List of photos (ListView)
-    marginLeft: 15,
-    marginRight: 15,
-  },
+  // photoListStyle: { // List of photos (ListView)
+  //
+  // },
   photoStyle: { // Individual photos
     height: 150,
     width: 150,
-    marginLeft: 5,
-    marginRight: 5,
-    borderRadius: 10
+    marginLeft: 2.5,
+    marginRight: 2.5
   }
 };
 
 const { pageStyle,
         headerStyle,
         backButtonStyle,
-        titleFont,
-        timeUntilCloseFont,
+        titleContainerStyle,
+        titleStyle,
+        timeUntilCloseStyle,
         phoneButtonStyle,
         filterContainerStyle,
-        photoListStyle,
         photoStyle
       } = styles;
 
 const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
-const backButton = require('../img/fota_home_button_activated.png');
+const commentDetails = 'https://fotafood.herokuapp.com/api/comment/';
+const backButton = require('../img/exit_button.png');
 const phoneButton = require('../img/phone.png');
 
 class RestaurantDetail extends Component {
-  state = { photos: [], spinnerVisible: true }
+  state = { photos: [], comments: [], spinnerVisible: true }
 
   componentWillMount() {
     axios.get(restaurantDetails + this.props.restaurant.id)
       .then(response => this.setState({ photos: response.data,
                                         spinnerVisible: false }));
+    axios.get(commentDetails + this.props.restaurant.id)
+      .then(response => this.setState({ comments: response.data }));
   }
 
   isOpen(closeTime, openTime) {
@@ -153,6 +151,15 @@ class RestaurantDetail extends Component {
     return closingTimeString;
   }
 
+  renderFilters() {
+    return this.props.restaurant.type.map(filterName =>
+      <FilterDisplay
+        key={filterName}
+        text={filterName}
+      />
+    );
+  }
+
   renderPhoto(photo) {
     return (
       <View key={photo.id}>
@@ -165,6 +172,18 @@ class RestaurantDetail extends Component {
     );
   }
 
+  renderComment(comment) {
+    const adj = comment.adj.charAt(0).toUpperCase() + comment.adj.slice(1);
+    const noun = comment.noun.charAt(0).toUpperCase() + comment.noun.slice(1);
+    const commentString = `${adj} ${noun}`;
+    return (
+      <FilterDisplay
+        key={commentString}
+        text={commentString}
+      />
+    );
+  }
+
   render() {
     const restaurant = this.props.restaurant;
     const dataSource = new ListView.DataSource({
@@ -174,34 +193,40 @@ class RestaurantDetail extends Component {
       <View style={pageStyle}>
         <View>
           <View style={headerStyle}>
-            <ImageButton
-              style={backButtonStyle}
-              source={backButton}
-              onPress={() => this.props.close()}
-            />
-            <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-              <Text style={titleFont}>
+            <View style={{ marginTop: 5, marginLeft: 5 }}>
+              <ImageButton
+                style={backButtonStyle}
+                source={backButton}
+                onPress={() => this.props.close()}
+              />
+            </View>
+
+            <View style={titleContainerStyle}>
+              <Text style={titleStyle}>
                 {restaurant.name}
               </Text>
-              <Text style={timeUntilCloseFont}>
+              <Text style={timeUntilCloseStyle}>
                 {this.timeUntilCloseLabel(this.props.restaurant.closeTime,
                                           this.props.restaurant.openTime)}
               </Text>
             </View>
-            <ImageButton
-              style={phoneButtonStyle}
-              source={phoneButton}
-              onPress={() => phonecall(restaurant.phoneNumber)}
-            />
+
+            <View style={{ marginTop: 5, marginRight: 5 }}>
+              <ImageButton
+                style={phoneButtonStyle}
+                source={phoneButton}
+                onPress={() => phonecall(restaurant.phoneNumber)}
+              />
+            </View>
           </View>
 
           <View style={filterContainerStyle}>
-            <FilterDisplay
-              text={this.props.restaurant.cuisine}
-            />
+            <ScrollView horizontal>
+              {this.renderFilters()}
+            </ScrollView>
           </View>
 
-          <View style={photoListStyle}>
+          <View style={{ marginBottom: 10 }}>
             <ListView
               dataSource={dataSource.cloneWithRows(this.state.photos)}
               renderRow={photo => this.renderPhoto(photo)}
@@ -209,12 +234,25 @@ class RestaurantDetail extends Component {
               enableEmptySections
             />
           </View>
+
+          <Text style={titleStyle}>
+            Consensus!
+          </Text>
+          <View style={{ alignItems: 'center' }}>
+            <ListView
+              dataSource={dataSource.cloneWithRows(this.state.comments)}
+              renderRow={comment => this.renderComment(comment)}
+              enableEmptySections
+            />
+          </View>
         </View>
 
         <View style={{ alignItems: 'center' }}>
-          <Text>
-            Reviews
-          </Text>
+          <ImageButton
+            style={backButtonStyle}
+            source={backButton}
+            onPress={() => this.props.close()}
+          />
         </View>
       </View>
     );

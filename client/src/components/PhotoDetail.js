@@ -3,18 +3,17 @@
 import React, { Component } from 'react';
 import { View, Image, Text, Modal, Dimensions } from 'react-native';
 import axios from 'axios';
-import { Card, CardSection, ImageButton } from './common';
+import { Card, ImageButton } from './common';
 import RestaurantDetail from './RestaurantDetail';
 import saveVote from '../helpers/getasyncstorage';
 
 const styles = {
   photoStyle: { // The picture
-    borderRadius: 20,
+    // borderRadius: 20,
     height: Dimensions.get('window').width - 20,
-    flex: 1,
-    width: null
+    flex: 1
   },
-  modalStyle: {
+  modalStyle: { // For the faded out part
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)'
   },
@@ -24,7 +23,14 @@ const styles = {
     marginBottom: 20,
     marginLeft: 15,
     marginRight: 15,
-    borderRadius: 20,
+  },
+  photoInfoStyle: {
+    marginTop: 10,
+    marginBottom: 25,
+    backgroundColor: '#fff',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    position: 'relative'
   },
   upvoteStyle: { // Upvote/downvote
     height: 30,
@@ -65,6 +71,7 @@ const styles = {
 const { photoStyle,
         modalStyle,
         restaurantPageStyle,
+        photoInfoStyle,
         upvoteStyle,
         downvoteStyle,
         likeCountContainerStyle,
@@ -201,7 +208,7 @@ class PhotoDetail extends Component {
 
   render() {
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         <Modal
           animationType={'fade'}
           transparent
@@ -219,16 +226,16 @@ class PhotoDetail extends Component {
         </Modal>
 
         <Card>
-          <CardSection>
+          <View>
             <ImageButton
               activeOpacity={1}
               style={photoStyle}
               source={{ uri: this.state.link }}
               onPress={() => this.setModalVisible()}
             />
-          </CardSection>
+          </View>
 
-          <CardSection>
+          <View style={photoInfoStyle}>
             <View style={likeCountContainerStyle}>
               <Image
                 source={upvoteUnactivated}
@@ -249,7 +256,7 @@ class PhotoDetail extends Component {
                 onPress={() => this.renderDownvote()}
               />
             </View>
-          </CardSection>
+          </View>
         </Card>
       </View>
     );
