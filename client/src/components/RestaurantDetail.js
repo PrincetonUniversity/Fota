@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, Text, ScrollView, ListView } from 'react-native';
+import { View, Image, Text, ScrollView, FlatList } from 'react-native';
 import axios from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
@@ -79,7 +79,7 @@ const backButton = require('../img/exit_button.png');
 const phoneButton = require('../img/phone.png');
 
 class RestaurantDetail extends Component {
-  state = { photos: [], comments: [], spinnerVisible: true }
+  state = { photos: [], comments: [], spinnerVisible: true, refreshing: false }
 
   componentWillMount() {
     axios.get(restaurantDetails + this.props.restaurant.id)
@@ -162,10 +162,10 @@ class RestaurantDetail extends Component {
 
   renderPhoto(photo) {
     return (
-      <View key={photo.id}>
+      <View key={photo.item.id}>
         <Spinner visible={this.state.spinnerVisible} color='#ff9700' />
         <Image
-          source={{ uri: photo.link }}
+          source={{ uri: photo.item.link }}
           style={photoStyle}
         />
       </View>
@@ -173,8 +173,8 @@ class RestaurantDetail extends Component {
   }
 
   renderComment(comment) {
-    const adj = comment.adj.charAt(0).toUpperCase() + comment.adj.slice(1);
-    const noun = comment.noun.charAt(0).toUpperCase() + comment.noun.slice(1);
+    const adj = comment.item.adj.charAt(0).toUpperCase() + comment.item.adj.slice(1);
+    const noun = comment.item.noun.charAt(0).toUpperCase() + comment.item.noun.slice(1);
     const commentString = `${adj} ${noun}`;
     return (
       <FilterDisplay
@@ -186,9 +186,6 @@ class RestaurantDetail extends Component {
 
   render() {
     const restaurant = this.props.restaurant;
-    const dataSource = new ListView.DataSource({
-            rowHasChanged: (r1, r2) => r1.id !== r2.id
-        });
     return (
       <View style={pageStyle}>
         <View>
@@ -221,17 +218,22 @@ class RestaurantDetail extends Component {
           </View>
 
           <View style={filterContainerStyle}>
-            <ScrollView horizontal>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              bounces={false}
+            >
               {this.renderFilters()}
             </ScrollView>
           </View>
 
           <View style={{ marginBottom: 10 }}>
-            <ListView
-              dataSource={dataSource.cloneWithRows(this.state.photos)}
-              renderRow={photo => this.renderPhoto(photo)}
+            <FlatList
+              data={this.state.photos}
+              keyExtractor={photo => photo.id}
+              renderItem={photo => this.renderPhoto(photo)}
+              showsHorizontalScrollIndicator={false}
               horizontal
-              enableEmptySections
             />
           </View>
 
@@ -239,10 +241,11 @@ class RestaurantDetail extends Component {
             Consensus!
           </Text>
           <View style={{ alignItems: 'center' }}>
-            <ListView
-              dataSource={dataSource.cloneWithRows(this.state.comments)}
-              renderRow={comment => this.renderComment(comment)}
-              enableEmptySections
+            <FlatList
+              data={this.state.comments}
+              keyExtractor={comment => comment.id}
+              renderItem={comment => this.renderComment(comment)}
+              bounces={false}
             />
           </View>
         </View>
