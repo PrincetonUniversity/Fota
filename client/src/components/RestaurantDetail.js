@@ -19,10 +19,10 @@ const styles = {
     marginBottom: 5
   },
   backButtonStyle: { // Back button
-    width: 30,
-    height: 30,
-    marginRight: 15,
-    marginBottom: 15
+    width: 35,
+    height: 35,
+    marginRight: 25,
+    marginBottom: 25
   },
   titleContainerStyle: { // Contains a restaurant name and time until close
     alignItems: 'center',
@@ -42,8 +42,8 @@ const styles = {
     textAlign: 'justify'
   },
   phoneButtonStyle: {
-    width: 45,
-    height: 45
+    width: 60,
+    height: 60
   },
   filterContainerStyle: {
     alignItems: 'center',
@@ -250,13 +250,6 @@ class RestaurantDetail extends Component {
           </View>
         </View>
 
-        <View style={{ alignItems: 'center' }}>
-          <ImageButton
-            style={backButtonStyle}
-            source={backButton}
-            onPress={() => this.props.close()}
-          />
-        </View>
       </View>
     );
   }
