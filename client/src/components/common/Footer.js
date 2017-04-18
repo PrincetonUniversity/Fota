@@ -26,7 +26,7 @@ const styles = {
     right: 0
   },
   barStyle: {
-    backgroundColor: '#f8f8f8',
+    backgroundColor: '#fff',
     height: footerSize,
     position: 'absolute',
     left: 0,
@@ -36,7 +36,7 @@ const styles = {
     width: circleSize,
     height: circleSize,
     borderRadius: circleSize / 2,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: '#fff',
     position: 'absolute'
   },
   itemStyle: {

@@ -136,7 +136,7 @@ class PhotoDetail extends Component {
     const queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}`;
     axios.patch(queryString)
       .then()
-      .catch((e) => { }); // LATER should notify user on failure
+      .catch(); // LATER should notify user on failure
   }
 
   closeModal() {

@@ -7,6 +7,7 @@ import reducers from './reducers';
 import HomePage from './components/HomePage';
 import SearchPage from './components/SearchPage';
 import BlankPage from './components/BlankPage';
+import AccountPage from './components/AccountPage';
 import Navbar from './components/Navbar';
 
 class App extends Component {
@@ -23,6 +24,8 @@ class App extends Component {
         return <HomePage />;
       case 1:
         return <SearchPage />;
+      case 2:
+        return <AccountPage />;
       default:
         return <BlankPage />;
     }
@@ -33,9 +36,9 @@ class App extends Component {
     return (
       <Provider store={createStoreWithMiddleware(reducers)}>
         <Navigator
-          style={{ flex: 1 }}
+          style={{ flex: 1, backgroundColor: '#fff' }}
           initialRoute={{ id: 0 }}
-          renderScene={this.renderScene}
+          renderScene={this.renderScene.bind(this)}
           configureScene={this.configureScene}
           navigationBar={<Navbar />}
         />

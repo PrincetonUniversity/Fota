@@ -11,8 +11,7 @@ const ImageButton = ({ style, onPress, source, activeOpacity }) => (
       style={{ width: style.width,
                height: style.height,
                resizeMode: 'cover',
-               borderRadius: style.borderRadius,
-               padding: 13
+               borderRadius: style.borderRadius
               }}
       source={source}
     />
