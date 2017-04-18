@@ -19,10 +19,10 @@ const styles = {
     marginBottom: 5
   },
   backButtonStyle: { // Back button
-    width: 30,
-    height: 30,
-    marginRight: 15,
-    marginBottom: 15
+    width: 35,
+    height: 35,
+    marginRight: 25,
+    marginBottom: 25
   },
   titleContainerStyle: { // Contains a restaurant name and time until close
     alignItems: 'center',
@@ -42,8 +42,8 @@ const styles = {
     textAlign: 'justify'
   },
   phoneButtonStyle: {
-    width: 45,
-    height: 45
+    width: 60,
+    height: 60
   },
   filterContainerStyle: {
     alignItems: 'center',
@@ -79,7 +79,7 @@ const backButton = require('../img/exit_button.png');
 const phoneButton = require('../img/phone.png');
 
 class RestaurantDetail extends Component {
-  state = { photos: [], comments: [], spinnerVisible: true, refreshing: false }
+  state = { photos: [], comments: [], spinnerVisible: true }
 
   componentWillMount() {
     axios.get(restaurantDetails + this.props.restaurant.id)
@@ -88,6 +88,10 @@ class RestaurantDetail extends Component {
     axios.get(commentDetails + this.props.restaurant.id)
       .then(response => this.setState({ comments: response.data }));
   }
+
+  // componentWillUnmount() {
+  //   this.setState({ photos: [], comments: [], spinnerVisible: true });
+  // }
 
   isOpen(closeTime, openTime) {
     const currentDate = moment(new Date());
@@ -212,7 +216,7 @@ class RestaurantDetail extends Component {
               <ImageButton
                 style={phoneButtonStyle}
                 source={phoneButton}
-                onPress={() => phonecall(restaurant.phoneNumber)}
+                onPress={() => phonecall(restaurant.phoneNumber.substring(1), false)}
               />
             </View>
           </View>
@@ -250,13 +254,6 @@ class RestaurantDetail extends Component {
           </View>
         </View>
 
-        <View style={{ alignItems: 'center' }}>
-          <ImageButton
-            style={backButtonStyle}
-            source={backButton}
-            onPress={() => this.props.close()}
-          />
-        </View>
       </View>
     );
   }

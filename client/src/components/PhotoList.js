@@ -38,7 +38,7 @@ class PhotoList extends Component {
       const disliked = await AsyncStorage.getItem('disliked');
       this.setState({ liked: JSON.parse(liked), disliked: JSON.parse(disliked) });
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -60,9 +60,7 @@ class PhotoList extends Component {
     return null;
   }
 
-  refreshListView(refreshControl) {
-    console.log(refreshControl);
-    console.log('here');
+  refreshListView() {
     this.setState({ refreshing: true });
     this.getPhotoList();
     this.setState({ refreshing: false });

@@ -22,7 +22,7 @@ const saveVote = async (type, id) => {
         object = JSON.parse(object);
         if (!object) object = [];
         object.push(id);
-        console.log(`Your new disliked array is now: ${object}`);
+        // console.log(`Your new disliked array is now: ${object}`);
         await AsyncStorage.setItem('disliked', JSON.stringify(object));
     } else if (type === 3) {
         let object = await AsyncStorage.getItem('liked');
@@ -60,7 +60,7 @@ const saveVote = async (type, id) => {
         await AsyncStorage.setItem('disliked', JSON.stringify(object));
     }
   } catch (error) {
-    console.log(error); // Should eventually be used to notify user.
+    // console.log(error); // Should eventually be used to notify user.
   }
 };
 

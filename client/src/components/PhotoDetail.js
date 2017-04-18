@@ -21,7 +21,7 @@ const styles = {
     marginTop: 20,
     marginBottom: 20,
     marginLeft: 15,
-    marginRight: 15,
+    marginRight: 15
   },
   photoInfoStyle: {
     marginTop: 10,
@@ -32,13 +32,13 @@ const styles = {
     position: 'relative'
   },
   upvoteStyle: { // Upvote/downvote
-    height: 30,
-    width: 30
+    height: 35,
+    width: 35
   },
   downvoteStyle: { // Downvote
-    height: 30,
-    width: 30,
-    marginLeft: 10,
+    height: 35,
+    width: 35,
+    marginLeft: 20,
     marginRight: 10
   },
   likeCountContainerStyle: { // Upvote arrow + number of likes container
@@ -136,7 +136,7 @@ class PhotoDetail extends Component {
     const queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}`;
     axios.patch(queryString)
       .then()
-      .catch((e) => { console.log(e); }); // LATER should notify user on failure
+      .catch((e) => { }); // LATER should notify user on failure
   }
 
   closeModal() {

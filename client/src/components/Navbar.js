@@ -97,7 +97,7 @@ class Navbar extends Component {
           style={imgStyle}
         />
         <ImageButton
-          onPress={() => console.log('Camera!')}
+          onPress={() => this.renderHome()}
           source={cameraButton}
           style={camImgStyle}
         />
