@@ -4,7 +4,6 @@ import { Image, TouchableOpacity } from 'react-native';
 const ImageButton = ({ style, onPress, source, activeOpacity }) => (
   <TouchableOpacity
     style={style}
-    // hitSlop={{ left: 5, right: 5 }}
     onPress={onPress}
     activeOpacity={activeOpacity}
   >
@@ -12,7 +11,8 @@ const ImageButton = ({ style, onPress, source, activeOpacity }) => (
       style={{ width: style.width,
                height: style.height,
                resizeMode: 'cover',
-               borderRadius: style.borderRadius
+               borderRadius: style.borderRadius,
+               padding: 13
               }}
       source={source}
     />
