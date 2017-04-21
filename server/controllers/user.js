@@ -9,7 +9,7 @@ module.exports.post = (req, res) => {
   }).then((User) => {
     res.status(200).send({message: "user successfully created"})
   }).catch((err) => {
-    res.status(400).send({error: "this user id already exists"})
+    res.status(400).send({error: err})
   });
 };
 
