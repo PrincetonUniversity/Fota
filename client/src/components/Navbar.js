@@ -1,8 +1,10 @@
 // Navigation bar at the bottom
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { ImageButton, Footer } from './common';
 import { footerSize, circleSize } from './common/Footer';
+import { setCameraState } from '../actions';
 
 const styles = {
   imgStyle: {
@@ -32,7 +34,7 @@ class Navbar extends Component {
     homeSource: homeActivated,
     searchSource: searchUnactivated,
     accountSource: accountUnactivated,
-    settingsSource: settingsUnactivated
+    settingsSource: settingsUnactivated,
   }
 
   /*getTransition(current, next) {
@@ -45,7 +47,7 @@ class Navbar extends Component {
       homeSource: homeActivated,
       searchSource: searchUnactivated,
       accountSource: accountUnactivated,
-      settingsSource: settingsUnactivated
+      settingsSource: settingsUnactivated,
     });
     this.props.navigator.replace({ id: 0 });
   }
@@ -56,7 +58,7 @@ class Navbar extends Component {
       homeSource: homeUnactivated,
       searchSource: searchActivated,
       accountSource: accountUnactivated,
-      settingsSource: settingsUnactivated
+      settingsSource: settingsUnactivated,
     });
     this.props.navigator.replace({ id: 1 });
   }
@@ -67,7 +69,7 @@ class Navbar extends Component {
       homeSource: homeUnactivated,
       searchSource: searchUnactivated,
       accountSource: accountActivated,
-      settingsSource: settingsUnactivated
+      settingsSource: settingsUnactivated,
     });
     this.props.navigator.replace({ id: 2 });
   }
@@ -78,9 +80,13 @@ class Navbar extends Component {
       homeSource: homeUnactivated,
       searchSource: searchUnactivated,
       accountSource: accountUnactivated,
-      settingsSource: settingsActivated
+      settingsSource: settingsActivated,
     });
     this.props.navigator.replace({ id: 3 });
+  }
+
+  renderCamera() {
+    this.props.setCameraState(true);
   }
 
   render() {
@@ -97,7 +103,7 @@ class Navbar extends Component {
           style={imgStyle}
         />
         <ImageButton
-          onPress={() => this.renderHome()}
+          onPress={() => this.renderCamera()}
           source={cameraButton}
           style={camImgStyle}
         />
@@ -116,4 +122,4 @@ class Navbar extends Component {
   }
 }
 
-export default Navbar;
+export default connect(null, { setCameraState })(Navbar);

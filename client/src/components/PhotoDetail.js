@@ -9,8 +9,9 @@ import saveVote from '../helpers/getasyncstorage';
 
 const styles = {
   photoStyle: { // The picture
-    height: Dimensions.get('window').width - 20,
-    flex: 1
+    flex: 1,
+    width: null,
+    height: Dimensions.get('window').width
   },
   modalStyle: { // For the faded out part
     flex: 1,
@@ -136,7 +137,7 @@ class PhotoDetail extends Component {
     const queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}`;
     axios.patch(queryString)
       .then()
-      .catch((e) => { }); // LATER should notify user on failure
+      .catch(); // LATER should notify user on failure
   }
 
   closeModal() {
@@ -225,14 +226,12 @@ class PhotoDetail extends Component {
         </Modal>
 
         <Card>
-          <View>
-            <ImageButton
-              activeOpacity={1}
-              style={photoStyle}
-              source={{ uri: this.state.link }}
-              onPress={() => this.setModalVisible()}
-            />
-          </View>
+          <ImageButton
+            activeOpacity={1}
+            style={photoStyle}
+            source={{ uri: this.state.link }}
+            onPress={() => this.setModalVisible()}
+          />
 
           <View style={photoInfoStyle}>
             <View style={likeCountContainerStyle}>
