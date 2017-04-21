@@ -1,26 +1,41 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
+import { connect } from 'react-redux';
 import firebase from 'firebase';
-import { Header, Button } from './common';
+import { Header, Button, CardSection } from './common';
 import LoginForm from './LoginForm';
 
 class AccountPage extends Component {
   render() {
-    if (this.props.user) {
+    if (this.props.loginState) {
+      console.log(this.props.loginState);
       return (
         <View>
-          <Header><Text>{this.props.user}</Text></Header>
-          <Button onPress={() => firebase.auth().signOut()}>Log out</Button>
+          <Header><Text style={styles.headerTextStyle}>{this.props.loginState.email}</Text></Header>
+          <CardSection>
+            <Button onPress={() => firebase.auth().signOut()}>Log out</Button>
+          </CardSection>
         </View>
       );
     }
     return (
       <View>
-        <Header><Text style={{ fontSize: 20, color: '#000' }}>Log In</Text></Header>
+        <Header><Text style={styles.headerTextStyle}>Log In</Text></Header>
         <LoginForm />
       </View>
     );
   }
 }
 
-export default AccountPage;
+const styles = {
+  headerTextStyle: {
+    fontSize: 20,
+    color: '#000'
+  }
+};
+
+function mapStateToProps({ loginState }) {
+  return { loginState };
+}
+
+export default connect(mapStateToProps)(AccountPage);
