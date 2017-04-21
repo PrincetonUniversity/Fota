@@ -1,10 +1,11 @@
 var Photo = require('../models').Photo;
 var Restaurant = require('../models').Restaurant;
+var User = require('../models').User;
 var sequelize = require('sequelize');
 
 // create a new photo with given parameters
 module.exports.post = (req, res) => {
-  data = req.body
+  data = req.body;
   Photo.create({
     RestaurantId: data.RestaurantId,
     UserId: data.UserId,
@@ -18,7 +19,9 @@ module.exports.post = (req, res) => {
 }
 
 module.exports.get = (req, res) => {
+  // sequelizeInstance = new sequelize('fota_dev', 'postgres', '123', {dialect: 'postgres'});
   order = req.query.order;
+  // distance = req.query.distance;
   if (order == 'hot') {
     order = ['likecount', 'DESC']
   } else if (order == 'new') {
@@ -38,6 +41,18 @@ module.exports.get = (req, res) => {
       res.status(200).send({photos, restaurants});
     });
   });
+
+  // sequelizeInstance.query(`SELECT * FROM "Restaurants" WHERE 2 * 3961 * asin(sqrt((sin(radians((lat - 40.3468210) / 2))) ^ 2 + cos(radians(40.3468210)) * cos(radians(lat)) * (sin(radians((lng - -74.6552090) / 2))) ^ 2)) <= ${distance}`)
+  // .then((rest) => {
+  //   restaurants = rest[0];
+  //   photos = [];
+  //   restaurants.map((rest) => {
+  //     rest.getPhotos((photo) => {
+  //       photos.push(photo);
+  //     })
+  //   })
+  // })
+
 }
 
 module.exports.delete = (req, res) => {
@@ -52,13 +67,31 @@ module.exports.delete = (req, res) => {
 }
 
 module.exports.patch = (req, res) => {
+  userID = req.query.user;
   type = req.query.type;
   amount = req.query.amount || "1";
 
   if (type != "upvote" && type != "downvote")
-    return res.status(400).send({error: "no vote type supplied"})
+    return res.status(400).send({error: "no vote type supplied"});
 
   if (type == "upvote") {
+    if (userID) {
+      User.findById(userID).then((user) => {
+        if (!user) return res.status(404).send({error: "no user found"});
+
+        var liked = user.likedPhotos;
+        if (liked) {
+          liked.push(req.params.id);
+        } else {
+          liked = [req.params.id];
+        }
+        user.update({likedPhotos: liked}).catch((e) => {
+          console.log(e);
+          return res.status(400).send({error: "error in accessing user information"})
+        });
+      })
+    }
+
     Photo.update({
       likecount: sequelize.literal(`likecount + ${amount}`)
     }, {where: {
