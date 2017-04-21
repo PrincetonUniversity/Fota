@@ -8,7 +8,7 @@ import LoginForm from './LoginForm';
 class AccountPage extends Component {
   render() {
     if (this.props.loginState) {
-      console.log(this.props.loginState);
+      //console.log(this.props.loginState);
       return (
         <View>
           <Header><Text style={styles.headerTextStyle}>{this.props.loginState.email}</Text></Header>

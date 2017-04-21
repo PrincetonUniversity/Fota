@@ -23,7 +23,7 @@ class LoginForm extends Component {
 		this.setState({ error: '', loading: true });
 
 		firebase.auth().createUserWithEmailAndPassword(email, pass)
-			.then(this.onLoginSuccess.bind(this))
+			.then(this.onCreateUserSuccess.bind(this))
 			.catch(this.onCreateUserFail.bind(this));
 	}
 
@@ -38,6 +38,7 @@ class LoginForm extends Component {
 	onCreateUserSuccess(user) {
 		this.setState({ email: '', pass: '', loading: false });
 		axios.post('https://fotafood.herokuapp.com/api/user', { id: user.uid })
+			.then(console.log('It worked!'))
 			.catch((e) => console.log(e));
 	}
 
