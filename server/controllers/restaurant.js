@@ -22,6 +22,7 @@ module.exports.post = (req, res) => {
 
 module.exports.getRestaurants = (req, res) => {
   Restaurant.findAll({
+    order: [['name', 'ASC']]
   }).then((restaurants) => {
     res.status(200).send(restaurants);
   });

@@ -1,6 +1,7 @@
 const Restaurant = require('./server/controllers/restaurant');
 const Photo = require('./server/controllers/photo');
 const Comment = require('./server/controllers/comment');
+const User = require('./server/controllers/user');
 
 module.exports = (app) => {
   app.get('/', (req, res) => { res.send("hello") });
@@ -16,4 +17,7 @@ module.exports = (app) => {
 
   app.post('/api/comment', Comment.post);
   app.get('/api/comment/:restaurantId', Comment.get);
+
+  app.post('/api/user', User.post);
+  app.get('/api/user/:id', User.get);
 }
