@@ -50,6 +50,7 @@ class Base extends Component {
           <Modal
             visible={this.props.cameraVisible}
             style={{ flex: 1 }}
+            onRequestClose={() => this.props.setCameraState(false)}
           >
             <CameraNavigator />
             {/* <CameraPage /> */}
