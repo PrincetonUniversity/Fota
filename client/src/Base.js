@@ -1,15 +1,22 @@
 import React, { Component } from 'react';
 import { View, Navigator, Modal } from 'react-native';
 import { connect } from 'react-redux';
+import firebase from 'firebase';
 import HomePage from './components/HomePage';
 import SearchPage from './components/SearchPage';
 import BlankPage from './components/BlankPage';
 import AccountPage from './components/AccountPage';
 import Navbar from './components/Navbar';
-import CameraNavigator from './components/CameraNavigator';
-import { setCameraState } from './actions';
+import CameraPage from './components/CameraPage';
+import { setCameraState, logInOrOut } from './actions';
 
 class Base extends Component {
+  componentWillMount() {
+    firebase.auth().onAuthStateChanged((user) => {
+      this.props.logInOrOut(user);
+    });
+  }
+
   configureScene(route, routeStack) {
     if (routeStack.length < 2 || route.id > routeStack[routeStack.length - 2].id) {
       return ({ ...Navigator.SceneConfigs.HorizontalSwipeJump, gestures: {} });
@@ -57,4 +64,4 @@ function mapStateToProps({ cameraVisible }) {
   return { cameraVisible };
 }
 
-export default connect(mapStateToProps, { setCameraState })(Base);
+export default connect(mapStateToProps, { setCameraState, logInOrOut })(Base);
