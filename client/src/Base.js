@@ -7,7 +7,7 @@ import SearchPage from './components/SearchPage';
 import BlankPage from './components/BlankPage';
 import AccountPage from './components/AccountPage';
 import Navbar from './components/Navbar';
-import CameraPage from './components/CameraPage';
+import CameraNavigator from './components/CameraNavigator';
 import { setCameraState, logInOrOut } from './actions';
 
 class Base extends Component {

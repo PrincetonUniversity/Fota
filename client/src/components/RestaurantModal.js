@@ -14,7 +14,6 @@ class RestaurantModal extends Component {
   }
 
   render() {
-    console.log(this.props.restaurant);
     return (
       <View>
         <Modal
@@ -23,11 +22,13 @@ class RestaurantModal extends Component {
           visible={this.state.modalVisible}
           onRequestClose={() => { this.setModalVisible(false); }}
         >
-          <View style={{ flex: 1, paddingTop: 15 }}>
-            <RestaurantDetail
-              restaurant={this.props.restaurant}
-              close={this.closeModal.bind(this)}
-            />
+          <View style={styles.modalStyle}>
+            <View style={{ ...this.props.pageStyle, ...styles.pageStyle }}>
+              <RestaurantDetail
+                restaurant={this.props.restaurant}
+                close={this.closeModal.bind(this)}
+              />
+            </View>
           </View>
         </Modal>
 
@@ -38,5 +39,15 @@ class RestaurantModal extends Component {
     );
   }
 }
+
+const styles = {
+  modalStyle: { // For the faded out part
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)'
+  },
+  pageStyle: {
+    flex: 1
+  }
+};
 
 export default RestaurantModal;

@@ -62,16 +62,17 @@ const styles = {
   }
 };
 
-const { pageStyle,
-        headerStyle,
-        backButtonStyle,
-        titleContainerStyle,
-        titleStyle,
-        timeUntilCloseStyle,
-        phoneButtonStyle,
-        filterContainerStyle,
-        photoStyle
-      } = styles;
+const {
+  pageStyle,
+  headerStyle,
+  backButtonStyle,
+  titleContainerStyle,
+  titleStyle,
+  timeUntilCloseStyle,
+  phoneButtonStyle,
+  filterContainerStyle,
+  photoStyle
+} = styles;
 
 const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
 const commentDetails = 'https://fotafood.herokuapp.com/api/comment/';

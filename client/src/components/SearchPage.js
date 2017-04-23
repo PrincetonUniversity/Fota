@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { View, FlatList, Image } from 'react-native';
+import { Text, View, FlatList, Image } from 'react-native';
 import axios from 'axios';
 import { Header, Input } from './common';
-import RestaurantListing from './RestaurantListing';
+import RestaurantModal from './RestaurantModal';
 import { footerSize } from './common/Footer';
 
 class SearchPage extends Component {
@@ -25,7 +25,13 @@ class SearchPage extends Component {
 
   renderRestaurant(restaurant) {
     return (
-      <RestaurantListing restaurant={restaurant.item} />
+      <RestaurantModal restaurant={restaurant}>
+        <View style={{ flexDirection: 'row', padding: 10 }}>
+          <Text style={{ fontFamily: 'Avenir', fontSize: 15 }}>
+            {restaurant.name}
+          </Text>
+        </View>
+      </RestaurantModal>
     );
   }
 
@@ -49,7 +55,7 @@ class SearchPage extends Component {
           <FlatList
             data={this.state.rlist}
             keyExtractor={restaurant => restaurant.id}
-            renderItem={restaurant => this.renderRestaurant(restaurant)}
+            renderItem={restaurant => this.renderRestaurant(restaurant.item)}
             bounces={false}
           />
         </View>
