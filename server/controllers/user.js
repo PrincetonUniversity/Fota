@@ -25,7 +25,6 @@ module.exports.get = (req, res) => {
     user.getPhotos({
       order: [['createdAt', 'DESC']]
     }).then((uploadedPhotos) => {
-      console.log(user);
       // Return the actual liked photos
       Photo.findAll({where: {
         id: user.likedPhotos
@@ -33,7 +32,8 @@ module.exports.get = (req, res) => {
         return res.status(200).send({
           uploadedPhotos: uploadedPhotos,
           likedPhotos: likedPhotos,
-          likedPhotoIds: user.likedPhotos
+          likedPhotoIds: user.likedPhotos,
+          dislikedPhotoIds: user.dislikedPhotos
         })
       })
     })
