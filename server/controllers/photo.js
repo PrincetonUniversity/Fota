@@ -2,6 +2,7 @@ var Photo = require('../models').Photo;
 var Restaurant = require('../models').Restaurant;
 var User = require('../models').User;
 var sequelize = require('sequelize');
+var _ = require('lodash');
 
 // create a new photo with given parameters
 module.exports.post = (req, res) => {
@@ -89,13 +90,26 @@ module.exports.patch = (req, res) => {
       User.findById(userID).then((user) => {
         if (!user) return res.status(404).send({error: "no user found"});
 
-        var liked = user.likedPhotos;
-        if (liked) {
-          liked.push(req.params.id);
+        var liked = user.likedPhotos || [];
+        var disliked = user.dislikedPhotos || [];
+
+        // Take care of special cases: how should we save it on the server?
+
+        if (_.includes(disliked, parseInt(req.params.id))) {
+          // Case 1: disliked -> none
+          _.remove(disliked, function(item) {
+            return (item === parseInt(req.params.id));
+          });
+          if (amount === "2") {
+          // Case 2: disliked -> liked
+            liked.push(req.params.id);
+          }
         } else {
-          liked = [req.params.id];
+          // Case 3: none -> liked
+          liked.push(req.params.id);
         }
-        user.update({likedPhotos: liked}).catch((e) => {
+
+        user.update({likedPhotos: liked, dislikedPhotos: disliked}).catch((e) => {
           console.log(e);
           return res.status(400).send({error: "error in accessing user information"})
         });
@@ -106,7 +120,9 @@ module.exports.patch = (req, res) => {
       likecount: sequelize.literal(`likecount + ${amount}`)
     }, {where: {
       id: req.params.id
-    }}).catch((e) => console.log(e))
+    }}).then(() => {
+      res.status(200).send({message: "Your upvote has been succesfully processed"})
+    }).catch((e) => console.log(e))
   }
 
   if (type == "downvote") {
@@ -114,14 +130,26 @@ module.exports.patch = (req, res) => {
       User.findById(userID).then((user) => {
         if (!user) return res.status(404).send({error: "no user found"});
 
-        var disliked = user.dislikedPhotos;
-        if (disliked) {
-          disliked.push(req.params.id);
+        var liked = user.likedPhotos || [];
+        var disliked = user.dislikedPhotos || [];
+
+        // Take care of special cases: how should we save it on the server?
+
+        if (_.includes(liked, parseInt(req.params.id))) {
+          // Case 4: liked -> none
+          _.remove(liked, function(item) {
+            return (item === parseInt(req.params.id));
+          });
+          if (amount === "2") {
+          // Case 5: liked -> disliked
+            disliked.push(req.params.id);
+          }
         } else {
-          disliked = [req.params.id];
-          console.log(disliked + " = disliked list")
+          // Case 6: none -> disliked
+          disliked.push(req.params.id);
         }
-        user.update({dislikedPhotos: disliked}).catch((e) => {
+
+        user.update({dislikedPhotos: disliked, likedPhotos: liked}).catch((e) => {
           console.log(e);
           return res.status(400).send({error: "error in accessing user information"})
         });
