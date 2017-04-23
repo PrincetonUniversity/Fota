@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Image, Text, FlatList, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import axios from 'axios';
-// import { RNS3 } from 'react-native-aws3';
+import { RNS3 } from 'react-native-aws3';
 import { FilterDisplay } from './common';
 import { setCameraState } from '../actions';
 
@@ -60,34 +60,41 @@ class UploadCommentsPage extends Component {
   }
 
   submitUpload() {
-    // const file = {
-    //   uri: this.state.uploadPath,
-    //   name: `${this.state.restaurantid}${this.state.uploadPath}.png`,
-    //   type: 'image/png'
-    // };
-    //
-    // const options = {
-    //   keyPrefix: 'uploads/',
-    //   bucket: 'fota-app',
-    //   region: 'us-east-1',
-    //   accessKey: 'your-access-key',
-    //   secretKey: 'your-secret-key',
-    //   successActionStatus: 201
-    // }
+    const file = {
+      uri: this.state.uploadPath,
+      name: `${this.props.loginState.uid}_${this.state.restaurantid}_${this.state.uploadPath.split('/').pop()}.jpg`,
+      type: 'image/jpg'
+    };
 
-    axios.post('https://fotafood.herokuapp.com/api/photo', {
-      RestaurantId: this.state.restaurantid,
-      UserId: 'S70QX1ob2RcTNxj2HXwk2BGFECC3',
-      link: this.state.uploadPath // this should be the aws link
-    })
-      .then(response => {
-        console.log(response);
-        AsyncStorage.setItem('UploadRestaurant', '');
-        AsyncStorage.setItem('UploadPath', '');
-        this.props.navigator.replace({ id: 0 });
-        this.props.setCameraState(false);
+    const options = {
+      keyPrefix: '/',
+      bucket: 'fota-app',
+      region: 'us-east-1',
+      accessKey: 'AKIAJZT4VGQAIPGA4QTA',
+      secretKey: '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',
+      successActionStatus: 201
+    };
+
+    RNS3.put(file, options).then(response => {
+      console.log(response);
+      if (response.status !== 201) {
+        console.log(response.body);
+        return;
+      }
+      axios.post('https://fotafood.herokuapp.com/api/photo', {
+        RestaurantId: this.state.restaurantid,
+        UserId: this.props.loginState.uid,
+        link: response.body.postResponse.location // this should be the aws link
       })
-      .catch(error => console.log(error));
+        .then(response2 => {
+          console.log(response2);
+          AsyncStorage.setItem('UploadRestaurant', '');
+          AsyncStorage.setItem('UploadPath', '');
+          this.props.navigator.resetTo({ id: 0 });
+          this.props.setCameraState(false);
+        })
+        .catch(error => console.log(error));
+    });
   }
 
   renderUploadLocation() {
@@ -157,4 +164,8 @@ class UploadCommentsPage extends Component {
   }
 }
 
-export default connect(null, { setCameraState })(UploadCommentsPage);
+function mapStateToProps({ loginState }) {
+  return { loginState };
+}
+
+export default connect(mapStateToProps, { setCameraState })(UploadCommentsPage);

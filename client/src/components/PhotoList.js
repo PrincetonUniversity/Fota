@@ -44,8 +44,6 @@ class PhotoList extends Component {
         let disliked = userInfo.data.dislikedPhotoIds;
         if (!liked) liked = [];
         if (!disliked) disliked = [];
-        console.log(liked);
-        console.log(disliked);
         this.setState({ liked, disliked });
       });
     } catch (error) {
