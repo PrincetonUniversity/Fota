@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Text, Image, View, Modal } from 'react-native';
+import { View, Modal, TouchableWithoutFeedback } from 'react-native';
 import RestaurantDetail from './RestaurantDetail';
 
-class RestaurantListing extends Component {
+class RestaurantModal extends Component {
   state = { modalVisible: false }
 
   setModalVisible(visible) {
@@ -31,18 +31,12 @@ class RestaurantListing extends Component {
           </View>
         </Modal>
 
-        <View style={{ flexDirection: 'row', padding: 10 }}>
-          <Image
-            source={this.props.restaurant.link}
-            style={{ width: 10, height: 10 }}
-          />
-          <Text onPress={() => this.setModalVisible(true)}>
-            {this.props.restaurant.name}
-          </Text>
-        </View>
+        <TouchableWithoutFeedback onPress={() => this.setModalVisible(true)}>
+          {this.props.children}
+        </TouchableWithoutFeedback>
       </View>
     );
   }
 }
 
-export default RestaurantListing;
+export default RestaurantModal;

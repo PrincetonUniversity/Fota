@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import firebase from 'firebase';
 import axios from 'axios';
-import { CardSection, Button, Input, Spinner } from './common';
+import { Header, CardSection, Button, Input, Spinner } from './common';
 
 class LoginForm extends Component {
 	state = { email: '', pass: '', error: '', loading: false };
@@ -31,19 +31,23 @@ class LoginForm extends Component {
 		this.setState({ email: '', pass: '', loading: false });
 	}
 
-	onLoginFail() {
-		this.setState({ error: 'Incorrect username or password.', loading: false });
+	onLoginFail(error) {
+		let message = 'Authentication error.';
+		if (error.code === 'auth/invalid-email') {
+			message = 'Invalid email.';
+		} else if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+			message = 'Incorrect email or password.';
+		}
+		this.setState({ error: message, loading: false });
 	}
 
 	onCreateUserSuccess(user) {
 		this.setState({ email: '', pass: '', loading: false });
-		axios.post('https://fotafood.herokuapp.com/api/user', { id: user.uid })
-			.then(console.log('It worked!'))
-			.catch((e) => console.log(e));
+		axios.post('https://fotafood.herokuapp.com/api/user', { id: user.uid });
 	}
 
 	onCreateUserFail(error) {
-		let message = '';
+		let message = 'Authentication error.';
 		if (error.code === 'auth/email-already-in-use') {
 			message = 'Email is already in use.';
 		} else if (error.code === 'auth/invalid-email') {
@@ -73,6 +77,7 @@ class LoginForm extends Component {
 	render() {
 		return (
 			<View>
+				<Header><Text style={styles.headerTextStyle}>Log In</Text></Header>
 				<CardSection>
 					<Input
 						placeholder='user@example.com'
@@ -104,6 +109,10 @@ class LoginForm extends Component {
 }
 
 const styles = {
+	headerTextStyle: {
+    fontSize: 20,
+    color: '#000'
+  },
   labelStyle: {
     flex: 0.35
   },
