@@ -1,11 +1,11 @@
 // Visual component for each photo, i.e. photo frame+upvote/downvote/upvote count
 
 import React, { Component } from 'react';
-import { View, Image, Text, Modal, Dimensions } from 'react-native';
+import { View, Image, Text, Dimensions } from 'react-native';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { Card, ImageButton } from './common';
-import RestaurantDetail from './RestaurantDetail';
+import RestaurantModal from './RestaurantModal';
 import saveVote from '../helpers/getasyncstorage';
 
 const styles = {
@@ -14,12 +14,7 @@ const styles = {
     width: null,
     height: Dimensions.get('window').width
   },
-  modalStyle: { // For the faded out part
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)'
-  },
   restaurantPageStyle: { // Entire restaurant page
-    flex: 1,
     marginTop: 20,
     marginBottom: 20,
     marginLeft: 15,
@@ -69,17 +64,18 @@ const styles = {
   },
 };
 
-const { photoStyle,
-        modalStyle,
-        restaurantPageStyle,
-        photoInfoStyle,
-        upvoteStyle,
-        downvoteStyle,
-        likeCountContainerStyle,
-        likeCountArrowStyle,
-        likeCountTextStyle,
-        likeContainerStyle
-     } = styles;
+const {
+  photoStyle,
+  modalStyle,
+  restaurantPageStyle,
+  photoInfoStyle,
+  upvoteStyle,
+  downvoteStyle,
+  likeCountContainerStyle,
+  likeCountArrowStyle,
+  likeCountTextStyle,
+  likeContainerStyle
+} = styles;
 
 const upvoteUnactivated = require('../img/upvote_unactivated.png');
 const upvoteActivated = require('../img/upvote_activated.png');
@@ -215,55 +211,37 @@ class PhotoDetail extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        <Modal
-          animationType={'fade'}
-          transparent
-          visible={this.state.modalVisible}
-          onRequestClose={() => { this.setModalVisible(false); }}
-        >
-          <View style={modalStyle}>
-            <View style={restaurantPageStyle}>
-              <RestaurantDetail
-                restaurant={this.props.restaurant}
-                close={this.closeModal.bind(this)}
-              />
-            </View>
-          </View>
-        </Modal>
-
-        <Card>
-          <ImageButton
-            activeOpacity={1}
+      <Card>
+        <RestaurantModal restaurant={this.props.restaurant} pageStyle={restaurantPageStyle}>
+          <Image
             style={photoStyle}
             source={{ uri: this.state.link }}
-            onPress={() => this.setModalVisible()}
           />
+        </RestaurantModal>
 
-          <View style={photoInfoStyle}>
-            <View style={likeCountContainerStyle}>
-              <Image
-                source={upvoteUnactivated}
-                style={likeCountArrowStyle}
-              />
-              <Text style={likeCountTextStyle}>{this.state.likecount}</Text>
-            </View>
-
-            <View style={likeContainerStyle}>
-              <ImageButton
-                source={this.state.upvoteSource}
-                style={upvoteStyle}
-                onPress={() => this.renderUpvote()}
-              />
-              <ImageButton
-                source={this.state.downvoteSource}
-                style={downvoteStyle}
-                onPress={() => this.renderDownvote()}
-              />
-            </View>
+        <View style={photoInfoStyle}>
+          <View style={likeCountContainerStyle}>
+            <Image
+              source={upvoteUnactivated}
+              style={likeCountArrowStyle}
+            />
+            <Text style={likeCountTextStyle}>{this.state.likecount}</Text>
           </View>
-        </Card>
-      </View>
+
+          <View style={likeContainerStyle}>
+            <ImageButton
+              source={this.state.upvoteSource}
+              style={upvoteStyle}
+              onPress={() => this.renderUpvote()}
+            />
+            <ImageButton
+              source={this.state.downvoteSource}
+              style={downvoteStyle}
+              onPress={() => this.renderDownvote()}
+            />
+          </View>
+        </View>
+      </Card>
     );
   }
 }
