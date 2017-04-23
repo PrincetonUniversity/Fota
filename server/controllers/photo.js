@@ -110,15 +110,36 @@ module.exports.patch = (req, res) => {
   }
 
   if (type == "downvote") {
+    if (userID) {
+      User.findById(userID).then((user) => {
+        if (!user) return res.status(404).send({error: "no user found"});
+
+        var disliked = user.dislikedPhotos;
+        if (disliked) {
+          disliked.push(req.params.id);
+        } else {
+          disliked = [req.params.id];
+          console.log(disliked + " = disliked list")
+        }
+        user.update({dislikedPhotos: disliked}).catch((e) => {
+          console.log(e);
+          return res.status(400).send({error: "error in accessing user information"})
+        });
+      })
+    }
+
     Photo.update({
       likecount: sequelize.literal(`likecount - ${amount}`)
     }, {where: {
       id: req.params.id
-    }}).catch((e) => console.log(e))
+    }}).then(() => {
+      response = {
+        message: "Your upvote/downvote request has been successfully processed."
+      };
+      return res.send(response);
+    })
+    .catch((e) => console.log(e))
   }
 
-  response = {
-    message: "Your upvote/downvote request has been successfully processed."
-  };
-  return res.send(response);
+
 }

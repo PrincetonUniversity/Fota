@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { View, Image, Text, Dimensions } from 'react-native';
 import axios from 'axios';
+import { connect } from 'react-redux';
 import { Card, ImageButton } from './common';
 import RestaurantModal from './RestaurantModal';
 import saveVote from '../helpers/getasyncstorage';
@@ -130,7 +131,13 @@ class PhotoDetail extends Component {
   // Sends the update request to the fota server.
   // type can either be "downvote" or "upvote"
   sendUpdateRequest(type, amount) {
-    const queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}`;
+    const user = this.props.loginState;
+    let queryString = '';
+    if (!user) {
+      queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}`;
+    } else {
+      queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}&user=${user.uid}`;
+    }
     axios.patch(queryString)
       .then()
       .catch(); // LATER should notify user on failure
@@ -239,4 +246,8 @@ class PhotoDetail extends Component {
   }
 }
 
-export default PhotoDetail;
+function mapStateToProps({ loginState }) {
+  return { loginState };
+}
+
+export default connect(mapStateToProps)(PhotoDetail);

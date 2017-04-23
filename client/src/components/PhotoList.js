@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { FlatList, View, AsyncStorage } from 'react-native';
 import _ from 'lodash';
+import axios from 'axios';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import PhotoDetail from './PhotoDetail';
@@ -23,7 +24,11 @@ class PhotoList extends Component {
   }
 
   getPhotoList() {
-    this.getLikedAndDisliked().done();
+    if (!this.props.loginState) {
+      this.getLikedAndDislikedFromDevice().done();
+    } else {
+      this.getLikedAndDislikedFromServer().done();
+    }
     navigator.geolocation.getCurrentPosition(position => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
@@ -31,7 +36,25 @@ class PhotoList extends Component {
     });
   }
 
-  getLikedAndDisliked = async () => {
+  getLikedAndDislikedFromServer = async () => {
+    try {
+      axios.get(`https://fotafood.herokuapp.com/api/user/${this.props.loginState.uid}`)
+      .then((userInfo) => {
+        let liked = userInfo.data.likedPhotoIds;
+        let disliked = userInfo.data.dislikedPhotoIds;
+        if (!liked) liked = [];
+        if (!disliked) disliked = [];
+        console.log(liked);
+        console.log(disliked);
+        this.setState({ liked, disliked });
+      });
+    } catch (error) {
+      console.log('Error at line 42 in Photolist.js');
+      console.log(error);
+    }
+  }
+
+  getLikedAndDislikedFromDevice = async () => {
     try {
       // await AsyncStorage.clear();
       const liked = await AsyncStorage.getItem('liked');
@@ -94,8 +117,8 @@ class PhotoList extends Component {
   }
 }
 
-function mapStateToProps({ photos, restaurants }) {
-  return { photos, restaurants };
+function mapStateToProps({ photos, restaurants, loginState }) {
+  return { photos, restaurants, loginState };
 }
 
 export default connect(mapStateToProps, { getPhotosAndRests })(PhotoList);
