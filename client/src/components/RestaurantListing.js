@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, Image, View, Modal } from 'react-native';
+import { Text, View, Modal } from 'react-native';
 import RestaurantDetail from './RestaurantDetail';
 
 class RestaurantListing extends Component {
@@ -31,11 +31,10 @@ class RestaurantListing extends Component {
         </Modal>
 
         <View style={{ flexDirection: 'row', padding: 10 }}>
-          <Image
-            source={this.props.restaurant.link}
-            style={{ width: 10, height: 10 }}
-          />
-          <Text onPress={() => this.setModalVisible(true)}>
+          <Text
+            style={{ fontFamily: 'Avenir', fontSize: 15 }}
+            onPress={() => this.setModalVisible(true)}
+          >
             {this.props.restaurant.name}
           </Text>
         </View>
