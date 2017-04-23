@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, ScrollView, ListView, Image } from 'react-native';
+import { View, FlatList, Image } from 'react-native';
 import axios from 'axios';
 import { Header, Input } from './common';
 import RestaurantListing from './RestaurantListing';
@@ -25,16 +25,11 @@ class SearchPage extends Component {
 
   renderRestaurant(restaurant) {
     return (
-      <RestaurantListing
-        restaurant={restaurant}
-      />
+      <RestaurantListing restaurant={restaurant.item} />
     );
   }
 
   render() {
-    const dataSource = new ListView.DataSource({
-            rowHasChanged: (r1, r2) => r1.id !== r2.id
-        });
     return (
       <View style={{ flex: 1, marginBottom: footerSize }}>
         <Header>
@@ -49,16 +44,16 @@ class SearchPage extends Component {
               source={require('../img/magnifying_glass_unactivated.png')}
             />
           </Input>
-       </Header>
-       <ScrollView>
-         <ListView
-           dataSource={dataSource.cloneWithRows(this.state.rlist)}
-           renderRow={restaurant => this.renderRestaurant(restaurant)}
-           enableEmptySections
-         />
-         <View style={{ flex: 1, backgroundColor: '#A9A9A9' }} />
-      </ScrollView>
-     </View>
+        </Header>
+        <View style={{ marginBottom: footerSize }}>
+          <FlatList
+            data={this.state.rlist}
+            keyExtractor={restaurant => restaurant.id}
+            renderItem={restaurant => this.renderRestaurant(restaurant)}
+            bounces={false}
+          />
+        </View>
+      </View>
     );
   }
 }

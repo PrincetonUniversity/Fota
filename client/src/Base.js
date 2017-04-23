@@ -6,7 +6,7 @@ import SearchPage from './components/SearchPage';
 import BlankPage from './components/BlankPage';
 import AccountPage from './components/AccountPage';
 import Navbar from './components/Navbar';
-import CameraPage from './components/CameraPage';
+import CameraNavigator from './components/CameraNavigator';
 import { setCameraState } from './actions';
 
 class Base extends Component {
@@ -37,14 +37,15 @@ class Base extends Component {
           visible={this.props.cameraVisible}
           style={{ flex: 1 }}
         >
-          <CameraPage />
+          <CameraNavigator />
+          {/* <CameraPage /> */}
         </Modal>
 
         <Navigator
           style={{ flex: 1, backgroundColor: '#fff' }}
           initialRoute={{ id: 0 }}
           renderScene={this.renderScene.bind(this)}
-          configureScene={this.configureScene}
+          // configureScene={this.configureScene}
           navigationBar={<Navbar />}
         />
       </View>
