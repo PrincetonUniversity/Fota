@@ -5,14 +5,24 @@ var sequelize = require('sequelize');
 
 // create a new photo with given parameters
 module.exports.post = (req, res) => {
-  data = req.body;
+  const { RestaurantId, UserId, link } = req.body;
+
+  // Make sure the user exists and is authroized
+  if (!UserId) return res.status(401).send({error: "Must provide user ID"});
+  User.findById(UserId).then((user) => {
+    if (!user) return res.status(404).send({error: "User not found"});
+  }).catch((err) => {
+    console.log(err);
+    return res.status(500).send({error: "Internal server error"});
+  })
+
   Photo.create({
-    RestaurantId: data.RestaurantId,
-    UserId: data.UserId,
+    RestaurantId,
+    UserId,
     likecount: 0,
-    link: data.link
+    link
   }).then((photo) => {
-    res.status(200).send(photo);
+    res.status(200).send({message: "creation successful"});
   }).catch((err) => {
     console.log(err);
   })

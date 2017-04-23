@@ -44,14 +44,15 @@ class Base extends Component {
           visible={this.props.cameraVisible}
           style={{ flex: 1 }}
         >
-          <CameraPage />
+          <CameraNavigator />
+          {/* <CameraPage /> */}
         </Modal>
 
         <Navigator
           style={{ flex: 1, backgroundColor: '#fff' }}
           initialRoute={{ id: 0 }}
           renderScene={this.renderScene.bind(this)}
-          configureScene={this.configureScene}
+          // configureScene={this.configureScene}
           navigationBar={<Navbar />}
         />
       </View>

@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, Dimensions, Modal } from 'react-native';
+import { View, Text, Dimensions, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import Camera from 'react-native-camera';
 import { ImageButton } from './common/';
 import { setCameraState } from '../actions';
-import UploadPage from './UploadPage';
 
 const styles = {
   pageStyle: {
@@ -43,39 +42,25 @@ const { pageStyle,
         cameraButtonStyle
       } = styles;
 
-let PicturePath;
 const cameraButton = require('../img/camera_button.png');
 
 class CameraPage extends Component {
-  state = { uploadPageVisible: false }
-
-  closeModal() {
-    this.setState({ uploadPageVisible: false });
-  }
-
   takePicture() {
     this.camera.capture()
-     .then((data) => { PicturePath = data.path; this.setState({ uploadPageVisible: true }); })
+     .then((data) => {
+       AsyncStorage.setItem('UploadPath', data.path);
+       this.renderUploadLocation();
+     })
      .catch(err => console.error(err));
   }
 
+  renderUploadLocation() {
+    this.props.navigator.replace({ id: 1 });
+  }
+
   render() {
-    console.log(cameraStyle.height);
     return (
       <View style={pageStyle}>
-        <Modal
-          visible={this.state.uploadPageVisible}
-          onRequestClose={() => {
-            PicturePath = null;
-            this.closeModal();
-          }}
-        >
-          <UploadPage
-            photo={PicturePath}
-            close={this.closeModal.bind(this)}
-          />
-        </Modal>
-
         <View style={headerStyle}>
           <Text
             onPress={() => {
@@ -87,16 +72,12 @@ class CameraPage extends Component {
         </View>
 
         <Camera
-          ref={(cam) => {
-             this.camera = cam;
-           }}
+          ref={(cam) => { this.camera = cam; }}
           style={cameraStyle}
           captureTarget={Camera.constants.CaptureTarget.disk}
         />
 
-        <View
-          style={footerStyle}
-        >
+        <View style={footerStyle}>
           <ImageButton
             source={cameraButton}
             style={cameraButtonStyle}
