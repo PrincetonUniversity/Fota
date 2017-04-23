@@ -11,9 +11,15 @@ import CameraPage from './components/CameraPage';
 import { setCameraState, logInOrOut } from './actions';
 
 class Base extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { loginFinished: false };
+  }
+
   componentWillMount() {
     firebase.auth().onAuthStateChanged((user) => {
       this.props.logInOrOut(user);
+      this.setState({ loginFinished: true });
     });
   }
 
@@ -38,24 +44,26 @@ class Base extends Component {
   }
 
   render() {
-    return (
-      <View style={{ flex: 1 }}>
-        <Modal
-          visible={this.props.cameraVisible}
-          style={{ flex: 1 }}
-        >
-          <CameraPage />
-        </Modal>
+    if (this.state.loginFinished) {
+      return (
+        <View style={{ flex: 1 }}>
+          <Modal
+            visible={this.props.cameraVisible}
+            style={{ flex: 1 }}
+          >
+            <CameraPage />
+          </Modal>
 
-        <Navigator
-          style={{ flex: 1, backgroundColor: '#fff' }}
-          initialRoute={{ id: 0 }}
-          renderScene={this.renderScene.bind(this)}
-          configureScene={this.configureScene}
-          navigationBar={<Navbar />}
-        />
-      </View>
-    );
+          <Navigator
+            style={{ flex: 1, backgroundColor: '#fff' }}
+            initialRoute={{ id: 0 }}
+            renderScene={this.renderScene.bind(this)}
+            configureScene={this.configureScene}
+            navigationBar={<Navbar />}
+          />
+        </View>
+      );
+    } return (<View />);
   }
 }
 
