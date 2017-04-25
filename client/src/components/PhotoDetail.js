@@ -66,7 +66,6 @@ const styles = {
 
 const {
   photoStyle,
-  modalStyle,
   restaurantPageStyle,
   photoInfoStyle,
   upvoteStyle,
@@ -225,7 +224,7 @@ class PhotoDetail extends Component {
               source={upvoteUnactivated}
               style={likeCountArrowStyle}
             />
-            <Text style={likeCountTextStyle}>{this.state.likecount}</Text>
+          <Text style={likeCountTextStyle}>{this.state.likecount.toString()}</Text>
           </View>
 
           <View style={likeContainerStyle}>

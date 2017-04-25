@@ -76,7 +76,6 @@ class UploadCommentsPage extends Component {
     };
 
     RNS3.put(file, options).then(response => {
-      console.log(response);
       if (response.status !== 201) {
         console.log(response.body);
         return;
@@ -86,8 +85,7 @@ class UploadCommentsPage extends Component {
         UserId: this.props.loginState.uid,
         link: response.body.postResponse.location // this should be the aws link
       })
-        .then(response2 => {
-          console.log(response2);
+        .then(() => {
           AsyncStorage.setItem('UploadRestaurant', '');
           AsyncStorage.setItem('UploadPath', '');
           this.props.navigator.resetTo({ id: 0 });

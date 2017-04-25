@@ -75,6 +75,7 @@ class CameraPage extends Component {
           ref={(cam) => { this.camera = cam; }}
           style={cameraStyle}
           captureTarget={Camera.constants.CaptureTarget.disk}
+          playSoundOnCapture
         />
 
         <View style={footerStyle}>
