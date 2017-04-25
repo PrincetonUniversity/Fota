@@ -53,14 +53,13 @@ class Base extends Component {
             onRequestClose={() => this.props.setCameraState(false)}
           >
             <CameraNavigator />
-            {/* <CameraPage /> */}
           </Modal>
 
           <Navigator
             style={{ flex: 1, backgroundColor: '#fff' }}
             initialRoute={{ id: 0 }}
             renderScene={this.renderScene.bind(this)}
-            // configureScene={this.configureScene}
+            configureScene={this.configureScene}
             navigationBar={<Navbar />}
           />
         </View>

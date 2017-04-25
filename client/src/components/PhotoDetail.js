@@ -66,7 +66,6 @@ const styles = {
 
 const {
   photoStyle,
-  modalStyle,
   restaurantPageStyle,
   photoInfoStyle,
   upvoteStyle,
