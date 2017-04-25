@@ -19,6 +19,10 @@ const styles = {
     marginRight: 10,
     marginTop: 20
   },
+  headerTextStyle: {
+    fontSize: 15,
+    fontFamily: 'Avenir'
+  },
   cameraStyle: {
     height: Dimensions.get('window').width,
     backgroundColor: 'black'
@@ -37,6 +41,7 @@ const styles = {
 
 const { pageStyle,
         headerStyle,
+        headerTextStyle,
         cameraStyle,
         footerStyle,
         cameraButtonStyle
@@ -63,6 +68,7 @@ class CameraPage extends Component {
       <View style={pageStyle}>
         <View style={headerStyle}>
           <Text
+            style={headerTextStyle}
             onPress={() => {
               this.props.setCameraState(false);
             }}

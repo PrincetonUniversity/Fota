@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Image, Text, FlatList, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import axios from 'axios';
+import RNFetchBlob from 'react-native-fetch-blob';
 import { RNS3 } from 'react-native-aws3';
 import { FilterDisplay } from './common';
 import { setCameraState } from '../actions';
@@ -20,30 +21,35 @@ const styles = {
     marginRight: 10,
     marginTop: 20
   },
+  headerTextStyle: {
+    fontSize: 15,
+    fontFamily: 'Avenir'
+  },
   imageStyle: {
     width: 150,
     height: 150,
     marginBottom: 10
   },
-  containerStyle: {
-    backgroundColor: '#ddd',
-    marginHorizontal: 10,
-    paddingHorizontal: 12,
-    marginBottom: 10,
-    borderRadius: 16,
-    height: 32
-  }
+  // containerStyle: {
+  //   backgroundColor: '#ddd',
+  //   marginHorizontal: 10,
+  //   paddingHorizontal: 12,
+  //   marginBottom: 10,
+  //   borderRadius: 16,
+  //   height: 32
+  // }
 };
 
 const { pageStyle,
         headerStyle,
+        headerTextStyle,
         imageStyle
       } = styles;
 
 const commentDetails = 'https://fotafood.herokuapp.com/api/comment/13'; // HARD CODED
 
 class UploadCommentsPage extends Component {
-  state = { uploadPath: null, restaurantid: null, presetComments: [] }
+  state = { uploadPath: null, restaurantid: null, presetComments: [], submitted: false }
 
   componentWillMount() {
     axios.get(commentDetails)
@@ -59,7 +65,26 @@ class UploadCommentsPage extends Component {
         }).done();
   }
 
+  deleteImage(photo) {
+    RNFetchBlob.fs.exists(photo)
+      .then((result) => {
+        if (result) {
+          return RNFetchBlob.fs.unlink(photo)
+            .then(() => console.log('File deleted'))
+            .catch((err) => console.log(err.message));
+        }
+      });
+  }
+
   submitUpload() {
+    console.log(this.state.submitted);
+
+    if (this.state.submitted) {
+      return;
+    }
+
+    this.setState({ submitted: true });
+
     const file = {
       uri: this.state.uploadPath,
       name: `${this.props.loginState.uid}_${this.state.restaurantid}_${this.state.uploadPath.split('/').pop()}.jpg`,
@@ -76,6 +101,7 @@ class UploadCommentsPage extends Component {
     };
 
     RNS3.put(file, options).then(response => {
+      console.log(response);
       if (response.status !== 201) {
         console.log(response.body);
         return;
@@ -85,10 +111,12 @@ class UploadCommentsPage extends Component {
         UserId: this.props.loginState.uid,
         link: response.body.postResponse.location // this should be the aws link
       })
-        .then(() => {
+        .then(response2 => {
+          console.log(response2);
+          this.deleteImage(this.state.uploadPath);
           AsyncStorage.setItem('UploadRestaurant', '');
           AsyncStorage.setItem('UploadPath', '');
-          this.props.navigator.resetTo({ id: 0 });
+          // this.props.navigator.resetTo({ id: 0 });
           this.props.setCameraState(false);
         })
         .catch(error => console.log(error));
@@ -117,6 +145,7 @@ class UploadCommentsPage extends Component {
         <View style={pageStyle}>
           <View style={headerStyle}>
             <Text
+              style={headerTextStyle}
               onPress={() => {
                 AsyncStorage.setItem('UploadRestaurant', '');
                 this.renderUploadLocation();
@@ -126,6 +155,7 @@ class UploadCommentsPage extends Component {
             </Text>
 
             <Text
+              style={headerTextStyle}
               onPress={() => this.submitUpload()}
             >
               Submit
@@ -140,7 +170,7 @@ class UploadCommentsPage extends Component {
           </View>
 
           <View style={{ alignItems: 'center', marginBottom: 10 }}>
-            <Text>
+            <Text style={{ fontFamily: 'Avenir' }}>
               Would you like to say something about the restaurant?
             </Text>
           </View>

@@ -18,6 +18,10 @@ const styles = {
     marginRight: 10,
     marginTop: 20
   },
+  headerTextStyle: {
+    fontSize: 15,
+    fontFamily: 'Avenir'
+  },
   imageStyle: {
     width: 150,
     height: 150,
@@ -35,6 +39,7 @@ const styles = {
 
 const { pageStyle,
         headerStyle,
+        headerTextStyle,
         imageStyle,
         containerStyle
       } = styles;
@@ -104,6 +109,7 @@ class UploadLocationPage extends Component {
         <View style={pageStyle}>
           <View style={headerStyle}>
             <Text
+              style={headerTextStyle}
               onPress={() => {
                 this.deleteImage(this.state.uploadPath);
                 AsyncStorage.setItem('UploadPath', '');

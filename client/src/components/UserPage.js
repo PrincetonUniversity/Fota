@@ -79,6 +79,7 @@ const styles = {
   },
   sectionTextStyle: {
     fontSize: 18,
+    fontFamily: 'Avenir'
   },
   emptyTextStyle: {
     color: '#aaa',
