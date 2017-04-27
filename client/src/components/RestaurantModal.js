@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { View, Modal, TouchableWithoutFeedback } from 'react-native';
+import { View, Modal, Navigator, TouchableWithoutFeedback } from 'react-native';
 import RestaurantDetail from './RestaurantDetail';
+import CommentUpload from './CommentUpload';
 
 class RestaurantModal extends Component {
   state = { modalVisible: false }
@@ -11,6 +12,34 @@ class RestaurantModal extends Component {
 
   closeModal() {
     this.setState({ modalVisible: false });
+  }
+
+  renderScene(route, navigator) {
+    switch (route.id) {
+      case 0:
+        return (
+          <RestaurantDetail
+            navigator={navigator}
+            restaurant={this.props.restaurant}
+            close={this.closeModal.bind(this)}
+          />
+        );
+      case 1:
+        return (
+          <CommentUpload
+            restaurant={this.props.restaurant}
+            navigator={navigator}
+          />
+        );
+      default:
+        return (
+          <RestaurantDetail
+            navigator={navigator}
+            restaurant={this.props.restaurant}
+            close={this.closeModal.bind(this)}
+          />
+        );
+    }
   }
 
   render() {
@@ -24,10 +53,15 @@ class RestaurantModal extends Component {
         >
           <View style={styles.modalStyle}>
             <View style={{ ...this.props.pageStyle, ...styles.pageStyle }}>
-              <RestaurantDetail
+              <Navigator
+                style={{ flex: 1, backgroundColor: '#fff' }}
+                initialRoute={{ id: 0 }}
+                renderScene={this.renderScene.bind(this)}
+              />
+              {/* <RestaurantDetail
                 restaurant={this.props.restaurant}
                 close={this.closeModal.bind(this)}
-              />
+              /> */}
             </View>
           </View>
         </Modal>

@@ -44,7 +44,7 @@ const { pageStyle,
         containerStyle
       } = styles;
 
-class UploadLocationPage extends Component {
+class CameraLocationPage extends Component {
   state = { uploadPath: null, query: '', rlist: [], totalList: [] }
 
   componentWillMount() {
@@ -153,4 +153,4 @@ class UploadLocationPage extends Component {
   }
 }
 
-export default UploadLocationPage;
+export default CameraLocationPage;

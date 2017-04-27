@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, Image, Text, ScrollView, FlatList } from 'react-native';
+import { View, Image, Text, ScrollView, FlatList, Modal } from 'react-native';
 import axios from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 import { phonecall } from 'react-native-communications';
-import { ImageButton, FilterDisplay } from './common';
+import { ImageButton, FilterDisplay, CommentDisplay } from './common';
+import CommentUpload from './CommentUpload';
 
 const styles = {
   pageStyle: { // Entire restaurant page
@@ -90,10 +91,6 @@ class RestaurantDetail extends Component {
       .then(response => this.setState({ comments: response.data }));
   }
 
-  // componentWillUnmount() {
-  //   this.setState({ photos: [], comments: [], spinnerVisible: true });
-  // }
-
   isOpen(closeTime, openTime) {
     const currentDate = moment(new Date());
     const openTimeHours = Math.floor(openTime / 100);
@@ -156,6 +153,10 @@ class RestaurantDetail extends Component {
     return closingTimeString;
   }
 
+  renderCommentUpload() {
+    this.props.navigator.push({ id: 1 });
+  }
+
   renderFilters() {
     return this.props.restaurant.type.map(filterName =>
       <FilterDisplay
@@ -182,7 +183,7 @@ class RestaurantDetail extends Component {
     const noun = comment.item.noun.charAt(0).toUpperCase() + comment.item.noun.slice(1);
     const commentString = `${adj} ${noun}`;
     return (
-      <FilterDisplay
+      <CommentDisplay
         key={commentString}
         text={commentString}
       />
@@ -249,12 +250,18 @@ class RestaurantDetail extends Component {
             <FlatList
               data={this.state.comments}
               keyExtractor={comment => comment.id}
+              numColumns={2}
               renderItem={comment => this.renderComment(comment)}
               bounces={false}
             />
           </View>
         </View>
 
+        <ImageButton
+          style={phoneButtonStyle}
+          source={phoneButton}
+          onPress={() => this.renderCommentUpload()}
+        />
       </View>
     );
   }

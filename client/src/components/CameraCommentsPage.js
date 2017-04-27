@@ -48,7 +48,7 @@ const { pageStyle,
 
 const commentDetails = 'https://fotafood.herokuapp.com/api/comment/13'; // HARD CODED
 
-class UploadCommentsPage extends Component {
+class CameraCommentsPage extends Component {
   state = { uploadPath: null, restaurantid: null, presetComments: [], submitted: false }
 
   componentWillMount() {
@@ -196,4 +196,4 @@ function mapStateToProps({ loginState }) {
   return { loginState };
 }
 
-export default connect(mapStateToProps, { setCameraState })(UploadCommentsPage);
+export default connect(mapStateToProps, { setCameraState })(CameraCommentsPage);
