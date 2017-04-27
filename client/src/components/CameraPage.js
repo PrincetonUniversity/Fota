@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { View, Text, Dimensions, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
-import Camera from 'react-native-camera';
+import { CameraKitCamera } from 'react-native-camera-kit';
+import ImageResizer from 'react-native-image-resizer';
 import { ImageButton } from './common/';
 import { setCameraState } from '../actions';
 
@@ -25,7 +26,8 @@ const styles = {
   },
   cameraStyle: {
     height: Dimensions.get('window').width,
-    backgroundColor: 'black'
+    width: Dimensions.get('window').width,
+    backgroundColor: 'white'
   },
   footerStyle: {
     flex: 1,
@@ -50,13 +52,13 @@ const { pageStyle,
 const cameraButton = require('../img/camera_button.png');
 
 class CameraPage extends Component {
-  takePicture() {
-    this.camera.capture()
-     .then((data) => {
-       AsyncStorage.setItem('UploadPath', data.path);
-       this.renderUploadLocation();
-     })
-     .catch(err => console.error(err));
+  async takePicture() {
+    const data = await this.camera.capture(false);
+    ImageResizer.createResizedImage(data.uri, 1280, 720, 'JPEG', 100).then(reuri => {
+      console.log(reuri);
+      AsyncStorage.setItem('UploadPath', reuri);
+      this.renderUploadLocation();
+    });
   }
 
   renderUploadLocation() {
@@ -77,10 +79,13 @@ class CameraPage extends Component {
           </Text>
         </View>
 
-        <Camera
+        <CameraKitCamera
           ref={(cam) => { this.camera = cam; }}
           style={cameraStyle}
-          captureTarget={Camera.constants.CaptureTarget.disk}
+          cameraOptions={{
+            ratioOverlay: '1:1',
+            ratioOverlayColor: '#ff0000'
+          }}
         />
 
         <View style={footerStyle}>

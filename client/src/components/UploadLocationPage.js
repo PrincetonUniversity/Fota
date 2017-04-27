@@ -69,11 +69,11 @@ class UploadLocationPage extends Component {
   }
 
   deleteImage(photo) {
-    RNFetchBlob.fs.exists(photo)
+    const filepath = photo.replace(/^(file:)/, '');
+    RNFetchBlob.fs.exists(filepath)
       .then((result) => {
         if (result) {
-          return RNFetchBlob.fs.unlink(photo)
-            .then(() => console.log('File deleted'))
+          return RNFetchBlob.fs.unlink(filepath)
             .catch((err) => console.log(err.message));
         }
       });

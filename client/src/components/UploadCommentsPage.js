@@ -77,8 +77,6 @@ class UploadCommentsPage extends Component {
   }
 
   submitUpload() {
-    console.log(this.state.submitted);
-
     if (this.state.submitted) {
       return;
     }
@@ -101,9 +99,7 @@ class UploadCommentsPage extends Component {
     };
 
     RNS3.put(file, options).then(response => {
-      console.log(response);
       if (response.status !== 201) {
-        console.log(response.body);
         return;
       }
       axios.post('https://fotafood.herokuapp.com/api/photo', {
@@ -111,8 +107,7 @@ class UploadCommentsPage extends Component {
         UserId: this.props.loginState.uid,
         link: response.body.postResponse.location // this should be the aws link
       })
-        .then(response2 => {
-          console.log(response2);
+        .then(() => {
           this.deleteImage(this.state.uploadPath);
           AsyncStorage.setItem('UploadRestaurant', '');
           AsyncStorage.setItem('UploadPath', '');
