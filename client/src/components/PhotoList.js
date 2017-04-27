@@ -20,7 +20,7 @@ class PhotoList extends Component {
   componentDidMount() {
     setTimeout(() => {
       this.setState({ spinnerVisible: false });
-    }, 300);
+    }, 100);
   }
 
   getPhotoList() {
@@ -32,7 +32,7 @@ class PhotoList extends Component {
     navigator.geolocation.getCurrentPosition(position => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
-      this.props.getPhotosAndRests('hot', lat, lng);
+      this.props.getPhotosAndRests(this.props.sorting, lat, lng);
     });
   }
 
@@ -59,7 +59,7 @@ class PhotoList extends Component {
       const disliked = await AsyncStorage.getItem('disliked');
       this.setState({ liked: JSON.parse(liked), disliked: JSON.parse(disliked) });
     } catch (error) {
-      // console.log(error);
+      console.log(error);
     }
   };
 
@@ -99,6 +99,13 @@ class PhotoList extends Component {
   }
 
   render() {
+    if (this.props.loading) {
+      return (
+        <View>
+          <Spinner visible color='#ff9700' />
+        </View>
+      );
+    }
     return (
       <View>
         <FlatList
@@ -109,14 +116,13 @@ class PhotoList extends Component {
           onRefresh={() => this.refreshListView()}
           refreshing={this.state.refreshing}
         />
-        <Spinner visible={this.state.spinnerVisible} color='#ff9700' />
       </View>
     );
   }
 }
 
-function mapStateToProps({ photos, restaurants, loginState }) {
-  return { photos, restaurants, loginState };
+function mapStateToProps({ photos, restaurants, loginState, loading, sorting }) {
+  return { photos, restaurants, loginState, loading, sorting };
 }
 
 export default connect(mapStateToProps, { getPhotosAndRests })(PhotoList);

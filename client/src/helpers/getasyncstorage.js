@@ -22,7 +22,6 @@ const saveVote = async (type, id) => {
         object = JSON.parse(object);
         if (!object) object = [];
         object.push(id);
-        // console.log(`Your new disliked array is now: ${object}`);
         await AsyncStorage.setItem('disliked', JSON.stringify(object));
     } else if (type === 3) {
         let object = await AsyncStorage.getItem('liked');
