@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { View, Image, Text, FlatList, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import RNFetchBlob from 'react-native-fetch-blob';
 import { RNS3 } from 'react-native-aws3';
 import { FilterDisplay } from './common';
+import { deleteImage } from './CameraPage';
 import { setCameraState } from '../actions';
 
 const styles = {
@@ -65,17 +65,6 @@ class CameraCommentsPage extends Component {
         }).done();
   }
 
-  deleteImage(photo) {
-    RNFetchBlob.fs.exists(photo)
-      .then((result) => {
-        if (result) {
-          return RNFetchBlob.fs.unlink(photo)
-            .then(() => console.log('File deleted'))
-            .catch((err) => console.log(err.message));
-        }
-      });
-  }
-
   submitUpload() {
     if (this.state.submitted) {
       return;
@@ -108,7 +97,7 @@ class CameraCommentsPage extends Component {
         link: response.body.postResponse.location // this should be the aws link
       })
         .then(() => {
-          this.deleteImage(this.state.uploadPath);
+          deleteImage(this.state.uploadPath);
           AsyncStorage.setItem('UploadRestaurant', '');
           AsyncStorage.setItem('UploadPath', '');
           // this.props.navigator.resetTo({ id: 0 });

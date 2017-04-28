@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View, Image, Text, FlatList, AsyncStorage } from 'react-native';
 import axios from 'axios';
-import RNFetchBlob from 'react-native-fetch-blob';
 import { Input, Header } from './common';
+import { deleteImage } from './CameraPage';
 
 const styles = {
   pageStyle: {
@@ -68,17 +68,6 @@ class CameraLocationPage extends Component {
     this.setState({ query, rlist });
   }
 
-  deleteImage(photo) {
-    const filepath = photo.replace(/^(file:)/, '');
-    RNFetchBlob.fs.exists(filepath)
-      .then((result) => {
-        if (result) {
-          return RNFetchBlob.fs.unlink(filepath)
-            .catch((err) => console.log(err.message));
-        }
-      });
-  }
-
   renderRestaurant(restaurant) {
     return (
       <View style={{ flexDirection: 'row', padding: 10, alignItems: 'center' }}>
@@ -111,7 +100,7 @@ class CameraLocationPage extends Component {
             <Text
               style={headerTextStyle}
               onPress={() => {
-                this.deleteImage(this.state.uploadPath);
+                deleteImage(this.state.uploadPath);
                 AsyncStorage.setItem('UploadPath', '');
                 this.renderCameraPage();
               }}

@@ -15,7 +15,6 @@
     "react-native": "0.43.3",
     "react-native-aws3": "0.0.8",
     "react-native-camera": "^0.7.0",
-    "react-native-camera-kit": "^5.2.13",
     "react-native-communications": "2.2.1",
     "react-native-fetch-blob": "^0.10.4",
     "react-native-image-resizer": "^0.1.0",

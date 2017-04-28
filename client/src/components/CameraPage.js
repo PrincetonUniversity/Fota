@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { View, Text, Dimensions, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
-import { CameraKitCamera } from 'react-native-camera-kit';
+import Camera, { constants } from 'react-native-camera';
 import ImageResizer from 'react-native-image-resizer';
+import RNFetchBlob from 'react-native-fetch-blob';
 import { ImageButton } from './common/';
 import { setCameraState } from '../actions';
 
@@ -27,6 +28,7 @@ const styles = {
   cameraStyle: {
     height: Dimensions.get('window').width,
     width: Dimensions.get('window').width,
+    alignSelf: 'center',
     backgroundColor: 'white'
   },
   footerStyle: {
@@ -41,23 +43,37 @@ const styles = {
   }
 };
 
-const { pageStyle,
-        headerStyle,
-        headerTextStyle,
-        cameraStyle,
-        footerStyle,
-        cameraButtonStyle
-      } = styles;
+const {
+  pageStyle,
+  headerStyle,
+  headerTextStyle,
+  cameraStyle,
+  footerStyle,
+  cameraButtonStyle
+} = styles;
 
 const cameraButton = require('../img/camera_button.png');
 
+export function deleteImage(path) {
+  const filepath = path.replace(/^(file:)/, '');
+  RNFetchBlob.fs.exists(filepath)
+    .then((result) => {
+      if (result) {
+        return RNFetchBlob.fs.unlink(filepath)
+          .catch((err) => console.log(err.message));
+      }
+    });
+}
+
 class CameraPage extends Component {
-  async takePicture() {
-    const data = await this.camera.capture(false);
-    ImageResizer.createResizedImage(data.uri, 1280, 720, 'JPEG', 100).then(reuri => {
-      console.log(reuri);
-      AsyncStorage.setItem('UploadPath', reuri);
-      this.renderCameraLocation();
+  takePicture() {
+    this.camera.capture().then(data => {
+      ImageResizer.createResizedImage(data.path, 800, 1600, 'JPEG', 100).then(reuri => {
+        console.log(reuri);
+        deleteImage(data.path);
+        AsyncStorage.setItem('UploadPath', reuri);
+        this.renderUploadLocation();
+      });
     });
   }
 
@@ -79,13 +95,11 @@ class CameraPage extends Component {
           </Text>
         </View>
 
-        <CameraKitCamera
+        <Camera
           ref={(cam) => { this.camera = cam; }}
           style={cameraStyle}
-          cameraOptions={{
-            ratioOverlay: '1:1',
-            ratioOverlayColor: '#ff0000'
-          }}
+          aspect={constants.Aspect.fill}
+          captureTarget={constants.CaptureTarget.disk}
         />
 
         <View style={footerStyle}>
