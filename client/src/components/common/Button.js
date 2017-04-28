@@ -18,11 +18,12 @@ const styles = {
       color: '#fff',
       fontSize: 16,
       fontWeight: '600',
-      paddingTop: 7,
-      paddingBottom: 7
+      padding: 7
+      // paddingTop: 7,
+      // paddingBottom: 7,
   },
   buttonStyles: {
-      flex: 1,
+      flex: -1,
       alignSelf: 'stretch',
       backgroundColor: '#ff9700',
       marginLeft: 10,

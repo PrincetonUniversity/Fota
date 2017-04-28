@@ -127,6 +127,10 @@ class PhotoDetail extends Component {
     this.setState({ modalVisible: visible });
   }
 
+  closeModal() {
+    this.setState({ modalVisible: false });
+  }
+
   // Sends the update request to the fota server.
   // type can either be "downvote" or "upvote"
   sendUpdateRequest(type, amount) {
@@ -140,10 +144,6 @@ class PhotoDetail extends Component {
     axios.patch(queryString)
       .then()
       .catch(); // LATER should notify user on failure
-  }
-
-  closeModal() {
-    this.setState({ modalVisible: false });
   }
 
   renderUpvote() {

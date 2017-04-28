@@ -6,4 +6,5 @@ export * from './ImageButton';
 export * from './Footer';
 export * from './Input';
 export * from './FilterDisplay';
+export * from './CommentDisplay';
 export * from './Spinner';

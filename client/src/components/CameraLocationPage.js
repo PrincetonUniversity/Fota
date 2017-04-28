@@ -35,7 +35,7 @@ const { pageStyle,
         containerStyle
       } = styles;
 
-class UploadLocationPage extends Component {
+class CameraLocationPage extends Component {
   state = { uploadPath: null, query: '', rlist: [], totalList: [] }
 
   componentWillMount() {
@@ -66,7 +66,7 @@ class UploadLocationPage extends Component {
           style={{ fontFamily: 'Avenir', fontSize: 15 }}
           onPress={() => {
             AsyncStorage.setItem('UploadRestaurant', String(restaurant.item.id));
-            this.renderUploadComments();
+            this.renderCameraComments();
           }}
         >
           {restaurant.item.name}
@@ -79,7 +79,7 @@ class UploadLocationPage extends Component {
     this.props.navigator.replace({ id: 0 });
   }
 
-  renderUploadComments() {
+  renderCameraComments() {
     this.props.navigator.replace({ id: 2 });
   }
 
@@ -133,4 +133,4 @@ class UploadLocationPage extends Component {
   }
 }
 
-export default UploadLocationPage;
+export default CameraLocationPage;

@@ -68,7 +68,7 @@ class CameraPage extends Component {
     });
   }
 
-  renderUploadLocation() {
+  renderCameraLocation() {
     this.props.navigator.replace({ id: 1 });
   }
 

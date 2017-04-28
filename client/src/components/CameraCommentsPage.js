@@ -38,7 +38,7 @@ const { pageStyle,
 
 const commentDetails = 'https://fotafood.herokuapp.com/api/comment/13'; // HARD CODED
 
-class UploadCommentsPage extends Component {
+class CameraCommentsPage extends Component {
   state = { uploadPath: null, restaurantid: null, presetComments: [], submitted: false }
 
   componentWillMount() {
@@ -97,13 +97,13 @@ class UploadCommentsPage extends Component {
     });
   }
 
-  renderUploadLocation() {
+  renderCameraLocation() {
     this.props.navigator.replace({ id: 1 });
   }
 
   renderComment(comment) {
-    const adj = comment.item.adj.charAt(0).toUpperCase() + comment.item.adj.slice(1);
-    const noun = comment.item.noun.charAt(0).toUpperCase() + comment.item.noun.slice(1);
+    const adj = comment.adj.charAt(0).toUpperCase() + comment.adj.slice(1);
+    const noun = comment.noun.charAt(0).toUpperCase() + comment.noun.slice(1);
     const commentString = `${adj} ${noun}`;
     return (
       <FilterDisplay
@@ -122,7 +122,7 @@ class UploadCommentsPage extends Component {
               style={headerTextStyle}
               onPress={() => {
                 AsyncStorage.setItem('UploadRestaurant', '');
-                this.renderUploadLocation();
+                this.renderCameraLocation();
               }}
             >
               Back
@@ -153,7 +153,7 @@ class UploadCommentsPage extends Component {
             <FlatList
               data={this.state.presetComments}
               keyExtractor={comment => comment.id}
-              renderItem={comment => this.renderComment(comment)}
+              renderItem={comment => this.renderComment(comment.item)}
               bounces={false}
             />
           </View>
@@ -170,4 +170,4 @@ function mapStateToProps({ loginState }) {
   return { loginState };
 }
 
-export default connect(mapStateToProps, { setCameraState })(UploadCommentsPage);
+export default connect(mapStateToProps, { setCameraState })(CameraCommentsPage);

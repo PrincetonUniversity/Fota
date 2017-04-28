@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View, Navigator } from 'react-native';
 import CameraPage from './CameraPage';
-import UploadLocationPage from './UploadLocationPage';
-import UploadCommentsPage from './UploadCommentsPage';
+import CameraLocationPage from './CameraLocationPage';
+import CameraCommentsPage from './CameraCommentsPage';
 
 class CameraNavigator extends Component {
   renderScene(route, navigator) {
@@ -10,9 +10,9 @@ class CameraNavigator extends Component {
       case 0:
         return <CameraPage navigator={navigator} />;
       case 1:
-        return <UploadLocationPage navigator={navigator} />;
+        return <CameraLocationPage navigator={navigator} />;
       case 2:
-        return <UploadCommentsPage navigator={navigator} />;
+        return <CameraCommentsPage navigator={navigator} />;
       default:
         return <CameraPage navigator={navigator} />;
     }
