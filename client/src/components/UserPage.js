@@ -64,9 +64,9 @@ class UserPage extends Component {
         </CardSection>
         {this.renderPhotoList(this.state.upvoted, 'Save all your upvoted photos here!')}
 
-        <CardSection>
+        <View style={{ alignItems: 'center' }}>
           <Button onPress={() => firebase.auth().signOut()}>Log out</Button>
-        </CardSection>
+        </View>
       </View>
     );
   }

@@ -63,14 +63,14 @@ class LoginForm extends Component {
       return <Spinner size="small" />;
     }
     return (
-      <CardSection>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Button onPress={this.onLoginButtonPress.bind(this)}>
           Log In
         </Button>
         <Button onPress={this.onSignupButtonPress.bind(this)}>
           Sign Up
         </Button>
-      </CardSection>
+      </View>
     );
   }
 
