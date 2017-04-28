@@ -3,7 +3,7 @@ import { View, Image, Text, FlatList, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { RNS3 } from 'react-native-aws3';
-import { FilterDisplay } from './common';
+import { Header, FilterDisplay } from './common';
 import { deleteImage } from './CameraPage';
 import { setCameraState } from '../actions';
 
@@ -11,15 +11,6 @@ const styles = {
   pageStyle: {
     flex: 1,
     flexDirection: 'column'
-  },
-  headerStyle: {
-    height: 40,
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginLeft: 10,
-    marginRight: 10,
-    marginTop: 20
   },
   headerTextStyle: {
     fontSize: 15,
@@ -41,7 +32,6 @@ const styles = {
 };
 
 const { pageStyle,
-        headerStyle,
         headerTextStyle,
         imageStyle
       } = styles;
@@ -127,7 +117,7 @@ class CameraCommentsPage extends Component {
     if (this.state.uploadPath) {
       return (
         <View style={pageStyle}>
-          <View style={headerStyle}>
+          <Header>
             <Text
               style={headerTextStyle}
               onPress={() => {
@@ -144,7 +134,7 @@ class CameraCommentsPage extends Component {
             >
               Submit
             </Text>
-          </View>
+          </Header>
 
           <View style={{ alignItems: 'center' }}>
             <Image

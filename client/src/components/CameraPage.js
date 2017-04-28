@@ -4,22 +4,13 @@ import { connect } from 'react-redux';
 import Camera, { constants } from 'react-native-camera';
 import ImageResizer from 'react-native-image-resizer';
 import RNFetchBlob from 'react-native-fetch-blob';
-import { ImageButton } from './common/';
+import { Header, ImageButton } from './common/';
 import { setCameraState } from '../actions';
 
 const styles = {
   pageStyle: {
     flex: 1,
     flexDirection: 'column'
-  },
-  headerStyle: {
-    height: 40,
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginLeft: 10,
-    marginRight: 10,
-    marginTop: 20
   },
   headerTextStyle: {
     fontSize: 15,
@@ -45,7 +36,6 @@ const styles = {
 
 const {
   pageStyle,
-  headerStyle,
   headerTextStyle,
   cameraStyle,
   footerStyle,
@@ -68,6 +58,7 @@ export function deleteImage(path) {
 class CameraPage extends Component {
   takePicture() {
     this.camera.capture().then(data => {
+      console.log(data.path);
       ImageResizer.createResizedImage(data.path, 800, 1600, 'JPEG', 100).then(reuri => {
         console.log(reuri);
         deleteImage(data.path);
@@ -84,7 +75,7 @@ class CameraPage extends Component {
   render() {
     return (
       <View style={pageStyle}>
-        <View style={headerStyle}>
+        <Header>
           <Text
             style={headerTextStyle}
             onPress={() => {
@@ -93,7 +84,7 @@ class CameraPage extends Component {
           >
             Cancel
           </Text>
-        </View>
+        </Header>
 
         <Camera
           ref={(cam) => { this.camera = cam; }}

@@ -73,7 +73,6 @@ const styles = {
   },
   containerStyle: {
     backgroundColor: '#ddd',
-    marginHorizontal: 10,
     paddingHorizontal: 12,
     borderRadius: 16,
     height: 32

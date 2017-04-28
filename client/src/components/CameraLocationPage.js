@@ -9,15 +9,6 @@ const styles = {
     flex: 1,
     flexDirection: 'column'
   },
-  headerStyle: {
-    height: 40,
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginLeft: 10,
-    marginRight: 10,
-    marginTop: 20
-  },
   headerTextStyle: {
     fontSize: 15,
     fontFamily: 'Avenir'
@@ -96,7 +87,7 @@ class CameraLocationPage extends Component {
     if (this.state.uploadPath) {
       return (
         <View style={pageStyle}>
-          <View style={headerStyle}>
+          <Header>
             <Text
               style={headerTextStyle}
               onPress={() => {
@@ -107,7 +98,7 @@ class CameraLocationPage extends Component {
             >
               Cancel
             </Text>
-          </View>
+          </Header>
 
           <View style={{ alignItems: 'center' }}>
             <Image
