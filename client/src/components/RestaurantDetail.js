@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
-import { View, Image, Text, ScrollView, FlatList, Modal } from 'react-native';
+import { View, Image, Text, ScrollView, FlatList } from 'react-native';
 import axios from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 import { phonecall } from 'react-native-communications';
-import { ImageButton, FilterDisplay, CommentDisplay } from './common';
-import CommentUpload from './CommentUpload';
+import { Button, ImageButton, FilterDisplay, CommentDisplay } from './common';
 
 const styles = {
   pageStyle: { // Entire restaurant page
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF' // #F8F8F8
+    backgroundColor: '#FFFFFF',
+    marginBottom: 10
   },
   headerStyle: { // Header including back button, name, time until close, call button
     flexDirection: 'row',
@@ -168,10 +168,10 @@ class RestaurantDetail extends Component {
 
   renderPhoto(photo) {
     return (
-      <View key={photo.item.id}>
+      <View key={photo.id}>
         <Spinner visible={this.state.spinnerVisible} color='#ff9700' />
         <Image
-          source={{ uri: photo.item.link }}
+          source={{ uri: photo.link }}
           style={photoStyle}
         />
       </View>
@@ -179,8 +179,8 @@ class RestaurantDetail extends Component {
   }
 
   renderComment(comment) {
-    const adj = comment.item.adj.charAt(0).toUpperCase() + comment.item.adj.slice(1);
-    const noun = comment.item.noun.charAt(0).toUpperCase() + comment.item.noun.slice(1);
+    const adj = comment.adj.charAt(0).toUpperCase() + comment.adj.slice(1);
+    const noun = comment.noun.charAt(0).toUpperCase() + comment.noun.slice(1);
     const commentString = `${adj} ${noun}`;
     return (
       <CommentDisplay
@@ -237,7 +237,7 @@ class RestaurantDetail extends Component {
             <FlatList
               data={this.state.photos}
               keyExtractor={photo => photo.id}
-              renderItem={photo => this.renderPhoto(photo)}
+              renderItem={photo => this.renderPhoto(photo.item)}
               showsHorizontalScrollIndicator={false}
               horizontal
             />
@@ -246,22 +246,25 @@ class RestaurantDetail extends Component {
           <Text style={titleStyle}>
             Consensus!
           </Text>
-          <View style={{ alignItems: 'center' }}>
+          <View style={{ alignItems: 'center', height: 210 }}>
             <FlatList
               data={this.state.comments}
               keyExtractor={comment => comment.id}
               numColumns={2}
-              renderItem={comment => this.renderComment(comment)}
-              bounces={false}
+              initialNumToRender={5}
+              renderItem={comment => this.renderComment(comment.item)}
+              // bounces={false}
             />
           </View>
         </View>
 
-        <ImageButton
-          style={phoneButtonStyle}
-          source={phoneButton}
-          onPress={() => this.renderCommentUpload()}
-        />
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flex: 1 }} />
+          <Button onPress={() => this.renderCommentUpload()}>
+            Add a comment!
+          </Button>
+          <View style={{ flex: 1 }} />
+        </View>
       </View>
     );
   }

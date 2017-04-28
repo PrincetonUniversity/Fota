@@ -118,13 +118,13 @@ class CameraCommentsPage extends Component {
     });
   }
 
-  renderUploadLocation() {
+  renderCameraLocation() {
     this.props.navigator.replace({ id: 1 });
   }
 
   renderComment(comment) {
-    const adj = comment.item.adj.charAt(0).toUpperCase() + comment.item.adj.slice(1);
-    const noun = comment.item.noun.charAt(0).toUpperCase() + comment.item.noun.slice(1);
+    const adj = comment.adj.charAt(0).toUpperCase() + comment.adj.slice(1);
+    const noun = comment.noun.charAt(0).toUpperCase() + comment.noun.slice(1);
     const commentString = `${adj} ${noun}`;
     return (
       <FilterDisplay
@@ -143,7 +143,7 @@ class CameraCommentsPage extends Component {
               style={headerTextStyle}
               onPress={() => {
                 AsyncStorage.setItem('UploadRestaurant', '');
-                this.renderUploadLocation();
+                this.renderCameraLocation();
               }}
             >
               Back
@@ -174,7 +174,7 @@ class CameraCommentsPage extends Component {
             <FlatList
               data={this.state.presetComments}
               keyExtractor={comment => comment.id}
-              renderItem={comment => this.renderComment(comment)}
+              renderItem={comment => this.renderComment(comment.item)}
               bounces={false}
             />
           </View>

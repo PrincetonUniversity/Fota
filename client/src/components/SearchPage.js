@@ -51,6 +51,7 @@ class SearchPage extends Component {
             />
           </Input>
         </Header>
+        
         <View style={{ marginBottom: footerSize }}>
           <FlatList
             data={this.state.rlist}

@@ -58,10 +58,6 @@ class RestaurantModal extends Component {
                 initialRoute={{ id: 0 }}
                 renderScene={this.renderScene.bind(this)}
               />
-              {/* <RestaurantDetail
-                restaurant={this.props.restaurant}
-                close={this.closeModal.bind(this)}
-              /> */}
             </View>
           </View>
         </Modal>

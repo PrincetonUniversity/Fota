@@ -7,21 +7,21 @@ const CommentDisplay = (props) => {
         <Text style={styles.textStyle}>
           {props.text}
         </Text>
+        {props.children}
       </View>
     );
 };
 
 const styles = {
     containerStyle: {
-      // flex: -1,
+      flex: -1,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
       borderRadius: 20,
       backgroundColor: 'orange',
       alignItems: 'center',
       padding: 8,
-      marginLeft: 5,
-      marginRight: 5,
-      marginTop: 5,
-      marginBottom: 5
+      margin: 5
     },
     textStyle: {
       color: 'white',
@@ -29,7 +29,6 @@ const styles = {
       fontSize: 12,
       marginLeft: 3,
       marginRight: 3,
-      textAlign: 'justify'
     }
 };
 

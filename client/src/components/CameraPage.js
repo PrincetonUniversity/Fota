@@ -57,11 +57,11 @@ class CameraPage extends Component {
     ImageResizer.createResizedImage(data.uri, 1280, 720, 'JPEG', 100).then(reuri => {
       console.log(reuri);
       AsyncStorage.setItem('UploadPath', reuri);
-      this.renderUploadLocation();
+      this.renderCameraLocation();
     });
   }
 
-  renderUploadLocation() {
+  renderCameraLocation() {
     this.props.navigator.replace({ id: 1 });
   }
 
