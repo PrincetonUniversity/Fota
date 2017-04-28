@@ -251,7 +251,6 @@ class RestaurantDetail extends Component {
               data={this.state.comments}
               keyExtractor={comment => comment.id}
               numColumns={2}
-              initialNumToRender={5}
               renderItem={comment => this.renderComment(comment.item)}
               // bounces={false}
             />

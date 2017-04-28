@@ -3,7 +3,7 @@ import { View, Image, Text, FlatList, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { RNS3 } from 'react-native-aws3';
-import { Header, FilterDisplay } from './common';
+import { Header, CommentDisplay } from './common';
 import { deleteImage } from './CameraPage';
 import { setCameraState } from '../actions';
 
@@ -106,7 +106,7 @@ class CameraCommentsPage extends Component {
     const noun = comment.noun.charAt(0).toUpperCase() + comment.noun.slice(1);
     const commentString = `${adj} ${noun}`;
     return (
-      <FilterDisplay
+      <CommentDisplay
         key={commentString}
         text={commentString}
       />
@@ -154,6 +154,7 @@ class CameraCommentsPage extends Component {
               data={this.state.presetComments}
               keyExtractor={comment => comment.id}
               renderItem={comment => this.renderComment(comment.item)}
+              numColumns={2}
               bounces={false}
             />
           </View>

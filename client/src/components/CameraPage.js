@@ -63,7 +63,7 @@ class CameraPage extends Component {
         console.log(reuri);
         deleteImage(data.path);
         AsyncStorage.setItem('UploadPath', reuri);
-        this.renderUploadLocation();
+        this.renderCameraLocation();
       });
     });
   }
