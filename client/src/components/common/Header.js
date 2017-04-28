@@ -10,10 +10,10 @@ const Header = (props) => (
 const styles = {
     viewStyle: {
         backgroundColor: 'white',
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        height: 60,
-        paddingTop: 15,
+        height: 50,
+        paddingHorizontal: 10,
         // shadowColor: '#000',
         // shadowOffset: { width: 0, height: 2 },
         // shadowOpacity: 0.2,

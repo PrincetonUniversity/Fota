@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import { View, Navigator, Modal } from 'react-native';
+import { Platform, View, Navigator, Modal } from 'react-native';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
-import HomePage from './components/HomePage';
+import PhotoList from './components/PhotoList';
 import SearchPage from './components/SearchPage';
 import BlankPage from './components/BlankPage';
 import AccountPage from './components/AccountPage';
 import Navbar from './components/Navbar';
 import CameraNavigator from './components/CameraNavigator';
+import { footerSize } from './components/common';
 import { setCameraState, logInOrOut } from './actions';
 
 class Base extends Component {
@@ -33,7 +34,7 @@ class Base extends Component {
   renderScene(route) {
     switch (route.id) {
       case 0:
-        return <HomePage />;
+        return <PhotoList />;
       case 1:
         return <SearchPage />;
       case 2:
@@ -46,7 +47,7 @@ class Base extends Component {
   render() {
     if (this.state.loginFinished) {
       return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginTop: (Platform.OS === 'ios') ? 15 : 0 }}>
           <Modal
             visible={this.props.cameraVisible}
             style={{ flex: 1 }}
@@ -56,7 +57,7 @@ class Base extends Component {
           </Modal>
 
           <Navigator
-            style={{ flex: 1, backgroundColor: '#fff' }}
+            style={{ flex: 1, backgroundColor: '#fff', paddingBottom: footerSize }}
             initialRoute={{ id: 0 }}
             renderScene={this.renderScene.bind(this)}
             configureScene={this.configureScene}

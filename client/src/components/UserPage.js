@@ -74,6 +74,9 @@ class UserPage extends Component {
 
 const styles = {
   headerTextStyle: {
+    flex: 1,
+    textAlign: 'center',
+    fontFamily: 'Avenir',
     fontSize: 20,
     color: '#000'
   },
@@ -83,6 +86,7 @@ const styles = {
   },
   emptyTextStyle: {
     color: '#aaa',
+    fontFamily: 'Avenir',
     marginHorizontal: 15,
     marginBottom: 10
   },

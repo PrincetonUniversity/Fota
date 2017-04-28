@@ -110,15 +110,19 @@ class LoginForm extends Component {
 
 const styles = {
   headerTextStyle: {
+    flex: 1,
     fontSize: 20,
+    textAlign: 'center',
     fontFamily: 'Avenir',
     color: '#000'
   },
   labelStyle: {
-    flex: 0.35
+    flex: 0.35,
+    fontFamily: 'Avenir'
   },
   errorTextStyle: {
     fontSize: 16,
+    fontFamily: 'Avenir',
     alignSelf: 'center',
     color: 'red'
   }
