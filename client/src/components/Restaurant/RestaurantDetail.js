@@ -4,7 +4,7 @@ import axios from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 import { phonecall } from 'react-native-communications';
-import { Button, ImageButton, FilterDisplay, CommentDisplay } from './common';
+import { Button, ImageButton, FilterDisplay, CommentDisplay } from '../common';
 
 const styles = {
   pageStyle: { // Entire restaurant page
@@ -52,9 +52,6 @@ const styles = {
     marginLeft: 5,
     marginRight: 5
   },
-  // photoListStyle: { // List of photos (ListView)
-  //
-  // },
   photoStyle: { // Individual photos
     height: 150,
     width: 150,
@@ -77,8 +74,8 @@ const {
 
 const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
 const commentDetails = 'https://fotafood.herokuapp.com/api/comment/';
-const backButton = require('../img/exit_button.png');
-const phoneButton = require('../img/phone.png');
+const backButton = require('../../img/exit_button.png');
+const phoneButton = require('../../img/phone.png');
 
 class RestaurantDetail extends Component {
   state = { photos: [], comments: [], spinnerVisible: true }
@@ -108,49 +105,59 @@ class RestaurantDetail extends Component {
     return false;
   }
 
-  timeUntilClose(closeTime) { // Calculates how long until the restaurant closes
-    const currentDate = moment(new Date());
-    const closeTimeHours = Math.floor(closeTime / 100);
-    const closeTimeMinutes = closeTime - closeTimeHours * 100;
-    const closeDate = moment({ hours: closeTimeHours, minutes: closeTimeMinutes });
-    if (currentDate > closeDate) {
-      closeDate.add(1, 'days');
-    }
-    const timeOpenHours = closeDate.diff(currentDate, 'hours');
-    const timeOpenMinutes = closeDate.diff(currentDate, 'minutes') % 60;
+  // timeUntilClose(closeTime) { // Calculates how long until the restaurant closes
+  //   const currentDate = moment(new Date());
+  //   const closeTimeHours = Math.floor(closeTime / 100);
+  //   const closeTimeMinutes = closeTime - closeTimeHours * 100;
+  //   const closeDate = moment({ hours: closeTimeHours, minutes: closeTimeMinutes });
+  //   if (currentDate > closeDate) {
+  //     closeDate.add(1, 'days');
+  //   }
+  //   const timeOpenHours = closeDate.diff(currentDate, 'hours');
+  //   const timeOpenMinutes = closeDate.diff(currentDate, 'minutes') % 60;
+  //
+  //   return [timeOpenHours, timeOpenMinutes];
+  // }
 
-    return [timeOpenHours, timeOpenMinutes];
+  timeString(time) {
+    const timeHours = Math.floor(time / 100);
+    const timeMinutes = time - timeHours * 100;
+    const timeDate = moment({ hours: timeHours, minutes: timeMinutes });
+    return timeDate.format('h:mm A');
   }
 
   timeUntilCloseLabel(closeTime, openTime) {
     if (!this.isOpen(closeTime, openTime)) {
-      const openTimeHours = Math.floor(openTime / 100);
-      const openTimeMinutes = openTime - openTimeHours * 100;
-      const openDate = moment({ hours: openTimeHours, minutes: openTimeMinutes });
-      const openTimeString = openDate.format('h:mm A');
-      return `Closed until ${openTimeString}`;
+      // const openTimeHours = Math.floor(openTime / 100);
+      // const openTimeMinutes = openTime - openTimeHours * 100;
+      // const openDate = moment({ hours: openTimeHours, minutes: openTimeMinutes });
+      // const openTimeString = openDate.format('h:mm A');
+      const time = this.timeString(openTime);
+      return `Closed until ${time}`;
     }
-    const timeUntilClose = this.timeUntilClose(closeTime);
-    let hoursOpen = timeUntilClose[0]; // Hours in amount of time open.
-    const minutesOpen = timeUntilClose[1]; // Minutes in amount of time open.
-    let closingTimeString = 'Open for ';
-    if (timeUntilClose[0] === 0) {
-      if (minutesOpen === 1) {
-        closingTimeString += `${minutesOpen} minute`;
-      } else {
-        closingTimeString += `${minutesOpen} minutes`;
-      }
-    } else {
-      if (minutesOpen > 30) {
-        hoursOpen += 1;
-      }
-      if (hoursOpen === 1) {
-        closingTimeString += `${hoursOpen} hour`;
-      } else {
-        closingTimeString += `${hoursOpen} hours`;
-      }
-    }
-    return closingTimeString;
+    const time = this.timeString(closeTime);
+    return `Open until ${time}`;
+    // const timeUntilClose = this.timeUntilClose(closeTime);
+    // let hoursOpen = timeUntilClose[0]; // Hours in amount of time open.
+    // const minutesOpen = timeUntilClose[1]; // Minutes in amount of time open.
+    // let closingTimeString = 'Open for ';
+    // if (timeUntilClose[0] === 0) {
+    //   if (minutesOpen === 1) {
+    //     closingTimeString += `${minutesOpen} minute`;
+    //   } else {
+    //     closingTimeString += `${minutesOpen} minutes`;
+    //   }
+    // } else {
+    //   if (minutesOpen > 30) {
+    //     hoursOpen += 1;
+    //   }
+    //   if (hoursOpen === 1) {
+    //     closingTimeString += `${hoursOpen} hour`;
+    //   } else {
+    //     closingTimeString += `${hoursOpen} hours`;
+    //   }
+    // }
+    // return closingTimeString;
   }
 
   renderCommentUpload() {
@@ -257,12 +264,10 @@ class RestaurantDetail extends Component {
           </View>
         </View>
 
-        <View style={{ flexDirection: 'row' }}>
-          <View style={{ flex: 1 }} />
+        <View style={{ flexDirection: 'row', marginLeft: 30, marginRight: 30 }}>
           <Button onPress={() => this.renderCommentUpload()}>
             Add a comment!
           </Button>
-          <View style={{ flex: 1 }} />
         </View>
       </View>
     );

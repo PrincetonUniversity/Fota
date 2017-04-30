@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Text, View, FlatList, Image } from 'react-native';
 import axios from 'axios';
 import firebase from 'firebase';
-import { Header, Button, CardSection } from './common';
-import RestaurantModal from './RestaurantModal';
+import { Header, Button, CardSection } from '../common';
+import RestaurantModal from '../Restaurant/RestaurantModal';
 
 class UserPage extends Component {
   state = { uploaded: [], upvoted: [], restaurants: [] }
@@ -57,14 +57,14 @@ class UserPage extends Component {
         <CardSection>
           <Text style={styles.sectionTextStyle}>My Photos</Text>
         </CardSection>
-        {this.renderPhotoList(this.state.uploaded, 'Upload a photo to see it here!')}
+        {this.renderPhotoList(this.state.uploaded, 'Take your first photo to see it here!')}
 
         <CardSection>
           <Text style={styles.sectionTextStyle}>My Upvotes</Text>
         </CardSection>
-        {this.renderPhotoList(this.state.upvoted, 'Save all your upvoted photos here!')}
+        {this.renderPhotoList(this.state.upvoted, 'See all your upvoted photos here!')}
 
-        <View style={{ alignItems: 'center' }}>
+        <View style={{ alignItems: 'center', flexDirection: 'row' }}>
           <Button onPress={() => firebase.auth().signOut()}>Log out</Button>
         </View>
       </View>

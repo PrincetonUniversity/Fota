@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
-import { View, Image, Text, FlatList, AsyncStorage } from 'react-native';
+import { View,
+          Image,
+          Text,
+          FlatList,
+          AsyncStorage,
+          TouchableWithoutFeedback,
+          Keyboard
+        } from 'react-native';
 import axios from 'axios';
-import { Input, Header } from './common';
+import { Input, Header } from '../common';
 import { deleteImage } from './CameraPage';
 
 const styles = {
@@ -29,7 +36,6 @@ const styles = {
 };
 
 const { pageStyle,
-        headerStyle,
         headerTextStyle,
         imageStyle,
         containerStyle
@@ -86,6 +92,7 @@ class CameraLocationPage extends Component {
   render() {
     if (this.state.uploadPath) {
       return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={pageStyle}>
           <Header>
             <Text
@@ -110,21 +117,20 @@ class CameraLocationPage extends Component {
           <Header>
             <Input
               style={containerStyle}
-              placeholder='Where did you take this picture?'
+              placeholder='Where are you?'
               value={this.state.query}
               onChangeText={query => this.updateQuery(query)}
             />
           </Header>
 
-          <View>
-            <FlatList
-              data={this.state.rlist}
-              keyExtractor={restaurant => restaurant.id}
-              renderItem={restaurant => this.renderRestaurant(restaurant)}
-              bounces={false}
-            />
-          </View>
+          <FlatList
+            data={this.state.rlist}
+            keyExtractor={restaurant => restaurant.id}
+            renderItem={restaurant => this.renderRestaurant(restaurant)}
+            bounces={false}
+          />
         </View>
+        </TouchableWithoutFeedback>
       );
     }
     return ( // DO SOMETHING HERE

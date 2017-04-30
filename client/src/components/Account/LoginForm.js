@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import firebase from 'firebase';
 import axios from 'axios';
-import { Header, CardSection, Button, Input, Spinner } from './common';
+import { Header, CardSection, Button, Input, Spinner } from '../common';
 
 class LoginForm extends Component {
   state = { email: '', pass: '', error: '', loading: false };
@@ -63,7 +63,7 @@ class LoginForm extends Component {
       return <Spinner size="small" />;
     }
     return (
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
         <Button onPress={this.onLoginButtonPress.bind(this)}>
           Log In
         </Button>

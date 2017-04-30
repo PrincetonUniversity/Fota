@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Text, View, FlatList, Image } from 'react-native';
+import { Text, View, FlatList, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import axios from 'axios';
-import { Header, Input } from './common';
-import RestaurantModal from './RestaurantModal';
-import { footerSize } from './common/Footer';
+import { Header, Input } from '../common';
+import RestaurantModal from '../Restaurant/RestaurantModal';
+import { footerSize } from '../common/Footer';
 
 class SearchPage extends Component {
   state = { query: '', rlist: [], totalList: [] }
@@ -37,30 +37,32 @@ class SearchPage extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1, marginBottom: footerSize }}>
-        <Header>
-          <Input
-            style={styles.containerStyle}
-            placeholder='Search'
-            value={this.state.query}
-            onChangeText={query => this.updateQuery(query)}
-          >
-            <Image
-              style={styles.labelStyle}
-              source={require('../img/magnifying_glass_unactivated.png')}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{ flex: 1, marginBottom: footerSize }}>
+          <Header>
+            <Input
+              style={styles.containerStyle}
+              placeholder='Search'
+              value={this.state.query}
+              onChangeText={query => this.updateQuery(query)}
+            >
+              <Image
+                style={styles.labelStyle}
+                source={require('../../img/magnifying_glass_unactivated.png')}
+              />
+            </Input>
+          </Header>
+
+          <View style={{ marginBottom: footerSize }}>
+            <FlatList
+              data={this.state.rlist}
+              keyExtractor={restaurant => restaurant.id}
+              renderItem={restaurant => this.renderRestaurant(restaurant.item)}
+              bounces={false}
             />
-          </Input>
-        </Header>
-        
-        <View style={{ marginBottom: footerSize }}>
-          <FlatList
-            data={this.state.rlist}
-            keyExtractor={restaurant => restaurant.id}
-            renderItem={restaurant => this.renderRestaurant(restaurant.item)}
-            bounces={false}
-          />
+          </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 }

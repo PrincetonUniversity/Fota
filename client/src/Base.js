@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { Platform, View, Navigator, Modal } from 'react-native';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
-import PhotoList from './components/PhotoList';
-import SearchPage from './components/SearchPage';
-import BlankPage from './components/BlankPage';
-import AccountPage from './components/AccountPage';
+import PhotoList from './components/Photo/PhotoList';
+import SearchPage from './components/Search/SearchPage';
+import BlankPage from './components/common/BlankPage';
+import AccountPage from './components/Account/AccountPage';
 import Navbar from './components/Navbar';
-import CameraNavigator from './components/CameraNavigator';
+import CameraNavigator from './components/Camera/CameraNavigator';
 import { footerSize } from './components/common';
 import { setCameraState, logInOrOut } from './actions';
 
@@ -43,11 +43,11 @@ class Base extends Component {
         return <BlankPage />;
     }
   }
-
+//marginTop: (Platform.OS === 'ios') ? 15 : 0
   render() {
     if (this.state.loginFinished) {
       return (
-        <View style={{ flex: 1, marginTop: (Platform.OS === 'ios') ? 15 : 0 }}>
+        <View style={{ flex: 1 }}>
           <Modal
             visible={this.props.cameraVisible}
             style={{ flex: 1 }}
