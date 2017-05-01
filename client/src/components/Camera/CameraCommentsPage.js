@@ -3,9 +3,9 @@ import { View, Image, Text, FlatList, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { RNS3 } from 'react-native-aws3';
-import { Header, CommentDisplay } from './common';
+import { Header, CommentDisplay } from '../common';
 import { deleteImage } from './CameraPage';
-import { setCameraState } from '../actions';
+import { setCameraState } from '../../actions';
 
 const styles = {
   pageStyle: {

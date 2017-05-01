@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import Camera, { constants } from 'react-native-camera';
 import ImageResizer from 'react-native-image-resizer';
 import RNFetchBlob from 'react-native-fetch-blob';
-import { Header, ImageButton } from './common/';
-import { setCameraState } from '../actions';
+import { Header, ImageButton } from '../common/';
+import { setCameraState } from '../../actions';
 
 const styles = {
   pageStyle: {
@@ -42,7 +42,7 @@ const {
   cameraButtonStyle
 } = styles;
 
-const cameraButton = require('../img/camera_button.png');
+const cameraButton = require('../../img/camera_button.png');
 
 export function deleteImage(path) {
   const filepath = path.replace(/^(file:)/, '');

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, FlatList } from 'react-native';
 import axios from 'axios';
-import { CommentDisplay, ImageButton, Button, Header } from './common';
+import { CommentDisplay, ImageButton, Button } from '../common';
 
 const styles = {
   pageStyle: {
@@ -74,7 +74,7 @@ const { pageStyle,
 
 const adjectives = ['Great', 'Good', 'OK', 'Bad'];
 const nouns = ['Food', 'Ambience', 'Service', 'Atmosphere'];
-const backButton = require('../img/exit_button.png');
+const backButton = require('../../img/exit_button.png');
 
 class CommentUpload extends Component {
   state = { adjective: '', noun: '', comments: [] }
@@ -117,10 +117,9 @@ class CommentUpload extends Component {
   submitComments() {
     if (this.state.comments.length === 0) {
       return;
-    } else {
-      this.state.comments.map(comment => this.submitComment(comment));
-      this.renderRestaurantDetail();
     }
+    this.state.comments.map(comment => this.submitComment(comment));
+    this.renderRestaurantDetail();
   }
 
   submitComment(comment) {
@@ -150,15 +149,14 @@ class CommentUpload extends Component {
           {this.renderComment()}
         </ScrollView>
       );
-    } else {
-      return (
-        <View style={uploadContainerStyle}>
-          <Text style={commentTextStyle}>
-            Say something about this restaurant...
-          </Text>
-        </View>
-      );
     }
+    return (
+      <View style={uploadContainerStyle}>
+        <Text style={commentTextStyle}>
+          Say something about this restaurant...
+        </Text>
+      </View>
+    );
   }
 
   renderComment() {

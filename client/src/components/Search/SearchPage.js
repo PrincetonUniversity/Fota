@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Text, View, FlatList, Image } from 'react-native';
+import { Text, View, FlatList, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import axios from 'axios';
-import { Header, Input } from './common';
-import RestaurantModal from './RestaurantModal';
+import { Header, Input } from '../common';
+import RestaurantModal from '../Restaurant/RestaurantModal';
 
 class SearchPage extends Component {
   state = { query: '', rlist: [], totalList: [] }
@@ -42,28 +42,30 @@ class SearchPage extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        <Header>
-          <Input
-            style={styles.containerStyle}
-            placeholder='Search'
-            value={this.state.query}
-            onChangeText={query => this.updateQuery(query)}
-          >
-            <Image
-              style={styles.labelStyle}
-              source={require('../img/magnifying_glass_unactivated.png')}
-            />
-          </Input>
-        </Header>
-        <FlatList
-          data={this.state.rlist}
-          keyExtractor={restaurant => restaurant.id}
-          renderItem={restaurant => this.renderRestaurant(restaurant.item)}
-          keyboardShouldPersistTaps={'handled'}
-          bounces={false}
-        />
-      </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{ flex: 1 }}>
+          <Header>
+            <Input
+              style={styles.containerStyle}
+              placeholder='Search'
+              value={this.state.query}
+              onChangeText={query => this.updateQuery(query)}
+            >
+              <Image
+                style={styles.labelStyle}
+                source={require('../../img/magnifying_glass_unactivated.png')}
+              />
+            </Input>
+          </Header>
+          <FlatList
+            data={this.state.rlist}
+            keyExtractor={restaurant => restaurant.id}
+            renderItem={restaurant => this.renderRestaurant(restaurant.item)}
+            keyboardShouldPersistTaps={'handled'}
+            bounces={false}
+          />
+        </View>
+      </TouchableWithoutFeedback>
     );
   }
 }

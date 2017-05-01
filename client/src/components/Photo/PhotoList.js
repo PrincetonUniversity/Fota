@@ -7,8 +7,8 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import PhotoDetail from './PhotoDetail';
-import Headbar from './Headbar';
-import { getPhotosAndRests } from '../actions/index';
+import Headbar from '../Headbar';
+import { getPhotosAndRests } from '../../actions/index';
 
 class PhotoList extends Component {
   state = { likesLoading: true, refreshing: false, liked: null, disliked: null };

@@ -4,9 +4,9 @@ import React, { Component } from 'react';
 import { View, Image, Text, Dimensions } from 'react-native';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import { Card, ImageButton } from './common';
-import RestaurantModal from './RestaurantModal';
-import saveVote from '../helpers/getasyncstorage';
+import { Card, ImageButton } from '../common';
+import RestaurantModal from '../Restaurant/RestaurantModal';
+import saveVote from '../../helpers/getasyncstorage';
 
 const styles = {
   photoStyle: { // The picture
@@ -76,10 +76,10 @@ const {
   likeContainerStyle
 } = styles;
 
-const upvoteUnactivated = require('../img/upvote_unactivated.png');
-const upvoteActivated = require('../img/upvote_activated.png');
-const downvoteUnactivated = require('../img/downvote_unactivated.png');
-const downvoteActivated = require('../img/downvote_activated.png');
+const upvoteUnactivated = require('../../img/upvote_unactivated.png');
+const upvoteActivated = require('../../img/upvote_activated.png');
+const downvoteUnactivated = require('../../img/downvote_unactivated.png');
+const downvoteActivated = require('../../img/downvote_activated.png');
 
 class PhotoDetail extends Component {
   constructor(props) {
