@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, View, Navigator, Modal } from 'react-native';
+import { View, Navigator, Modal } from 'react-native';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
 import PhotoList from './components/PhotoList';
@@ -47,7 +47,7 @@ class Base extends Component {
   render() {
     if (this.state.loginFinished) {
       return (
-        <View style={{ flex: 1, marginTop: (Platform.OS === 'ios') ? 15 : 0 }}>
+        <View style={{ flex: 1 }}>
           <Modal
             visible={this.props.cameraVisible}
             style={{ flex: 1 }}

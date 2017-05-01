@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, Text, ScrollView, FlatList } from 'react-native';
+import { View, Image, Text, ScrollView, FlatList, Platform } from 'react-native';
 import axios from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
@@ -17,6 +17,8 @@ const styles = {
   headerStyle: { // Header including back button, name, time until close, call button
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: (Platform.OS === 'ios') ? 15 : 0,
+    marginHorizontal: 5,
     marginBottom: 5
   },
   backButtonStyle: { // Back button
@@ -60,6 +62,11 @@ const styles = {
     width: 150,
     marginLeft: 2.5,
     marginRight: 2.5
+  },
+  reviewStyle: {
+    alignItems: 'center',
+    flex: 1,
+    marginBottom: 10
   }
 };
 
@@ -72,7 +79,8 @@ const {
   timeUntilCloseStyle,
   phoneButtonStyle,
   filterContainerStyle,
-  photoStyle
+  photoStyle,
+  reviewStyle
 } = styles;
 
 const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
@@ -194,75 +202,71 @@ class RestaurantDetail extends Component {
     const restaurant = this.props.restaurant;
     return (
       <View style={pageStyle}>
-        <View>
-          <View style={headerStyle}>
-            <View style={{ marginTop: 5, marginLeft: 5 }}>
-              <ImageButton
-                style={backButtonStyle}
-                source={backButton}
-                onPress={() => this.props.close()}
-              />
-            </View>
-
-            <View style={titleContainerStyle}>
-              <Text style={titleStyle}>
-                {restaurant.name}
-              </Text>
-              <Text style={timeUntilCloseStyle}>
-                {this.timeUntilCloseLabel(this.props.restaurant.closeTime,
-                                          this.props.restaurant.openTime)}
-              </Text>
-            </View>
-
-            <View style={{ marginTop: 5, marginRight: 5 }}>
-              <ImageButton
-                style={phoneButtonStyle}
-                source={phoneButton}
-                onPress={() => phonecall(restaurant.phoneNumber.substring(1), false)}
-              />
-            </View>
-          </View>
-
-          <View style={filterContainerStyle}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              bounces={false}
-            >
-              {this.renderFilters()}
-            </ScrollView>
-          </View>
-
-          <View style={{ marginBottom: 10 }}>
-            <FlatList
-              data={this.state.photos}
-              keyExtractor={photo => photo.id}
-              renderItem={photo => this.renderPhoto(photo.item)}
-              showsHorizontalScrollIndicator={false}
-              horizontal
+        <View style={headerStyle}>
+          <View style={{ marginTop: 5 }}>
+            <ImageButton
+              style={backButtonStyle}
+              source={backButton}
+              onPress={() => this.props.close()}
             />
           </View>
 
-          <Text style={titleStyle}>
-            Consensus!
-          </Text>
-          <View style={{ alignItems: 'center', height: 210 }}>
-            <FlatList
-              data={this.state.comments}
-              keyExtractor={comment => comment.id}
-              numColumns={2}
-              renderItem={comment => this.renderComment(comment.item)}
-              // bounces={false}
+          <View style={titleContainerStyle}>
+            <Text style={titleStyle}>
+              {restaurant.name}
+            </Text>
+            <Text style={timeUntilCloseStyle}>
+              {this.timeUntilCloseLabel(this.props.restaurant.closeTime,
+                                        this.props.restaurant.openTime)}
+            </Text>
+          </View>
+
+          <View style={{ marginTop: 5 }}>
+            <ImageButton
+              style={phoneButtonStyle}
+              source={phoneButton}
+              onPress={() => phonecall(restaurant.phoneNumber.substring(1), false)}
             />
           </View>
         </View>
 
+        <View style={filterContainerStyle}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            bounces={false}
+          >
+            {this.renderFilters()}
+          </ScrollView>
+        </View>
+
+        <View style={{ marginBottom: 10 }}>
+          <FlatList
+            data={this.state.photos}
+            keyExtractor={photo => photo.id}
+            renderItem={photo => this.renderPhoto(photo.item)}
+            showsHorizontalScrollIndicator={false}
+            horizontal
+          />
+        </View>
+
+        <Text style={titleStyle}>
+          Consensus!
+        </Text>
+        <View style={reviewStyle}>
+          <FlatList
+            data={this.state.comments}
+            keyExtractor={comment => comment.id}
+            numColumns={2}
+            renderItem={comment => this.renderComment(comment.item)}
+            // bounces={false}
+          />
+        </View>
+
         <View style={{ flexDirection: 'row' }}>
-          <View style={{ flex: 1 }} />
           <Button onPress={() => this.renderCommentUpload()}>
             Add a comment!
           </Button>
-          <View style={{ flex: 1 }} />
         </View>
       </View>
     );

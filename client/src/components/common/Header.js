@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 
 const Header = (props) => (
       <View style={styles.viewStyle}>
@@ -13,6 +13,7 @@ const styles = {
         justifyContent: 'space-between',
         alignItems: 'center',
         height: 50,
+        marginTop: (Platform.OS === 'ios') ? 15 : 0,
         paddingHorizontal: 10,
         // shadowColor: '#000',
         // shadowOffset: { width: 0, height: 2 },

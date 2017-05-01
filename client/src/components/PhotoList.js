@@ -11,16 +11,10 @@ import Headbar from './Headbar';
 import { getPhotosAndRests } from '../actions/index';
 
 class PhotoList extends Component {
-  state = { spinnerVisible: true, refreshing: false, liked: null, disliked: null };
+  state = { likesLoading: true, refreshing: false, liked: null, disliked: null };
 
   componentWillMount() {
     this.getPhotoList();
-  }
-
-  componentDidMount() {
-    setTimeout(() => {
-      this.setState({ spinnerVisible: false });
-    }, 100);
   }
 
   getPhotoList() {
@@ -44,10 +38,9 @@ class PhotoList extends Component {
         let disliked = userInfo.data.dislikedPhotoIds;
         if (!liked) liked = [];
         if (!disliked) disliked = [];
-        this.setState({ liked, disliked });
+        this.setState({ liked, disliked, likesLoading: false });
       });
     } catch (error) {
-      console.log('Error at line 42 in Photolist.js');
       console.log(error);
     }
   }
@@ -57,7 +50,11 @@ class PhotoList extends Component {
       // await AsyncStorage.clear();
       const liked = await AsyncStorage.getItem('liked');
       const disliked = await AsyncStorage.getItem('disliked');
-      this.setState({ liked: JSON.parse(liked), disliked: JSON.parse(disliked) });
+      this.setState({
+        liked: JSON.parse(liked),
+        disliked: JSON.parse(disliked),
+        likesLoading: false
+      });
     } catch (error) {
       console.log(error);
     }
@@ -99,9 +96,10 @@ class PhotoList extends Component {
   }
 
   render() {
-    if (this.props.loading) {
+    if (this.props.loading || this.state.likesLoading) {
       return (
         <View>
+          <Headbar />
           <Spinner visible color='#ff9700' />
         </View>
       );

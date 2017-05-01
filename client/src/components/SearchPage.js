@@ -3,7 +3,6 @@ import { Text, View, FlatList, Image } from 'react-native';
 import axios from 'axios';
 import { Header, Input } from './common';
 import RestaurantModal from './RestaurantModal';
-import { footerSize } from './common/Footer';
 
 class SearchPage extends Component {
   state = { query: '', rlist: [], totalList: [] }
@@ -16,9 +15,15 @@ class SearchPage extends Component {
   updateQuery(query) {
     let rlist = [];
     if (query !== '') {
-      rlist = this.state.totalList.filter(restaurant =>
-        restaurant.name.toLowerCase().includes(query.toLowerCase())
-      );
+      rlist = this.state.totalList.filter(restaurant => {
+        const arr = restaurant.name.toLowerCase().split(' ');
+        for (const word of arr) {
+          if (word.startsWith(query)) {
+            return true;
+          }
+        }
+        return false;
+      });
     }
     this.setState({ query, rlist });
   }
@@ -37,7 +42,7 @@ class SearchPage extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1, marginBottom: footerSize }}>
+      <View style={{ flex: 1 }}>
         <Header>
           <Input
             style={styles.containerStyle}
@@ -51,15 +56,13 @@ class SearchPage extends Component {
             />
           </Input>
         </Header>
-        
-        <View style={{ marginBottom: footerSize }}>
-          <FlatList
-            data={this.state.rlist}
-            keyExtractor={restaurant => restaurant.id}
-            renderItem={restaurant => this.renderRestaurant(restaurant.item)}
-            bounces={false}
-          />
-        </View>
+        <FlatList
+          data={this.state.rlist}
+          keyExtractor={restaurant => restaurant.id}
+          renderItem={restaurant => this.renderRestaurant(restaurant.item)}
+          keyboardShouldPersistTaps={'handled'}
+          bounces={false}
+        />
       </View>
     );
   }
@@ -76,6 +79,10 @@ const styles = {
     paddingHorizontal: 12,
     borderRadius: 16,
     height: 32
+  },
+  dismisserStyle: {
+    flex: 1,
+    color: '#f00'
   }
 };
 
