@@ -5,7 +5,8 @@ import { View,
           FlatList,
           AsyncStorage,
           TouchableOpacity,
-          ScrollView
+          ScrollView,
+          Alert
         } from 'react-native';
 import { connect } from 'react-redux';
 import axios from 'axios';
