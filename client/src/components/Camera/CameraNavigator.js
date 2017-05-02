@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { View, Navigator } from 'react-native';
+import { connect } from 'react-redux';
 import CameraPage from './CameraPage';
 import CameraLocationPage from './CameraLocationPage';
 import CameraCommentsPage from './CameraCommentsPage';
+import CameraLoginForm from './CameraLoginForm';
 
 class CameraNavigator extends Component {
   renderScene(route, navigator) {
@@ -14,16 +16,17 @@ class CameraNavigator extends Component {
       case 2:
         return <CameraCommentsPage navigator={navigator} />;
       default:
-        return <CameraPage navigator={navigator} />;
+        return <CameraLoginForm navigator={navigator} />;
     }
   }
 
   render() {
+    const user = (this.props.loginState) ? 0 : -1;
     return (
       <View style={{ flex: 1 }}>
         <Navigator
           style={{ flex: 1, backgroundColor: '#fff' }}
-          initialRoute={{ id: 0 }}
+          initialRoute={{ id: user }}
           renderScene={this.renderScene.bind(this)}
         />
       </View>
@@ -31,4 +34,8 @@ class CameraNavigator extends Component {
   }
 }
 
-export default CameraNavigator;
+function mapStateToProps({ loginState }) {
+  return { loginState };
+}
+
+export default connect(mapStateToProps)(CameraNavigator);
