@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, Text, FlatList, AsyncStorage } from 'react-native';
+import { View, Image, Text, FlatList, AsyncStorage, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { RNS3 } from 'react-native-aws3';
@@ -96,7 +96,20 @@ class CameraCommentsPage extends Component {
           // this.props.navigator.resetTo({ id: 0 });
           this.props.setCameraState(false);
         })
-        .catch(error => console.log(error));
+        .catch(error => {
+          console.log(error.response.status === 400);
+          if (error.response.status === 400) {
+            console.log('bad photo');
+            Alert.alert(
+              'Invalid Photo',
+              'You may have uploaded an invalid photo. Please make sure your submit a picture of food.',
+              [
+                { text: 'Okay', onPress: () => { this.props.navigator.replace({ id: 0 }); } }
+              ]
+          );
+          }
+        }
+        );
     });
   }
 

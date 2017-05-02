@@ -58,7 +58,6 @@ export function deleteImage(path) {
 class CameraPage extends Component {
   takePicture() {
     this.camera.capture().then(data => {
-      this.filterExplicitContent(data.path);
       ImageResizer.createResizedImage(data.path, 800, 1600, 'JPEG', 100).then(reuri => {
         deleteImage(data.path);
         AsyncStorage.setItem('UploadPath', reuri);
