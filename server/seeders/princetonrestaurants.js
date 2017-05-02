@@ -1,8 +1,10 @@
 const axios = require('axios');
 var Restaurant = require ('../models').Restaurant;
 
+const offset = process.argv[2];
+
 // Seed the database with top 30 Princeton restaurants from yelp.
-axios.get('https://api.yelp.com/v3/businesses/search?term=food&latitude=40.3573&longitude=-74.6672&radius=4000&limit=30', {
+axios.get(`https://api.yelp.com/v3/businesses/search?term=restaurant&latitude=40.3487&longitude=-74.6593&radius=10000&limit=50&offset=${offset}`, {
   headers: {Authorization: 'Bearer kuAOnCz9HL6BXgUKDvVgLlQ2ODiGiPYbzGUm9HFBTU8xnteXI6L7UXh70OI5NmMbLvvWABU6HYXOe-HNWOH1bnbZQKXcOEQxT26oiXjkqm79bGd3MfHK7tIlmDrtWHYx'}
 }).then((response) => {
   response.data.businesses.map((data) => {
@@ -15,6 +17,7 @@ axios.get('https://api.yelp.com/v3/businesses/search?term=food&latitude=40.3573&
     const address = `${data.location.address1} ${data.location.city} ${data.location.state} ${data.location.zip_code}`;
 
     Restaurant.create({
+      id: data.id,
       name: data.name,
       phoneNumber: data.phone,
       lat: data.coordinates.latitude,
