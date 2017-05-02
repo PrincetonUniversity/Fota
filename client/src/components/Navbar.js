@@ -19,14 +19,14 @@ const styles = {
 
 const { imgStyle, camImgStyle } = styles;
 
-const homeActivated = require('../img/fota_home_button_activated.png');
-const homeUnactivated = require('../img/fota_home_button_unactivated.png');
+const homeActivated = require('../img/fota_home_activated.png');
+const homeUnactivated = require('../img/fota_home_unactivated.png');
 const searchActivated = require('../img/magnifying_glass_activated.png');
 const searchUnactivated = require('../img/magnifying_glass_unactivated.png');
-const accountActivated = require('../img/account_button_activated.png');
-const accountUnactivated = require('../img/account_button_unactivated.png');
-const settingsActivated = require('../img/fota_home_button_activated.png');
-const settingsUnactivated = require('../img/fota_home_button_unactivated.png');
+const accountActivated = require('../img/account_activated.png');
+const accountUnactivated = require('../img/account_unactivated.png');
+const settingsActivated = require('../img/settings_activated.png');
+const settingsUnactivated = require('../img/settings_unactivated.png');
 const cameraButton = require('../img/camera_button.png');
 
 class Navbar extends Component {

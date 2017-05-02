@@ -1,7 +1,7 @@
 // The hot/new button
 
 import React, { Component } from 'react';
-import { TouchableOpacity, Text } from 'react-native';
+import { View, TouchableWithoutFeedback, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { getPhotosAndRests, loadingTrue, changeSorting } from '../actions/index';
 
@@ -28,16 +28,18 @@ class OrderToggler extends Component {
   }
 
   render() {
-    let text = '';
-    if (this.props.sorting === 'hot') text = 'Hot';
-    else text = 'New';
+    const { selectedStyle, unselectedStyle } = styles;
+    const hotStyle = (this.props.sorting === 'hot') ? selectedStyle : unselectedStyle;
+    const newStyle = (this.props.sorting === 'hot') ? unselectedStyle : selectedStyle;
     return (
-      <TouchableOpacity
-        style={styles.containerStyle}
+      <TouchableWithoutFeedback
         onPress={this.onButtonClick}
       >
-        <Text>{text}</Text>
-      </TouchableOpacity>
+        <View style={styles.containerStyle}>
+          <Text style={hotStyle}> Hot</Text>
+          <Text style={newStyle}> New</Text>
+        </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
@@ -45,7 +47,24 @@ class OrderToggler extends Component {
 const styles = {
   containerStyle: {
     flexDirection: 'row',
-    justifyContent: 'space-around'
+    paddingHorizontal: 9,
+    justifyContent: 'flex-end'
+  },
+  selectedStyle: {
+    paddingHorizontal: 8,
+    paddingTop: 3,
+    backgroundColor: '#ff9700',
+    color: '#fff',
+    borderColor: '#ff9700',
+    borderWidth: 2
+  },
+  unselectedStyle: {
+    paddingHorizontal: 8,
+    paddingTop: 3,
+    backgroundColor: '#fff',
+    color: '#ff9700',
+    borderColor: '#ff9700',
+    borderWidth: 2
   }
 };
 

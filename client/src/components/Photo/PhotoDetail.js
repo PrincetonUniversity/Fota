@@ -15,10 +15,8 @@ const styles = {
     height: Dimensions.get('window').width
   },
   restaurantPageStyle: { // Entire restaurant page
-    marginTop: 20,
-    marginBottom: 20,
-    marginLeft: 15,
-    marginRight: 15
+    marginVertical: 20,
+    marginHorizontal: 15
   },
   photoInfoStyle: {
     marginTop: 10,
@@ -214,10 +212,7 @@ class PhotoDetail extends Component {
         <RestaurantModal
           restaurant={this.props.restaurant}
           pageStyle={restaurantPageStyle}
-          options={[
-            { name: 'Report as Spam', onClick: () => {} },
-            { name: 'Click me!', onClick: () => {} }
-          ]}
+          options={[{ name: 'Report as Spam', onClick: () => {} }]}
         >
           <Image
             style={photoStyle}
