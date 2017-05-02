@@ -1,9 +1,16 @@
 import React, { Component } from 'react';
-import { View, Image, Text, FlatList, AsyncStorage } from 'react-native';
+import { View,
+          Image,
+          Text,
+          FlatList,
+          AsyncStorage,
+          TouchableOpacity,
+          ScrollView
+        } from 'react-native';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { RNS3 } from 'react-native-aws3';
-import { Header, CommentDisplay } from '../common';
+import { ImageButton, Header, CommentDisplay } from '../common';
 import { deleteImage } from './CameraPage';
 import { setCameraState } from '../../actions';
 
@@ -21,25 +28,51 @@ const styles = {
     height: 150,
     marginBottom: 10
   },
+  uploadContainerStyle: {
+    height: 50, // FIGURE OUT HOW TO NOT HARD CODE THIS
+    padding: 1,
+    borderRadius: 10,
+    backgroundColor: '#b2b2b2',
+    marginRight: 10,
+    marginLeft: 10,
+    marginBottom: 10
+  },
+  commentTextStyle: {
+    color: 'white',
+    fontFamily: 'Avenir',
+    fontSize: 15,
+    marginLeft: 7,
+    opacity: 0.8
+  },
+  deleteCommentStyle: { // delete a selected comment
+    width: 15,
+    height: 15,
+  },
+  commentOptionStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10
+  }
 };
 
 const { pageStyle,
         headerTextStyle,
         imageStyle,
+        uploadContainerStyle,
+        commentTextStyle,
+        deleteCommentStyle,
+        commentOptionStyle
       } = styles;
 
-const commentDetails = 'https://fotafood.herokuapp.com/api/comment/13'; // HARD CODED
+const adjectives = ['Great', 'Good', 'OK', 'Bad'];
+const nouns = ['Food', 'Ambience', 'Service', 'Atmosphere'];
+const backButton = require('../../img/exit_button.png');
 
 class CameraCommentsPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { uploadPath: null, restaurantid: null, presetComments: [], adjective: '', noun: '', comments: [] };
+    this.state = { uploadPath: null, restaurantid: null, adjective: '', noun: '', comments: [] };
     this.submitting = false;
-  }
-
-  componentWillMount() {
-    axios.get(commentDetails)
-      .then(response => this.setState({ presetComments: response.data }));
   }
 
   componentDidMount() {
@@ -51,6 +84,69 @@ class CameraCommentsPage extends Component {
         }).done();
   }
 
+  componentDidUpdate() {
+    this.addComment();
+  }
+
+// COMMENT CONTROL
+// Set selected chosen adjective
+  setAdjective(adjective) {
+    this.setState({ adjective });
+  }
+
+// Set selected chosen noun
+  setNoun(noun) {
+    this.setState({ noun });
+  }
+
+// Add a comment to list of user's comment choices
+  addComment() {
+    const adj = this.state.adjective;
+    const noun = this.state.noun;
+    console.log(adj);
+    const newComment = `${adj} ${noun}`;
+    if (adj && noun) {
+      if (this.state.comments.indexOf(newComment) === -1) {
+        this.setState({
+          adjective: '',
+          noun: '',
+          comments: this.state.comments.concat(`${adj} ${noun}`)
+        });
+      }
+    }
+  }
+
+// Delete chosen comment from list of user's comment choices
+  deleteComment(comment) {
+    let comments = this.state.comments;
+    const index = comments.indexOf(comment);
+    comments.splice(index, 1);
+    console.log(comments);
+    this.setState({ comments });
+  }
+
+// Submit all comments
+  submitComments() {
+    if (this.state.comments.length === 0) {
+      return;
+    }
+    this.state.comments.map(comment => this.submitComment(comment));
+  }
+
+// Helper function, submits a single comment
+  submitComment(comment) {
+    const words = comment.split(' ');
+    const adj = words[0];
+    const noun = words[1];
+    axios.post('https://fotafood.herokuapp.com/api/comment', {
+      noun,
+      adj,
+      rest: this.state.restaurantid
+    })
+      .catch(error => console.log(error));
+  }
+
+// Uploading the photo and comments
   submitUpload() {
     if (this.submitting) {
       return;
@@ -76,6 +172,7 @@ class CameraCommentsPage extends Component {
       if (response.status !== 201) {
         return;
       }
+      this.submitComments(); // Do we need to do .then?
       axios.post('https://fotafood.herokuapp.com/api/photo', {
         RestaurantId: this.state.restaurantid,
         UserId: this.props.loginState.uid,
@@ -96,15 +193,63 @@ class CameraCommentsPage extends Component {
     this.props.navigator.replace({ id: 1 });
   }
 
-  renderComment(comment) {
-    const adj = comment.adj.charAt(0).toUpperCase() + comment.adj.slice(1);
-    const noun = comment.noun.charAt(0).toUpperCase() + comment.noun.slice(1);
-    const commentString = `${adj} ${noun}`;
+// List of selected comments
+  renderComments() {
+    if (this.state.comments.length !== 0) {
+      return (
+        <ScrollView
+          style={uploadContainerStyle}
+          horizontal
+          bounces={false}
+        >
+          {this.renderComment()}
+        </ScrollView>
+      );
+    }
     return (
+      <View style={{ ...uploadContainerStyle, ...{ justifyContent: 'center' } }}>
+        <Text style={commentTextStyle}>
+          Say something about this restaurant...
+        </Text>
+      </View>
+    );
+  }
+
+// Individual selected comment
+  renderComment() {
+    return this.state.comments.map(comment =>
       <CommentDisplay
-        key={commentString}
-        text={commentString}
-      />
+        key={comment}
+        text={comment}
+      >
+        <ImageButton
+          style={deleteCommentStyle}
+          source={backButton}
+          onPress={() => this.deleteComment(comment)}
+        />
+      </CommentDisplay>
+    );
+  }
+
+  renderAdjective(adjective) {
+    return (
+      <TouchableOpacity
+        key={adjective}
+        onPress={() => this.setAdjective(adjective)}
+      >
+        <CommentDisplay text={adjective} />
+      </TouchableOpacity>
+    );
+  }
+
+  renderNoun(noun) {
+    return (
+      <TouchableOpacity
+        key={noun}
+        onPress={() => this.setNoun(noun)}
+      >
+        <CommentDisplay text={noun} />
+      </TouchableOpacity>
     );
   }
 
@@ -139,17 +284,26 @@ class CameraCommentsPage extends Component {
           </View>
 
           <View>
-            {/* {this.renderComments()} */}
+            {this.renderComments()}
           </View>
 
-          <View style={{ alignItems: 'center' }}>
+          <View style={commentOptionStyle}>
+            <View style={{ flex: 1 }} />
+
             <FlatList
-              data={this.state.presetComments}
-              keyExtractor={comment => comment.id}
-              renderItem={comment => this.renderComment(comment.item)}
-              numColumns={2}
+              data={adjectives}
+              keyExtractor={index => index.toString()}
+              renderItem={adjective => this.renderAdjective(adjective.item)}
               bounces={false}
             />
+            <FlatList
+              data={nouns}
+              keyExtractor={index => index.toString()}
+              renderItem={noun => this.renderNoun(noun.item)}
+              bounces={false}
+            />
+
+            <View style={{ flex: 1 }} />
           </View>
         </View>
       );

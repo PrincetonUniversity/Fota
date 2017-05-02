@@ -17,8 +17,6 @@ const styles = {
   backButtonStyle: { // Back button
     width: 35,
     height: 35,
-    // marginRight: 25,
-    // marginBottom: 25
   },
   promptStyle: {
     fontFamily: 'Avenir',
@@ -252,7 +250,6 @@ class CommentUpload extends Component {
               Submit
           </Button>
         </View>
-
       </View>
     );
   }
