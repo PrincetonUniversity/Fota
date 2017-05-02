@@ -29,6 +29,7 @@ class LoginForm extends Component {
 
   onLoginSuccess() {
     this.setState({ email: '', pass: '', loading: false });
+    this.props.onLoginFinished();
   }
 
   onLoginFail(error) {
@@ -43,7 +44,8 @@ class LoginForm extends Component {
 
   onCreateUserSuccess(user) {
     this.setState({ email: '', pass: '', loading: false });
-    axios.post('https://fotafood.herokuapp.com/api/user', { id: user.uid });
+    axios.post('https://fotafood.herokuapp.com/api/user', { id: user.uid })
+      .then(this.props.onLoginFinished());
   }
 
   onCreateUserFail(error) {
@@ -77,7 +79,6 @@ class LoginForm extends Component {
   render() {
     return (
       <View>
-        <Header><Text style={styles.headerTextStyle}>Log In</Text></Header>
         <CardSection>
           <Input
             placeholder='user@example.com'
@@ -109,13 +110,6 @@ class LoginForm extends Component {
 }
 
 const styles = {
-  headerTextStyle: {
-    flex: 1,
-    fontSize: 20,
-    textAlign: 'center',
-    fontFamily: 'Avenir',
-    color: '#000'
-  },
   labelStyle: {
     flex: 0.35,
     fontFamily: 'Avenir'

@@ -185,7 +185,21 @@ class CameraCommentsPage extends Component {
           // this.props.navigator.resetTo({ id: 0 });
           this.props.setCameraState(false);
         })
-        .catch(error => console.log(error));
+        .catch(error => {
+          deleteImage(this.state.uploadPath);
+          console.log(error.response.status === 400);
+          if (error.response.status === 400) {
+            console.log('bad photo');
+            Alert.alert(
+              'Invalid Photo',
+              'You may have uploaded an invalid photo. Please make sure your submit a picture of food.',
+              [
+                { text: 'Okay', onPress: () => { this.props.navigator.replace({ id: 0 }); } }
+              ]
+          );
+          }
+        }
+        );
     });
   }
 
