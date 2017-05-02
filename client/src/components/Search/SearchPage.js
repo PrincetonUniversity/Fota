@@ -21,7 +21,7 @@ class SearchPage extends Component {
       rlist = this.state.totalList.filter(restaurant => {
         const arr = restaurant.name.toLowerCase().split(' ');
         for (const word of arr) {
-          if (word.startsWith(query)) {
+          if (word.startsWith(query.toLowerCase())) {
             return true;
           }
         }
@@ -35,7 +35,7 @@ class SearchPage extends Component {
     return (
       <RestaurantModal
         restaurant={restaurant}
-        pageStyle={{ marginTop: (Platform.OS === 'ios') ? 15 : 0 }}
+        pageStyle={{ paddingTop: (Platform.OS === 'ios') ? 15 : 0 }}
       >
         <View style={{ flexDirection: 'row', padding: 10 }}>
           <Text style={{ fontFamily: 'Avenir', fontSize: 15 }}>
@@ -47,6 +47,7 @@ class SearchPage extends Component {
   }
 
   render() {
+    console.log(this.state.rlist);
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ flex: 1 }}>

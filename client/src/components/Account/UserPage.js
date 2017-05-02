@@ -45,7 +45,7 @@ class UserPage extends Component {
     return (
       <RestaurantModal
         restaurant={restaurant}
-        pageStyle={{ marginTop: (Platform.OS === 'ios') ? 15 : 0 }}
+        pageStyle={{ paddingTop: (Platform.OS === 'ios') ? 15 : 0 }}
         options={options}
       >
         <Image

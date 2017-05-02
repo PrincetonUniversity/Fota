@@ -75,7 +75,7 @@ const adjectives = ['Great', 'Good', 'OK', 'Bad'];
 const nouns = ['Food', 'Ambience', 'Service', 'Atmosphere'];
 const backButton = require('../../img/exit_button.png');
 
-class CommentUpload extends Component {
+class CommentSelection extends Component {
   state = { adjective: '', noun: '', comments: [] }
 
   componentDidUpdate() {
@@ -198,30 +198,6 @@ class CommentUpload extends Component {
   render() {
     return (
       <View style={pageStyle}>
-        <View style={headerStyle}>
-          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-start' }}>
-            <ImageButton
-              style={backButtonStyle}
-              source={backButton}
-              onPress={() => this.renderRestaurantDetail()}
-            />
-          </View>
-
-          <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={promptStyle}>
-              What did you think?
-            </Text>
-          </View>
-
-          <View
-            style={{ flex: 1 }}
-          />
-        </View>
-
-        <Text style={restaurantNameStyle}>
-          {this.props.restaurant.name}
-        </Text>
-
         <View>
           {this.renderComments()}
         </View>
@@ -246,16 +222,9 @@ class CommentUpload extends Component {
 
           <View style={{ flex: 1 }} />
         </View>
-
-        <View style={{ flexDirection: 'row' }}>
-          <Button onPress={() => this.submitComments()}>
-              Submit
-          </Button>
-        </View>
-
       </View>
     );
   }
 }
 
-export default CommentUpload;
+export default Selection;

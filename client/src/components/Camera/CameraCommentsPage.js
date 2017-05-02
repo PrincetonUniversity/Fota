@@ -21,19 +21,11 @@ const styles = {
     height: 150,
     marginBottom: 10
   },
-  // containerStyle: {
-  //   backgroundColor: '#ddd',
-  //   marginHorizontal: 10,
-  //   paddingHorizontal: 12,
-  //   marginBottom: 10,
-  //   borderRadius: 16,
-  //   height: 32
-  // }
 };
 
 const { pageStyle,
         headerTextStyle,
-        imageStyle
+        imageStyle,
       } = styles;
 
 const commentDetails = 'https://fotafood.herokuapp.com/api/comment/13'; // HARD CODED
@@ -41,7 +33,7 @@ const commentDetails = 'https://fotafood.herokuapp.com/api/comment/13'; // HARD 
 class CameraCommentsPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { uploadPath: null, restaurantid: null, presetComments: [] };
+    this.state = { uploadPath: null, restaurantid: null, presetComments: [], adjective: '', noun: '', comments: [] };
     this.submitting = false;
   }
 
@@ -146,10 +138,8 @@ class CameraCommentsPage extends Component {
             />
           </View>
 
-          <View style={{ alignItems: 'center', marginBottom: 10 }}>
-            <Text style={{ fontFamily: 'Avenir' }}>
-              Would you like to say something about the restaurant?
-            </Text>
+          <View>
+            {/* {this.renderComments()} */}
           </View>
 
           <View style={{ alignItems: 'center' }}>

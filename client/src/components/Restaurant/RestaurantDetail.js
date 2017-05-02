@@ -265,7 +265,7 @@ class RestaurantDetail extends Component {
             keyExtractor={comment => comment.id}
             numColumns={2}
             renderItem={comment => this.renderComment(comment.item)}
-            // bounces={false}
+            bounces={false}
           />
         </View>
 

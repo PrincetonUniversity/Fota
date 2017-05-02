@@ -58,9 +58,15 @@ class CameraLocationPage extends Component {
   updateQuery(query) {
     let rlist = this.state.totalList;
     if (query !== '') {
-      rlist = this.state.totalList.filter(restaurant =>
-        restaurant.name.toLowerCase().includes(query.toLowerCase())
-      );
+      rlist = this.state.totalList.filter(restaurant => {
+        const arr = restaurant.name.toLowerCase().split(' ');
+        for (const word of arr) {
+          if (word.startsWith(query.toLowerCase())) {
+            return true;
+          }
+        }
+        return false;
+      });
     }
     this.setState({ query, rlist });
   }
@@ -93,43 +99,43 @@ class CameraLocationPage extends Component {
     if (this.state.uploadPath) {
       return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={pageStyle}>
-          <Header>
-            <Text
-              style={headerTextStyle}
-              onPress={() => {
-                deleteImage(this.state.uploadPath);
-                AsyncStorage.setItem('UploadPath', '');
-                this.renderCameraPage();
-              }}
-            >
-              Cancel
-            </Text>
-          </Header>
+          <View style={pageStyle}>
+            <Header>
+              <Text
+                style={headerTextStyle}
+                onPress={() => {
+                  deleteImage(this.state.uploadPath);
+                  AsyncStorage.setItem('UploadPath', '');
+                  this.renderCameraPage();
+                }}
+              >
+                Cancel
+              </Text>
+            </Header>
 
-          <View style={{ alignItems: 'center' }}>
-            <Image
-              source={{ uri: this.state.uploadPath }}
-              style={imageStyle}
+            <View style={{ alignItems: 'center' }}>
+              <Image
+                source={{ uri: this.state.uploadPath }}
+                style={imageStyle}
+              />
+            </View>
+
+            <Header>
+              <Input
+                style={containerStyle}
+                placeholder='Where are you?'
+                value={this.state.query}
+                onChangeText={query => this.updateQuery(query)}
+              />
+            </Header>
+
+            <FlatList
+              data={this.state.rlist}
+              keyExtractor={restaurant => restaurant.id}
+              renderItem={restaurant => this.renderRestaurant(restaurant)}
+              bounces={false}
             />
           </View>
-
-          <Header>
-            <Input
-              style={containerStyle}
-              placeholder='Where are you?'
-              value={this.state.query}
-              onChangeText={query => this.updateQuery(query)}
-            />
-          </Header>
-
-          <FlatList
-            data={this.state.rlist}
-            keyExtractor={restaurant => restaurant.id}
-            renderItem={restaurant => this.renderRestaurant(restaurant)}
-            bounces={false}
-          />
-        </View>
         </TouchableWithoutFeedback>
       );
     }
