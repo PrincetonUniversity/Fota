@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, Text, ScrollView, FlatList, Platform } from 'react-native';
+import { View, Image, Text, ScrollView, FlatList } from 'react-native';
 import axios from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
@@ -17,7 +17,6 @@ const styles = {
   headerStyle: { // Header including back button, name, time until close, call button
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: (Platform.OS === 'ios') ? 15 : 0,
     marginHorizontal: 5,
     marginBottom: 5
   },

@@ -39,7 +39,11 @@ const { pageStyle,
 const commentDetails = 'https://fotafood.herokuapp.com/api/comment/13'; // HARD CODED
 
 class CameraCommentsPage extends Component {
-  state = { uploadPath: null, restaurantid: null, presetComments: [], submitted: false }
+  constructor(props) {
+    super(props);
+    this.state = { uploadPath: null, restaurantid: null, presetComments: [] };
+    this.submitting = false;
+  }
 
   componentWillMount() {
     axios.get(commentDetails)
@@ -56,11 +60,10 @@ class CameraCommentsPage extends Component {
   }
 
   submitUpload() {
-    if (this.state.submitted) {
+    if (this.submitting) {
       return;
     }
-
-    this.setState({ submitted: true });
+    this.submitting = true;
 
     const file = {
       uri: this.state.uploadPath,

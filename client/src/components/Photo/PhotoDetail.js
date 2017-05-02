@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { View, Image, Text, Dimensions } from 'react-native';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import { Card, ImageButton } from '../common';
+import { ImageButton } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 import saveVote from '../../helpers/getasyncstorage';
 
@@ -210,8 +210,15 @@ class PhotoDetail extends Component {
 
   render() {
     return (
-      <Card>
-        <RestaurantModal restaurant={this.props.restaurant} pageStyle={restaurantPageStyle}>
+      <View>
+        <RestaurantModal
+          restaurant={this.props.restaurant}
+          pageStyle={restaurantPageStyle}
+          options={[
+            { name: 'Report as Spam', onClick: () => {} },
+            { name: 'Click me!', onClick: () => {} }
+          ]}
+        >
           <Image
             style={photoStyle}
             source={{ uri: this.state.link }}
@@ -240,7 +247,7 @@ class PhotoDetail extends Component {
             />
           </View>
         </View>
-      </Card>
+      </View>
     );
   }
 }

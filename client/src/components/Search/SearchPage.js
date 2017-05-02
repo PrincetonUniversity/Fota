@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { Text, View, FlatList, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import {
+  Text, View, FlatList, Image,
+  TouchableWithoutFeedback, Keyboard, Platform
+ } from 'react-native';
 import axios from 'axios';
 import { Header, Input } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
@@ -30,7 +33,10 @@ class SearchPage extends Component {
 
   renderRestaurant(restaurant) {
     return (
-      <RestaurantModal restaurant={restaurant}>
+      <RestaurantModal
+        restaurant={restaurant}
+        pageStyle={{ marginTop: (Platform.OS === 'ios') ? 15 : 0 }}
+      >
         <View style={{ flexDirection: 'row', padding: 10 }}>
           <Text style={{ fontFamily: 'Avenir', fontSize: 15 }}>
             {restaurant.name}

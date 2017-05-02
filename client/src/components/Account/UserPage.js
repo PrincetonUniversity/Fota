@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
-import { Text, View, FlatList, Image } from 'react-native';
+import { Text, View, FlatList, Image, Platform } from 'react-native';
 import axios from 'axios';
 import firebase from 'firebase';
 import { Header, Button, CardSection } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 
 class UserPage extends Component {
-  state = { uploaded: [], upvoted: [], restaurants: [] }
+  constructor(props) {
+    super(props);
+    this.state = { uploaded: [], upvoted: [], restaurants: [], deleting: false };
+    this.deleting = false;
+  }
 
   componentWillMount() {
     axios.get(`https://fotafood.herokuapp.com/api/user/${this.props.user.uid}`)
@@ -18,12 +22,32 @@ class UserPage extends Component {
       .then(response => this.setState({ restaurants: response.data }));
   }
 
-  renderPhoto(photo) {
+  deleteFromServer(photo) {
+    if (this.deleting) {
+      return;
+    }
+    this.deleting = true;
+    axios.delete('https://fotafood.herokuapp.com/api/photo', { data: { id: photo.id } })
+      .then(() => {
+        this.deleting = false;
+      });
+  }
+
+  renderPhoto(photo, allowDelete) {
+    let options = null;
+    if (allowDelete) {
+      options = [{ name: 'Delete', onClick: () => this.deleteFromServer(photo) }];
+    }
     const restaurant = this.state.restaurants.filter(
       rest => rest.id === photo.RestaurantId
     )[0];
+
     return (
-      <RestaurantModal restaurant={restaurant}>
+      <RestaurantModal
+        restaurant={restaurant}
+        pageStyle={{ marginTop: (Platform.OS === 'ios') ? 15 : 0 }}
+        options={options}
+      >
         <Image
           key={photo.id}
           source={{ uri: photo.link }}
@@ -33,7 +57,7 @@ class UserPage extends Component {
     );
   }
 
-  renderPhotoList(list, message) {
+  renderPhotoList(list, message, allowDelete) {
     if (list.length === 0) {
       return <Text style={styles.emptyTextStyle}>{message}</Text>;
     }
@@ -41,7 +65,7 @@ class UserPage extends Component {
       <FlatList
         data={list}
         keyExtractor={photo => photo.id}
-        renderItem={photo => this.renderPhoto(photo.item)}
+        renderItem={photo => this.renderPhoto(photo.item, allowDelete)}
         showsHorizontalScrollIndicator={false}
         style={{ marginBottom: 10 }}
         horizontal
@@ -57,12 +81,12 @@ class UserPage extends Component {
         <CardSection>
           <Text style={styles.sectionTextStyle}>My Photos</Text>
         </CardSection>
-        {this.renderPhotoList(this.state.uploaded, 'Take your first photo to see it here!')}
+        {this.renderPhotoList(this.state.uploaded, 'Take your first photo to see it here!', true)}
 
         <CardSection>
           <Text style={styles.sectionTextStyle}>My Upvotes</Text>
         </CardSection>
-        {this.renderPhotoList(this.state.upvoted, 'See all your upvoted photos here!')}
+        {this.renderPhotoList(this.state.upvoted, 'See all your upvoted photos here!', false)}
 
         <View style={{ alignItems: 'center', flexDirection: 'row' }}>
           <Button onPress={() => firebase.auth().signOut()}>Log out</Button>
