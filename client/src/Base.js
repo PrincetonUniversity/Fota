@@ -6,6 +6,7 @@ import PhotoList from './components/Photo/PhotoList';
 import SearchPage from './components/Search/SearchPage';
 import BlankPage from './components/common/BlankPage';
 import AccountPage from './components/Account/AccountPage';
+import SettingsPage from './components/Settings/SettingsPage';
 import Navbar from './components/Navbar';
 import CameraNavigator from './components/Camera/CameraNavigator';
 import { footerSize } from './components/common';
@@ -39,6 +40,8 @@ class Base extends Component {
         return <SearchPage />;
       case 2:
         return <AccountPage />;
+      case 3:
+        return <SettingsPage />;
       default:
         return <BlankPage />;
     }
