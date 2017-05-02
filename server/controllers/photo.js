@@ -2,30 +2,61 @@ var Photo = require('../models').Photo;
 var Restaurant = require('../models').Restaurant;
 var User = require('../models').User;
 var sequelize = require('sequelize');
+var axios = require('axios');
 var _ = require('lodash');
 
 // create a new photo with given parameters
 module.exports.post = (req, res) => {
   const { RestaurantId, UserId, link } = req.body;
+  const googleKey = 'AIzaSyD6vcwe8-GiUFrC58UspiOA1-4JpYWvnGQ';
+  axios.post(`https://vision.googleapis.com/v1/images:annotate?key=${googleKey}`,
+    {
+      requests: [
+        {
+          image: {
+            source: {
+              imageUri: link
+            }
+          },
+          features: [
+            {
+              type: "SAFE_SEARCH_DETECTION"
+            },
+            {
+              type: "FACE_DETECTION"
+            }
+          ]
+        }
+      ]
+    }
+  ).then((result) => {
+    response = result.data.responses[0];
+    // Filter for inapporpriate photos
+    if (response.faceAnnotations[0].detectionConfidence > 0.7) return res.status(400).send({error: "invalid photo"});
+    const { medical, spoof, adult, violence } = response.safeSearchAnnotation;
+    const rejects = ['LIKELY', 'VERY_LIKELY', 'POSSIBLE'];
+    if (rejects.includes(medical) || rejects.includes(spoof) || rejects.includes(adult) || rejects.includes(violence))
+      return res.status(400).send({error: "invalid photo"});
 
-  // Make sure the user exists and is authroized
-  if (!UserId) return res.status(401).send({error: "Must provide user ID"});
-  User.findById(UserId).then((user) => {
-    if (!user) return res.status(404).send({error: "User not found"});
-  }).catch((err) => {
-    console.log(err);
-    return res.status(500).send({error: "Internal server error"});
-  })
+    // Make sure the user exists and is authroized
+    if (!UserId) return res.status(401).send({error: "Must provide user ID"});
+    User.findById(UserId).then((user) => {
+      if (!user) return res.status(404).send({error: "User not found"});
+    }).catch((err) => {
+      console.log(err);
+      return res.status(500).send({error: "Internal server error"});
+    })
 
-  Photo.create({
-    RestaurantId,
-    UserId,
-    likecount: 0,
-    link
-  }).then((photo) => {
-    res.status(200).send({message: "creation successful"});
-  }).catch((err) => {
-    console.log(err);
+    Photo.create({
+      RestaurantId,
+      UserId,
+      likecount: 0,
+      link
+    }).then((photo) => {
+      res.status(200).send({message: "creation successful"});
+    }).catch((err) => {
+      console.log(err);
+    })
   })
 }
 
