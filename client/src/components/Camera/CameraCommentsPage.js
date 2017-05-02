@@ -97,6 +97,7 @@ class CameraCommentsPage extends Component {
           this.props.setCameraState(false);
         })
         .catch(error => {
+          deleteImage(this.state.uploadPath);
           console.log(error.response.status === 400);
           if (error.response.status === 400) {
             console.log('bad photo');
