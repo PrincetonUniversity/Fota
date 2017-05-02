@@ -32,11 +32,15 @@ module.exports.post = (req, res) => {
   ).then((result) => {
     response = result.data.responses[0];
     // Filter for inapporpriate photos
-    if (response.faceAnnotations[0].detectionConfidence > 0.7) return res.status(400).send({error: "invalid photo"});
-    const { medical, spoof, adult, violence } = response.safeSearchAnnotation;
-    const rejects = ['LIKELY', 'VERY_LIKELY', 'POSSIBLE'];
-    if (rejects.includes(medical) || rejects.includes(spoof) || rejects.includes(adult) || rejects.includes(violence))
-      return res.status(400).send({error: "invalid photo"});
+    if (response.faceAnnotations) {
+      if (response.faceAnnotations[0].detectionConfidence > 0.7) return res.status(400).send({error: "invalid photo"});
+    }
+    if (response.safeSearchAnnotation) {
+      const { medical, spoof, adult, violence } = response.safeSearchAnnotation;
+      const rejects = ['LIKELY', 'VERY_LIKELY', 'POSSIBLE'];
+      if (rejects.includes(medical) || rejects.includes(spoof) || rejects.includes(adult) || rejects.includes(violence))
+        return res.status(400).send({error: "invalid photo"});
+    }
 
     // Make sure the user exists and is authroized
     if (!UserId) return res.status(401).send({error: "Must provide user ID"});
