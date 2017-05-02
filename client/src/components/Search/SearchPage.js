@@ -21,7 +21,7 @@ class SearchPage extends Component {
       rlist = this.state.totalList.filter(restaurant => {
         const arr = restaurant.name.toLowerCase().split(' ');
         for (const word of arr) {
-          if (word.startsWith(query)) {
+          if (word.startsWith(query.toLowerCase())) {
             return true;
           }
         }
