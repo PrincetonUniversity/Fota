@@ -65,9 +65,9 @@ module.exports.post = (req, res) => {
 }
 
 module.exports.get = (req, res) => {
-  // sequelizeInstance = new sequelize('fota_dev', 'postgres', '123', {dialect: 'postgres'});
-  order = req.query.order;
-  // distance = req.query.distance;
+  sequelizeInstance = new sequelize('fota_dev', 'postgres', '123', {dialect: 'postgres'});
+  let { order, distance, lat, lng } = req.query;
+
   if (order == 'hot') {
     order = ['likecount', 'DESC']
   } else if (order == 'new') {
@@ -77,28 +77,41 @@ module.exports.get = (req, res) => {
   }
 
   // geographical data accessible as req.query.lat and req.query.lng
-  Photo.findAll({
-    order: [
-      order
-    ]
-  }).then((photos) => {
-    Restaurant.findAll({
-    }).then((restaurants) => {
-      res.status(200).send({photos, restaurants});
+  // Photo.findAll({
+  //   order: [
+  //     order
+  //   ]
+  // }).then((photos) => {
+  //   Restaurant.findAll({
+  //   }).then((restaurants) => {
+  //     res.status(200).send({photos, restaurants});
+  //   });
+  // });40.3471400,-74.6592790
+
+  sequelizeInstance.query(`SELECT * FROM "Restaurants" WHERE 2 * 3961 * asin(sqrt((sin(radians((lat - ${lat}) / 2))) ^ 2 + cos(radians(${lat})) * cos(radians(lat)) * (sin(radians((lng - ${lng}) / 2))) ^ 2)) <= ${distance}`)
+  .then((rest) => {
+    let restaurantList = rest[0];
+    let photos = [];
+    let i = 0;
+    restaurantList.forEach((restaurant) => {
+      Photo.findAll({
+        where: {
+          RestaurantId: restaurant.id
+        },
+        order: [
+          order
+        ]
+      }).then((photo) => {
+        photos.push(...photo);
+        i++;
+        // Wait for all photos to be found, then send off.
+        if (i === restaurantList.length) return res.send({photos, restaurants: restaurantList});
+      });
     });
+  }).catch((err) => {
+    console.log(err);
+    return res.status(500).send({error: 'internal server error'});
   });
-
-  // sequelizeInstance.query(`SELECT * FROM "Restaurants" WHERE 2 * 3961 * asin(sqrt((sin(radians((lat - 40.3468210) / 2))) ^ 2 + cos(radians(40.3468210)) * cos(radians(lat)) * (sin(radians((lng - -74.6552090) / 2))) ^ 2)) <= ${distance}`)
-  // .then((rest) => {
-  //   restaurants = rest[0];
-  //   photos = [];
-  //   restaurants.map((rest) => {
-  //     rest.getPhotos((photo) => {
-  //       photos.push(photo);
-  //     })
-  //   })
-  // })
-
 }
 
 module.exports.delete = (req, res) => {

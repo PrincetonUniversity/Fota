@@ -7,7 +7,7 @@ export const LOADING = '9(AA6969asD)';
 export const SORTING = ')!sdj0ad!SDAD::L';
 
 export function getPhotosAndRests(sort, lat, lng) {
-  const request = axios.get(`https://fotafood.herokuapp.com/api/photo?order=${sort}&lat=${lat}&lng=${lng}`);
+  const request = axios.get(`https://fotafood.herokuapp.com/api/photo?order=${sort}&lat=${lat}&lng=${lng}&distance=${1}`);
   return {
     type: PHOTOS_AND_RESTS,
     payload: request
