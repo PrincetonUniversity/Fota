@@ -65,9 +65,15 @@ module.exports.post = (req, res) => {
 }
 
 module.exports.get = (req, res) => {
-  // sequelizeInstance = new sequelize('fota_dev', 'postgres', '123', {dialect: 'postgres'}); develpment
-  sequelizeInstance = new sequelize('d4b6551qnieiak', 'avagljasiiykvi',
-  'f551b9fa1d29ddae38551cd21bbbf87ff982e996741f82fc302143bf0225ea0c', {dialect: 'postgres'});
+  if (process.env.DATABASE_URL) {
+    sequelizeInstance = new sequelize(process.env.DATABASE_URL, {
+      dialect: 'postgres',
+      protocol: 'postgres',
+      port: '5432',
+      host: 'ec2-23-23-223-2.compute-1.amazonaws.com'
+    })
+  } else sequelizeInstance = new sequelize('fota_dev', 'postgres', '123', {dialect: 'postgres'});
+
 
   let { order, distance, lat, lng } = req.query;
 
