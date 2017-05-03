@@ -114,7 +114,7 @@ module.exports.get = (req, res) => {
     });
   }).catch((err) => {
     console.log(err);
-    return res.status(500).send({error: 'internal server error'});
+    return res.status(500).send(err);
   });
 }
 
