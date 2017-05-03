@@ -65,7 +65,10 @@ module.exports.post = (req, res) => {
 }
 
 module.exports.get = (req, res) => {
-  sequelizeInstance = new sequelize('fota_dev', 'postgres', '123', {dialect: 'postgres'});
+  // sequelizeInstance = new sequelize('fota_dev', 'postgres', '123', {dialect: 'postgres'}); develpment
+  sequelizeInstance = new sequelize('d4b6551qnieiak', 'avagljasiiykvi',
+  'f551b9fa1d29ddae38551cd21bbbf87ff982e996741f82fc302143bf0225ea0c', {dialect: 'postgres'});
+
   let { order, distance, lat, lng } = req.query;
 
   if (order == 'hot') {
@@ -76,7 +79,8 @@ module.exports.get = (req, res) => {
     return res.status(400).send({error: "sorting order incorrect"})
   }
 
-  // geographical data accessible as req.query.lat and req.query.lng
+  // Below is the old code, kept just in case we need to revert.
+  // The commented out code would return all photos, regardless of distance
   // Photo.findAll({
   //   order: [
   //     order
