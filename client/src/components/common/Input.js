@@ -18,6 +18,7 @@ const Input = ({ style, children, placeholder, secure, value, onChangeText }) =>
 
 const styles = {
   inputStyle: {
+    fontFamily: 'Avenir',
     padding: 1,
     borderRadius: 3,
     color: '#000',
