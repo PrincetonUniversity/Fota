@@ -11,7 +11,7 @@ return (
         placeholder={placeholder}
         placeholderTextColor='white'
         onChangeText={onChangeText}
-        autoCorrect={false}
+        autoCorrect
         secureTextEntry={secure}
         underlineColorAndroid={'transparent'}
         onSubmitEditing={onSubmitEditing}
