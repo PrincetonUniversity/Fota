@@ -89,12 +89,20 @@ class CommentUpload extends Component {
 
 // Set the selected adjective
   setAdjective(adjective) {
-    this.setState({ adjective });
+    if (/^[a-z]+$/i.test(adjective)) {
+      let cleanAdj = adjective.toLowerCase();
+      cleanAdj = cleanAdj.charAt(0).toUpperCase() + cleanAdj.slice(1);
+      this.setState({ adjective: cleanAdj });
+    }
   }
 
 // Set the selected noun
   setNoun(noun) {
-    this.setState({ noun });
+    if (/^[a-z]+$/i.test(noun)) {
+      let cleanNoun = noun.toLowerCase();
+      cleanNoun = cleanNoun.charAt(0).toUpperCase() + cleanNoun.slice(1);
+      this.setState({ noun: cleanNoun });
+    }
   }
 
   updateNewAdjective(newAdjective) {
