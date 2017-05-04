@@ -195,7 +195,7 @@ class CameraCommentsPage extends Component {
               'Invalid Photo',
               'You may have uploaded an invalid photo. Please make sure your submit a picture of food.',
               [
-                { text: 'Okay', onPress: () => { this.props.navigator.replace({ id: 0 }); } }
+                { text: 'OK', onPress: () => { this.props.navigator.replace({ id: 0 }); } }
               ]
           );
           }

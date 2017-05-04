@@ -2,8 +2,8 @@
 
 import React, { Component } from 'react';
 import { View, Image, Text, Dimensions } from 'react-native';
-import axios from 'axios';
 import { connect } from 'react-redux';
+import request from '../../helpers/axioshelper';
 import { ImageButton } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 import saveVote from '../../helpers/getasyncstorage';
@@ -139,9 +139,8 @@ class PhotoDetail extends Component {
     } else {
       queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}&user=${user.uid}`;
     }
-    axios.patch(queryString)
-      .then()
-      .catch(); // LATER should notify user on failure
+    request.patch(queryString)
+    .catch(e => request.showErrorAlert(e)); // LATER should notify user on failure
   }
 
   renderUpvote() {

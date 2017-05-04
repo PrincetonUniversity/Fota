@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import { View,
-          Image,
-          Text,
-          FlatList,
-          AsyncStorage,
-          TouchableWithoutFeedback,
-          Keyboard
-        } from 'react-native';
-import axios from 'axios';
+import {
+  View,
+  Image,
+  Text,
+  FlatList,
+  AsyncStorage,
+  TouchableWithoutFeedback,
+  Keyboard
+} from 'react-native';
+import request from '../../helpers/axioshelper';
 import { Input, Header } from '../common';
 import { deleteImage } from './CameraPage';
 
@@ -45,8 +46,9 @@ class CameraLocationPage extends Component {
   state = { uploadPath: null, query: '', rlist: [], totalList: [] }
 
   componentWillMount() {
-    axios.get('https://fotafood.herokuapp.com/api/restaurant')
-      .then(response => this.setState({ totalList: response.data, rlist: response.data }));
+    request.get('https://fotafood.herokuapp.com/api/restaurant')
+      .then(response => this.setState({ totalList: response.data, rlist: response.data }))
+      .catch(e => request.showErrorAlert(e));
   }
 
   componentDidMount() {

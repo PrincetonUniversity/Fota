@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import firebase from 'firebase';
-import axios from 'axios';
-import { Header, CardSection, Button, Input, Spinner } from '../common';
+import request from '../../helpers/axioshelper';
+import { CardSection, Button, Input, Spinner } from '../common';
 
 class LoginForm extends Component {
   state = { email: '', pass: '', error: '', loading: false };
@@ -44,8 +44,9 @@ class LoginForm extends Component {
 
   onCreateUserSuccess(user) {
     this.setState({ email: '', pass: '', loading: false });
-    axios.post('https://fotafood.herokuapp.com/api/user', { id: user.uid })
-      .then(this.props.onLoginFinished());
+    request.post('https://fotafood.herokuapp.com/api/user', { id: user.uid })
+      .then(this.props.onLoginFinished())
+      .catch(e => request.showErrorAlert(e));
   }
 
   onCreateUserFail(error) {

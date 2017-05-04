@@ -1,4 +1,4 @@
-import axios from 'axios';
+import request from '../helpers/axioshelper';
 
 export const PHOTOS_AND_RESTS = '12308asdas';
 export const CAMERA_STATE = 'a9x8c7vm1';
@@ -7,10 +7,11 @@ export const LOADING = '9(AA6969asD)';
 export const SORTING = ')!sdj0ad!SDAD::L';
 
 export function getPhotosAndRests(sort, lat, lng) {
-  const request = axios.get(`https://fotafood.herokuapp.com/api/photo?order=${sort}&lat=${lat}&lng=${lng}&distance=${1}`);
+  const req = request.get(`https://fotafood.herokuapp.com/api/photo?order=${sort}&lat=${lat}&lng=${lng}&distance=${1}`)
+    .catch(e => request.showErrorAlert(e));
   return {
     type: PHOTOS_AND_RESTS,
-    payload: request
+    payload: req
   };
 }
 
