@@ -101,23 +101,21 @@ module.exports.get = (req, res) => {
   sequelizeInstance.query(`SELECT * FROM "Restaurants" WHERE 2 * 3961 * asin(sqrt((sin(radians((lat - ${lat}) / 2))) ^ 2 + cos(radians(${lat})) * cos(radians(lat)) * (sin(radians((lng - ${lng}) / 2))) ^ 2)) <= ${distance}`)
   .then((rest) => {
     let restaurantList = rest[0];
-    let photos = [];
-    let i = 0;
+    let restaurantIdList = [];
     restaurantList.forEach((restaurant) => {
-      Photo.findAll({
-        where: {
-          RestaurantId: restaurant.id
-        },
-        order: [
-          order
-        ]
-      }).then((photo) => {
-        photos.push(...photo);
-        i++;
-        // Wait for all photos to be found, then send off.
-        if (i === restaurantList.length) return res.send({photos, restaurants: restaurantList});
-      });
+      restaurantIdList.push(restaurant.id);
     });
+    Photo.findAll({
+      where: {
+        // Below is equivalent to: RestaurantIdList.contains(RestaurantId)
+        RestaurantId: restaurantIdList
+      },
+      order: [
+        order
+      ]
+    }).then((photos) => {
+      return res.status(200).send({photos, restaurants: restaurantList});
+    })
   }).catch((err) => {
     console.log(err);
     return res.status(500).send(err);
