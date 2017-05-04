@@ -9,6 +9,7 @@ module.exports = (app) => {
   app.post('/api/restaurant', Restaurant.post);
   app.get('/api/restaurant', Restaurant.getRestaurants);
   app.get('/api/restaurant/:restaurantId', Restaurant.getPhotos);
+  app.get('/api/restaurantnear', Restaurant.getNearbyRestaurants);
 
   app.post('/api/photo', Photo.post);
   app.get('/api/photo', Photo.get);
