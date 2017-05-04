@@ -11,7 +11,7 @@ import { View,
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { RNS3 } from 'react-native-aws3';
-import { ImageButton, Header, CommentDisplay } from '../common';
+import { ImageButton, Header, CommentDisplay, CommentDisplayInput } from '../common';
 import { deleteImage } from './CameraPage';
 import { setCameraState } from '../../actions';
 
@@ -38,6 +38,12 @@ const styles = {
     marginLeft: 10,
     marginBottom: 10
   },
+  commentTextInputStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    marginBottom: 4
+  },
   commentTextStyle: {
     color: 'white',
     fontFamily: 'Avenir',
@@ -60,6 +66,7 @@ const { pageStyle,
         headerTextStyle,
         imageStyle,
         uploadContainerStyle,
+        commentTextInputStyle,
         commentTextStyle,
         deleteCommentStyle,
         commentOptionStyle
@@ -72,7 +79,15 @@ const backButton = require('../../img/exit_button.png');
 class CameraCommentsPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { uploadPath: null, restaurantid: null, adjective: '', noun: '', comments: [] };
+    this.state = {
+      uploadPath: null,
+      restaurantid: null,
+      adjective: '',
+      noun: '',
+      comments: [],
+      newAdjective: '',
+      newNoun: ''
+    };
     this.submitting = false;
   }
 
@@ -90,14 +105,30 @@ class CameraCommentsPage extends Component {
   }
 
 // COMMENT CONTROL
-// Set selected chosen adjective
+// Set the selected adjective
   setAdjective(adjective) {
-    this.setState({ adjective });
+    if (/^[a-z]+$/i.test(adjective)) {
+      let cleanAdj = adjective.toLowerCase();
+      cleanAdj = cleanAdj.charAt(0).toUpperCase() + cleanAdj.slice(1);
+      this.setState({ adjective: cleanAdj });
+    }
   }
 
-// Set selected chosen noun
+// Set the selected noun
   setNoun(noun) {
-    this.setState({ noun });
+    if (/^[a-z]+$/i.test(noun)) {
+      let cleanNoun = noun.toLowerCase();
+      cleanNoun = cleanNoun.charAt(0).toUpperCase() + cleanNoun.slice(1);
+      this.setState({ noun: cleanNoun });
+    }
+  }
+
+  updateNewAdjective(newAdjective) {
+    this.setState({ newAdjective });
+  }
+
+  updateNewNoun(newNoun) {
+    this.setState({ newNoun });
   }
 
 // Add a comment to list of user's comment choices
@@ -183,7 +214,6 @@ class CameraCommentsPage extends Component {
           deleteImage(this.state.uploadPath);
           AsyncStorage.setItem('UploadRestaurant', '');
           AsyncStorage.setItem('UploadPath', '');
-          // this.props.navigator.resetTo({ id: 0 });
           this.props.setCameraState(false);
         })
         .catch(error => {
@@ -193,11 +223,11 @@ class CameraCommentsPage extends Component {
             console.log('bad photo');
             Alert.alert(
               'Invalid Photo',
-              'You may have uploaded an invalid photo. Please make sure your submit a picture of food.',
+              'You may have uploaded an invalid photo. Please make sure you submit a picture of food.',
               [
                 { text: 'OK', onPress: () => { this.props.navigator.replace({ id: 0 }); } }
               ]
-          );
+            );
           }
         }
         );
@@ -208,16 +238,18 @@ class CameraCommentsPage extends Component {
     this.props.navigator.replace({ id: 1 });
   }
 
-// List of selected comments
-  renderComments() {
-    if (this.state.comments.length !== 0) {
+// Render the bar containing all selected comments
+  renderCommentsInput() {
+    if (this.state.comments.length !== 0 || this.state.adjective !== '' || this.state.noun !== '') {
       return (
         <ScrollView
           style={uploadContainerStyle}
           horizontal
           bounces={false}
         >
-          {this.renderComment()}
+          {this.renderAllComments()}
+          {this.renderSingleComment(this.state.adjective, 0)}
+          {this.renderSingleComment(this.state.noun, 1)}
         </ScrollView>
       );
     }
@@ -230,20 +262,31 @@ class CameraCommentsPage extends Component {
     );
   }
 
-// Individual selected comment
-  renderComment() {
+// Visuall rendering all comments
+  renderAllComments() {
     return this.state.comments.map(comment =>
-      <CommentDisplay
-        key={comment}
-        text={comment}
-      >
-        <ImageButton
-          style={deleteCommentStyle}
-          source={backButton}
-          onPress={() => this.deleteComment(comment)}
-        />
-      </CommentDisplay>
+      this.renderSingleComment(comment, 2)
     );
+  }
+
+// Rendering a single comment with type.
+// type === 0: adjective, type === 1: noun, type === 2: comment
+  renderSingleComment(comment, type) {
+    if (comment) {
+      return (
+        <CommentDisplay
+          key={comment}
+          text={comment}
+        >
+          <ImageButton
+            style={deleteCommentStyle}
+            source={backButton}
+            onPress={() => this.deleteComment(comment, type)}
+          />
+        </CommentDisplay>
+      );
+    }
+    return;
   }
 
   renderAdjective(adjective) {
@@ -299,24 +342,57 @@ class CameraCommentsPage extends Component {
           </View>
 
           <View>
-            {this.renderComments()}
+            {this.renderCommentsInput()}
+          </View>
+
+          <View style={commentTextInputStyle}>
+            <View style={{ flex: 1 }} />
+
+            <View style={{ flex: 2, height: 34 }}>
+              <CommentDisplayInput
+                value={this.state.newAdjective}
+                placeholder='Adjective'
+                onChangeText={adjective => this.updateNewAdjective(adjective)}
+                onSubmitEditing={() => {
+                  this.setAdjective(this.state.newAdjective);
+                  this.setState({ newAdjective: '' });
+                }}
+              />
+            </View>
+
+            <View style={{ flex: 2 }}>
+              <CommentDisplayInput
+                value={this.state.newNoun}
+                placeholder='Noun'
+                onChangeText={noun => this.updateNewNoun(noun)}
+                onSubmitEditing={() => {
+                  this.setNoun(this.state.newNoun);
+                  this.setState({ newNoun: '' });
+                }}
+              />
+            </View>
+
+            <View style={{ flex: 1 }} />
           </View>
 
           <View style={commentOptionStyle}>
             <View style={{ flex: 1 }} />
 
-            <FlatList
-              data={adjectives}
-              keyExtractor={index => index.toString()}
-              renderItem={adjective => this.renderAdjective(adjective.item)}
-              bounces={false}
-            />
-            <FlatList
-              data={nouns}
-              keyExtractor={index => index.toString()}
-              renderItem={noun => this.renderNoun(noun.item)}
-              bounces={false}
-            />
+            <View style={{ flex: 2 }}>
+              <FlatList
+                data={adjectives}
+                keyExtractor={(index) => index.toString()}
+                renderItem={adjective => this.renderAdjective(adjective.item)}
+              />
+            </View>
+
+            <View style={{ flex: 2 }}>
+              <FlatList
+                data={nouns}
+                keyExtractor={(index) => index.toString()}
+                renderItem={noun => this.renderNoun(noun.item)}
+              />
+            </View>
 
             <View style={{ flex: 1 }} />
           </View>
