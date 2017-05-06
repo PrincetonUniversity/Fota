@@ -11,13 +11,9 @@ class SearchPage extends Component {
   state = { query: '', rlist: [], totalList: [] }
 
   componentWillMount() {
-    navigator.geolocation.getCurrentPosition(position => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      request.get(`https://fotafood.herokuapp.com/api/restaurantnear?lat=${lat}&lng=${lng}`)
-        .then(response => this.setState({ totalList: response.data }))
-        .catch(e => request.showErrorAlert(e));
-    });
+    request.get('https://fotafood.herokuapp.com/api/restaurant')
+      .then(response => this.setState({ totalList: response.data }))
+      .catch(e => request.showErrorAlert(e));
   }
 
   updateQuery(query) {
@@ -46,10 +42,6 @@ class SearchPage extends Component {
         <View style={{ flexDirection: 'row', padding: 10 }}>
           <Text style={{ fontFamily: 'Avenir', fontSize: 15 }}>
             {restaurant.name}
-          </Text>
-          <View style={{ flex: 1 }} />
-          <Text style={{ fontFamily: 'Avenir', fontSize: 15 }}>
-            {restaurant.distance.toPrecision(2)}
           </Text>
         </View>
       </RestaurantModal>
