@@ -99,6 +99,55 @@ class RestaurantDetail extends Component {
     }).catch(e => request.showErrorAlert(e));
   }
 
+  getTrueHours(hours) {
+    const hourarray = JSON.parse(hours)[0].open;
+    const now = new Date();
+    const dayNow = (now.getDay() + 6) % 7;
+    const hourNow = now.getHours() * 100;
+    const candidateHours = hourarray.filter((element) => (element.day === dayNow));
+
+    // Check the boundary case
+    // Hasn't opened at all yet today
+    if (parseInt(candidateHours[0].start) >= hourNow) {
+      return {
+        start: parseInt(candidateHours[0].start),
+        end: parseInt(candidateHours[0].end)
+      };
+    }
+
+    // Check the boundaray case
+    // Closed for today -- use tomorrow's time
+    if (parseInt(candidateHours[candidateHours.length - 1].end) <= hourNow) {
+      const dayTomorrow = (dayNow + 1) % 7;
+      const tomorrowHours = hourarray.filter((element) => (element.day === dayTomorrow));
+      return {
+        start: parseInt(tomorrowHours[0].start),
+        end: parseInt(tomorrowHours[0].end)
+      };
+    }
+
+    // Check if open now
+    for (let i = 0; i < candidateHours.length; i++) {
+      const start = parseInt(candidateHours[0].start);
+      const end = parseInt(candidateHours[0].end);
+      if (hourNow >= start && hourNow <= end) {
+        return { start, end };
+      }
+    }
+
+    // Check the next open time
+    for (let i = 1; i < candidateHours.length; i++) {
+      const prevClose = parseInt(candidateHours[i - 1].end);
+      const nextOpen = parseInt(candidateHours[i].start);
+      if (hourNow >= prevClose && hourNow <= nextOpen) {
+        return { start: nextOpen, end: parseInt((candidateHours[i].end)) };
+      }
+    }
+
+    // If we made it here, the data input was invalid. Return null
+    return null;
+  }
+
   isOpen(closeTime, openTime) {
     const currentDate = moment(new Date());
     const openTimeHours = Math.floor(openTime / 100);
@@ -116,20 +165,6 @@ class RestaurantDetail extends Component {
     return false;
   }
 
-  // timeUntilClose(closeTime) { // Calculates how long until the restaurant closes
-  //   const currentDate = moment(new Date());
-  //   const closeTimeHours = Math.floor(closeTime / 100);
-  //   const closeTimeMinutes = closeTime - closeTimeHours * 100;
-  //   const closeDate = moment({ hours: closeTimeHours, minutes: closeTimeMinutes });
-  //   if (currentDate > closeDate) {
-  //     closeDate.add(1, 'days');
-  //   }
-  //   const timeOpenHours = closeDate.diff(currentDate, 'hours');
-  //   const timeOpenMinutes = closeDate.diff(currentDate, 'minutes') % 60;
-  //
-  //   return [timeOpenHours, timeOpenMinutes];
-  // }
-
   timeString(time) {
     const timeHours = Math.floor(time / 100);
     const timeMinutes = time - timeHours * 100;
@@ -137,38 +172,19 @@ class RestaurantDetail extends Component {
     return timeDate.format('h:mm A');
   }
 
-  timeUntilCloseLabel(closeTime, openTime) {
+  timeUntilCloseLabel(hours) {
+    if (!hours) return '';
+    const trueHours = this.getTrueHours(hours);
+    if (!trueHours) return '';
+    const openTime = trueHours.start;
+    const closeTime = trueHours.end;
+
     if (!this.isOpen(closeTime, openTime)) {
-      // const openTimeHours = Math.floor(openTime / 100);
-      // const openTimeMinutes = openTime - openTimeHours * 100;
-      // const openDate = moment({ hours: openTimeHours, minutes: openTimeMinutes });
-      // const openTimeString = openDate.format('h:mm A');
       const time = this.timeString(openTime);
       return `Closed until ${time}`;
     }
     const time = this.timeString(closeTime);
     return `Open until ${time}`;
-    // const timeUntilClose = this.timeUntilClose(closeTime);
-    // let hoursOpen = timeUntilClose[0]; // Hours in amount of time open.
-    // const minutesOpen = timeUntilClose[1]; // Minutes in amount of time open.
-    // let closingTimeString = 'Open for ';
-    // if (timeUntilClose[0] === 0) {
-    //   if (minutesOpen === 1) {
-    //     closingTimeString += `${minutesOpen} minute`;
-    //   } else {
-    //     closingTimeString += `${minutesOpen} minutes`;
-    //   }
-    // } else {
-    //   if (minutesOpen > 30) {
-    //     hoursOpen += 1;
-    //   }
-    //   if (hoursOpen === 1) {
-    //     closingTimeString += `${hoursOpen} hour`;
-    //   } else {
-    //     closingTimeString += `${hoursOpen} hours`;
-    //   }
-    // }
-    // return closingTimeString;
   }
 
   renderCommentUpload() {
@@ -226,8 +242,7 @@ class RestaurantDetail extends Component {
               {restaurant.name}
             </Text>
             <Text style={timeUntilCloseStyle}>
-              {this.timeUntilCloseLabel(this.props.restaurant.closeTime,
-                                        this.props.restaurant.openTime)}
+              {this.timeUntilCloseLabel(this.props.restaurant.hours)}
             </Text>
           </View>
 
