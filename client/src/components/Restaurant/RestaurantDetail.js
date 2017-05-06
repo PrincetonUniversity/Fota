@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { View, Image, Text, ScrollView, FlatList } from 'react-native';
-import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 import { phonecall } from 'react-native-communications';
 import request from '../../helpers/axioshelper';
@@ -53,6 +52,12 @@ const styles = {
     marginLeft: 5,
     marginRight: 5
   },
+  emptyTextStyle: {
+    color: '#aaa',
+    fontFamily: 'Avenir',
+    marginHorizontal: 15,
+    marginBottom: 10
+  },
   photoStyle: { // Individual photos
     height: 150,
     width: 150,
@@ -85,7 +90,7 @@ const backButton = require('../../img/exit_button.png');
 const phoneButton = require('../../img/phone.png');
 
 class RestaurantDetail extends Component {
-  state = { photos: [], comments: [], spinnerVisible: true }
+  state = { photos: [], comments: [], loading: true }
 
   componentWillMount() {
     request.get(restaurantDetails + this.props.restaurant.id)
@@ -93,7 +98,7 @@ class RestaurantDetail extends Component {
       request.get(commentDetails + this.props.restaurant.id)
       .then(res2 => this.setState({
         photos: response.data,
-        spinnerVisible: false,
+        loading: false,
         comments: res2.data
       })).catch(e => request.showErrorAlert(e));
     }).catch(e => request.showErrorAlert(e));
@@ -184,10 +189,28 @@ class RestaurantDetail extends Component {
     );
   }
 
+  renderPhotoList() {
+    if (!this.state.loading && this.state.photos.length === 0) {
+      return (
+        <Text style={styles.emptyTextStyle}>
+          Be the first to upload a photo here!
+        </Text>
+      );
+    }
+    return (
+      <FlatList
+        data={this.state.photos}
+        keyExtractor={photo => photo.id}
+        renderItem={photo => this.renderPhoto(photo.item)}
+        showsHorizontalScrollIndicator={false}
+        horizontal
+      />
+    );
+  }
+
   renderPhoto(photo) {
     return (
       <View key={photo.id}>
-        <Spinner visible={this.state.spinnerVisible} color='#ff9700' />
         <Image
           source={{ uri: photo.link }}
           style={photoStyle}
@@ -251,13 +274,7 @@ class RestaurantDetail extends Component {
         </View>
 
         <View style={{ marginBottom: 10 }}>
-          <FlatList
-            data={this.state.photos}
-            keyExtractor={photo => photo.id}
-            renderItem={photo => this.renderPhoto(photo.item)}
-            showsHorizontalScrollIndicator={false}
-            horizontal
-          />
+          {this.renderPhotoList()}
         </View>
 
         <Text style={titleStyle}>

@@ -32,6 +32,11 @@ class UserPage extends Component {
     request.delete('https://fotafood.herokuapp.com/api/photo', { id: photo.id })
     .then(() => {
       this.deleting = false;
+      const newUploaded = [];
+      for (const item of this.state.uploaded) {
+        if (item.id !== photo.id) newUploaded.push(item);
+      }
+      this.setState({ uploaded: newUploaded });
     })
     .catch(e => request.showErrorAlert(e));
   }
