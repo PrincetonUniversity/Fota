@@ -4,6 +4,7 @@ import moment from 'moment';
 import { phonecall } from 'react-native-communications';
 import request from '../../helpers/axioshelper';
 import { Button, ImageButton, FilterDisplay, CommentDisplay } from '../common';
+import NounDetail from './NounDetail';
 
 const styles = {
   pageStyle: { // Entire restaurant page
@@ -91,7 +92,7 @@ const backButton = require('../../img/exit_button.png');
 const phoneButton = require('../../img/phone.png');
 
 class RestaurantDetail extends Component {
-  state = { photos: [], comments: [], loading: true }
+  state = { photos: [], nouns: [], noun: null, loading: true }
 
   componentWillMount() {
     request.get(restaurantDetails + this.props.restaurant.id)
@@ -237,21 +238,27 @@ class RestaurantDetail extends Component {
   }
 
   renderCommentDetail() {
+    if (this.state.noun) {
+      return (
+        <View>
+          <Text onPress={this.setState({ noun: null })}>Back</Text>
+          <NounDetail noun={this.state.noun} />
+        </View>
+      );
+    }
     return (
       <FlatList
-        data={this.state.comments}
-        keyExtractor={comment => comment.id}
+        data={this.state.nouns}
+        keyExtractor={noun => noun}
         numColumns={2}
-        renderItem={comment => this.renderComment(comment.item)}
+        renderItem={noun => this.renderNoun(noun)}
         bounces={false}
       />
     );
   }
 
-  renderComment(comment) {
-    const adj = comment.adj.charAt(0).toUpperCase() + comment.adj.slice(1);
-    const noun = comment.noun.charAt(0).toUpperCase() + comment.noun.slice(1);
-    const commentString = `${adj} ${noun}`;
+  renderNoun(noun) {
+    const commentString = `${noun.adj[0].word} ${noun.noun}: ${noun.adj[0].count}`;
     return (
       <CommentDisplay
         key={commentString}
