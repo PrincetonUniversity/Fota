@@ -89,7 +89,6 @@ class CommentUpload extends Component {
 
 // Set the selected adjective
   setAdjective(adjective) {
-    console.log(adjective);
     if (/^[a-z]+$/i.test(adjective)) {
       let cleanAdj = adjective.toLowerCase();
       cleanAdj = cleanAdj.charAt(0).toUpperCase() + cleanAdj.slice(1);

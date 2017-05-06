@@ -8,6 +8,7 @@ import Base from './Base';
 class App extends Component {
   render() {
     const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
+
     return (
       <Provider store={createStoreWithMiddleware(reducers, { cameraVisible: false })}>
         <Base />
