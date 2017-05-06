@@ -1,7 +1,7 @@
 // Visual component for each photo, i.e. photo frame+upvote/downvote/upvote count
 
 import React, { Component } from 'react';
-import { View, Image, Text, Dimensions } from 'react-native';
+import { View, Image, Text, Dimensions, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import request from '../../helpers/axioshelper';
 import { ImageButton } from '../common';
@@ -211,7 +211,14 @@ class PhotoDetail extends Component {
         <RestaurantModal
           restaurant={this.props.restaurant}
           pageStyle={restaurantPageStyle}
-          options={[{ name: 'Report as Spam', onClick: () => {} }]}
+          options={[{
+            name: 'Report as Spam',
+            onClick: () => Alert.alert(
+                '',
+                'This photo has been reported. Thanks for letting us know!',
+                [{ text: 'OK' }]
+              )
+          }]}
         >
           <Image
             style={photoStyle}

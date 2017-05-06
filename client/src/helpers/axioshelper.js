@@ -7,10 +7,10 @@ function request(method, url, data, resolve, reject) {
       axios({ method, url, data })
         .then(response => resolve(response))
         .catch(e => {
-          reject({ etype: 'server error', ...e });
+          reject({ etype: 1, ...e });
         });
     } else {
-      reject({ etype: 'no internet' });
+      reject({ etype: 0 });
     }
   }).catch(e => console.log(e));
 }
@@ -48,13 +48,13 @@ exports.delete = (url, data = null) => (
 );
 
 exports.showErrorAlert = (error) => {
-  if (error.etype === 'no internet') {
+  if (error.etype === 0) {
     Alert.alert(
       'No Connection',
       'You are not online right now. Please connect to the Internet and try again.',
       [{ text: 'OK' }]
     );
-  } else if (error.etype === 'server error') {
+  } else if (error.etype === 1) {
     Alert.alert(
       'Server Error',
       'A server error has occured.',

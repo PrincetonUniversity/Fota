@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, FlatList } from 'react-native';
-import axios from 'axios';
+import request from '../../helpers/axioshelper';
 import { CommentDisplay, CommentDisplayInput, ImageButton, Button } from '../common';
 
 const styles = {
@@ -138,7 +138,7 @@ class CommentUpload extends Component {
     } else if (type === 1) {
       this.setState({ noun: '' });
     } else if (type === 2) {
-      let comments = this.state.comments;
+      const comments = this.state.comments;
       const index = comments.indexOf(comment);
       comments.splice(index, 1);
       this.setState({ comments });
@@ -160,12 +160,12 @@ class CommentUpload extends Component {
     const words = comment.split(' ');
     const adj = words[0];
     const noun = words[1];
-    axios.post('https://fotafood.herokuapp.com/api/comment', {
+    request.post('https://fotafood.herokuapp.com/api/comment', {
       noun,
       adj,
       rest: this.props.restaurant.id
     })
-      .catch(error => console.log(error));
+      .catch(e => request.showErrorAlert(e));
   }
 
 // For pressing the back button

@@ -48,7 +48,6 @@ class SearchPage extends Component {
   }
 
   render() {
-    console.log(this.state.rlist);
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ flex: 1 }}>
