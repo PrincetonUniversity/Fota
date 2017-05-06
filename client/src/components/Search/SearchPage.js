@@ -33,6 +33,7 @@ class SearchPage extends Component {
   }
 
   renderRestaurant(restaurant) {
+    console.log(restaurant);
     return (
       <RestaurantModal
         restaurant={restaurant}

@@ -82,13 +82,17 @@ class CameraLocationPage extends Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          AsyncStorage.setItem('UploadRestaurant', String(restaurant.item.id));
+          AsyncStorage.setItem('UploadRestaurant', String(restaurant.id));
           this.renderCameraComments();
         }}
       >
         <View style={{ flexDirection: 'row', padding: 10 }}>
           <Text style={{ fontFamily: 'Avenir', fontSize: 15 }}>
             {restaurant.name}
+          </Text>
+          <View style={{ flex: 1 }} />
+          <Text style={{ fontFamily: 'Avenir', fontSize: 10 }}>
+            {restaurant.distance.toPrecision(2)} mi.
           </Text>
         </View>
       </TouchableOpacity>
