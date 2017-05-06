@@ -57,7 +57,7 @@ exports.showErrorAlert = (error) => {
   } else if (error.etype === 1) {
     Alert.alert(
       'Server Error',
-      'A server error has occured.',
+      'Something went wrong. Please try again.',
       [{ text: 'OK' }]
     );
   }
