@@ -90,6 +90,10 @@ class CameraLocationPage extends Component {
           <Text style={{ fontFamily: 'Avenir', fontSize: 15 }}>
             {restaurant.name}
           </Text>
+          <View style={{ flex: 1 }} />
+          <Text style={{ fontFamily: 'Avenir', fontSize: 15 }}>
+            {restaurant.distance.toPrecision(2)}
+          </Text>
         </View>
       </TouchableOpacity>
     );

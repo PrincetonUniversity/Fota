@@ -20,14 +20,12 @@ function isNetworkConnected() {
 function request(method, url, data, resolve, reject) {
   isNetworkConnected().then(isConnected => {
     if (isConnected) {
-      console.log('bryan');
       axios({ method, url, data })
         .then(response => resolve(response))
         .catch(e => {
           reject({ etype: 1, ...e });
         });
     } else {
-      console.log('albert');
       reject({ etype: 0 });
     }
   }).catch(e => console.log(e));
