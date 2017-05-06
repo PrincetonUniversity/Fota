@@ -8,7 +8,7 @@ import RestaurantModal from '../Restaurant/RestaurantModal';
 class UserPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { uploaded: [], upvoted: [], restaurants: [], deleting: false };
+    this.state = { uploaded: [], upvoted: [], restaurants: [], deleting: false, loading: true };
     this.deleting = false;
   }
 
@@ -19,7 +19,8 @@ class UserPage extends Component {
       .then(res2 => this.setState({
         uploaded: response.data.uploadedPhotos,
         upvoted: response.data.likedPhotos,
-        restaurants: res2.data
+        restaurants: res2.data,
+        loading: false
       })).catch(e => request.showErrorAlert(e));
     }).catch(e => request.showErrorAlert(e));
   }
@@ -32,6 +33,11 @@ class UserPage extends Component {
     request.delete('https://fotafood.herokuapp.com/api/photo', { id: photo.id })
     .then(() => {
       this.deleting = false;
+      const newUploaded = [];
+      for (const item of this.state.uploaded) {
+        if (item.id !== photo.id) newUploaded.push(item);
+      }
+      this.setState({ uploaded: newUploaded });
     })
     .catch(e => request.showErrorAlert(e));
   }
@@ -61,7 +67,7 @@ class UserPage extends Component {
   }
 
   renderPhotoList(list, message, allowDelete) {
-    if (list.length === 0) {
+    if (!this.state.loading && list.length === 0) {
       return <Text style={styles.emptyTextStyle}>{message}</Text>;
     }
     return (

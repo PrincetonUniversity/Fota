@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ImageButton, Footer } from './common';
 import { footerSize, circleSize } from './common/Footer';
-import { setCameraState } from '../actions';
+import { setCameraState, setNavigator } from '../actions';
 
 const styles = {
   imgStyle: {
@@ -35,6 +35,10 @@ class Navbar extends Component {
     searchSource: searchUnactivated,
     accountSource: accountUnactivated,
     settingsSource: settingsUnactivated,
+  }
+
+  componentWillMount() {
+    this.props.setNavigator(this);
   }
 
   /*getTransition(current, next) {
@@ -122,4 +126,4 @@ class Navbar extends Component {
   }
 }
 
-export default connect(null, { setCameraState })(Navbar);
+export default connect(null, { setCameraState, setNavigator })(Navbar);

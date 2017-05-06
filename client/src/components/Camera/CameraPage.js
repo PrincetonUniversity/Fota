@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Dimensions, AsyncStorage } from 'react-native';
+import { View, Text, Dimensions, AsyncStorage, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import Camera, { constants } from 'react-native-camera';
 import ImageResizer from 'react-native-image-resizer';
@@ -44,15 +44,24 @@ const {
 
 const cameraButton = require('../../img/camera_button.png');
 
+function cameraErrorAlert() {
+  Alert.alert(
+    'Error',
+    'Oops! Something went wrong. Please restart the app and try again.',
+    [{ text: 'OK' }]
+  );
+}
+
 export function deleteImage(path) {
   const filepath = path.replace(/^(file:)/, '');
   RNFetchBlob.fs.exists(filepath)
     .then((result) => {
       if (result) {
         return RNFetchBlob.fs.unlink(filepath)
-          .catch((err) => console.log(err.message));
+          .catch(() => cameraErrorAlert());
       }
-    });
+    })
+    .catch(() => cameraErrorAlert());
 }
 
 class CameraPage extends Component {
@@ -62,8 +71,8 @@ class CameraPage extends Component {
         deleteImage(data.path);
         AsyncStorage.setItem('UploadPath', reuri);
         this.renderCameraLocation();
-      });
-    });
+      }).catch(() => cameraErrorAlert());
+    }).catch(() => cameraErrorAlert());
   }
 
   renderCameraLocation() {

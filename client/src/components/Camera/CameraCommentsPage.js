@@ -96,11 +96,11 @@ class CameraCommentsPage extends Component {
 
   componentDidMount() {
     AsyncStorage.getItem('UploadPath').then((path) => {
-            this.setState({ uploadPath: path });
-        }).done();
+      this.setState({ uploadPath: path });
+    }).done();
     AsyncStorage.getItem('UploadRestaurant').then((restaurantid) => {
-            this.setState({ restaurantid });
-        }).done();
+      this.setState({ restaurantid });
+    }).done();
   }
 
   componentDidUpdate() {
@@ -158,7 +158,7 @@ class CameraCommentsPage extends Component {
     } else if (type === 1) {
       this.setState({ noun: '' });
     } else if (type === 2) {
-      let comments = this.state.comments;
+      const comments = this.state.comments;
       const index = comments.indexOf(comment);
       comments.splice(index, 1);
       this.setState({ comments });
@@ -214,7 +214,6 @@ class CameraCommentsPage extends Component {
         request.showErrorAlert({ etype: 1 });
         return;
       }
-      this.submitComments(); // Do we need to do .then?
       request.post('https://fotafood.herokuapp.com/api/photo', {
         RestaurantId: this.state.restaurantid,
         UserId: this.props.loginState.uid,
@@ -222,8 +221,10 @@ class CameraCommentsPage extends Component {
       })
         .then(() => {
           deleteImage(this.state.uploadPath);
+          this.submitComments();
           AsyncStorage.setItem('UploadRestaurant', '');
           AsyncStorage.setItem('UploadPath', '');
+          this.props.navigator.renderHome();
           this.props.setCameraState(false);
         })
         .catch(e => {
@@ -429,8 +430,8 @@ class CameraCommentsPage extends Component {
   }
 }
 
-function mapStateToProps({ loginState }) {
-  return { loginState };
+function mapStateToProps({ loginState, navigator }) {
+  return { loginState, navigator };
 }
 
 export default connect(mapStateToProps, { setCameraState })(CameraCommentsPage);

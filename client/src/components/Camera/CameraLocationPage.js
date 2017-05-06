@@ -57,24 +57,35 @@ class CameraLocationPage extends Component {
   }
 
   componentDidMount() {
-    AsyncStorage.getItem('UploadPath').then(path => {
-            this.setState({ uploadPath: path });
-        }).done();
+    AsyncStorage.getItem('UploadPath').then((path) => {
+      this.setState({ uploadPath: path });
+    }).done();
   }
 
   updateQuery(query) {
     let rlist = this.state.totalList;
-    if (query !== '') {
-      rlist = this.state.totalList.filter(restaurant => {
+    const qarr = query.toLowerCase().split(' ');
+    if (qarr.length === 0) {
+      this.setState({ query, rlist: [] });
+      return;
+    }
+    const current = qarr.pop();
+    for (const qword of qarr) {
+      rlist = rlist.filter(restaurant => {
         const arr = restaurant.name.toLowerCase().split(' ');
         for (const word of arr) {
-          if (word.startsWith(query.toLowerCase())) {
-            return true;
-          }
+          if (word === qword) return true;
         }
         return false;
       });
     }
+    rlist = rlist.filter(restaurant => {
+      const arr = restaurant.name.toLowerCase().split(' ');
+      for (const word of arr) {
+        if (word.startsWith(current)) return true;
+      }
+      return false;
+    });
     this.setState({ query, rlist });
   }
 
