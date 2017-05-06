@@ -53,10 +53,11 @@ const styles = {
     marginRight: 5
   },
   emptyTextStyle: {
+    fontSize: 16,
+    textAlign: 'center',
     color: '#aaa',
     fontFamily: 'Avenir',
-    marginHorizontal: 15,
-    marginBottom: 10
+    paddingVertical: 67
   },
   photoStyle: { // Individual photos
     height: 150,
@@ -219,6 +220,18 @@ class RestaurantDetail extends Component {
     );
   }
 
+  renderCommentDetail() {
+    return (
+      <FlatList
+        data={this.state.comments}
+        keyExtractor={comment => comment.id}
+        numColumns={2}
+        renderItem={comment => this.renderComment(comment.item)}
+        bounces={false}
+      />
+    );
+  }
+
   renderComment(comment) {
     const adj = comment.adj.charAt(0).toUpperCase() + comment.adj.slice(1);
     const noun = comment.noun.charAt(0).toUpperCase() + comment.noun.slice(1);
@@ -281,13 +294,7 @@ class RestaurantDetail extends Component {
           Consensus!
         </Text>
         <View style={reviewStyle}>
-          <FlatList
-            data={this.state.comments}
-            keyExtractor={comment => comment.id}
-            numColumns={2}
-            renderItem={comment => this.renderComment(comment.item)}
-            bounces={false}
-          />
+          {this.renderCommentDetail()}
         </View>
 
         <View style={{ flexDirection: 'row' }}>

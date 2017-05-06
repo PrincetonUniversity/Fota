@@ -9,7 +9,7 @@ class SettingsPage extends Component {
     console.log('here');
     return radii.map(radius =>
       <View style={{ flexDirection: 'row', marginTop: 5, marginBottom: 5 }} key={radius}>
-        <Text onPress={radius => } style={{ fontSize: 15, fontFamily: 'Avenir' }}>
+        <Text style={{ fontSize: 15, fontFamily: 'Avenir' }}>
           {radius} mi.
         </Text>
       </View>
