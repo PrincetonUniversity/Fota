@@ -45,8 +45,12 @@ class CameraLocationPage extends Component {
   state = { uploadPath: null, query: '', rlist: [], totalList: [] }
 
   componentWillMount() {
-    axios.get('https://fotafood.herokuapp.com/api/restaurant')
-      .then(response => this.setState({ totalList: response.data, rlist: response.data }));
+    navigator.geolocation.getCurrentPosition(position => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      axios.get(`https://fotafood.herokuapp.com/api/restaurantnear?lat=${lat}&lng=${lng}`)
+        .then(response => this.setState({ totalList: response.data, rlist: response.data }));
+    });
   }
 
   componentDidMount() {
@@ -133,6 +137,7 @@ class CameraLocationPage extends Component {
               data={this.state.rlist}
               keyExtractor={restaurant => restaurant.id}
               renderItem={restaurant => this.renderRestaurant(restaurant)}
+              keyboardShouldPersistTaps={'handled'}
               bounces={false}
             />
           </View>
