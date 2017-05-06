@@ -1,8 +1,7 @@
 import React from 'react';
 import { TextInput, View } from 'react-native';
 
-const CommentDisplayInput = ({ placeholder, value, onChangeText, secure, onSubmitEditing }) => {
-return (
+const CommentDisplayInput = ({ placeholder, value, onChangeText, secure, onBlur }) => (
     <View style={styles.containerStyle}>
       <TextInput
         style={styles.inputStyle}
@@ -14,11 +13,10 @@ return (
         autoCorrect
         secureTextEntry={secure}
         underlineColorAndroid={'transparent'}
-        onSubmitEditing={onSubmitEditing}
+        onBlur={onBlur}
       />
     </View>
 );
-};
 
 const styles = {
   containerStyle: {

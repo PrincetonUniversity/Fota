@@ -89,6 +89,7 @@ class CommentUpload extends Component {
 
 // Set the selected adjective
   setAdjective(adjective) {
+    console.log(adjective);
     if (/^[a-z]+$/i.test(adjective)) {
       let cleanAdj = adjective.toLowerCase();
       cleanAdj = cleanAdj.charAt(0).toUpperCase() + cleanAdj.slice(1);
@@ -266,9 +267,7 @@ class CommentUpload extends Component {
             </Text>
           </View>
 
-          <View
-            style={{ flex: 1 }}
-          />
+          <View style={{ flex: 1 }} />
         </View>
 
         <Text style={restaurantNameStyle}>
@@ -287,7 +286,7 @@ class CommentUpload extends Component {
               value={this.state.newAdjective}
               placeholder='Adjective'
               onChangeText={adjective => this.updateNewAdjective(adjective)}
-              onSubmitEditing={() => {
+              onBlur={() => {
                 this.setAdjective(this.state.newAdjective);
                 this.setState({ newAdjective: '' });
               }}
@@ -299,7 +298,7 @@ class CommentUpload extends Component {
               value={this.state.newNoun}
               placeholder='Noun'
               onChangeText={noun => this.updateNewNoun(noun)}
-              onSubmitEditing={() => {
+              onBlur={() => {
                 this.setNoun(this.state.newNoun);
                 this.setState({ newNoun: '' });
               }}
@@ -317,6 +316,7 @@ class CommentUpload extends Component {
               data={adjectives}
               keyExtractor={(index) => index.toString()}
               renderItem={adjective => this.renderAdjective(adjective.item)}
+              keyboardShouldPersistTaps={'handled'}
             />
           </View>
 
@@ -325,6 +325,7 @@ class CommentUpload extends Component {
               data={nouns}
               keyExtractor={(index) => index.toString()}
               renderItem={noun => this.renderNoun(noun.item)}
+              keyboardShouldPersistTaps={'handled'}
             />
           </View>
 

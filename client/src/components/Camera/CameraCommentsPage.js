@@ -6,12 +6,14 @@ import { View,
           AsyncStorage,
           TouchableOpacity,
           ScrollView,
-          Alert
+          Alert,
+          TouchableWithoutFeedback,
+          Keyboard
         } from 'react-native';
 import { connect } from 'react-redux';
 import { RNS3 } from 'react-native-aws3';
 import request from '../../helpers/axioshelper';
-import { ImageButton, Header, CommentDisplay, CommentDisplayInput } from '../common';
+import { ImageButton, Header, CommentDisplay, CommentDisplayInput, Spinner } from '../common';
 import { deleteImage } from './CameraPage';
 import { setCameraState } from '../../actions';
 
@@ -86,7 +88,8 @@ class CameraCommentsPage extends Component {
       noun: '',
       comments: [],
       newAdjective: '',
-      newNoun: ''
+      newNoun: '',
+      submitPressed: false
     };
     this.submitting = false;
   }
@@ -149,12 +152,18 @@ class CameraCommentsPage extends Component {
   }
 
 // Delete chosen comment from list of user's comment choices
-  deleteComment(comment) {
-    const comments = this.state.comments;
-    const index = comments.indexOf(comment);
-    comments.splice(index, 1);
-    console.log(comments);
-    this.setState({ comments });
+  deleteComment(comment, type) {
+    if (type === 0) {
+      this.setState({ adjective: '' });
+    } else if (type === 1) {
+      this.setState({ noun: '' });
+    } else if (type === 2) {
+      let comments = this.state.comments;
+      const index = comments.indexOf(comment);
+      comments.splice(index, 1);
+      this.setState({ comments });
+    }
+    return;
   }
 
 // Submit all comments
@@ -183,6 +192,7 @@ class CameraCommentsPage extends Component {
       return;
     }
     this.submitting = true;
+    this.setState({ submitPressed: true });
 
     const file = {
       uri: this.state.uploadPath,
@@ -231,6 +241,20 @@ class CameraCommentsPage extends Component {
           }
         });
     }).catch(() => request.showErrorAlert({ etype: 0 }));
+  }
+
+  renderSubmitButton() {
+    if (this.state.submitPressed) {
+      return <Spinner size="small" />;
+    }
+    return (
+      <Text
+        style={headerTextStyle}
+        onPress={() => this.submitUpload()}
+      >
+        Submit
+      </Text>
+    );
   }
 
   renderCameraLocation() {
@@ -313,6 +337,7 @@ class CameraCommentsPage extends Component {
   render() {
     if (this.state.uploadPath) {
       return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={pageStyle}>
           <Header>
             <Text
@@ -325,12 +350,9 @@ class CameraCommentsPage extends Component {
               Back
             </Text>
 
-            <Text
-              style={headerTextStyle}
-              onPress={() => this.submitUpload()}
-            >
-              Submit
-            </Text>
+            <View style={{ width: 50 }}>
+              {this.renderSubmitButton()}
+            </View>
           </Header>
 
           <View style={{ alignItems: 'center' }}>
@@ -352,7 +374,7 @@ class CameraCommentsPage extends Component {
                 value={this.state.newAdjective}
                 placeholder='Adjective'
                 onChangeText={adjective => this.updateNewAdjective(adjective)}
-                onSubmitEditing={() => {
+                onBlur={() => {
                   this.setAdjective(this.state.newAdjective);
                   this.setState({ newAdjective: '' });
                 }}
@@ -364,7 +386,7 @@ class CameraCommentsPage extends Component {
                 value={this.state.newNoun}
                 placeholder='Noun'
                 onChangeText={noun => this.updateNewNoun(noun)}
-                onSubmitEditing={() => {
+                onBlur={() => {
                   this.setNoun(this.state.newNoun);
                   this.setState({ newNoun: '' });
                 }}
@@ -382,6 +404,7 @@ class CameraCommentsPage extends Component {
                 data={adjectives}
                 keyExtractor={(index) => index.toString()}
                 renderItem={adjective => this.renderAdjective(adjective.item)}
+                keyboardShouldPersistTaps={'handled'}
               />
             </View>
 
@@ -390,12 +413,14 @@ class CameraCommentsPage extends Component {
                 data={nouns}
                 keyExtractor={(index) => index.toString()}
                 renderItem={noun => this.renderNoun(noun.item)}
+                keyboardShouldPersistTaps={'handled'}
               />
             </View>
 
             <View style={{ flex: 1 }} />
           </View>
         </View>
+        </TouchableWithoutFeedback>
       );
     }
     return ( // DO SOMETHING HERE

@@ -6,7 +6,8 @@ import {
   FlatList,
   AsyncStorage,
   TouchableWithoutFeedback,
-  Keyboard
+  Keyboard,
+  TouchableOpacity
 } from 'react-native';
 import request from '../../helpers/axioshelper';
 import { Input, Header } from '../common';
@@ -46,9 +47,13 @@ class CameraLocationPage extends Component {
   state = { uploadPath: null, query: '', rlist: [], totalList: [] }
 
   componentWillMount() {
-    request.get('https://fotafood.herokuapp.com/api/restaurant')
-      .then(response => this.setState({ totalList: response.data, rlist: response.data }))
-      .catch(e => request.showErrorAlert(e));
+    navigator.geolocation.getCurrentPosition(position => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      request.get(`https://fotafood.herokuapp.com/api/restaurantnear?lat=${lat}&lng=${lng}`)
+        .then(response => this.setState({ totalList: response.data, rlist: response.data }))
+        .catch(e => request.showErrorAlert(e));
+    });
   }
 
   componentDidMount() {
@@ -75,17 +80,18 @@ class CameraLocationPage extends Component {
 
   renderRestaurant(restaurant) {
     return (
-      <View style={{ flexDirection: 'row', padding: 10, alignItems: 'center' }}>
-        <Text
-          style={{ fontFamily: 'Avenir', fontSize: 15 }}
-          onPress={() => {
-            AsyncStorage.setItem('UploadRestaurant', String(restaurant.item.id));
-            this.renderCameraComments();
-          }}
-        >
-          {restaurant.item.name}
-        </Text>
-      </View>
+      <TouchableOpacity
+        onPress={() => {
+          AsyncStorage.setItem('UploadRestaurant', String(restaurant.item.id));
+          this.renderCameraComments();
+        }}
+      >
+        <View style={{ flexDirection: 'row', padding: 10 }}>
+          <Text style={{ fontFamily: 'Avenir', fontSize: 15 }}>
+            {restaurant.name}
+          </Text>
+        </View>
+      </TouchableOpacity>
     );
   }
 
@@ -134,7 +140,8 @@ class CameraLocationPage extends Component {
             <FlatList
               data={this.state.rlist}
               keyExtractor={restaurant => restaurant.id}
-              renderItem={restaurant => this.renderRestaurant(restaurant)}
+              renderItem={restaurant => this.renderRestaurant(restaurant.item)}
+              keyboardShouldPersistTaps={'handled'}
               bounces={false}
             />
           </View>

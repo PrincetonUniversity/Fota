@@ -29,7 +29,7 @@ class UserPage extends Component {
       return;
     }
     this.deleting = true;
-    request.delete('https://fotafood.herokuapp.com/api/photo', { data: { id: photo.id } })
+    request.delete('https://fotafood.herokuapp.com/api/photo', { id: photo.id })
     .then(() => {
       this.deleting = false;
     })
