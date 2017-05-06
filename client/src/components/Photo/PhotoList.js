@@ -3,9 +3,9 @@
 import React, { Component } from 'react';
 import { FlatList, View, AsyncStorage } from 'react-native';
 import _ from 'lodash';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
+import request from '../../helpers/axioshelper';
 import PhotoDetail from './PhotoDetail';
 import Headbar from '../Headbar';
 import { getPhotosAndRests } from '../../actions/index';
@@ -32,14 +32,15 @@ class PhotoList extends Component {
 
   getLikedAndDislikedFromServer = async () => {
     try {
-      axios.get(`https://fotafood.herokuapp.com/api/user/${this.props.loginState.uid}`)
+      request.get(`https://fotafood.herokuapp.com/api/user/${this.props.loginState.uid}`)
       .then((userInfo) => {
         let liked = userInfo.data.likedPhotoIds;
         let disliked = userInfo.data.dislikedPhotoIds;
         if (!liked) liked = [];
         if (!disliked) disliked = [];
         this.setState({ liked, disliked, likesLoading: false });
-      });
+      })
+      .catch(this.setState({ likesLoading: false }));
     } catch (error) {
       console.log(error);
     }

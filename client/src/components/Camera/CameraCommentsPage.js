@@ -11,8 +11,8 @@ import { View,
           Keyboard
         } from 'react-native';
 import { connect } from 'react-redux';
-import axios from 'axios';
 import { RNS3 } from 'react-native-aws3';
+import request from '../../helpers/axioshelper';
 import { ImageButton, Header, CommentDisplay, CommentDisplayInput } from '../common';
 import { deleteImage } from './CameraPage';
 import { setCameraState } from '../../actions';
@@ -178,12 +178,11 @@ class CameraCommentsPage extends Component {
     const words = comment.split(' ');
     const adj = words[0];
     const noun = words[1];
-    axios.post('https://fotafood.herokuapp.com/api/comment', {
+    request.post('https://fotafood.herokuapp.com/api/comment', {
       noun,
       adj,
       rest: this.state.restaurantid
-    })
-      .catch(error => console.log(error));
+    }).catch(e => request.showErrorAlert(e));
   }
 
 // Uploading the photo and comments
@@ -210,10 +209,11 @@ class CameraCommentsPage extends Component {
 
     RNS3.put(file, options).then(response => {
       if (response.status !== 201) {
+        request.showErrorAlert({ etype: 1 });
         return;
       }
       this.submitComments(); // Do we need to do .then?
-      axios.post('https://fotafood.herokuapp.com/api/photo', {
+      request.post('https://fotafood.herokuapp.com/api/photo', {
         RestaurantId: this.state.restaurantid,
         UserId: this.props.loginState.uid,
         link: response.body.postResponse.location // this should be the aws link
@@ -224,22 +224,21 @@ class CameraCommentsPage extends Component {
           AsyncStorage.setItem('UploadPath', '');
           this.props.setCameraState(false);
         })
-        .catch(error => {
+        .catch(e => {
           deleteImage(this.state.uploadPath);
-          console.log(error.response.status === 400);
-          if (error.response.status === 400) {
-            console.log('bad photo');
+          if (e.etype === 1 && e.response.status === 400) {
             Alert.alert(
               'Invalid Photo',
               'You may have uploaded an invalid photo. Please make sure you submit a picture of food.',
               [
-                { text: 'Okay', onPress: () => { this.props.navigator.replace({ id: 0 }); } }
+                { text: 'OK', onPress: () => { this.props.navigator.replace({ id: 0 }); } }
               ]
             );
+          } else {
+            request.showErrorAlert(e);
           }
-        }
-        );
-    });
+        });
+    }).catch(() => request.showErrorAlert({ etype: 0 }));
   }
 
   renderCameraLocation() {
@@ -289,7 +288,7 @@ class CameraCommentsPage extends Component {
           <ImageButton
             style={deleteCommentStyle}
             source={backButton}
-            onPress={() => { console.log('pressed'); this.deleteComment(comment, type); }}
+            onPress={() => this.deleteComment(comment, type)}
           />
         </CommentDisplay>
       );

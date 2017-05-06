@@ -1,9 +1,9 @@
 // Visual component for each photo, i.e. photo frame+upvote/downvote/upvote count
 
 import React, { Component } from 'react';
-import { View, Image, Text, Dimensions } from 'react-native';
-import axios from 'axios';
+import { View, Image, Text, Dimensions, Alert } from 'react-native';
 import { connect } from 'react-redux';
+import request from '../../helpers/axioshelper';
 import { ImageButton } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 import saveVote from '../../helpers/getasyncstorage';
@@ -139,9 +139,8 @@ class PhotoDetail extends Component {
     } else {
       queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}&user=${user.uid}`;
     }
-    axios.patch(queryString)
-      .then()
-      .catch(); // LATER should notify user on failure
+    request.patch(queryString)
+    .catch(e => request.showErrorAlert(e)); // LATER should notify user on failure
   }
 
   renderUpvote() {
@@ -212,7 +211,14 @@ class PhotoDetail extends Component {
         <RestaurantModal
           restaurant={this.props.restaurant}
           pageStyle={restaurantPageStyle}
-          options={[{ name: 'Report as Spam', onClick: () => {} }]}
+          options={[{
+            name: 'Report as Spam',
+            onClick: () => Alert.alert(
+                '',
+                'This photo has been reported. Thanks for letting us know!',
+                [{ text: 'OK' }]
+              )
+          }]}
         >
           <Image
             style={photoStyle}

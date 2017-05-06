@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import {
   Text, View, FlatList, Image,
   TouchableWithoutFeedback, Keyboard, Platform
- } from 'react-native';
-import axios from 'axios';
+} from 'react-native';
+import request from '../../helpers/axioshelper';
 import { Header, Input } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 
@@ -11,8 +11,9 @@ class SearchPage extends Component {
   state = { query: '', rlist: [], totalList: [] }
 
   componentWillMount() {
-    axios.get('https://fotafood.herokuapp.com/api/restaurant')
-      .then(response => this.setState({ totalList: response.data }));
+    request.get('https://fotafood.herokuapp.com/api/restaurant')
+      .then(response => this.setState({ totalList: response.data }))
+      .catch(e => request.showErrorAlert(e));
   }
 
   updateQuery(query) {
@@ -41,13 +42,15 @@ class SearchPage extends Component {
           <Text style={{ fontFamily: 'Avenir', fontSize: 15 }}>
             {restaurant.name}
           </Text>
+          <Text style={{ fontFamily: 'Avenir', fontSize: 15 }}>
+            {restaurant.distance.toPrecision(2)}
+          </Text>
         </View>
       </RestaurantModal>
     );
   }
 
   render() {
-    console.log(this.state.rlist);
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ flex: 1 }}>

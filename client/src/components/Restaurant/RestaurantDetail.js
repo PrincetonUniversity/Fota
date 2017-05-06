@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { View, Image, Text, ScrollView, FlatList } from 'react-native';
-import axios from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 import { phonecall } from 'react-native-communications';
+import request from '../../helpers/axioshelper';
 import { Button, ImageButton, FilterDisplay, CommentDisplay } from '../common';
 
 const styles = {
@@ -88,11 +88,15 @@ class RestaurantDetail extends Component {
   state = { photos: [], comments: [], spinnerVisible: true }
 
   componentWillMount() {
-    axios.get(restaurantDetails + this.props.restaurant.id)
-      .then(response => this.setState({ photos: response.data,
-                                        spinnerVisible: false }));
-    axios.get(commentDetails + this.props.restaurant.id)
-      .then(response => this.setState({ comments: response.data }));
+    request.get(restaurantDetails + this.props.restaurant.id)
+    .then(response => {
+      request.get(commentDetails + this.props.restaurant.id)
+      .then(res2 => this.setState({
+        photos: response.data,
+        spinnerVisible: false,
+        comments: res2.data
+      })).catch(e => request.showErrorAlert(e));
+    }).catch(e => request.showErrorAlert(e));
   }
 
   isOpen(closeTime, openTime) {

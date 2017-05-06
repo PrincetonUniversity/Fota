@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, FlatList, Image, Platform } from 'react-native';
-import axios from 'axios';
 import firebase from 'firebase';
+import request from '../../helpers/axioshelper';
 import { Header, Button, CardSection } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 
@@ -13,13 +13,15 @@ class UserPage extends Component {
   }
 
   componentWillMount() {
-    axios.get(`https://fotafood.herokuapp.com/api/user/${this.props.user.uid}`)
-      .then(response => this.setState({
+    request.get(`https://fotafood.herokuapp.com/api/user/${this.props.user.uid}`)
+    .then(response => {
+      request.get('https://fotafood.herokuapp.com/api/restaurant')
+      .then(res2 => this.setState({
         uploaded: response.data.uploadedPhotos,
-        upvoted: response.data.likedPhotos
-      }));
-    axios.get('https://fotafood.herokuapp.com/api/restaurant')
-      .then(response => this.setState({ restaurants: response.data }));
+        upvoted: response.data.likedPhotos,
+        restaurants: res2.data
+      })).catch(e => request.showErrorAlert(e));
+    }).catch(e => request.showErrorAlert(e));
   }
 
   deleteFromServer(photo) {
@@ -27,10 +29,11 @@ class UserPage extends Component {
       return;
     }
     this.deleting = true;
-    axios.delete('https://fotafood.herokuapp.com/api/photo', { data: { id: photo.id } })
-      .then(() => {
-        this.deleting = false;
-      });
+    request.delete('https://fotafood.herokuapp.com/api/photo', { data: { id: photo.id } })
+    .then(() => {
+      this.deleting = false;
+    })
+    .catch(e => request.showErrorAlert(e));
   }
 
   renderPhoto(photo, allowDelete) {
