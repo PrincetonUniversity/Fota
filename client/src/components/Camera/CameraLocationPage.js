@@ -57,7 +57,7 @@ class CameraLocationPage extends Component {
   }
 
   componentDidMount() {
-    AsyncStorage.getItem('UploadPath').then((path) => {
+    AsyncStorage.getItem('UploadPath').then(path => {
             this.setState({ uploadPath: path });
         }).done();
   }

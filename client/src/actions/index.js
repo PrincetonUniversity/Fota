@@ -6,8 +6,8 @@ export const LOGIN = 'randomtext';
 export const LOADING = '9(AA6969asD)';
 export const SORTING = ')!sdj0ad!SDAD::L';
 
-export function getPhotosAndRests(sort, lat, lng) {
-  const req = request.get(`https://fotafood.herokuapp.com/api/photo?order=${sort}&lat=${lat}&lng=${lng}&distance=${1}`)
+export function getPhotosAndRests(sort, lat, lng, radius) {
+  const req = request.get(`https://fotafood.herokuapp.com/api/photo?order=${sort}&lat=${lat}&lng=${lng}&distance=${radius}`)
     .catch(e => request.showErrorAlert(e));
   return {
     type: PHOTOS_AND_RESTS,

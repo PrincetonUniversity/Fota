@@ -26,7 +26,9 @@ class PhotoList extends Component {
     navigator.geolocation.getCurrentPosition(position => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
-      this.props.getPhotosAndRests(this.props.sorting, lat, lng);
+      AsyncStorage.getItem('SearchRadius').then(radius =>
+        this.props.getPhotosAndRests(this.props.sorting, lat, lng, parseInt(radius, 10))
+      );
     });
   }
 

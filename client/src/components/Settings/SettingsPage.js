@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
-import { Header, ImageButton } from '../common';
+import { Text, View, AsyncStorage, TouchableOpacity } from 'react-native';
+import { Header } from '../common';
 
 const radii = [1, 5, 10, 25];
 
@@ -8,11 +8,13 @@ class SettingsPage extends Component {
   renderRadii() {
     console.log('here');
     return radii.map(radius =>
-      <View style={{ flexDirection: 'row', marginTop: 5, marginBottom: 5 }} key={radius}>
-        <Text onPress={radius => } style={{ fontSize: 15, fontFamily: 'Avenir' }}>
-          {radius} mi.
-        </Text>
-      </View>
+      <TouchableOpacity key={radius} onPress={() => AsyncStorage.setItem('SearchRadius', radius.toString())}>
+        <View style={{ flexDirection: 'row', marginTop: 5, marginBottom: 5 }}>
+          <Text style={{ fontSize: 15, fontFamily: 'Avenir' }}>
+            {radius} mi.
+          </Text>
+        </View>
+      </TouchableOpacity>
     );
   }
 
