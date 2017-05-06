@@ -1,5 +1,6 @@
 var Restaurant = require('../models').Restaurant;
 var Photo = require('../models').Photo;
+var sequelize = require('sequelize');
 
 module.exports.post = (req, res) => {
   data = req.body
@@ -43,4 +44,35 @@ module.exports.getPhotos = (req, res) => {
   }).catch((err) => {
     console.log(err);
   })
+}
+
+module.exports.getNearbyRestaurants = (req, res) => {
+  if (process.env.DATABASE_URL) {
+    sequelizeInstance = new sequelize(process.env.DATABASE_URL, {
+      dialect: 'postgres',
+      protocol: 'postgres',
+      port: '5432',
+      host: 'ec2-23-23-223-2.compute-1.amazonaws.com'
+    })
+  } else sequelizeInstance = new sequelize('fota_dev', 'postgres', '123', {dialect: 'postgres'});
+
+  let { lat, lng } = req.query;
+  if (!lat || !lng) return res.status(400).send({error: 'Must provide lat, lng'});
+
+  sequelizeInstance.query(`SELECT id, name, 2 * 3961 * asin(sqrt((sin(radians((lat - ${lat}) / 2))) ^ 2 + cos(radians(${lat})) * cos(radians(lat)) * (sin(radians((lng - ${lng}) / 2))) ^ 2)) AS distance FROM "Restaurants"`)
+  .then((restaurants) => {
+    let closeRestaurants = restaurants[0].filter((rest) => {
+      return (rest.distance <= 1)
+    });
+    // distance comparator
+    sortedRestaurants = closeRestaurants.sort((a, b) => {
+      if (a.distance == b.distance) return 0;
+      if (a.distance > b.distance) return 1;
+      if (a.distance < b.distance) return -1;
+    });
+    return res.status(200).send(sortedRestaurants);
+  }).catch((err) => {
+    console.log(err);
+    return res.status(500).send({error: 'Internal Server Error'});
+  });
 }
