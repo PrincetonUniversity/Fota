@@ -1,8 +1,24 @@
 import { Alert, NetInfo } from 'react-native';
 import axios from 'axios';
 
+function isNetworkConnected() {
+  return NetInfo.fetch().then(reachability => {
+    if (reachability === 'unknown') {
+      return new Promise(resolve => {
+        const handleFirstConnectivityChangeIOS = isConnected => {
+          NetInfo.isConnected.removeEventListener('change', handleFirstConnectivityChangeIOS);
+          resolve(isConnected);
+        };
+        NetInfo.isConnected.addEventListener('change', handleFirstConnectivityChangeIOS);
+      });
+    }
+    const r = reachability.toLowerCase();
+    return (r !== 'none' && r !== 'unknown');
+  });
+}
+
 function request(method, url, data, resolve, reject) {
-  NetInfo.isConnected.fetch().then(isConnected => {
+  isNetworkConnected().then(isConnected => {
     if (isConnected) {
       axios({ method, url, data })
         .then(response => resolve(response))

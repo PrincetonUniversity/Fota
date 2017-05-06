@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import { View,
-          Image,
-          Text,
-          FlatList,
-          AsyncStorage,
-          TouchableOpacity,
-          ScrollView,
-          Alert
-        } from 'react-native';
+import {
+  View,
+  Image,
+  Text,
+  FlatList,
+  AsyncStorage,
+  TouchableOpacity,
+  ScrollView,
+  Alert
+} from 'react-native';
 import { connect } from 'react-redux';
 import { RNS3 } from 'react-native-aws3';
 import request from '../../helpers/axioshelper';
-import { ImageButton, Header, CommentDisplay, CommentDisplayInput } from '../common';
+import { ImageButton, Header, CommentDisplay, CommentDisplayInput, Spinner } from '../common';
 import { deleteImage } from './CameraPage';
 import { setCameraState } from '../../actions';
 
@@ -86,7 +87,8 @@ class CameraCommentsPage extends Component {
       noun: '',
       comments: [],
       newAdjective: '',
-      newNoun: ''
+      newNoun: '',
+      submitPressed: false
     };
     this.submitting = false;
   }
@@ -183,6 +185,7 @@ class CameraCommentsPage extends Component {
       return;
     }
     this.submitting = true;
+    this.setState({ submitPressed: true });
 
     const file = {
       uri: this.state.uploadPath,
@@ -231,6 +234,20 @@ class CameraCommentsPage extends Component {
           }
         });
     }).catch(() => request.showErrorAlert({ etype: 0 }));
+  }
+
+  renderSubmitButton() {
+    if (this.state.submitPressed) {
+      return <Spinner size="small" />;
+    }
+    return (
+      <Text
+        style={headerTextStyle}
+        onPress={() => this.submitUpload()}
+      >
+        Submit
+      </Text>
+    );
   }
 
   renderCameraLocation() {
@@ -325,12 +342,9 @@ class CameraCommentsPage extends Component {
               Back
             </Text>
 
-            <Text
-              style={headerTextStyle}
-              onPress={() => this.submitUpload()}
-            >
-              Submit
-            </Text>
+            <View style={{ width: 50 }}>
+              {this.renderSubmitButton()}
+            </View>
           </Header>
 
           <View style={{ alignItems: 'center' }}>
