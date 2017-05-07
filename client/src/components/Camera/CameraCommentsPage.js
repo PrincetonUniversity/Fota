@@ -78,7 +78,7 @@ const { pageStyle,
 
 const adjectives = ['Great', 'Good', 'OK', 'Bad'];
 const nouns = ['Food', 'Ambience', 'Service', 'Atmosphere'];
-const backButton = require('../../img/exit_button.png');
+const deleteButton = require('../../img/exit_button.png');
 
 class CameraCommentsPage extends Component {
   constructor(props) {
@@ -306,7 +306,7 @@ class CameraCommentsPage extends Component {
         >
           <ImageButton
             style={deleteCommentStyle}
-            source={backButton}
+            source={deleteButton}
             onPress={() => this.deleteComment(comment, type)}
           />
         </CommentDisplay>

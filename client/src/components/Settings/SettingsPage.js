@@ -41,7 +41,7 @@ class SettingsPage extends Component {
         }}
       >
         <View style={styles.distanceStyle}>
-          <Text style={{ fontSize: 17, fontFamily: 'Avenir' }}>
+          <Text style={{ fontSize: 17, fontFamily: 'Avenir', marginLeft: 5 }}>
             {radius} mi.
           </Text>
           {this.renderCheckmark(radius)}
@@ -57,7 +57,7 @@ class SettingsPage extends Component {
           <Header>
             <Text style={styles.headerTextStyle}>Settings</Text>
           </Header>
-          <Text style={{ fontSize: 23, fontFamily: 'Avenir' }}>
+          <Text style={{ fontSize: 23, fontFamily: 'Avenir', marginLeft: 5 }}>
             Distance
           </Text>
           <FlatList

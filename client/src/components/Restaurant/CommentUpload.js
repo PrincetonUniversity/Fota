@@ -80,6 +80,7 @@ const { pageStyle,
 const adjectives = ['Great', 'Good', 'OK', 'Bad'];
 const nouns = ['Food', 'Ambience', 'Service', 'Atmosphere'];
 const backButton = require('../../img/back_arrow.png');
+const deleteButton = require('../../img/exit_button.png');
 
 class CommentUpload extends Component {
   state = { adjective: '', noun: '', comments: [], newAdjective: '', newNoun: '' }
@@ -217,7 +218,7 @@ class CommentUpload extends Component {
         >
           <ImageButton
             style={deleteCommentStyle}
-            source={backButton}
+            source={deleteButton}
             onPress={() => this.deleteComment(comment, type)}
           />
         </CommentDisplay>

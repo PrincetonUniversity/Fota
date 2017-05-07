@@ -65,7 +65,7 @@ class SearchPage extends Component {
           <Header>
             <Input
               style={styles.containerStyle}
-              placeholder='Search'
+              placeholder='Search for a restaurant'
               value={this.state.query}
               onChangeText={query => this.updateQuery(query)}
             >
