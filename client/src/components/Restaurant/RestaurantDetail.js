@@ -114,6 +114,14 @@ class RestaurantDetail extends Component {
     const hourNow = now.getHours() * 100;
     const candidateHours = hourarray.filter((element) => (element.day === dayNow));
 
+    // Closed for today
+    if (candidateHours.length === 0) {
+      return {
+        start: 'closed',
+        end: 'closed'
+      };
+    }
+
     // Check the boundary case
     // Hasn't opened at all yet today
     if (parseInt(candidateHours[0].start) >= hourNow) {
@@ -184,6 +192,10 @@ class RestaurantDetail extends Component {
     if (!hours) return '';
     const trueHours = this.getTrueHours(hours);
     if (!trueHours) return '';
+    if (trueHours.start === 'closed') {
+      return 'Closed for today';
+    }
+
     const openTime = trueHours.start;
     const closeTime = trueHours.end;
 
