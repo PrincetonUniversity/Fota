@@ -1,16 +1,14 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-const CommentDisplay = (props) => {
-  return (
-    <View style={styles.containerStyle}>
-      <Text style={styles.textStyle}>
-        {props.text}
-      </Text>
-      {props.children}
-    </View>
-  );
-};
+const CommentDisplay = (props) => (
+  <View style={styles.containerStyle}>
+    <Text style={styles.textStyle}>
+      {props.text}
+    </Text>
+    {props.children}
+  </View>
+);
 
 const styles = {
     containerStyle: {
