@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import { Header } from '../common';
 import UserPage from './UserPage';
@@ -11,10 +11,12 @@ class AccountPage extends Component {
       return <UserPage user={this.props.loginState} />;
     }
     return (
-      <View>
-        <Header><Text style={styles.headerTextStyle}>Log In</Text></Header>
-        <LoginForm />
-      </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{ flex: 1 }}>
+          <Header><Text style={styles.headerTextStyle}>Log In</Text></Header>
+          <LoginForm />
+        </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
