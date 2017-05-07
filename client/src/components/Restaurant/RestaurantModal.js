@@ -91,13 +91,11 @@ class RestaurantModal extends Component {
     }
     return (
       <View style={styles.modalStyle}>
-        <View style={{ ...styles.pageStyle, ...this.props.pageStyle }}>
-          <Navigator
-            style={{ flex: 1, backgroundColor: '#fff' }}
-            initialRoute={{ id: 0 }}
-            renderScene={this.renderScene.bind(this)}
-          />
-        </View>
+        <Navigator
+          style={{ flex: 1, backgroundColor: '#fff', ...this.props.pageStyle }}
+          initialRoute={{ id: 0 }}
+          renderScene={this.renderScene.bind(this)}
+        />
       </View>
     );
   }
@@ -130,9 +128,6 @@ const styles = {
     flex: 1,
     justifyContent: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)'
-  },
-  pageStyle: {
-    flex: 1
   },
   popupStyle: {
     marginHorizontal: 20,
