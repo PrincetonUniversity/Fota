@@ -85,9 +85,7 @@ class CameraPage extends Component {
         <Header>
           <Text
             style={headerTextStyle}
-            onPress={() => {
-              this.props.setCameraState(false);
-            }}
+            onPress={() => this.props.setCameraState(false)}
           >
             Cancel
           </Text>
