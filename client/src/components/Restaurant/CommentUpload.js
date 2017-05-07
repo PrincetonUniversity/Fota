@@ -79,7 +79,7 @@ const { pageStyle,
 
 const adjectives = ['Great', 'Good', 'OK', 'Bad'];
 const nouns = ['Food', 'Ambience', 'Service', 'Atmosphere'];
-const backButton = require('../../img/exit_button.png');
+const backButton = require('../../img/back_arrow.png');
 
 class CommentUpload extends Component {
   state = { adjective: '', noun: '', comments: [], newAdjective: '', newNoun: '' }

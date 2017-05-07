@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { View, Image, Text, ScrollView, FlatList, TouchableOpacity, Navigator } from 'react-native';
+import { View, Image, Text, ScrollView, FlatList } from 'react-native';
 import moment from 'moment';
 import { phonecall } from 'react-native-communications';
 import request from '../../helpers/axioshelper';
-import { Button, ImageButton, FilterDisplay, CommentDisplay } from '../common';
-import NounDetail from './NounDetail';
+import { Button, ImageButton, FilterDisplay } from '../common';
+import CommentDetail from './CommentDetail';
 
 const styles = {
   pageStyle: { // Entire restaurant page
@@ -58,7 +58,13 @@ const styles = {
     textAlign: 'center',
     color: '#aaa',
     fontFamily: 'Avenir',
-    paddingVertical: 67
+  },
+  emptyCommentTextStyle: {
+    fontSize: 15,
+    textAlign: 'center',
+    color: '#aaa',
+    fontFamily: 'Avenir',
+    backgroundColor: '#f00'
   },
   photoStyle: { // Individual photos
     height: 150,
@@ -66,11 +72,6 @@ const styles = {
     marginLeft: 2.5,
     marginRight: 2.5
   },
-  reviewStyle: {
-    alignItems: 'center',
-    flex: 1,
-    marginBottom: 10
-  }
 };
 
 const {
@@ -82,8 +83,8 @@ const {
   timeUntilCloseStyle,
   phoneButtonStyle,
   filterContainerStyle,
+  emptyTextStyle,
   photoStyle,
-  reviewStyle
 } = styles;
 
 const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
@@ -92,7 +93,7 @@ const backButton = require('../../img/exit_button.png');
 const phoneButton = require('../../img/phone.png');
 
 class RestaurantDetail extends Component {
-  state = { photos: [], nouns: [], noun: null, loading: true }
+  state = { photos: [], nouns: [], loading: true }
 
   componentWillMount() {
     request.get(restaurantDetails + this.props.restaurant.id)
@@ -210,9 +211,12 @@ class RestaurantDetail extends Component {
   renderPhotoList() {
     if (!this.state.loading && this.state.photos.length === 0) {
       return (
-        <Text style={styles.emptyTextStyle}>
-          Be the first to upload a photo here!
-        </Text>
+        <View style={{ height: 150, justifyContent: 'center' }}>
+          <Text style={emptyTextStyle}>
+            Be the first to upload a photo here!
+          </Text>
+        </View>
+
       );
     }
     return (
@@ -226,6 +230,19 @@ class RestaurantDetail extends Component {
     );
   }
 
+  renderCommentList() {
+    if (!this.state.loading && this.state.nouns.length === 0) {
+      return (
+        <View style={{ flex: 1, marginHorizontal: 20, marginTop: 5 }}>
+          <Text style={emptyTextStyle}>
+            There are no comments for this restaurant yet. Be the first to write one!
+          </Text>
+        </View>
+      );
+    }
+    return <CommentDetail nouns={this.state.nouns} />;
+  }
+
   renderPhoto(photo) {
     return (
       <View key={photo.id}>
@@ -234,73 +251,6 @@ class RestaurantDetail extends Component {
           style={photoStyle}
         />
       </View>
-    );
-  }
-
-  renderCommentDetail() {
-    if (this.state.noun) {
-      return (
-        <View>
-          <Text onPress={this.setState({ noun: null })}>Back</Text>
-          <NounDetail noun={this.state.noun} />
-        </View>
-      );
-    }
-    return (
-      <FlatList
-        data={this.state.nouns}
-        keyExtractor={noun => `${noun.adj} + ${noun.noun}`}
-        // numColumns={1}
-        renderItem={noun => this.renderNoun(noun.item)}
-        bounces={false}
-      />
-    );
-  }
-
-  // renderCommentScene(route, navigator) {
-  //   switch (route.id) {
-  //     case 0:
-  //       return (
-  //         <FlatList
-  //           data={this.state.nouns}
-  //           keyExtractor={noun => `${noun.adj} + ${noun.noun}`}
-  //           renderItem={noun => this.renderNoun(noun.item, navigator)}
-  //           bounces={false}
-  //         />
-  //       );
-  //     case 1:
-  //       return (
-  //         <View>
-  //           <Text onPress={this.setState({ noun: null })}>Back</Text>
-  //           <NounDetail noun={this.state.noun} />
-  //         </View>
-  //       );
-  //     default:
-  //       return (
-  //         <FlatList
-  //           data={this.state.nouns}
-  //           keyExtractor={noun => `${noun.adj} + ${noun.noun}`}
-  //           renderItem={noun => this.renderNoun(noun.item, navigator)}
-  //           bounces={false}
-  //         />
-  //       );
-  //   }
-  // }
-
-  // updateNoun(noun) {
-  //   this.setState({ noun });
-  //   console.log(this.state.noun);
-  // }
-
-  renderNoun(noun) {
-    const commentString = `${noun.adj[0].word} ${noun.noun}: ${noun.adj[0].count}`;
-    return (
-      <TouchableOpacity onPress={() => this.setState({ noun })}>
-        <CommentDisplay
-          key={commentString}
-          text={commentString}
-        />
-      </TouchableOpacity>
     );
   }
 
@@ -352,9 +302,7 @@ class RestaurantDetail extends Component {
         <Text style={titleStyle}>
           Consensus!
         </Text>
-        <View style={reviewStyle}>
-          {this.renderCommentDetail()}
-        </View>
+        {this.renderCommentList()}
 
         <View style={{ flexDirection: 'row' }}>
           <Button onPress={() => this.renderCommentUpload()}>
