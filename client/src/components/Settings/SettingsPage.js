@@ -2,22 +2,20 @@ import React, { Component } from 'react';
 import { Text, View, AsyncStorage, TouchableHighlight, Image, FlatList } from 'react-native';
 import { Header } from '../common';
 
-const radii = [1, 5, 10, 25];
+const radii = ['1', '3', '5', '10'];
 const checkmark = require('../../img/fota_home_activated.png');
 
 class SettingsPage extends Component {
-  state = { radius: '', fetchingComplete: false }
+  state = { radius: '' }
 
   componentWillMount() {
     AsyncStorage.getItem('SearchRadius').then(currentRadius =>
-      this.setState({ radius: parseInt(currentRadius, 10), fetchingComplete: true })
+      this.setState({ radius: currentRadius })
     );
   }
 
-  componentDidUpdate() {
-    AsyncStorage.getItem('SearchRadius').then(currentRadius =>
-      this.setState({ radius: parseInt(currentRadius, 10) })
-    );
+  updateRadius(radius) {
+    this.setState({ radius });
   }
 
   renderCheckmark(radius) {
@@ -25,24 +23,25 @@ class SettingsPage extends Component {
       return (
         <Image
           source={checkmark}
-          style={{ width: 15, height: 15 }}
+          style={{ width: 20, height: 20 }}
         />
       );
     }
-    return;
   }
 
   renderRadius(radius) {
     return (
       <TouchableHighlight
         key={radius}
+        underlayColor='#ff9700'
         onPress={() => {
-          this.setState({ radius });
-          AsyncStorage.setItem('SearchRadius', radius.toString());
+          AsyncStorage.setItem('SearchRadius', radius).then(() =>
+            this.updateRadius(radius)
+          );
         }}
       >
         <View style={styles.distanceStyle}>
-          <Text style={{ fontSize: 15, fontFamily: 'Avenir' }}>
+          <Text style={{ fontSize: 17, fontFamily: 'Avenir' }}>
             {radius} mi.
           </Text>
           {this.renderCheckmark(radius)}
@@ -52,22 +51,31 @@ class SettingsPage extends Component {
   }
 
   render() {
-    if (this.state.fetchingComplete) {
+    if (this.state.radius) {
       return (
         <View>
           <Header>
             <Text style={styles.headerTextStyle}>Settings</Text>
           </Header>
-          <View>
-            <Text style={{ fontSize: 17, fontFamily: 'Avenir' }}>
-              Distance Away
-            </Text>
-            <FlatList
-              data={radii}
-              keyExtractor={index => index}
-              renderItem={radius => this.renderRadius(radius.item)}
-            />
-          </View>
+          <Text style={{ fontSize: 23, fontFamily: 'Avenir' }}>
+            Distance
+          </Text>
+          <FlatList
+            data={radii}
+            extraData={this.state.radius}
+            keyExtractor={index => (index + this.state.radius)}
+            renderItem={radius => this.renderRadius(radius.item)}
+            ListHeaderComponent={() =>
+              <View style={{ height: 1, backgroundColor: 'gray' }} />
+            }
+            ItemSeparatorComponent={() =>
+              <View style={{ height: 1, backgroundColor: 'gray' }} />
+            }
+            ListFooterComponent={() =>
+              <View style={{ height: 1, backgroundColor: 'gray' }} />
+            }
+            bounces={false}
+          />
         </View>
       );
     }
@@ -82,15 +90,15 @@ const styles = {
     flex: 1,
     textAlign: 'center',
     fontFamily: 'Avenir',
-    fontSize: 20,
+    fontSize: 30,
     color: '#000'
   },
   distanceStyle: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 5,
-    marginBottom: 5
+    marginTop: 10,
+    marginBottom: 10
   }
 };
 

@@ -18,7 +18,7 @@ const styles = {
       flexDirection: 'row',
       justifyContent: 'space-around',
       borderRadius: 20,
-      backgroundColor: 'orange',
+      backgroundColor: '#ff9700',
       alignItems: 'center',
       padding: 8,
       margin: 5

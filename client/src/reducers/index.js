@@ -14,5 +14,5 @@ export default combineReducers({
     loginState: LoginReducer,
     loading: LoadingReducer,
     sorting: SortingReducer,
-    navigator: NavigatorReducer
+    mainNavigator: NavigatorReducer
 });

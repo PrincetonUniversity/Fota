@@ -115,6 +115,7 @@ class CameraLocationPage extends Component {
   }
 
   renderCameraComments() {
+    console.log(this.props.navigator);
     this.props.navigator.replace({ id: 2 });
   }
 

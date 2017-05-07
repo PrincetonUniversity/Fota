@@ -23,7 +23,7 @@ const styles = {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'orange',
+    backgroundColor: '#b2b2b2',
     paddingHorizontal: 12,
     borderRadius: 16,
     height: 32,

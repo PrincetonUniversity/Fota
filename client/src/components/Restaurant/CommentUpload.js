@@ -34,7 +34,9 @@ const styles = {
     height: 50, // FIGURE OUT HOW TO NOT HARD CODE THIS
     padding: 1,
     borderRadius: 10,
-    backgroundColor: '#b2b2b2',
+    backgroundColor: 'white',
+    borderColor: '#ff9700',
+    borderWidth: 2,
     marginRight: 10,
     marginLeft: 10,
     marginBottom: 10
@@ -46,9 +48,9 @@ const styles = {
     marginBottom: 4
   },
   commentTextStyle: {
-    color: 'white',
+    color: 'gray',
     fontFamily: 'Avenir',
-    fontSize: 15,
+    fontSize: 13,
     marginLeft: 7,
     opacity: 0.8
   },
@@ -191,7 +193,7 @@ class CommentUpload extends Component {
     return (
       <View style={{ ...uploadContainerStyle, ...{ justifyContent: 'center' } }}>
         <Text style={commentTextStyle}>
-          Say something about this restaurant...
+          Tap a bubble from each column.
         </Text>
       </View>
     );

@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { View,
-          Image,
-          Text,
-          FlatList,
-          AsyncStorage,
-          TouchableOpacity,
-          ScrollView,
-          Alert,
-          TouchableWithoutFeedback,
-          Keyboard
-        } from 'react-native';
+  Image,
+  Text,
+  FlatList,
+  AsyncStorage,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+  TouchableWithoutFeedback,
+  Keyboard
+} from 'react-native';
 import { connect } from 'react-redux';
 import { RNS3 } from 'react-native-aws3';
 import request from '../../helpers/axioshelper';
@@ -35,7 +35,9 @@ const styles = {
     height: 50, // FIGURE OUT HOW TO NOT HARD CODE THIS
     padding: 1,
     borderRadius: 10,
-    backgroundColor: '#b2b2b2',
+    backgroundColor: 'white',
+    borderColor: '#ff9700',
+    borderWidth: 2,
     marginRight: 10,
     marginLeft: 10,
     marginBottom: 10
@@ -47,9 +49,9 @@ const styles = {
     marginBottom: 4
   },
   commentTextStyle: {
-    color: 'white',
+    color: 'gray',
     fontFamily: 'Avenir',
-    fontSize: 15,
+    fontSize: 13,
     marginLeft: 7,
     opacity: 0.8
   },
@@ -224,7 +226,7 @@ class CameraCommentsPage extends Component {
           this.submitComments();
           AsyncStorage.setItem('UploadRestaurant', '');
           AsyncStorage.setItem('UploadPath', '');
-          this.props.navigator.renderHome();
+          this.props.mainNavigator.renderHome();
           this.props.setCameraState(false);
         })
         .catch(e => {
@@ -345,6 +347,7 @@ class CameraCommentsPage extends Component {
               style={headerTextStyle}
               onPress={() => {
                 AsyncStorage.setItem('UploadRestaurant', '');
+                // console.log(this.props.navigator);
                 this.renderCameraLocation();
               }}
             >
@@ -430,8 +433,8 @@ class CameraCommentsPage extends Component {
   }
 }
 
-function mapStateToProps({ loginState, navigator }) {
-  return { loginState, navigator };
+function mapStateToProps({ loginState, mainNavigator }) {
+  return { loginState, mainNavigator };
 }
 
 export default connect(mapStateToProps, { setCameraState })(CameraCommentsPage);
