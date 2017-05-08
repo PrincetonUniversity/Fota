@@ -19,7 +19,7 @@ class SearchPage extends Component {
   updateQuery(query) {
     let rlist = this.state.totalList;
     const qarr = query.toLowerCase().split(' ');
-    if (qarr.length === 0) {
+    if (qarr.length === 0 || qarr[0] === '') {
       this.setState({ query, rlist: [] });
       return;
     }
