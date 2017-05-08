@@ -190,7 +190,7 @@ class RestaurantDetail extends Component {
       return false;
     }
 
-    if (currentHour <= openTime) {
+    if (currentHour < openTime) {
       return false;
     }
 
