@@ -136,6 +136,12 @@ class RestaurantDetail extends Component {
     if (parseInt(candidateHours[candidateHours.length - 1].end) <= hourNow) {
       const dayTomorrow = (dayNow + 1) % 7;
       const tomorrowHours = hourarray.filter((element) => (element.day === dayTomorrow));
+      if (tomorrowHours.length === 0) {
+        return {
+          start: 'closed',
+          end: 'closed'
+        };
+      }
       return {
         start: parseInt(tomorrowHours[0].start),
         end: parseInt(tomorrowHours[0].end)
