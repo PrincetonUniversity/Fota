@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import { View, FlatList } from 'react-native';
+import { View, FlatList, Text } from 'react-native';
 import { CommentDisplay, ImageButton } from '../common';
 
 class NounDetail extends Component {
+
   renderComment(adj, count) {
     const percent = Math.round((count * 100.0) / this.props.noun.totalCount);
     const commentString = `${adj} ${this.props.noun.noun}: ${percent}%`;
     return (
-        <CommentDisplay text={commentString} />
+      <CommentDisplay text={commentString} />
     );
   }
 
@@ -25,6 +26,7 @@ class NounDetail extends Component {
           keyExtractor={adj => adj.word}
           showsVerticalScrollIndicator={false}
           renderItem={adj => this.renderComment(adj.item.word, adj.item.count)}
+          removeClippedSubviews={false}
           bounces={false}
         />
       </View>

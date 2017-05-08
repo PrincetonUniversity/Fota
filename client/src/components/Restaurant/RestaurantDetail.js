@@ -254,6 +254,7 @@ class RestaurantDetail extends Component {
         renderItem={photo => this.renderPhoto(photo.item)}
         showsHorizontalScrollIndicator={false}
         horizontal
+        removeClippedSubviews={false}
       />
     );
   }

@@ -17,6 +17,7 @@ class CommentDetail extends Component {
         showsVerticalScrollIndicator={false}
         renderItem={noun => this.renderNoun(noun.item, navigator)}
         bounces={false}
+        removeClippedSubviews={false}
       />
     );
   }

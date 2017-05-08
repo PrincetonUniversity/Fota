@@ -81,6 +81,7 @@ class SearchPage extends Component {
             renderItem={restaurant => this.renderRestaurant(restaurant.item)}
             keyboardShouldPersistTaps={'handled'}
             bounces={false}
+            removeClippedSubviews={false}
           />
         </View>
       </TouchableWithoutFeedback>

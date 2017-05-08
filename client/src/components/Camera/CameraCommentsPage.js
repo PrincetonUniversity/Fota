@@ -409,6 +409,7 @@ class CameraCommentsPage extends Component {
                 keyExtractor={(index) => index.toString()}
                 renderItem={adjective => this.renderAdjective(adjective.item)}
                 keyboardShouldPersistTaps={'handled'}
+                removeClippedSubviews={false}
               />
             </View>
 
@@ -418,6 +419,7 @@ class CameraCommentsPage extends Component {
                 keyExtractor={(index) => index.toString()}
                 renderItem={noun => this.renderNoun(noun.item)}
                 keyboardShouldPersistTaps={'handled'}
+                removeClippedSubviews={false}
               />
             </View>
 
