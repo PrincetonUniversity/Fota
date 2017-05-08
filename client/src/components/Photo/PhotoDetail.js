@@ -58,7 +58,6 @@ const styles = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'stretch',
-    //marginRight: 20
   },
 };
 

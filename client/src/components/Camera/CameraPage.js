@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, Dimensions, AsyncStorage, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import Camera, { constants } from 'react-native-camera';
+// eslint-disable-next-line
 import ImageResizer from 'react-native-image-resizer';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { Header, ImageButton } from '../common/';

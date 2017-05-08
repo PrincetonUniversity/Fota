@@ -198,6 +198,7 @@ class CameraCommentsPage extends Component {
 
     const file = {
       uri: this.state.uploadPath,
+      // eslint-disable-next-line
       name: `${this.props.loginState.uid}_${this.state.restaurantid}_${this.state.uploadPath.split('/').pop()}.jpg`,
       type: 'image/jpg'
     };
@@ -219,7 +220,7 @@ class CameraCommentsPage extends Component {
       request.post('https://fotafood.herokuapp.com/api/photo', {
         RestaurantId: this.state.restaurantid,
         UserId: this.props.loginState.uid,
-        link: response.body.postResponse.location // this should be the aws link
+        link: response.body.postResponse.location
       })
         .then(() => {
           deleteImage(this.state.uploadPath);
@@ -234,6 +235,7 @@ class CameraCommentsPage extends Component {
           if (e.etype === 1 && e.response.status === 400) {
             Alert.alert(
               'Invalid Photo',
+              // eslint-disable-next-line
               'You may have uploaded an invalid photo. Please make sure you submit a picture of food.',
               [
                 { text: 'OK', onPress: () => { this.props.navigator.replace({ id: 0 }); } }

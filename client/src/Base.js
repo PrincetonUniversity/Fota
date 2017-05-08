@@ -46,7 +46,7 @@ class Base extends Component {
         return <BlankPage />;
     }
   }
-//marginTop: (Platform.OS === 'ios') ? 15 : 0
+
   render() {
     if (this.state.loginFinished) {
       return (

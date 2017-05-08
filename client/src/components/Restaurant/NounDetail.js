@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { View, FlatList, Text } from 'react-native';
+import { View, FlatList } from 'react-native';
 import { CommentDisplay, ImageButton } from '../common';
 
 class NounDetail extends Component {
-
   renderComment(adj, count) {
     const percent = Math.round((count * 100.0) / this.props.noun.totalCount);
     const commentString = `${adj} ${this.props.noun.noun}: ${percent}%`;

@@ -2,20 +2,20 @@ import React from 'react';
 import { TextInput, View } from 'react-native';
 
 const CommentDisplayInput = ({ placeholder, value, onChangeText, secure, onBlur }) => (
-    <View style={styles.containerStyle}>
-      <TextInput
-        style={styles.inputStyle}
-        value={value}
-        defaultValue={placeholder}
-        placeholder={placeholder}
-        placeholderTextColor='white'
-        onChangeText={onChangeText}
-        autoCorrect
-        secureTextEntry={secure}
-        underlineColorAndroid={'transparent'}
-        onBlur={onBlur}
-      />
-    </View>
+  <View style={styles.containerStyle}>
+    <TextInput
+      style={styles.inputStyle}
+      value={value}
+      defaultValue={placeholder}
+      placeholder={placeholder}
+      placeholderTextColor='white'
+      onChangeText={onChangeText}
+      autoCorrect
+      secureTextEntry={secure}
+      underlineColorAndroid={'transparent'}
+      onBlur={onBlur}
+    />
+  </View>
 );
 
 const styles = {
