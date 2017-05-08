@@ -171,20 +171,30 @@ class RestaurantDetail extends Component {
   }
 
   isOpen(closeTime, openTime) {
-    const currentDate = moment(new Date());
-    const openTimeHours = Math.floor(openTime / 100);
-    const openTimeMinutes = openTime - openTimeHours * 100;
-    const openDate = moment({ hours: openTimeHours, minutes: openTimeMinutes });
-    const closeTimeHours = Math.floor(closeTime / 100);
-    const closeTimeMinutes = closeTime - closeTimeHours * 100;
-    const closeDate = moment({ hours: closeTimeHours, minutes: closeTimeMinutes });
-    if (currentDate > closeDate) {
-      closeDate.add(1, 'days');
+    // const currentDate = moment(new Date());
+    // const openTimeHours = Math.floor(openTime / 100);
+    // const openTimeMinutes = openTime - openTimeHours * 100;
+    // const openDate = moment({ hours: openTimeHours, minutes: openTimeMinutes });
+    // const closeTimeHours = Math.floor(closeTime / 100);
+    // const closeTimeMinutes = closeTime - closeTimeHours * 100;
+    // const closeDate = moment({ hours: closeTimeHours, minutes: closeTimeMinutes });
+    // if (currentDate > closeDate) {
+    //   closeDate.add(1, 'days');
+    // }
+    // if (currentDate > openDate && currentDate < closeDate) {
+    //   return true;
+    // }
+    // return false;
+    const currentHour = (new Date()).getHours() * 100;
+    if (currentHour >= closeTime) {
+      return false;
     }
-    if (currentDate > openDate && currentDate < closeDate) {
-      return true;
+
+    if (currentHour < openTime) {
+      return false;
     }
-    return false;
+
+    return true;
   }
 
   timeString(time) {
