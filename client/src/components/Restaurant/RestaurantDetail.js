@@ -274,6 +274,7 @@ class RestaurantDetail extends Component {
 
   render() {
     const restaurant = this.props.restaurant;
+    console.log(backButton);
     return (
       <View style={pageStyle}>
         <View style={headerStyle}>
