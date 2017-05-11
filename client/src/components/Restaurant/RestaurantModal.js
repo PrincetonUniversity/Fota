@@ -64,8 +64,8 @@ class RestaurantModal extends Component {
         key={option.name}
         activeOpacity={0.9}
         onPress={() => {
-          option.onClick();
           this.setModalVisible(false);
+          option.onClick();
         }}
       >
         <CardSection>

@@ -116,7 +116,6 @@ class PhotoList extends Component {
           ListHeaderComponent={Headbar}
           onRefresh={() => this.refreshListView()}
           refreshing={this.state.refreshing}
-          removeClippedSubviews={false}
         />
       </View>
     );

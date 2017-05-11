@@ -212,11 +212,11 @@ class PhotoDetail extends Component {
           pageStyle={restaurantPageStyle}
           options={[{
             name: 'Report as Spam',
-            onClick: () => Alert.alert(
-                '',
-                'This photo has been reported. Thanks for letting us know!',
-                [{ text: 'OK' }]
-              )
+            onClick: () => setTimeout(() => Alert.alert(
+                  '',
+                  'This photo has been reported. Thanks for letting us know!',
+                  [{ text: 'OK' }]
+                ), 550)
           }]}
         >
           <Image
