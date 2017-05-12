@@ -12,15 +12,7 @@ const Headbar = () => (
 );
 
 const styles = {
-  // headerStyle: {
-  //   backgroundColor: '#ff9700',
-  //   alignItems: 'center',
-  //   height: 50,
-  //   paddingHorizontal: 10,
-  //   flexDirection: 'row'
-  // },
   searchStyle: {
-    //backgroundColor: '#00f',
     textAlign: 'center',
     flex: 2
   },

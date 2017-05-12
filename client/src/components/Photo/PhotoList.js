@@ -111,6 +111,7 @@ class PhotoList extends Component {
       <View>
         <FlatList
           data={this.props.photos}
+          extraData={Headbar}
           keyExtractor={photo => photo.id}
           renderItem={photo => this.renderPhoto(photo)}
           ListHeaderComponent={Headbar}
