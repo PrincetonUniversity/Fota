@@ -1,9 +1,9 @@
 // The hot/new button
 
 import React, { Component } from 'react';
-import { View, TouchableWithoutFeedback, Text, AsyncStorage } from 'react-native';
+import { View, TouchableWithoutFeedback, Text } from 'react-native';
 import { connect } from 'react-redux';
-import { getPhotosAndRests, loadingTrue, changeSorting } from '../actions/index';
+import { changeSorting } from '../actions/index';
 
 class OrderToggler extends Component {
   constructor(props) {
@@ -12,7 +12,6 @@ class OrderToggler extends Component {
   }
 
   onButtonClick() {
-    this.props.loadingTrue();
     if (this.props.sorting === 'hot') {
       this.props.changeSorting('new');
     } else {
@@ -66,4 +65,4 @@ function mapStateToProps({ sorting }) {
   return { sorting };
 }
 
-export default connect(mapStateToProps, { getPhotosAndRests, loadingTrue, changeSorting })(OrderToggler);
+export default connect(mapStateToProps, { changeSorting })(OrderToggler);

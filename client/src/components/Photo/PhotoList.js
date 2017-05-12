@@ -8,7 +8,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import request from '../../helpers/axioshelper';
 import PhotoDetail from './PhotoDetail';
 import Headbar from '../Headbar';
-import { getPhotosAndRests } from '../../actions/index';
+import { getPhotosAndRests, loadingTrue } from '../../actions/index';
 
 class PhotoList extends Component {
   state = { likesLoading: true, refreshing: false, liked: null, disliked: null };
@@ -18,6 +18,7 @@ class PhotoList extends Component {
   }
 
   getPhotoList() {
+    this.props.loadingTrue();
     if (!this.props.loginState) {
       this.getLikedAndDislikedFromDevice().done();
     } else {
@@ -42,7 +43,7 @@ class PhotoList extends Component {
         if (!disliked) disliked = [];
         this.setState({ liked, disliked, likesLoading: false });
       })
-      .catch(this.setState({ likesLoading: false }));
+      .catch(() => this.setState({ likesLoading: false }));
     } catch (error) {
       console.log(error);
     }
@@ -127,4 +128,4 @@ function mapStateToProps({ photos, restaurants, loginState, loading, sorting }) 
   return { photos, restaurants, loginState, loading, sorting };
 }
 
-export default connect(mapStateToProps, { getPhotosAndRests })(PhotoList);
+export default connect(mapStateToProps, { getPhotosAndRests, loadingTrue })(PhotoList);

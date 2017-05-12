@@ -140,7 +140,6 @@ class CameraCommentsPage extends Component {
   addComment() {
     const adj = this.state.adjective;
     const noun = this.state.noun;
-    console.log(adj);
     const newComment = `${adj} ${noun}`;
     if (adj && noun) {
       if (this.state.comments.indexOf(newComment) === -1) {
@@ -349,7 +348,6 @@ class CameraCommentsPage extends Component {
               style={headerTextStyle}
               onPress={() => {
                 AsyncStorage.setItem('UploadRestaurant', '');
-                // console.log(this.props.navigator);
                 this.renderCameraLocation();
               }}
             >
