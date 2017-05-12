@@ -114,7 +114,7 @@ class PhotoList extends Component {
           extraData={Headbar}
           keyExtractor={photo => photo.id}
           renderItem={photo => this.renderPhoto(photo)}
-          ListHeaderComponent={Headbar}
+          ListHeaderComponent={() => <Headbar update={this.getPhotoList.bind(this)} />}
           onRefresh={() => this.refreshListView()}
           refreshing={this.state.refreshing}
         />

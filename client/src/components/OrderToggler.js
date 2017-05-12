@@ -13,19 +13,12 @@ class OrderToggler extends Component {
 
   onButtonClick() {
     this.props.loadingTrue();
-    navigator.geolocation.getCurrentPosition(position => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      AsyncStorage.getItem('SearchRadius').then(radius => {
-        if (this.props.sorting === 'hot') {
-          this.props.getPhotosAndRests('new', lat, lng, parseInt(radius, 10));
-          this.props.changeSorting('new');
-        } else {
-          this.props.getPhotosAndRests('hot', lat, lng, parseInt(radius, 10));
-          this.props.changeSorting('hot');
-        }
-      });
-    });
+    if (this.props.sorting === 'hot') {
+      this.props.changeSorting('new');
+    } else {
+      this.props.changeSorting('hot');
+    }
+    this.props.update();
   }
 
   render() {

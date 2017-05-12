@@ -5,9 +5,9 @@ import { View } from 'react-native';
 import { Header } from './common';
 import OrderToggler from './OrderToggler';
 
-const Headbar = () => (
+const Headbar = ({ update }) => (
   <Header>
-    <View style={styles.toggleStyle}><OrderToggler /></View>
+    <View style={styles.toggleStyle}><OrderToggler update={update} /></View>
   </Header>
 );
 
