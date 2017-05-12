@@ -13,7 +13,6 @@ class OrderToggler extends Component {
 
   onButtonClick() {
     this.props.loadingTrue();
-
     navigator.geolocation.getCurrentPosition(position => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;

@@ -42,7 +42,7 @@ class PhotoList extends Component {
         if (!disliked) disliked = [];
         this.setState({ liked, disliked, likesLoading: false });
       })
-      .catch(this.setState({ likesLoading: false }));
+      .catch(() => this.setState({ likesLoading: false }));
     } catch (error) {
       console.log(error);
     }
@@ -111,7 +111,7 @@ class PhotoList extends Component {
       <View>
         <FlatList
           data={this.props.photos}
-          extraData={Headbar}
+          //extraData={[this.state.liked, this.state.disliked]}
           keyExtractor={photo => photo.id}
           renderItem={photo => this.renderPhoto(photo)}
           ListHeaderComponent={Headbar}
