@@ -1,4 +1,4 @@
-// Header at the top with search and order toggle
+// Header at the top with order toggle
 
 import React from 'react';
 import { View } from 'react-native';

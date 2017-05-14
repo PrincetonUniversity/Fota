@@ -20,7 +20,6 @@ const styles = {
   promptStyle: {
     fontFamily: 'Avenir',
     fontSize: 20,
-    // fontWeight: 'bold',
     textAlign: 'center'
   },
   restaurantNameStyle: {
@@ -31,7 +30,7 @@ const styles = {
     marginBottom: 10
   },
   uploadContainerStyle: {
-    height: 50, // FIGURE OUT HOW TO NOT HARD CODE THIS
+    height: 50,
     padding: 1,
     borderRadius: 10,
     backgroundColor: 'white',
@@ -92,8 +91,8 @@ class CommentUpload extends Component {
 
 // Set the selected adjective
   setAdjective(adjective) {
-    if (/^[a-z]+$/i.test(adjective)) {
-      let cleanAdj = adjective.toLowerCase();
+    if (/^[a-z]+$/i.test(adjective.trim())) {
+      let cleanAdj = adjective.trim().toLowerCase();
       cleanAdj = cleanAdj.charAt(0).toUpperCase() + cleanAdj.slice(1);
       this.setState({ adjective: cleanAdj });
     }
@@ -101,8 +100,8 @@ class CommentUpload extends Component {
 
 // Set the selected noun
   setNoun(noun) {
-    if (/^[a-z]+$/i.test(noun)) {
-      let cleanNoun = noun.toLowerCase();
+    if (/^[a-z]+$/i.test(noun.trim())) {
+      let cleanNoun = noun.trim().toLowerCase();
       cleanNoun = cleanNoun.charAt(0).toUpperCase() + cleanNoun.slice(1);
       this.setState({ noun: cleanNoun });
     }
@@ -213,7 +212,7 @@ class CommentUpload extends Component {
     if (comment) {
       return (
         <CommentDisplay
-          key={comment}
+          key={`${comment} ${type}`}
           text={comment}
         >
           <ImageButton

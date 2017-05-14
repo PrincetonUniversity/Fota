@@ -18,7 +18,9 @@ class PhotoList extends Component {
   }
 
   getPhotoList() {
-    this.props.loadingTrue();
+    if (!this.state.refreshing) {
+      this.props.loadingTrue();
+    }
     if (!this.props.loginState) {
       this.getLikedAndDislikedFromDevice().done();
     } else {
@@ -27,9 +29,10 @@ class PhotoList extends Component {
     navigator.geolocation.getCurrentPosition(position => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
-      AsyncStorage.getItem('SearchRadius').then(radius =>
-        this.props.getPhotosAndRests(this.props.sorting, lat, lng, parseInt(radius, 10))
-      );
+      AsyncStorage.getItem('SearchRadius').then(radius => {
+        this.props.getPhotosAndRests(this.props.sorting, lat, lng, parseInt(radius, 10));
+        this.setState({ refreshing: false });
+      });
     });
   }
 
@@ -83,9 +86,8 @@ class PhotoList extends Component {
   }
 
   refreshListView() {
-    this.setState({ refreshing: true });
-    this.getPhotoList();
-    this.setState({ refreshing: false });
+    this.setState({ refreshing: true }, () => this.getPhotoList());
+    // this.setState({ refreshing: false });
   }
 
   renderPhoto(photo) {
@@ -118,6 +120,8 @@ class PhotoList extends Component {
           ListHeaderComponent={() => <Headbar update={this.getPhotoList.bind(this)} />}
           onRefresh={() => this.refreshListView()}
           refreshing={this.state.refreshing}
+          showVerticalScrollIndicator={false}
+          windowSize={10}
         />
       </View>
     );

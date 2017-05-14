@@ -139,7 +139,7 @@ class PhotoDetail extends Component {
       queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}&user=${user.uid}`;
     }
     request.patch(queryString)
-    .catch(e => request.showErrorAlert(e)); // LATER should notify user on failure
+    .catch(e => request.showErrorAlert(e));
   }
 
   renderUpvote() {

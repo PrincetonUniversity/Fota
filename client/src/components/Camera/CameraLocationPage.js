@@ -164,7 +164,7 @@ class CameraLocationPage extends Component {
         </TouchableWithoutFeedback>
       );
     }
-    return ( // DO SOMETHING HERE
+    return (
       <View style={{ flex: 1, backgroundColor: 'white' }} />
     );
   }
