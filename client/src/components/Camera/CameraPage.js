@@ -97,6 +97,8 @@ class CameraPage extends Component {
           style={cameraStyle}
           aspect={constants.Aspect.fill}
           captureTarget={constants.CaptureTarget.disk}
+          onFocusChanged={() => {}}
+          onZoomChanged={() => {}}
         />
 
         <View style={footerStyle}>

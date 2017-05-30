@@ -112,8 +112,8 @@ class CameraCommentsPage extends Component {
 // COMMENT CONTROL
 // Set the selected adjective
   setAdjective(adjective) {
-    if (/^[a-z]+$/i.test(adjective)) {
-      let cleanAdj = adjective.toLowerCase();
+    if (/^[a-z]+$/i.test(adjective.trim())) {
+      let cleanAdj = adjective.trim().toLowerCase();
       cleanAdj = cleanAdj.charAt(0).toUpperCase() + cleanAdj.slice(1);
       this.setState({ adjective: cleanAdj });
     }
@@ -121,8 +121,8 @@ class CameraCommentsPage extends Component {
 
 // Set the selected noun
   setNoun(noun) {
-    if (/^[a-z]+$/i.test(noun)) {
-      let cleanNoun = noun.toLowerCase();
+    if (/^[a-z]+$/i.test(noun.trim())) {
+      let cleanNoun = noun.trim().toLowerCase();
       cleanNoun = cleanNoun.charAt(0).toUpperCase() + cleanNoun.slice(1);
       this.setState({ noun: cleanNoun });
     }
