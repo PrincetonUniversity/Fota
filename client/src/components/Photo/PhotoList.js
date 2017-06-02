@@ -27,8 +27,8 @@ class PhotoList extends Component {
       this.getLikedAndDislikedFromServer().done();
     }
     navigator.geolocation.getCurrentPosition(position => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
+      const lat = 40.34; // position.coords.latitude
+      const lng = -74.656; // position.coords.longitude
       AsyncStorage.getItem('SearchRadius').then(radius => {
         this.props.getPhotosAndRests(this.props.sorting, lat, lng, parseInt(radius, 10));
         this.setState({ refreshing: false });
