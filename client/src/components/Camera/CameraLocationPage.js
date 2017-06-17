@@ -48,8 +48,8 @@ class CameraLocationPage extends Component {
 
   componentWillMount() {
     navigator.geolocation.getCurrentPosition(position => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
+      const lat = 40.34; // position.coords.latitude
+      const lng = -74.656; // position.coords.longitude
       request.get(`https://fotafood.herokuapp.com/api/restaurantnear?lat=${lat}&lng=${lng}`)
         .then(response => this.setState({ totalList: response.data, rlist: response.data }))
         .catch(e => request.showErrorAlert(e));
