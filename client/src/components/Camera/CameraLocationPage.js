@@ -66,7 +66,7 @@ class CameraLocationPage extends Component {
     let rlist = this.state.totalList;
     const qarr = query.toLowerCase().split(' ');
     if (qarr.length === 0 || qarr[0] === '') {
-      this.setState({ query, rlist: [] });
+      this.setState({ query, rlist: this.state.totalList });
       return;
     }
     const current = qarr.pop();
@@ -115,7 +115,6 @@ class CameraLocationPage extends Component {
   }
 
   renderCameraComments() {
-    console.log(this.props.navigator);
     this.props.navigator.replace({ id: 2 });
   }
 
@@ -159,12 +158,13 @@ class CameraLocationPage extends Component {
               renderItem={restaurant => this.renderRestaurant(restaurant.item)}
               keyboardShouldPersistTaps={'handled'}
               bounces={false}
+              removeClippedSubviews={false}
             />
           </View>
         </TouchableWithoutFeedback>
       );
     }
-    return ( // DO SOMETHING HERE
+    return (
       <View style={{ flex: 1, backgroundColor: 'white' }} />
     );
   }

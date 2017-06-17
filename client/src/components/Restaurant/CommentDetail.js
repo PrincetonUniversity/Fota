@@ -17,6 +17,7 @@ class CommentDetail extends Component {
         showsVerticalScrollIndicator={false}
         renderItem={noun => this.renderNoun(noun.item, navigator)}
         bounces={false}
+        removeClippedSubviews={false}
       />
     );
   }
@@ -36,6 +37,7 @@ class CommentDetail extends Component {
         style={{ flex: 1, marginHorizontal: 10 }}
         initialRoute={{ noun: null }}
         renderScene={this.renderScene.bind(this)}
+        // eslint-disable-next-line
         configureScene={(route, routeStack) => Navigator.SceneConfigs.HorizontalSwipeJump}
       />
     );

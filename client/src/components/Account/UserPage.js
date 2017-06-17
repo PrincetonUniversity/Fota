@@ -78,6 +78,7 @@ class UserPage extends Component {
         showsHorizontalScrollIndicator={false}
         style={{ marginBottom: 10 }}
         horizontal
+        removeClippedSubviews={false}
       />
     );
   }

@@ -59,7 +59,7 @@ const saveVote = async (type, id) => {
         await AsyncStorage.setItem('disliked', JSON.stringify(object));
     }
   } catch (error) {
-    // console.log(error); // Should eventually be used to notify user.
+    console.log(error);
   }
 };
 

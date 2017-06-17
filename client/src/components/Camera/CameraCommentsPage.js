@@ -112,8 +112,8 @@ class CameraCommentsPage extends Component {
 // COMMENT CONTROL
 // Set the selected adjective
   setAdjective(adjective) {
-    if (/^[a-z]+$/i.test(adjective)) {
-      let cleanAdj = adjective.toLowerCase();
+    if (/^[a-z]+$/i.test(adjective.trim())) {
+      let cleanAdj = adjective.trim().toLowerCase();
       cleanAdj = cleanAdj.charAt(0).toUpperCase() + cleanAdj.slice(1);
       this.setState({ adjective: cleanAdj });
     }
@@ -121,8 +121,8 @@ class CameraCommentsPage extends Component {
 
 // Set the selected noun
   setNoun(noun) {
-    if (/^[a-z]+$/i.test(noun)) {
-      let cleanNoun = noun.toLowerCase();
+    if (/^[a-z]+$/i.test(noun.trim())) {
+      let cleanNoun = noun.trim().toLowerCase();
       cleanNoun = cleanNoun.charAt(0).toUpperCase() + cleanNoun.slice(1);
       this.setState({ noun: cleanNoun });
     }
@@ -140,7 +140,6 @@ class CameraCommentsPage extends Component {
   addComment() {
     const adj = this.state.adjective;
     const noun = this.state.noun;
-    console.log(adj);
     const newComment = `${adj} ${noun}`;
     if (adj && noun) {
       if (this.state.comments.indexOf(newComment) === -1) {
@@ -198,6 +197,7 @@ class CameraCommentsPage extends Component {
 
     const file = {
       uri: this.state.uploadPath,
+      // eslint-disable-next-line
       name: `${this.props.loginState.uid}_${this.state.restaurantid}_${this.state.uploadPath.split('/').pop()}.jpg`,
       type: 'image/jpg'
     };
@@ -219,7 +219,7 @@ class CameraCommentsPage extends Component {
       request.post('https://fotafood.herokuapp.com/api/photo', {
         RestaurantId: this.state.restaurantid,
         UserId: this.props.loginState.uid,
-        link: response.body.postResponse.location // this should be the aws link
+        link: response.body.postResponse.location
       })
         .then(() => {
           deleteImage(this.state.uploadPath);
@@ -234,6 +234,7 @@ class CameraCommentsPage extends Component {
           if (e.etype === 1 && e.response.status === 400) {
             Alert.alert(
               'Invalid Photo',
+              // eslint-disable-next-line
               'You may have uploaded an invalid photo. Please make sure you submit a picture of food.',
               [
                 { text: 'OK', onPress: () => { this.props.navigator.replace({ id: 0 }); } }
@@ -347,7 +348,6 @@ class CameraCommentsPage extends Component {
               style={headerTextStyle}
               onPress={() => {
                 AsyncStorage.setItem('UploadRestaurant', '');
-                // console.log(this.props.navigator);
                 this.renderCameraLocation();
               }}
             >
@@ -409,6 +409,7 @@ class CameraCommentsPage extends Component {
                 keyExtractor={(index) => index.toString()}
                 renderItem={adjective => this.renderAdjective(adjective.item)}
                 keyboardShouldPersistTaps={'handled'}
+                removeClippedSubviews={false}
               />
             </View>
 
@@ -418,6 +419,7 @@ class CameraCommentsPage extends Component {
                 keyExtractor={(index) => index.toString()}
                 renderItem={noun => this.renderNoun(noun.item)}
                 keyboardShouldPersistTaps={'handled'}
+                removeClippedSubviews={false}
               />
             </View>
 

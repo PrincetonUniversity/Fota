@@ -1,9 +1,9 @@
 // The hot/new button
 
 import React, { Component } from 'react';
-import { View, TouchableWithoutFeedback, Text, AsyncStorage } from 'react-native';
+import { View, TouchableWithoutFeedback, Text } from 'react-native';
 import { connect } from 'react-redux';
-import { getPhotosAndRests, loadingTrue, changeSorting } from '../actions/index';
+import { changeSorting } from '../actions/index';
 
 class OrderToggler extends Component {
   constructor(props) {
@@ -12,21 +12,12 @@ class OrderToggler extends Component {
   }
 
   onButtonClick() {
-    this.props.loadingTrue();
-
-    navigator.geolocation.getCurrentPosition(position => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      AsyncStorage.getItem('SearchRadius').then(radius => {
-        if (this.props.sorting === 'hot') {
-          this.props.getPhotosAndRests('new', lat, lng, parseInt(radius, 10));
-          this.props.changeSorting('new');
-        } else {
-          this.props.getPhotosAndRests('hot', lat, lng, parseInt(radius, 10));
-          this.props.changeSorting('hot');
-        }
-      });
-    });
+    if (this.props.sorting === 'hot') {
+      this.props.changeSorting('new');
+    } else {
+      this.props.changeSorting('hot');
+    }
+    this.props.update();
   }
 
   render() {
@@ -74,4 +65,4 @@ function mapStateToProps({ sorting }) {
   return { sorting };
 }
 
-export default connect(mapStateToProps, { getPhotosAndRests, loadingTrue, changeSorting })(OrderToggler);
+export default connect(mapStateToProps, { changeSorting })(OrderToggler);

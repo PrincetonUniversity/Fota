@@ -58,7 +58,6 @@ const styles = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'stretch',
-    //marginRight: 20
   },
 };
 
@@ -140,7 +139,7 @@ class PhotoDetail extends Component {
       queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}&user=${user.uid}`;
     }
     request.patch(queryString)
-    .catch(e => request.showErrorAlert(e)); // LATER should notify user on failure
+    .catch(e => request.showErrorAlert(e));
   }
 
   renderUpvote() {
@@ -213,11 +212,11 @@ class PhotoDetail extends Component {
           pageStyle={restaurantPageStyle}
           options={[{
             name: 'Report as Spam',
-            onClick: () => Alert.alert(
-                '',
-                'This photo has been reported. Thanks for letting us know!',
-                [{ text: 'OK' }]
-              )
+            onClick: () => setTimeout(() => Alert.alert(
+                  '',
+                  'This photo has been reported. Thanks for letting us know!',
+                  [{ text: 'OK' }]
+                ), 550)
           }]}
         >
           <Image

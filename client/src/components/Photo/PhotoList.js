@@ -8,7 +8,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import request from '../../helpers/axioshelper';
 import PhotoDetail from './PhotoDetail';
 import Headbar from '../Headbar';
-import { getPhotosAndRests } from '../../actions/index';
+import { getPhotosAndRests, loadingTrue } from '../../actions/index';
 
 class PhotoList extends Component {
   state = { likesLoading: true, refreshing: false, liked: null, disliked: null };
@@ -18,17 +18,21 @@ class PhotoList extends Component {
   }
 
   getPhotoList() {
+    if (!this.state.refreshing) {
+      this.props.loadingTrue();
+    }
     if (!this.props.loginState) {
       this.getLikedAndDislikedFromDevice().done();
     } else {
       this.getLikedAndDislikedFromServer().done();
     }
     navigator.geolocation.getCurrentPosition(position => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      AsyncStorage.getItem('SearchRadius').then(radius =>
-        this.props.getPhotosAndRests(this.props.sorting, lat, lng, parseInt(radius, 10))
-      );
+      const lat = 40.34; // position.coords.latitude
+      const lng = -74.656; // position.coords.longitude
+      AsyncStorage.getItem('SearchRadius').then(radius => {
+        this.props.getPhotosAndRests(this.props.sorting, lat, lng, parseInt(radius, 10));
+        this.setState({ refreshing: false });
+      });
     });
   }
 
@@ -42,7 +46,7 @@ class PhotoList extends Component {
         if (!disliked) disliked = [];
         this.setState({ liked, disliked, likesLoading: false });
       })
-      .catch(this.setState({ likesLoading: false }));
+      .catch(() => this.setState({ likesLoading: false }));
     } catch (error) {
       console.log(error);
     }
@@ -82,9 +86,8 @@ class PhotoList extends Component {
   }
 
   refreshListView() {
-    this.setState({ refreshing: true });
-    this.getPhotoList();
-    this.setState({ refreshing: false });
+    this.setState({ refreshing: true }, () => this.getPhotoList());
+    // this.setState({ refreshing: false });
   }
 
   renderPhoto(photo) {
@@ -111,11 +114,14 @@ class PhotoList extends Component {
       <View>
         <FlatList
           data={this.props.photos}
+          extraData={Headbar}
           keyExtractor={photo => photo.id}
           renderItem={photo => this.renderPhoto(photo)}
-          ListHeaderComponent={Headbar}
+          ListHeaderComponent={() => <Headbar update={this.getPhotoList.bind(this)} />}
           onRefresh={() => this.refreshListView()}
           refreshing={this.state.refreshing}
+          showVerticalScrollIndicator={false}
+          windowSize={10}
         />
       </View>
     );
@@ -126,4 +132,4 @@ function mapStateToProps({ photos, restaurants, loginState, loading, sorting }) 
   return { photos, restaurants, loginState, loading, sorting };
 }
 
-export default connect(mapStateToProps, { getPhotosAndRests })(PhotoList);
+export default connect(mapStateToProps, { getPhotosAndRests, loadingTrue })(PhotoList);

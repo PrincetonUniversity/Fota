@@ -1,15 +1,14 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-const FilterDisplay = (props) => {
-    return (
-      <View style={styles.containerStyle}>
-        <Text style={styles.textStyle}>
-          {props.text}
-        </Text>
-      </View>
-    );
-};
+const FilterDisplay = (props) => (
+  <View style={styles.containerStyle}>
+    <Text style={styles.textStyle}>
+      {props.text}
+    </Text>
+  </View>
+);
+
 
 const styles = {
     containerStyle: {

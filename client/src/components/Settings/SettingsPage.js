@@ -75,6 +75,7 @@ class SettingsPage extends Component {
               <View style={{ height: 1, backgroundColor: 'gray' }} />
             }
             bounces={false}
+            removeClippedSubviews={false}
           />
         </View>
       );
