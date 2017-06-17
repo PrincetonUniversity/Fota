@@ -4,6 +4,13 @@ const Comment = require('./server/controllers/comment');
 const User = require('./server/controllers/user');
 
 module.exports = (app) => {
+  // Enable CORS for development Purposes
+  app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+  });
+
   app.get('/', (req, res) => { res.send("hello") });
 
   app.post('/api/restaurant', Restaurant.post);
