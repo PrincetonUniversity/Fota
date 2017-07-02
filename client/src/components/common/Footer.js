@@ -1,3 +1,11 @@
+/******************************************************************************
+ * Called by: Base, Navbar
+ * Dependencies:
+ *
+ * Description: Visual component for spacing the navigation bar (Navbar).
+ *
+ ******************************************************************************/
+
 import React from 'react';
 import { View } from 'react-native';
 

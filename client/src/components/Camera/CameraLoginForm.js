@@ -1,3 +1,13 @@
+/******************************************************************************
+ * Called by: Base
+ * Dependencies: redux, common/ImageButton, Account/LoginForm,
+ * actions/setCameraState
+ *
+ * Description: Called when the user tries to take a picture without being
+ * logged in. Prompts the user with a login form (Account/LoginForm).
+ *
+ ******************************************************************************/
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import { connect } from 'react-redux';

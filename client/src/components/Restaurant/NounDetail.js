@@ -1,3 +1,12 @@
+/******************************************************************************
+ * Called by: ./CommentDetail
+ * Dependencies: common/CommentDisplay, common/ImageButton
+ *
+ * Description: Displays the percentage breakdown for the different
+ * adjectives used with the noun from the review.
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import { View, FlatList } from 'react-native';
 import { CommentDisplay, ImageButton } from '../common';

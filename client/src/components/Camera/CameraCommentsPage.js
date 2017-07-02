@@ -1,3 +1,17 @@
+/******************************************************************************
+ * Called by: ./CameraNavigator
+ * Dependencies: AWS, helpers/axioshelper, common/ImageButton, common/Header,
+ * common/CommentDisplay, common/CommentDisplayInput, common/Spinner,
+ * ./CameraPage/deleteImage, actions/setCameraState
+ *
+ * Description: Step 3 of 3 in uploading a photo. Allows the user to optionally
+ * write comments about the photo and/or restaurant. Users can go back to the
+ * location page (Camera/CameraLocationPage) or submit the photo, bringing them
+ * back to the home page (Photo/PhotoList) and deleting the photo from local
+ * temp storage.
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import { View,
   Image,

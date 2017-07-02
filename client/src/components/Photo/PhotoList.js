@@ -1,4 +1,15 @@
-// List of all the photos in their visual component PhotoDetail
+/******************************************************************************
+ * Called by: Base,
+ * Dependencies: lodash, redux, common/Spinner, helpers/axioshelper,
+ * Photo/PhotoDetail, Headbar, actions/getPhotosAndRests, actions/loadingTrue
+ *
+ * Description: The home page. Retrieves and displays a list of nearby photos
+ * from the server (radius set by user through settings page), as well as a
+ * list of liked/disliked photos by the user from either the server or the
+ * device depending on whether or not the user is logged in. Pulling up past
+ * the top refreshes the list of photos.
+ *
+ ******************************************************************************/
 
 import React, { Component } from 'react';
 import { FlatList, View, AsyncStorage } from 'react-native';

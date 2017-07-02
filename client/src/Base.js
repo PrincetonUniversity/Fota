@@ -1,3 +1,18 @@
+/******************************************************************************
+ * Called by: App
+ *
+ * Dependencies: redux, firebase, Photo/PhotoList, Search/SearchPage,
+ * common/BlankPage, Account/AccountPage, Settings/SettingsPage,
+ * Camera/CameraNavigator, common/Footer, Navbar, actions/setCameraState,
+ * actions/logInOrOut
+ *
+ * Description: Base page for Fota. Displays all content on screen, including
+ * the navigation bar (Navbar), the currently loaded page (Photo/PhotoList,
+ * Search/SearchPage, Camera/CameraNavigator, Account/AccountPage,
+ * Settings/SettingsPage). Initializes login state.
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import { View, Navigator, Modal } from 'react-native';
 import { connect } from 'react-redux';

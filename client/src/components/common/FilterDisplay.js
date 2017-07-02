@@ -1,3 +1,11 @@
+/******************************************************************************
+ * Called by: Restaurant/RestaurantDetail
+ * Dependencies:
+ *
+ * Description: Visual component for displaying filter tags.
+ *
+ ******************************************************************************/
+
 import React from 'react';
 import { Text, View } from 'react-native';
 

@@ -1,3 +1,13 @@
+/******************************************************************************
+ * Called by: Camera/CameraCommentsPage, Camera/CameraLoginForm,
+ * Camera/CameraPage, Navbar, Photo/PhotoDetail, Restaurant/CommentUpload,
+ * Restaurant/NounDetail, Restaurant/RestaurantDetail
+ * Dependencies:
+ *
+ * Description: An image button.
+ *
+ ******************************************************************************/
+
 import React from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 

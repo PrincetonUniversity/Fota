@@ -1,3 +1,12 @@
+/******************************************************************************
+ * Called by: Camera/CameraCommentsPage, Restaurant/CommentUpload
+ * Dependencies:
+ *
+ * Description: Visual component for displaying indidual custom comments (user
+ * types in their own word).
+ *
+ ******************************************************************************/
+
 import React from 'react';
 import { TextInput, View } from 'react-native';
 

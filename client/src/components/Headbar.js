@@ -1,3 +1,12 @@
+/******************************************************************************
+ * Called by: Photo/PhotoList
+ * Dependencies: common/Header, OrderToggler
+ *
+ * Description: Header at the top of the home page (Photo/PhotoList). Contains
+ * the hot/new tab (OrderToggler).
+ *
+ ******************************************************************************/
+
 // Header at the top with order toggle
 
 import React from 'react';
@@ -18,8 +27,14 @@ const styles = {
   },
   toggleStyle: {
     alignItems: 'stretch',
-    flex: 1
-  }
+    flex: 1,
+  },
+  linearGradient: {
+    flex: 1,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 5
+  },
 };
 
 export default Headbar;

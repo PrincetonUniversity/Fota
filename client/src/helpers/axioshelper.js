@@ -1,3 +1,15 @@
+/******************************************************************************
+ * Called by: actions/index, Account/LoginForm, Account/UserPage,
+ * Camera/CameraCommentsPage, Camera/CameraLocationPage, Photo/PhotoDetail,
+ * Photo/PhotoList, Restaurant/CommentUpload, Restaurant/RestaurantDetail,
+ * Search/SearchPage
+ * Dependencies: axios
+ *
+ * Description: Helper file to communicate with the server through a RESTful
+ * API. Functions include get, post, patch, put, delete, showErrorAlert.
+ *
+ ******************************************************************************/
+
 import { Alert, NetInfo } from 'react-native';
 import axios from 'axios';
 

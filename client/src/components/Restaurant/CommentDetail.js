@@ -1,3 +1,13 @@
+/******************************************************************************
+ * Called by: ./RestaurantDetail
+ * Dependencies: ./NounDetail, common/CommentDisplay
+ *
+ * Description: Displays the reviews on the restaurant page. Tapping a review
+ * will bring up ./NounDetail, showing the percentage breakdown for the different
+ * adjectives used with the noun from the review.
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import { Navigator, FlatList, TouchableOpacity } from 'react-native';
 import NounDetail from './NounDetail';

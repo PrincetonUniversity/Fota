@@ -1,3 +1,15 @@
+/******************************************************************************
+ * Called by: Restaurant/RestaurantModal
+ * Dependencies: helpers/axioshelper, common/CommentDisplay,
+ * common/CommentDisplayInput, common/ImageButton, common/Button
+ *
+ * Description: Upload page for uploading comments through the restaurant page.
+ * Maintains a list of adjective-noun pairs the user has already selected as
+ * comments to upload. Only uploads valid full pairs (will not upload single
+ * adjective/noun words).
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, FlatList } from 'react-native';
 import request from '../../helpers/axioshelper';

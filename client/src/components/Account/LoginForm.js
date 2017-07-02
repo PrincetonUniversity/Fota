@@ -1,3 +1,16 @@
+/******************************************************************************
+ * Called by: ./AccountPage, Camera/CameraLoginForm, CameraNavigator
+ * Dependencies: firebase, helpers/axioshelper, common/CardSection,
+ * common/Button, common/Input, common/Spinner
+ *
+ * Description: Called when the user tries to access the account page
+ * (./AccountPage) or the camera page (Camera/CameraNavigator) without being
+ * logged in. Promps the user for a username and a password, with options to
+ * log in or sign up. Displays as a page on the account page and a pop-up on
+ * the camera page.
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import firebase from 'firebase';

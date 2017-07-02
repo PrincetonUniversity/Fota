@@ -1,3 +1,13 @@
+/******************************************************************************
+ * Called by: Base
+ * Dependencies: common/Header
+ *
+ * Description: Settings page accessed through the bottom navigation bar.
+ * Allows the user to select from different options for search radius
+ * (Photo/PhotoList), and stores it in async storage.
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import { Text, View, AsyncStorage, TouchableHighlight, Image, FlatList } from 'react-native';
 import { Header } from '../common';

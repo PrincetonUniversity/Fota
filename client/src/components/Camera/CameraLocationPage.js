@@ -1,3 +1,15 @@
+/******************************************************************************
+ * Called by: ./CameraNavigator
+ * Dependencies: request, common/Input, common/Header, ./CameraPage/deleteImage
+ *
+ * Description: Step 2 of 3 in uploading a photo. Presents options for
+ * selecting a restaurant to be associated with the picture. Users can retake
+ * the picture (Camera/CameraPage), deleting the current picture from local temp
+ * storage, or after choosing a restaurant can proceed to the comments page
+ * (Camera/CameraCommentsPage).
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import {
   View,

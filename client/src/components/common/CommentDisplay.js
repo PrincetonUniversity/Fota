@@ -1,3 +1,12 @@
+/******************************************************************************
+ * Called by: Camera/CameraCommentsPage, Restaurant/CommentDetail,
+ * Restaurant/CommentUpload, Restaurant/NounDetail
+ * Dependencies:
+ *
+ * Description: Visual component for displaying indidual comments (pre-selected).
+ *
+ ******************************************************************************/
+
 import React from 'react';
 import { Text, View } from 'react-native';
 

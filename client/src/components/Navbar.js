@@ -1,3 +1,14 @@
+/******************************************************************************
+ * Called by: Base
+ * Dependencies: redux, common/ImageButton, common/Footer
+ *
+ * Description: Bottom navigation bar. Leads to the home page (Photo/PhotoList),
+ * the search page (Search/SearchPage), the camera page (Camera/CameraNavigator),
+ * the account page (Account/AccountPage), or the settings page
+ * (Settings/SettingsPage).
+ *
+ ******************************************************************************/
+
 // Navigation bar at the bottom
 
 import React, { Component } from 'react';

@@ -1,3 +1,11 @@
+/******************************************************************************
+ * Called by:
+ * Dependencies:
+ *
+ * Description: Styling. Currently unused.
+ *
+ ******************************************************************************/
+
 import React from 'react';
 import { View } from 'react-native';
 

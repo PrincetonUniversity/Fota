@@ -1,3 +1,14 @@
+/******************************************************************************
+ * Called by: ./AccountPage
+ * Dependencies: firebase, helpers/axioshelper, common/Header, common/Button,
+ * common/CardSection, Restaurant/RestaurantModal
+ *
+ * Description: Called when the user accesses the account page (./AccountPage)
+ * after logging in. Displays a list of user-uploaded photos, liked photos,
+ * and a log out button.
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import { Text, View, FlatList, Image, Platform } from 'react-native';
 import firebase from 'firebase';

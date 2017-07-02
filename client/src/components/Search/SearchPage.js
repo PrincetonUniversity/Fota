@@ -1,3 +1,19 @@
+/******************************************************************************
+ * Called by: Base
+ * Dependencies: helper/axioshelper, common/Header, common/Input,
+ * Restaurant/RestaurantModal
+ *
+ * Description: Displays the search page. Finds the list of all nearby
+ * restaurants (not affected by search distance set), then filters the
+ * restaurants based on the search query (name only). Tapping on the name of
+ * the restaurant displays the restaurant page.
+ *
+ * Bugs: Uploading a comment in the restaurant page by accessing it through
+ * the search page doesn't allow tap-to-enter-comment due to
+ * keyboardShouldPersistTaps functionality (in FlatList)
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import { Text, View, FlatList, Image, Platform } from 'react-native';
 import request from '../../helpers/axioshelper';

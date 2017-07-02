@@ -1,3 +1,11 @@
+/******************************************************************************
+ * Called by: Restaurant/CommentDetail
+ * Dependencies: Account/LoginForm, Account/UserPage, Restaurant/RestaurantDetail
+ *
+ * Description: A text button. For an image button, see ./ImageButton.
+ *
+ ******************************************************************************/
+
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 

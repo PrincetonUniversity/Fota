@@ -1,3 +1,12 @@
+/******************************************************************************
+ * Called by: Base
+ * Dependencies: common/Header, ./UserPage, ./LoginForm, redux
+ *
+ * Description: Returns either the user page (./UserPage) or the login form
+ * (./LoginForm) depending on whether the user is logged in or not.
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import { Text, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { connect } from 'react-redux';

@@ -1,3 +1,11 @@
+/******************************************************************************
+ * Called by: Account/LoginForm, Camera/CameraCommentsPage, Photo/PhotoList
+ * Dependencies:
+ *
+ * Description: Visual component indicating that some content is loading.
+ *
+ ******************************************************************************/
+
 import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
 

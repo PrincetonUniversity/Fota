@@ -1,3 +1,14 @@
+/******************************************************************************
+ * Called by: Account/UserPage, Photo/PhotoDetail, Search/SearchPage
+ * Dependencies: common/CardSection, ./RestaurantDetail, ./CommentUpload
+ *
+ * Description: Either returns a pop-up (long press) or a Navigator component
+ * for switching between the different restaurant pages. Displayed when the user
+ * taps a picture (Account/UserPage, Photo/PhotoDetail) or selects a restaurant
+ * (Search/SearchPage).
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import {
   Text, View, Modal, Navigator,

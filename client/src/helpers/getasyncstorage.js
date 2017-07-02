@@ -1,3 +1,12 @@
+/******************************************************************************
+ * Called by: Photo/PhotoDetail
+ * Dependencies: lodash
+ *
+ * Description: Temporarily store some data locally. Used to store
+ * likes/dislikes for users who are not logged in.
+ *
+ ******************************************************************************/
+
 import { AsyncStorage } from 'react-native';
 import _ from 'lodash';
 

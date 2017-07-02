@@ -1,3 +1,15 @@
+/******************************************************************************
+ * Called by: CameraCommentsPage, CameraLocationPage, CameraNavigator
+ * Dependencies: redux, react-native-camera, ImageResizer, RNFetchBlob,
+ * common/Header, common/ImageButton, actions/setCameraState
+ *
+ * Description: Step 1 of 3 in uploading a photo. Displays the camera to the
+ * user. Exiting the camera brings the user back to the previous page the user
+ * was at, and taking a picture brings the user to the location page
+ * (./CameraLocationPage).
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import { View, Text, Dimensions, AsyncStorage, Alert } from 'react-native';
 import { connect } from 'react-redux';

@@ -1,3 +1,12 @@
+/******************************************************************************
+ * Called by: Base, Camera/CameraCommentsPage, Camera/CameraLoginPage,
+ * Camera/CameraPage, Navbar
+ * Dependencies: actions/
+ *
+ * Description: Global state for whether or not the camera should be displayed.
+ *
+ ******************************************************************************/
+
 import { CAMERA_STATE } from '../actions/index';
 
 export default function (state = [], action) {

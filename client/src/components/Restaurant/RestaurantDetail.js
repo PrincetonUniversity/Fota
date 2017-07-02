@@ -1,3 +1,12 @@
+/******************************************************************************
+ * Called by: ./RestaurantModal
+ * Dependencies: moment (date/time package), phonecall, helpers/axioshelper,
+ * common/Button, common/ImageButton, common/FilterDisplay, ./CommentDetail
+ *
+ * Description: Base restaurant page that displays all the restaurant info.
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import { View, Image, Text, ScrollView, FlatList } from 'react-native';
 import moment from 'moment';

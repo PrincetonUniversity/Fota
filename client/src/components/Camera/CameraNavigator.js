@@ -1,3 +1,13 @@
+/******************************************************************************
+ * Called by: Base
+ * Dependencies: redux, ./CameraPage, ./CameraLocationPage, ./CameraCommentsPage,
+ * ./CameraLoginForm
+ *
+ * Description: The main logic for switching between the different camera pages.
+ * Currently implemented with a Navigator component.
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import { View, Navigator } from 'react-native';
 import { connect } from 'react-redux';

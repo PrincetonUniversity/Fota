@@ -1,4 +1,18 @@
-// Visual component for each photo, i.e. photo frame+upvote/downvote/upvote count
+/******************************************************************************
+ * Called by: ./PhotoList
+ * Dependencies: redux, helpers/axioshelper, helpers/getasyncstorage,
+ * common/ImageButton, Restaurant/RestaurantModal
+ *
+ * Description: Visual component for each photo on the home page. Consists of
+ * the photo frame, upvote/downvote button and logic, and the upvote count.
+ *
+ * After a user votes on the photo, sends upvote/downvote information along
+ * with the user/phone ID depending on whether the user is logged in or not.
+ * Tapping a photo brings up the restaurant page (Restaurant/RestaurantModal)
+ * associated with the photo. Long pressing the photo brings up a "Report as
+ * Spam" option (done through Restaurant/RestaurantModal).
+ *
+ ******************************************************************************/
 
 import React, { Component } from 'react';
 import { View, Image, Text, Dimensions, Alert } from 'react-native';

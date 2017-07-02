@@ -1,3 +1,13 @@
+/******************************************************************************
+ * Called by: Account/LoginForm, Camera/CameraCommentsPage,
+ * Camera/CameraLocationPage, ./CommentDisplayInput, Restaurant/CommentUpload,
+ * Restaurant/RestaurantDetail, Search/SearchPage
+ * Dependencies:
+ *
+ * Description: Visual component for entering text.
+ *
+ ******************************************************************************/
+
 import React from 'react';
 import { View, TextInput } from 'react-native';
 

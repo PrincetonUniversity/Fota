@@ -1,3 +1,11 @@
+/******************************************************************************
+ * Called by: Account/LoginForm, Account/UserPage, Restaurant/RestaurantModal
+ * Dependencies:
+ *
+ * Description: Styling. Used to break up different sections.
+ *
+ ******************************************************************************/
+
 import React from 'react';
 import { View } from 'react-native';
 

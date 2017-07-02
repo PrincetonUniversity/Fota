@@ -1,3 +1,12 @@
+/******************************************************************************
+ * Called by:
+ *
+ * Dependencies: Base
+ *
+ * Description: React Native App file. Sets up redux.
+ *
+ ******************************************************************************/
+
 import React, { Component } from 'react';
 import { AsyncStorage } from 'react-native';
 import { Provider } from 'react-redux';

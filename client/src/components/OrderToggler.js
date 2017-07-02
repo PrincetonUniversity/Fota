@@ -1,3 +1,12 @@
+/******************************************************************************
+ * Called by: Headbar
+ * Dependencies: redux
+ *
+ * Description: The hot/new bar. Updates a global sorting order for the home
+ * page (Photo/PhotoList) through redux.
+ *
+ ******************************************************************************/
+
 // The hot/new button
 
 import React, { Component } from 'react';

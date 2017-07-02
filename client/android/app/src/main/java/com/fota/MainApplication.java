@@ -3,6 +3,7 @@ package com.fota;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.BV.LinearGradient.LinearGradientPackage;
 import fr.bamlab.rnimageresizer.ImageResizerPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
@@ -26,6 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new LinearGradientPackage(),
             new ImageResizerPackage(),
             new RNFetchBlobPackage(),
             new RCTCameraPackage()

@@ -1,3 +1,13 @@
+/******************************************************************************
+ * Called by: OrderToggler, Photo/PhotoList, reducers (redux)
+ *
+ * Dependencies: helpers/axioshelper
+ *
+ * Description: The actions to trigger reducers in redux. See reducers/ for
+ * more info.
+ *
+ ******************************************************************************/
+
 import request from '../helpers/axioshelper';
 
 export const PHOTOS_AND_RESTS = '12308asdas';
