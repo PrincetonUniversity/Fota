@@ -103,12 +103,14 @@ class PhotoList extends Component {
 
   renderPhoto(photo) {
     return (
-      <PhotoDetail
-        key={photo.item.id}
-        photo={photo.item}
-        vote={this.findVote(photo.item.id)}
-        restaurant={this.findRestaurant(photo.item.RestaurantId)}
-      />
+      <View style={{ marginLeft: 30, marginRight: 30, marginTop: 20, marginBottom: 20 }}>
+        <PhotoDetail
+          key={photo.item.id}
+          photo={photo.item}
+          vote={this.findVote(photo.item.id)}
+          restaurant={this.findRestaurant(photo.item.RestaurantId)}
+        />
+      </View>
     );
   }
 
@@ -122,7 +124,7 @@ class PhotoList extends Component {
       );
     }
     return (
-      <View>
+      <View style={{ backgroundColor: '#FFFFFF' }}>
         <FlatList
           data={this.props.photos}
           extraData={Headbar}

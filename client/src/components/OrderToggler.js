@@ -10,63 +10,92 @@
 // The hot/new button
 
 import React, { Component } from 'react';
-import { View, TouchableWithoutFeedback, Text } from 'react-native';
+import { View, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { changeSorting } from '../actions/index';
 
 class OrderToggler extends Component {
   constructor(props) {
     super(props);
-    this.onButtonClick = this.onButtonClick.bind(this);
+    this.onSelectHot = this.onSelectHot.bind(this);
+    this.onSelectNew = this.onSelectNew.bind(this);
   }
 
-  onButtonClick() {
+  onSelectHot() {
+    if (this.props.sorting === 'new') {
+      this.props.changeSorting('hot');
+      this.props.update(); // Refresh the photo list
+    }
+  }
+
+  onSelectNew() {
     if (this.props.sorting === 'hot') {
       this.props.changeSorting('new');
-    } else {
-      this.props.changeSorting('hot');
+      this.props.update(); // Refresh the photo list
     }
-    this.props.update();
   }
 
   render() {
-    const { selectedStyle, unselectedStyle } = styles;
-    const hotStyle = (this.props.sorting === 'hot') ? selectedStyle : unselectedStyle;
-    const newStyle = (this.props.sorting === 'hot') ? unselectedStyle : selectedStyle;
+    const {
+      orderSelectedStyle,
+      orderUnselectedStyle,
+      barSelectedStyle,
+      barUnselectedStyle
+    } = styles;
+    const hotStyle = (this.props.sorting === 'hot') ? orderSelectedStyle : orderUnselectedStyle;
+    const hotBarStyle = (this.props.sorting === 'hot') ? barSelectedStyle : barUnselectedStyle;
+    const newStyle = (this.props.sorting === 'hot') ? orderUnselectedStyle : orderSelectedStyle;
+    const newBarStyle = (this.props.sorting === 'hot') ? barUnselectedStyle : barSelectedStyle;
     return (
-      <TouchableWithoutFeedback
-        onPress={this.onButtonClick}
-      >
-        <View style={styles.containerStyle}>
-          <Text style={hotStyle}> Hot</Text>
-          <Text style={newStyle}> New</Text>
+      <View style={styles.containerStyle}>
+        <View style={hotBarStyle}>
+          <Text style={hotStyle} onPress={this.onSelectHot}>HOT</Text>
         </View>
-      </TouchableWithoutFeedback>
+        <View style={newBarStyle}>
+          <Text style={newStyle} onPress={this.onSelectNew}>NEW</Text>
+        </View>
+      </View>
     );
   }
 }
 
 const styles = {
   containerStyle: {
+    flex: 1,
+    alignSelf: 'flex-end',
     flexDirection: 'row',
-    paddingHorizontal: 9,
-    justifyContent: 'flex-end'
+    backgroundColor: 'transparent',
+    //borderWidth: 1
   },
-  selectedStyle: {
-    paddingHorizontal: 8,
-    paddingTop: 3,
-    backgroundColor: '#ff9700',
-    color: '#fff',
-    borderColor: '#ff9700',
-    borderWidth: 2
+  orderSelectedStyle: {
+    flex: 1,
+    textAlign: 'center',
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 18,
+    lineHeight: 22
   },
-  unselectedStyle: {
-    paddingHorizontal: 8,
-    paddingTop: 3,
-    backgroundColor: '#fff',
-    color: '#ff9700',
-    borderColor: '#ff9700',
-    borderWidth: 2
+  orderUnselectedStyle: {
+    flex: 1,
+    textAlign: 'center',
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 18,
+    lineHeight: 22,
+    opacity: 0.6
+  },
+  barSelectedStyle: {
+    flex: 1,
+    height: 30,
+    padding: 3,
+    borderBottomWidth: 4,
+    borderColor: '#FFFFFF'
+  },
+  barUnselectedStyle: {
+    flex: 1,
+    height: 30,
+    padding: 3
+    // justifyContent: 'center'
   }
 };
 

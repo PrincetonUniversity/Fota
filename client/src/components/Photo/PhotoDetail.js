@@ -23,22 +23,32 @@ import RestaurantModal from '../Restaurant/RestaurantModal';
 import saveVote from '../../helpers/getasyncstorage';
 
 const styles = {
+  photoFrameStyle: {
+    borderTopLeftRadius: 7,
+    borderTopRightRadius: 7,
+    overflow: 'hidden'
+  },
   photoStyle: { // The picture
     flex: 1,
     width: null,
-    height: Dimensions.get('window').width
+    height: Dimensions.get('window').width - 65
   },
   restaurantPageStyle: { // Entire restaurant page
     marginVertical: 20,
     marginHorizontal: 15
   },
   photoInfoStyle: {
-    marginTop: 10,
-    marginBottom: 25,
-    backgroundColor: '#fff',
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: '#FFFFFF',
+    borderBottomLeftRadius: 7,
+    borderBottomRightRadius: 7,
     justifyContent: 'space-between',
     flexDirection: 'row',
-    position: 'relative'
+    position: 'relative',
+    shadowOffset: { width: 1, height: 5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 15
   },
   upvoteStyle: { // Upvote/downvote
     height: 35,
@@ -76,6 +86,7 @@ const styles = {
 };
 
 const {
+  photoFrameStyle,
   photoStyle,
   restaurantPageStyle,
   photoInfoStyle,
@@ -233,10 +244,12 @@ class PhotoDetail extends Component {
                 ), 550)
           }]}
         >
-          <Image
-            style={photoStyle}
-            source={{ uri: this.state.link }}
-          />
+          <View style={photoFrameStyle}>
+            <Image
+              style={photoStyle}
+              source={{ uri: this.state.link }}
+            />
+          </View>
         </RestaurantModal>
 
         <View style={photoInfoStyle}>
@@ -245,7 +258,7 @@ class PhotoDetail extends Component {
               source={upvoteUnactivated}
               style={likeCountArrowStyle}
             />
-          <Text style={likeCountTextStyle}>{this.state.likecount.toString()}</Text>
+            <Text style={likeCountTextStyle}>{this.state.likecount.toString()}</Text>
           </View>
 
           <View style={likeContainerStyle}>
