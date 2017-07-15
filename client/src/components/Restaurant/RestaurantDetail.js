@@ -10,7 +10,8 @@
 import React, { Component } from 'react';
 import { View, Image, Text, ScrollView, FlatList } from 'react-native';
 import moment from 'moment';
-import { phonecall } from 'react-native-communications';
+//import { phonecall } from 'react-native-communications';
+//import ScrollableTabView, { DefaultTabBar } from 'react-native-scrollable-tab-view';
 import request from '../../helpers/axioshelper';
 import { Button, ImageButton, FilterDisplay } from '../common';
 import CommentDetail from './CommentDetail';
@@ -27,13 +28,13 @@ const styles = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginHorizontal: 5,
-    marginBottom: 5
+    //marginBottom: 5
   },
   backButtonStyle: { // Back button
     width: 35,
     height: 35,
-    marginRight: 25,
-    marginBottom: 25
+    //marginRight: 10,
+    //marginBottom: 25
   },
   titleContainerStyle: { // Contains a restaurant name and time until close
     alignItems: 'center',
@@ -60,7 +61,17 @@ const styles = {
     alignItems: 'center',
     marginBottom: 10,
     marginLeft: 5,
-    marginRight: 5
+    marginRight: 5,
+  },
+  infoContainerStyle: {
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    marginBottom: 10,
+    justifyContent: 'space-around',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.2)'
   },
   emptyTextStyle: {
     fontSize: 16,
@@ -76,8 +87,8 @@ const styles = {
     backgroundColor: '#f00'
   },
   photoStyle: { // Individual photos
-    height: 150,
-    width: 150,
+    height: 110,
+    width: 110,
     marginLeft: 2.5,
     marginRight: 2.5
   },
@@ -90,8 +101,9 @@ const {
   titleContainerStyle,
   titleStyle,
   timeUntilCloseStyle,
-  phoneButtonStyle,
+  //phoneButtonStyle,
   filterContainerStyle,
+  infoContainerStyle,
   emptyTextStyle,
   photoStyle,
 } = styles;
@@ -99,7 +111,16 @@ const {
 const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
 const commentDetails = 'https://fotafood.herokuapp.com/api/comment/';
 const backButton = require('../../img/exit_button.png');
-const phoneButton = require('../../img/phone.png');
+//const phoneButton = require('../../img/phone.png');
+
+// const Tabs = TabNavigator({
+//   Photos: {
+//     screen: <View style={{ marginBottom: 10 }}>{RestaurantDetail.renderPhotoList()}</View>
+//   },
+//   Notifications: {
+//     screen: RestaurantDetail.renderCommentList()
+//   }
+// });
 
 class RestaurantDetail extends Component {
   state = { photos: [], nouns: [], loading: true }
@@ -180,20 +201,6 @@ class RestaurantDetail extends Component {
   }
 
   isOpen(closeTime, openTime) {
-    // const currentDate = moment(new Date());
-    // const openTimeHours = Math.floor(openTime / 100);
-    // const openTimeMinutes = openTime - openTimeHours * 100;
-    // const openDate = moment({ hours: openTimeHours, minutes: openTimeMinutes });
-    // const closeTimeHours = Math.floor(closeTime / 100);
-    // const closeTimeMinutes = closeTime - closeTimeHours * 100;
-    // const closeDate = moment({ hours: closeTimeHours, minutes: closeTimeMinutes });
-    // if (currentDate > closeDate) {
-    //   closeDate.add(1, 'days');
-    // }
-    // if (currentDate > openDate && currentDate < closeDate) {
-    //   return true;
-    // }
-    // return false;
     const currentHour = (new Date()).getHours() * 100;
     if (currentHour >= closeTime) {
       return false;
@@ -262,7 +269,7 @@ class RestaurantDetail extends Component {
         keyExtractor={photo => photo.id}
         renderItem={photo => this.renderPhoto(photo.item)}
         showsHorizontalScrollIndicator={false}
-        horizontal
+        numColumns={3}
         removeClippedSubviews={false}
       />
     );
@@ -292,12 +299,20 @@ class RestaurantDetail extends Component {
     );
   }
 
+  // <View style={{ marginTop: 5 }}>
+  //   <ImageButton
+  //     style={phoneButtonStyle}
+  //     source={phoneButton}
+  //     onPress={() => phonecall(restaurant.phoneNumber.substring(1), false)}
+  //   />
+  // </View>
+
   render() {
     const restaurant = this.props.restaurant;
     return (
       <View style={pageStyle}>
         <View style={headerStyle}>
-          <View style={{ marginTop: 5 }}>
+          <View style={{ flex: 0.13, marginTop: 5 }}>
             <ImageButton
               style={backButtonStyle}
               source={backButton}
@@ -309,18 +324,9 @@ class RestaurantDetail extends Component {
             <Text style={titleStyle}>
               {restaurant.name}
             </Text>
-            <Text style={timeUntilCloseStyle}>
-              {this.timeUntilCloseLabel(this.props.restaurant.hours)}
-            </Text>
           </View>
 
-          <View style={{ marginTop: 5 }}>
-            <ImageButton
-              style={phoneButtonStyle}
-              source={phoneButton}
-              onPress={() => phonecall(restaurant.phoneNumber.substring(1), false)}
-            />
-          </View>
+          <View style={{ flex: 0.13 }} />
         </View>
 
         <View style={filterContainerStyle}>
@@ -333,14 +339,17 @@ class RestaurantDetail extends Component {
           </ScrollView>
         </View>
 
-        <View style={{ marginBottom: 10 }}>
-          {this.renderPhotoList()}
+        <View style={infoContainerStyle}>
+          <Text style={timeUntilCloseStyle}>
+            {this.timeUntilCloseLabel(this.props.restaurant.hours)}
+          </Text>
+          <Text style={timeUntilCloseStyle}>
+            5 min walk
+          </Text>
+          <Text style={timeUntilCloseStyle}>
+            $11 - $30
+          </Text>
         </View>
-
-        <Text style={titleStyle}>
-          Consensus!
-        </Text>
-        {this.renderCommentList()}
 
         <View style={{ flexDirection: 'row' }}>
           <Button onPress={() => this.renderCommentUpload()}>
