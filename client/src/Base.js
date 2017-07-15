@@ -14,7 +14,8 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Navigator, Modal } from 'react-native';
+import { View, Modal } from 'react-native';
+import { Navigator } from 'react-native-deprecated-custom-components';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
 import PhotoList from './components/Photo/PhotoList';

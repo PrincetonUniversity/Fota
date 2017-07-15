@@ -9,7 +9,8 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Navigator } from 'react-native';
+import { View } from 'react-native';
+import { Navigator } from 'react-native-deprecated-custom-components';
 import { connect } from 'react-redux';
 import CameraPage from './CameraPage';
 import CameraLocationPage from './CameraLocationPage';

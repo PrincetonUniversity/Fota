@@ -9,7 +9,8 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { Navigator, FlatList, TouchableOpacity } from 'react-native';
+import { FlatList, TouchableOpacity } from 'react-native';
+import { Navigator } from 'react-native-deprecated-custom-components';
 import NounDetail from './NounDetail';
 import { CommentDisplay } from '../common';
 

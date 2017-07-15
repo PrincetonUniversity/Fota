@@ -11,9 +11,10 @@
 
 import React, { Component } from 'react';
 import {
-  Text, View, Modal, Navigator,
+  Text, View, Modal,
   TouchableOpacity, TouchableWithoutFeedback
 } from 'react-native';
+import { Navigator } from 'react-native-deprecated-custom-components';
 import { CardSection } from '../common';
 import RestaurantDetail from './RestaurantDetail';
 import CommentUpload from './CommentUpload';
