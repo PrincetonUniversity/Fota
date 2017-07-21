@@ -10,6 +10,8 @@
  * back to the home page (Photo/PhotoList) and deleting the photo from local
  * temp storage.
  *
+ * Bugs/Todo: Do we need to wipe the stack after submitting the photo?
+ *
  ******************************************************************************/
 
 import React, { Component } from 'react';
@@ -26,6 +28,7 @@ import { View,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { RNS3 } from 'react-native-aws3';
+import { NavigationActions } from 'react-navigation';
 import request from '../../helpers/axioshelper';
 import { ImageButton, Header, CommentDisplay, CommentDisplayInput, Spinner } from '../common';
 import { deleteImage } from './CameraPage';
@@ -240,8 +243,10 @@ class CameraCommentsPage extends Component {
           this.submitComments();
           AsyncStorage.setItem('UploadRestaurant', '');
           AsyncStorage.setItem('UploadPath', '');
-          this.props.mainNavigator.renderHome();
-          this.props.setCameraState(false);
+          this.props.screenProps.rootNav.navigate('Home');
+          //SUBMITTING*********************************************************
+          //this.props.mainNavigator.renderHome();
+          //this.props.setCameraState(false);
         })
         .catch(e => {
           deleteImage(this.state.uploadPath);
@@ -251,7 +256,7 @@ class CameraCommentsPage extends Component {
               // eslint-disable-next-line
               'You may have uploaded an invalid photo. Please make sure you submit a picture of food.',
               [
-                { text: 'OK', onPress: () => { this.props.navigator.replace({ id: 0 }); } }
+                { text: 'OK', onPress: () => { this.props.navigation.navigate('Camera'); } }
               ]
             );
           } else {
@@ -276,7 +281,8 @@ class CameraCommentsPage extends Component {
   }
 
   renderCameraLocation() {
-    this.props.navigator.replace({ id: 1 });
+    const backAction = NavigationActions.back();
+    this.props.navigation.dispatch(backAction);
   }
 
 // Render the bar containing all selected comments

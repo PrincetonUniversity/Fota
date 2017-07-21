@@ -21,6 +21,7 @@ import {
   Keyboard,
   TouchableOpacity
 } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 import request from '../../helpers/axioshelper';
 import { Input, Header } from '../common';
 import { deleteImage } from './CameraPage';
@@ -123,11 +124,12 @@ class CameraLocationPage extends Component {
   }
 
   renderCameraPage() {
-    this.props.navigator.replace({ id: 0 });
+    const backAction = NavigationActions.back();
+    this.props.navigation.dispatch(backAction);
   }
 
   renderCameraComments() {
-    this.props.navigator.replace({ id: 2 });
+    this.props.navigation.navigate('Comments');
   }
 
   render() {

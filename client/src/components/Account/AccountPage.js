@@ -8,13 +8,24 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { Text, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { Text, View, TouchableWithoutFeedback, Keyboard, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { Header } from '../common';
 import UserPage from './UserPage';
 import LoginForm from './LoginForm';
 
+const homeUnactivated = require('../../img/fota_home_unactivated.png');
+
 class AccountPage extends Component {
+  static navigationOptions = {
+    tabBarIcon: ({ tintColor }) => (
+      <Image
+        source={homeUnactivated}
+        style={{ width: 26, height: 26, tintColor }}
+      />
+    ),
+  };
+
   render() {
     if (this.props.loginState) {
       return <UserPage user={this.props.loginState} />;

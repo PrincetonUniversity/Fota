@@ -20,8 +20,19 @@ import request from '../../helpers/axioshelper';
 import { Header, Input } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 
+const homeUnactivated = require('../../img/fota_home_unactivated.png');
+
 class SearchPage extends Component {
   state = { query: '', rlist: [], totalList: [] }
+
+  static navigationOptions = {
+    tabBarIcon: ({ tintColor }) => (
+      <Image
+        source={homeUnactivated}
+        style={{ width: 26, height: 26, tintColor }}
+      />
+    ),
+  };
 
   componentWillMount() {
     request.get('https://fotafood.herokuapp.com/api/restaurant')

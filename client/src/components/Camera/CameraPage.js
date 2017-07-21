@@ -8,11 +8,16 @@
  * was at, and taking a picture brings the user to the location page
  * (./CameraLocationPage).
  *
+ * Bugs/Todo: Resizing images on front end takes a long time. When pressing
+ * cancel, figure out how to change from .navigate('Home') to
+ * .dispatch(backAction) or .goBack()
+ *
  ******************************************************************************/
 
 import React, { Component } from 'react';
 import { View, Text, Dimensions, AsyncStorage, Alert } from 'react-native';
 import { connect } from 'react-redux';
+import { NavigationActions } from 'react-navigation';
 import Camera, { constants } from 'react-native-camera';
 // eslint-disable-next-line
 import ImageResizer from 'react-native-image-resizer';
@@ -89,16 +94,17 @@ class CameraPage extends Component {
   }
 
   renderCameraLocation() {
-    this.props.navigator.replace({ id: 1 });
+    this.props.navigation.navigate('Location');
   }
 
   render() {
+    const backAction = NavigationActions.back({ key: this.props.screenProps.key });
     return (
       <View style={pageStyle}>
         <Header>
           <Text
             style={headerTextStyle}
-            onPress={() => this.props.setCameraState(false)}
+            onPress={() => this.props.screenProps.rootNav.navigate('Home')}
           >
             Cancel
           </Text>

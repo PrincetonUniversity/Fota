@@ -6,6 +6,8 @@
  * Description: Called when the user tries to take a picture without being
  * logged in. Prompts the user with a login form (Account/LoginForm).
  *
+ * Bugs: Need to fix what happens when login form is closed
+ *
  ******************************************************************************/
 
 import React from 'react';
@@ -15,23 +17,22 @@ import { ImageButton } from '../common';
 import LoginForm from '../Account/LoginForm';
 import { setCameraState } from '../../actions';
 
-const openCamera = (navigator) => {
-  navigator.replace({ id: 0 });
-};
-
 const CameraLoginForm = (props) => (
   <View style={styles.fadeStyle}>
     <View style={styles.pageStyle}>
       <Text style={styles.textStyle}>Please log in to upload photos.</Text>
-      <LoginForm onLoginFinished={() => openCamera(props.navigator)} />
+      <LoginForm onLoginFinished={() => console.log('login finished')} />
+      {/* <LoginForm onLoginFinished={() => openCamera(props.navigator)} /> */}
       <ImageButton
         style={styles.backArrowStyle}
         source={require('../../img/exit_button.png')}
-        onPress={() => props.setCameraState(false)}
+        onPress={() => props.navigation.goBack('Camera')}
       />
     </View>
   </View>
 );
+
+//props.setCameraState(false)
 
 const styles = {
   backArrowStyle: {

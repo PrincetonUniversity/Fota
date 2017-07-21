@@ -19,6 +19,7 @@ class App extends Component {
   render() {
     const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
     AsyncStorage.setItem('SearchRadius', '1');
+
     return (
       <Provider store={createStoreWithMiddleware(reducers, { cameraVisible: false })}>
         <Base />

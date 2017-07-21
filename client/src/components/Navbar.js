@@ -57,51 +57,56 @@ class Navbar extends Component {
   }*/
 
   renderHome() {
-    if (this.props.navigator.getCurrentRoutes().pop().id === 0) return;
+    //if (this.props.navigator.getCurrentRoutes().pop().id === 0) return;
     this.setState({
       homeSource: homeActivated,
       searchSource: searchUnactivated,
       accountSource: accountUnactivated,
       settingsSource: settingsUnactivated,
     });
-    this.props.navigator.replace({ id: 0 });
+    //this.props.navigator.replace({ id: 0 });
+    this.props.navigation.navigate('Home');
   }
 
   renderSearch() {
-    if (this.props.navigator.getCurrentRoutes().pop().id === 1) return;
+    //if (this.props.navigation.state().pop().id === 1) return;
     this.setState({
       homeSource: homeUnactivated,
       searchSource: searchActivated,
       accountSource: accountUnactivated,
       settingsSource: settingsUnactivated,
     });
-    this.props.navigator.replace({ id: 1 });
+    //this.props.navigator.replace({ id: 1 });
+    this.props.navigation.navigate('Search');
   }
 
   renderAccount() {
-    if (this.props.navigator.getCurrentRoutes().pop().id === 2) return;
+    //if (this.props.navigator.getCurrentRoutes().pop().id === 2) return;
     this.setState({
       homeSource: homeUnactivated,
       searchSource: searchUnactivated,
       accountSource: accountActivated,
       settingsSource: settingsUnactivated,
     });
-    this.props.navigator.replace({ id: 2 });
+    //this.props.navigator.replace({ id: 2 });
+    this.props.navigation.navigate('Account');
   }
 
   renderSettings() {
-    if (this.props.navigator.getCurrentRoutes().pop().id === 3) return;
+    //if (this.props.navigator.getCurrentRoutes().pop().id === 3) return;
     this.setState({
       homeSource: homeUnactivated,
       searchSource: searchUnactivated,
       accountSource: accountUnactivated,
       settingsSource: settingsActivated,
     });
-    this.props.navigator.replace({ id: 3 });
+    //this.props.navigator.replace({ id: 3 });
+    this.props.navigation.navigate('Settings');
   }
 
   renderCamera() {
-    this.props.setCameraState(true);
+    //this.props.setCameraState(true);
+    this.props.navigation.navigate('Camera');
   }
 
   render() {

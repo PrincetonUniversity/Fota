@@ -6,11 +6,13 @@
  * Description: The main logic for switching between the different camera pages.
  * Currently implemented with a Navigator component.
  *
+ * Bugs: CameraLoginForm. May need to take out the modal implementation
+ *
  ******************************************************************************/
 
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import { Navigator } from 'react-native-deprecated-custom-components';
+import { StackNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
 import CameraPage from './CameraPage';
 import CameraLocationPage from './CameraLocationPage';
@@ -18,32 +20,39 @@ import CameraCommentsPage from './CameraCommentsPage';
 import CameraLoginForm from './CameraLoginForm';
 
 class CameraNavigator extends Component {
-  renderScene(route, navigator) {
-    switch (route.id) {
-      case 0:
-        return <CameraPage navigator={navigator} />;
-      case 1:
-        return <CameraLocationPage navigator={navigator} />;
-      case 2:
-        return <CameraCommentsPage navigator={navigator} />;
-      default:
-        return <CameraLoginForm navigator={navigator} />;
-    }
-  }
+  static navigationOptions = {
+    tabBarVisible: false
+  };
 
   render() {
-    const user = (this.props.loginState) ? 0 : -1;
+    if (this.props.loginState) {
+      return (
+        <CameraLoginForm navigation={this.props.navigation} />
+      );
+    }
     return (
       <View style={{ flex: 1 }}>
-        <Navigator
-          style={{ flex: 1, backgroundColor: '#fff' }}
-          initialRoute={{ id: user }}
-          renderScene={this.renderScene.bind(this)}
-        />
+        <CameraNav screenProps={{ rootNav: this.props.navigation, key: this.props.navigation.state.key }} />
       </View>
     );
   }
 }
+
+const CameraNav = StackNavigator({
+  Camera: {
+    screen: CameraPage
+  },
+  Location: {
+    screen: CameraLocationPage
+  },
+  Comments: {
+    screen: CameraCommentsPage
+  },
+},
+{
+  headerMode: 'none',
+  cardStyle: { backgroundColor: 'white' }
+});
 
 function mapStateToProps({ loginState }) {
   return { loginState };

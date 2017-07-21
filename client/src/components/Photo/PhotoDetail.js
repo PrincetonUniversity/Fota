@@ -22,82 +22,6 @@ import { ImageButton } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 import saveVote from '../../helpers/getasyncstorage';
 
-const styles = {
-  photoFrameStyle: {
-    borderTopLeftRadius: 7,
-    borderTopRightRadius: 7,
-    overflow: 'hidden'
-  },
-  photoStyle: { // The picture
-    flex: 1,
-    width: null,
-    height: Dimensions.get('window').width - 65
-  },
-  restaurantPageStyle: { // Entire restaurant page
-    marginVertical: 20,
-    marginHorizontal: 15
-  },
-  photoInfoStyle: {
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: '#FFFFFF',
-    borderBottomLeftRadius: 7,
-    borderBottomRightRadius: 7,
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    position: 'relative',
-    shadowOffset: { width: 1, height: 5 },
-    shadowOpacity: 0.1,
-    shadowRadius: 15
-  },
-  upvoteStyle: { // Upvote/downvote
-    height: 35,
-    width: 35
-  },
-  downvoteStyle: { // Downvote
-    height: 35,
-    width: 35,
-    marginLeft: 20,
-    marginRight: 10
-  },
-  likeCountContainerStyle: { // Upvote arrow + number of likes container
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginLeft: 10
-  },
-  likeCountArrowStyle: { // the arrow next to number of likes
-    height: 13,
-    width: 13
-  },
-  likeCountTextStyle: { // Number of likes
-    fontFamily: 'Avenir',
-    color: '#bababa',
-    fontSize: 13,
-    textAlign: 'justify',
-    fontWeight: 'bold',
-    marginLeft: 5
-  },
-  likeContainerStyle: { // Upvote/downvote container
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'stretch',
-  },
-};
-
-const {
-  photoFrameStyle,
-  photoStyle,
-  restaurantPageStyle,
-  photoInfoStyle,
-  upvoteStyle,
-  downvoteStyle,
-  likeCountContainerStyle,
-  likeCountArrowStyle,
-  likeCountTextStyle,
-  likeContainerStyle
-} = styles;
-
 const upvoteUnactivated = require('../../img/upvote_unactivated.png');
 const upvoteActivated = require('../../img/upvote_activated.png');
 const downvoteUnactivated = require('../../img/downvote_unactivated.png');
@@ -278,6 +202,82 @@ class PhotoDetail extends Component {
     );
   }
 }
+
+const styles = {
+  photoFrameStyle: {
+    borderTopLeftRadius: 7,
+    borderTopRightRadius: 7,
+    overflow: 'hidden'
+  },
+  photoStyle: { // The picture
+    flex: 1,
+    width: null,
+    height: Dimensions.get('window').width - 65
+  },
+  restaurantPageStyle: { // Entire restaurant page
+    //marginVertical: 20,
+    //marginHorizontal: 15
+  },
+  photoInfoStyle: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: '#FFFFFF',
+    borderBottomLeftRadius: 7,
+    borderBottomRightRadius: 7,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    position: 'relative',
+    shadowOffset: { width: 1, height: 5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 15
+  },
+  upvoteStyle: { // Upvote/downvote
+    height: 35,
+    width: 35
+  },
+  downvoteStyle: { // Downvote
+    height: 35,
+    width: 35,
+    marginLeft: 20,
+    marginRight: 10
+  },
+  likeCountContainerStyle: { // Upvote arrow + number of likes container
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginLeft: 10
+  },
+  likeCountArrowStyle: { // the arrow next to number of likes
+    height: 13,
+    width: 13
+  },
+  likeCountTextStyle: { // Number of likes
+    fontFamily: 'Avenir',
+    color: '#bababa',
+    fontSize: 13,
+    textAlign: 'justify',
+    fontWeight: 'bold',
+    marginLeft: 5
+  },
+  likeContainerStyle: { // Upvote/downvote container
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'stretch',
+  },
+};
+
+const {
+  photoFrameStyle,
+  photoStyle,
+  restaurantPageStyle,
+  photoInfoStyle,
+  upvoteStyle,
+  downvoteStyle,
+  likeCountContainerStyle,
+  likeCountArrowStyle,
+  likeCountTextStyle,
+  likeContainerStyle
+} = styles;
 
 function mapStateToProps({ loginState }) {
   return { loginState };

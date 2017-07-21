@@ -31,7 +31,8 @@ const styles = {
     position: 'absolute',
     bottom: 0,
     left: 0,
-    right: 0
+    right: 0,
+    marginTop: footerSize
   },
   barStyle: {
     backgroundColor: '#fff',

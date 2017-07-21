@@ -9,10 +9,13 @@
  * device depending on whether or not the user is logged in. Pulling up past
  * the top refreshes the list of photos.
  *
+ * Bugs/Todo: Change the order toggler (OrderToggler) to react navigation
+ * instead of the current implementation.
+ *
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { FlatList, View, AsyncStorage } from 'react-native';
+import { FlatList, View, AsyncStorage, Image } from 'react-native';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -21,8 +24,19 @@ import PhotoDetail from './PhotoDetail';
 import Headbar from '../Headbar';
 import { getPhotosAndRests, loadingTrue } from '../../actions/index';
 
+const homeUnactivated = require('../../img/fota_home_unactivated.png');
+
 class PhotoList extends Component {
   state = { likesLoading: true, refreshing: false, liked: null, disliked: null };
+
+  static navigationOptions = {
+    tabBarIcon: ({ tintColor }) => (
+      <Image
+        source={homeUnactivated}
+        style={{ width: 26, height: 26, tintColor }}
+      />
+    ),
+  };
 
   componentWillMount() {
     this.getPhotoList();

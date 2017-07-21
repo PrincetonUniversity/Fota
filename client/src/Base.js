@@ -11,11 +11,13 @@
  * Search/SearchPage, Camera/CameraNavigator, Account/AccountPage,
  * Settings/SettingsPage). Initializes login state.
  *
+ * Bugs/Todo: Footer margin not implemented with navbar
+ *
  ******************************************************************************/
 
 import React, { Component } from 'react';
 import { View, Modal } from 'react-native';
-import { Navigator } from 'react-native-deprecated-custom-components';
+import { TabNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
 import PhotoList from './components/Photo/PhotoList';
@@ -39,13 +41,6 @@ class Base extends Component {
       this.props.logInOrOut(user);
       this.setState({ loginFinished: true });
     });
-  }
-
-  configureScene(route, routeStack) {
-    if (routeStack.length < 2 || route.id > routeStack[routeStack.length - 2].id) {
-      return ({ ...Navigator.SceneConfigs.HorizontalSwipeJump, gestures: {} });
-    }
-    return ({ ...Navigator.SceneConfigs.HorizontalSwipeJumpFromLeft, gestures: {} });
   }
 
   renderScene(route) {
@@ -75,18 +70,55 @@ class Base extends Component {
             <CameraNavigator />
           </Modal>
 
-          <Navigator
+          <FotaNavigator />
+          {/* <Navigator
             style={{ flex: 1, backgroundColor: '#fff', paddingBottom: footerSize }}
             initialRoute={{ id: 0 }}
             renderScene={this.renderScene.bind(this)}
             configureScene={this.configureScene}
             navigationBar={<Navbar />}
-          />
+          /> */}
+
         </View>
       );
     } return (<View />);
   }
 }
+
+const FotaNavigator = TabNavigator({
+  Home: {
+    screen: PhotoList
+  },
+  Search: {
+    screen: SearchPage
+  },
+  Camera: {
+    screen: CameraNavigator
+  },
+  Account: {
+    screen: AccountPage
+  },
+  Settings: {
+    screen: SettingsPage
+  }
+},
+{
+  tabBarComponent: Navbar,
+  initialRouteName: 'Home',
+  backBehavior: 'initalRoute',
+  // tabBarOptions: {
+  //   showLabel: false,
+  //   activeTintColor: '#FD9627',
+  //   inactiveTintColor: '#CBCBCB',
+  //   tabStyle: {
+  //     height: 30
+  //   },
+  //   iconStyle: {
+  //     width: 10,
+  //     height: 10
+  //   }
+  // }
+});
 
 function mapStateToProps({ cameraVisible }) {
   return { cameraVisible };

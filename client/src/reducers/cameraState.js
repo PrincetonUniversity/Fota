@@ -5,6 +5,9 @@
  *
  * Description: Global state for whether or not the camera should be displayed.
  *
+ * Bugs/Todo: Not necessary any more. After finishing switching to react-navigation,
+ * should probably delete
+ *
  ******************************************************************************/
 
 import { CAMERA_STATE } from '../actions/index';
