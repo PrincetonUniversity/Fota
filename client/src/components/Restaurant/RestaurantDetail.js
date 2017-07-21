@@ -8,98 +8,23 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Image, Text, ScrollView, FlatList } from 'react-native';
+import { View, Text, ScrollView, Platform } from 'react-native';
 import moment from 'moment';
+import { TabNavigator, TabBarTop } from 'react-navigation';
+import FoundationIcon from 'react-native-vector-icons/Foundation';
+import Ionicon from 'react-native-vector-icons/Ionicons';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { phonecall } from 'react-native-communications';
+import getDirections from 'react-native-google-maps-directions';
 import request from '../../helpers/axioshelper';
-import { Button, ImageButton, FilterDisplay } from '../common';
-import CommentDetail from './CommentDetail';
-
-const styles = {
-  pageStyle: { // Entire restaurant page
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
-    marginBottom: 10
-  },
-  headerStyle: { // Header including back button, name, time until close, call button
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: 5,
-    marginBottom: 5
-  },
-  backButtonStyle: { // Back button
-    width: 35,
-    height: 35,
-    marginRight: 25,
-    marginBottom: 25
-  },
-  titleContainerStyle: { // Contains a restaurant name and time until close
-    alignItems: 'center',
-    marginTop: 10,
-    justifyContent: 'center',
-    flex: 1
-  },
-  titleStyle: { // Restaurant name
-    fontFamily: 'Avenir',
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center'
-  },
-  timeUntilCloseStyle: { // Time until close
-    fontFamily: 'Avenir',
-    fontSize: 10,
-    textAlign: 'justify'
-  },
-  phoneButtonStyle: {
-    width: 60,
-    height: 60
-  },
-  filterContainerStyle: {
-    alignItems: 'center',
-    marginBottom: 10,
-    marginLeft: 5,
-    marginRight: 5
-  },
-  emptyTextStyle: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#aaa',
-    fontFamily: 'Avenir',
-  },
-  emptyCommentTextStyle: {
-    fontSize: 15,
-    textAlign: 'center',
-    color: '#aaa',
-    fontFamily: 'Avenir',
-    backgroundColor: '#f00'
-  },
-  photoStyle: { // Individual photos
-    height: 150,
-    width: 150,
-    marginLeft: 2.5,
-    marginRight: 2.5
-  },
-};
-
-const {
-  pageStyle,
-  headerStyle,
-  backButtonStyle,
-  titleContainerStyle,
-  titleStyle,
-  timeUntilCloseStyle,
-  phoneButtonStyle,
-  filterContainerStyle,
-  emptyTextStyle,
-  photoStyle,
-} = styles;
+import { FilterDisplay } from '../common';
+import RestaurantPhotos from './RestaurantPhotos';
+import RestaurantComments from './RestaurantComments';
 
 const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
 const commentDetails = 'https://fotafood.herokuapp.com/api/comment/';
 const backButton = require('../../img/exit_button.png');
-const phoneButton = require('../../img/phone.png');
+//const phoneButton = require('../../img/phone.png');
 
 class RestaurantDetail extends Component {
   state = { photos: [], nouns: [], loading: true }
@@ -180,20 +105,6 @@ class RestaurantDetail extends Component {
   }
 
   isOpen(closeTime, openTime) {
-    // const currentDate = moment(new Date());
-    // const openTimeHours = Math.floor(openTime / 100);
-    // const openTimeMinutes = openTime - openTimeHours * 100;
-    // const openDate = moment({ hours: openTimeHours, minutes: openTimeMinutes });
-    // const closeTimeHours = Math.floor(closeTime / 100);
-    // const closeTimeMinutes = closeTime - closeTimeHours * 100;
-    // const closeDate = moment({ hours: closeTimeHours, minutes: closeTimeMinutes });
-    // if (currentDate > closeDate) {
-    //   closeDate.add(1, 'days');
-    // }
-    // if (currentDate > openDate && currentDate < closeDate) {
-    //   return true;
-    // }
-    // return false;
     const currentHour = (new Date()).getHours() * 100;
     if (currentHour >= closeTime) {
       return false;
@@ -232,8 +143,29 @@ class RestaurantDetail extends Component {
     return `Open until ${time}`;
   }
 
-  renderCommentUpload() {
-    this.props.navigator.push({ id: 1 });
+  handleGetDirections() {
+    navigator.geolocation.getCurrentPosition(position => {
+      const lat = position.coords.latitude; // position.coords.latitude
+      const lng = position.coords.longitude; // position.coords.longitude
+      const data = {
+        source: {
+          latitude: lat,
+          longitude: lng
+        },
+        destination: {
+          latitude: this.props.restaurant.lat,
+          longitude: this.props.restaurant.lng
+        },
+        params: [
+          {
+            key: 'dirflg',
+            value: 'w'
+          }
+        ]
+      };
+
+      getDirections(data);
+    });
   }
 
   renderFilters() {
@@ -244,63 +176,22 @@ class RestaurantDetail extends Component {
       />
     );
   }
-
-  renderPhotoList() {
-    if (!this.state.loading && this.state.photos.length === 0) {
-      return (
-        <View style={{ height: 150, justifyContent: 'center' }}>
-          <Text style={emptyTextStyle}>
-            Be the first to upload a photo here!
-          </Text>
-        </View>
-
-      );
-    }
-    return (
-      <FlatList
-        data={this.state.photos}
-        keyExtractor={photo => photo.id}
-        renderItem={photo => this.renderPhoto(photo.item)}
-        showsHorizontalScrollIndicator={false}
-        horizontal
-        removeClippedSubviews={false}
-      />
-    );
-  }
-
-  renderCommentList() {
-    if (!this.state.loading && this.state.nouns.length === 0) {
-      return (
-        <View style={{ flex: 1, marginHorizontal: 20, marginTop: 5 }}>
-          <Text style={emptyTextStyle}>
-            There are no comments for this restaurant yet. Be the first to write one!
-          </Text>
-        </View>
-      );
-    }
-    return <CommentDetail nouns={this.state.nouns} />;
-  }
-
-  renderPhoto(photo) {
-    return (
-      <View key={photo.id}>
-        <Image
-          source={{ uri: photo.link }}
-          style={photoStyle}
-        />
-      </View>
-    );
-  }
-
+  // <ImageButton
+  //   style={backButtonStyle}
+  //   source={backButton}
+  //   onPress={() => this.props.close()}
+  // />
   render() {
     const restaurant = this.props.restaurant;
     return (
       <View style={pageStyle}>
         <View style={headerStyle}>
-          <View style={{ marginTop: 5 }}>
-            <ImageButton
-              style={backButtonStyle}
-              source={backButton}
+          <View style={{ flex: 0.13, marginTop: 10 }}>
+            <Ionicon.Button
+              name='ios-arrow-back'
+              backgroundColor='white'
+              color='black'
+              size={30}
               onPress={() => this.props.close()}
             />
           </View>
@@ -309,18 +200,9 @@ class RestaurantDetail extends Component {
             <Text style={titleStyle}>
               {restaurant.name}
             </Text>
-            <Text style={timeUntilCloseStyle}>
-              {this.timeUntilCloseLabel(this.props.restaurant.hours)}
-            </Text>
           </View>
 
-          <View style={{ marginTop: 5 }}>
-            <ImageButton
-              style={phoneButtonStyle}
-              source={phoneButton}
-              onPress={() => phonecall(restaurant.phoneNumber.substring(1), false)}
-            />
-          </View>
+          <View style={{ flex: 0.13 }} />
         </View>
 
         <View style={filterContainerStyle}>
@@ -333,23 +215,170 @@ class RestaurantDetail extends Component {
           </ScrollView>
         </View>
 
-        <View style={{ marginBottom: 10 }}>
-          {this.renderPhotoList()}
+        <View style={infoContainerStyle}>
+          <View style={infoObjectStyle}>
+            <MaterialIcon name='access-time' size={30} />
+            <Text style={timeUntilCloseStyle}>
+              {this.timeUntilCloseLabel(this.props.restaurant.hours)}
+            </Text>
+          </View>
+
+          <View style={infoObjectStyle}>
+            <MaterialIcon name='directions-walk' size={30} />
+            <Text style={timeUntilCloseStyle}>
+              5 min walk
+            </Text>
+          </View>
+
+          <View style={infoObjectStyle}>
+            <FoundationIcon name='dollar' size={30} />
+            <Text style={timeUntilCloseStyle}>
+              $11 - $30
+            </Text>
+          </View>
         </View>
 
-        <Text style={titleStyle}>
-          Consensus!
-        </Text>
-        {this.renderCommentList()}
+        <RestaurantNavigator screenProps={{ restaurant: this.props.restaurant }} />
 
         <View style={{ flexDirection: 'row' }}>
-          <Button onPress={() => this.renderCommentUpload()}>
-            Add a comment!
-          </Button>
+          <View style={bottomSpacerStyle} />
+          <FoundationIcon.Button
+            name='telephone'
+            borderRadius={0}
+            backgroundColor='#FF9700'
+            onPress={() => phonecall(restaurant.phoneNumber.substring(1), false)}
+          >
+            CALL
+          </FoundationIcon.Button>
+          <View style={{ flexDirection: 'column', ...bottomSpacerStyle }}>
+            <View style={bottomSpacerStyle} />
+            <View style={bottomLineStyle} />
+            <View style={bottomSpacerStyle} />
+          </View>
+
+          <View style={bottomSpacerStyle} />
+          <MaterialIcon.Button
+            name='directions'
+            borderRadius={0}
+            backgroundColor='#FF9700'
+            onPress={() => phonecall(restaurant.phoneNumber.substring(1), false)}
+          >
+            DIRECTIONS
+          </MaterialIcon.Button>
+          <View style={bottomSpacerStyle} />
         </View>
       </View>
     );
   }
 }
+
+const RestaurantNavigator = TabNavigator({
+  Photos: {
+    screen: RestaurantPhotos
+  },
+  Comments: {
+    screen: RestaurantComments
+  }
+},
+{
+  tabBarPosition: 'top',
+  tabBarComponent: TabBarTop,
+  tabBarOptions: {
+    activeTintColor: '#FF9700',
+    inactiveTintColor: '#CBCBCB',
+    labelStyle: {
+      fontSize: 13,
+      color: 'black'
+    },
+    indicatorStyle: {
+      height: 5,
+    },
+    style: { backgroundColor: 'white' }
+  }
+});
+
+const styles = {
+  pageStyle: { // Entire restaurant page
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    paddingTop: (Platform.OS === 'ios') ? 15 : 0,
+    //paddingBottom: 10
+  },
+  headerStyle: { // Header including back button, name, time until close, call button
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 5,
+    //marginBottom: 5
+  },
+  backButtonStyle: { // Back button
+    width: 35,
+    height: 35
+  },
+  titleContainerStyle: { // Contains a restaurant name and time until close
+    alignItems: 'center',
+    marginTop: 10,
+    justifyContent: 'center',
+    flex: 1
+  },
+  titleStyle: { // Restaurant name
+    fontFamily: 'Avenir',
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center'
+  },
+  timeUntilCloseStyle: { // Time until close
+    fontFamily: 'Avenir',
+    fontSize: 10,
+    textAlign: 'justify'
+  },
+  phoneButtonStyle: {
+    width: 60,
+    height: 60
+  },
+  filterContainerStyle: {
+    alignItems: 'center',
+    marginBottom: 10,
+    marginLeft: 5,
+    marginRight: 5,
+  },
+  infoContainerStyle: {
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    justifyContent: 'space-around',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.2)'
+  },
+  infoObjectStyle: {
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
+  bottomSpacerStyle: {
+    flex: 1,
+    backgroundColor: '#FF9700'
+  },
+  bottomLineStyle: {
+    borderRightWidth: 1,
+    borderColor: 'white',
+    flex: 2,
+    backgroundColor: '#FF9700'
+  }
+};
+
+const {
+  pageStyle,
+  headerStyle,
+  titleContainerStyle,
+  titleStyle,
+  timeUntilCloseStyle,
+  filterContainerStyle,
+  infoContainerStyle,
+  infoObjectStyle,
+  bottomSpacerStyle,
+  bottomLineStyle
+} = styles;
 
 export default RestaurantDetail;
