@@ -23,8 +23,6 @@ import RestaurantComments from './RestaurantComments';
 
 const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
 const commentDetails = 'https://fotafood.herokuapp.com/api/comment/';
-const backButton = require('../../img/exit_button.png');
-//const phoneButton = require('../../img/phone.png');
 
 class RestaurantDetail extends Component {
   state = { photos: [], nouns: [], loading: true }
@@ -176,11 +174,7 @@ class RestaurantDetail extends Component {
       />
     );
   }
-  // <ImageButton
-  //   style={backButtonStyle}
-  //   source={backButton}
-  //   onPress={() => this.props.close()}
-  // />
+
   render() {
     const restaurant = this.props.restaurant;
     return (
