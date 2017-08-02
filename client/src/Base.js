@@ -22,12 +22,10 @@ import { connect } from 'react-redux';
 import firebase from 'firebase';
 import PhotoList from './components/Photo/PhotoList';
 import SearchPage from './components/Search/SearchPage';
-import BlankPage from './components/common/BlankPage';
 import AccountPage from './components/Account/AccountPage';
 import SettingsPage from './components/Settings/SettingsPage';
 import Navbar from './components/Navbar';
 import CameraNavigator from './components/Camera/CameraNavigator';
-import { footerSize } from './components/common';
 import { setCameraState, logInOrOut } from './actions';
 
 class Base extends Component {
@@ -43,21 +41,6 @@ class Base extends Component {
     });
   }
 
-  renderScene(route) {
-    switch (route.id) {
-      case 0:
-        return <PhotoList />;
-      case 1:
-        return <SearchPage />;
-      case 2:
-        return <AccountPage />;
-      case 3:
-        return <SettingsPage />;
-      default:
-        return <BlankPage />;
-    }
-  }
-
   render() {
     if (this.state.loginFinished) {
       return (
@@ -71,14 +54,6 @@ class Base extends Component {
           </Modal>
 
           <FotaNavigator />
-          {/* <Navigator
-            style={{ flex: 1, backgroundColor: '#fff', paddingBottom: footerSize }}
-            initialRoute={{ id: 0 }}
-            renderScene={this.renderScene.bind(this)}
-            configureScene={this.configureScene}
-            navigationBar={<Navbar />}
-          /> */}
-
         </View>
       );
     } return (<View />);

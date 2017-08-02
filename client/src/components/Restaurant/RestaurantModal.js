@@ -14,7 +14,6 @@ import {
   Text, View, Modal,
   TouchableOpacity, TouchableWithoutFeedback
 } from 'react-native';
-import { Navigator } from 'react-native-deprecated-custom-components';
 import { CardSection } from '../common';
 import RestaurantDetail from './RestaurantDetail';
 import CommentUpload from './CommentUpload';
@@ -111,12 +110,6 @@ class RestaurantModal extends Component {
       </View>
     );
   }
-
-  // <Navigator
-  //   style={{ flex: 1, backgroundColor: '#fff', ...this.props.pageStyle }}
-  //   initialRoute={{ id: 0 }}
-  //   renderScene={this.renderScene.bind(this)}
-  // />
 
   render() {
     return (

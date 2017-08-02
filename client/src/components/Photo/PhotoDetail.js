@@ -212,11 +212,8 @@ const styles = {
   photoStyle: { // The picture
     flex: 1,
     width: null,
-    height: Dimensions.get('window').width - 65
-  },
-  restaurantPageStyle: { // Entire restaurant page
-    //marginVertical: 20,
-    //marginHorizontal: 15
+    height: Dimensions.get('window').width - 65,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)'
   },
   photoInfoStyle: {
     paddingTop: 10,
