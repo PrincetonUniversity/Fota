@@ -48,12 +48,15 @@ class OrderToggler extends Component {
     const newBarStyle = (this.props.sorting === 'hot') ? barUnselectedStyle : barSelectedStyle;
     return (
       <View style={styles.containerStyle}>
+        <View style={{ flex: 0.5 }} />
         <View style={hotBarStyle}>
           <Text style={hotStyle} onPress={this.onSelectHot}>HOT</Text>
         </View>
+        
         <View style={newBarStyle}>
           <Text style={newStyle} onPress={this.onSelectNew}>NEW</Text>
         </View>
+        <View style={{ flex: 0.5 }} />
       </View>
     );
   }
@@ -64,13 +67,15 @@ const styles = {
     flex: 1,
     alignSelf: 'flex-end',
     flexDirection: 'row',
-    backgroundColor: 'transparent',
-    //borderWidth: 1
+    borderBottomWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.2)',
+    height: 30,
+    //paddingBottom: 5
   },
   orderSelectedStyle: {
     flex: 1,
     textAlign: 'center',
-    color: '#FFFFFF',
+    color: '#FF9700',
     fontWeight: 'bold',
     fontSize: 18,
     lineHeight: 22
@@ -78,7 +83,7 @@ const styles = {
   orderUnselectedStyle: {
     flex: 1,
     textAlign: 'center',
-    color: '#FFFFFF',
+    color: 'gray',
     fontWeight: 'bold',
     fontSize: 18,
     lineHeight: 22,
@@ -89,7 +94,7 @@ const styles = {
     height: 30,
     padding: 3,
     borderBottomWidth: 4,
-    borderColor: '#FFFFFF'
+    borderColor: '#FF9700'
   },
   barUnselectedStyle: {
     flex: 1,

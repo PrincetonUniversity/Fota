@@ -15,17 +15,13 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Image, Text, Dimensions, Alert } from 'react-native';
+import { View, Image, Text, Dimensions, Alert, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
+import Ionicon from 'react-native-vector-icons/Ionicons';
 import request from '../../helpers/axioshelper';
 import { ImageButton } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 import saveVote from '../../helpers/getasyncstorage';
-
-const upvoteUnactivated = require('../../img/upvote_unactivated.png');
-const upvoteActivated = require('../../img/upvote_activated.png');
-const downvoteUnactivated = require('../../img/downvote_unactivated.png');
-const downvoteActivated = require('../../img/downvote_activated.png');
 
 class PhotoDetail extends Component {
   constructor(props) {
@@ -37,8 +33,6 @@ class PhotoDetail extends Component {
         id: props.photo.id,
         userLiked: false,
         userDisliked: false,
-        upvoteSource: upvoteUnactivated,
-        downvoteSource: downvoteUnactivated,
         userHasVoted: false,
         modalVisible: false
       };
@@ -49,8 +43,6 @@ class PhotoDetail extends Component {
           id: props.photo.id,
           userLiked: true,
           userDisliked: false,
-          upvoteSource: upvoteActivated,
-          downvoteSource: downvoteUnactivated,
           userHasVoted: true,
           modalVisible: false
         };
@@ -61,8 +53,6 @@ class PhotoDetail extends Component {
           id: props.photo.id,
           userLiked: false,
           userDisliked: true,
-          upvoteSource: upvoteUnactivated,
-          downvoteSource: downvoteActivated,
           userHasVoted: true,
           modalVisible: false
         };
@@ -95,7 +85,6 @@ class PhotoDetail extends Component {
     let newLikeCount = this.state.likecount;
     let userNewLike = true;
     let userVoted = true;
-    let voteSource = upvoteActivated;
     if (!this.state.userHasVoted) {
       newLikeCount += 1;
       saveVote(1, this.state.id).done();
@@ -108,7 +97,6 @@ class PhotoDetail extends Component {
         newLikeCount -= 1;
         userNewLike = false;
         userVoted = false;
-        voteSource = upvoteUnactivated;
         saveVote(5, this.state.id).done();
         this.sendUpdateRequest('downvote', '1');
     }
@@ -117,8 +105,6 @@ class PhotoDetail extends Component {
       userLiked: userNewLike,
       userDisliked: false,
       userHasVoted: userVoted,
-      upvoteSource: voteSource,
-      downvoteSource: downvoteUnactivated
     });
   }
 
@@ -126,7 +112,6 @@ class PhotoDetail extends Component {
     let newLikeCount = this.state.likecount;
     let userHasDisliked = true;
     let userVoted = true;
-    let voteSource = downvoteActivated;
     if (!this.state.userHasVoted) {
       newLikeCount -= 1;
       saveVote(2, this.state.id).done();
@@ -139,7 +124,6 @@ class PhotoDetail extends Component {
       newLikeCount += 1;
       userHasDisliked = false;
       userVoted = false;
-      voteSource = downvoteUnactivated;
       saveVote(6, this.state.id).done();
       this.sendUpdateRequest('upvote', 1);
     }
@@ -148,12 +132,13 @@ class PhotoDetail extends Component {
       userLiked: false,
       userDisliked: userHasDisliked,
       userHasVoted: userVoted,
-      upvoteSource: upvoteUnactivated,
-      downvoteSource: voteSource
     });
   }
 
   render() {
+    const upvoteColor = this.state.userLiked === true ? 'white' : 'rgba(255, 255, 255, 0.6)';
+    const downvoteColor = this.state.userDisliked === true ? 'white' : 'rgba(255, 255, 255, 0.6)';
+    const voteCountColor = 'white';
     return (
       <View>
         <RestaurantModal
@@ -169,35 +154,35 @@ class PhotoDetail extends Component {
           }]}
         >
           <View style={photoFrameStyle}>
-            <Image
-              style={photoStyle}
-              source={{ uri: this.state.link }}
-            />
+            <Image style={photoStyle} source={{ uri: this.state.link }}>
+              <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end' }}>
+                <View style={{ flex: 2 }} />
+
+                <Text style={{ color: voteCountColor, ...likeCountTextStyle }}>
+                  {this.state.likecount.toString()}
+                </Text>
+                <TouchableOpacity onPress={() => this.renderDownvote()}>
+                  <Ionicon
+                    name='ios-arrow-down'
+                    size={40}
+                    color={downvoteColor}
+                    backgroundColor='transparent'
+                    style={{ marginRight: 10 }}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => this.renderUpvote()}>
+                  <Ionicon
+                    name='ios-arrow-up'
+                    size={40}
+                    color={upvoteColor}
+                    backgroundColor='transparent'
+                    style={{ marginRight: 20 }}
+                  />
+                </TouchableOpacity>
+              </View>
+            </Image>
           </View>
         </RestaurantModal>
-
-        <View style={photoInfoStyle}>
-          <View style={likeCountContainerStyle}>
-            <Image
-              source={upvoteUnactivated}
-              style={likeCountArrowStyle}
-            />
-            <Text style={likeCountTextStyle}>{this.state.likecount.toString()}</Text>
-          </View>
-
-          <View style={likeContainerStyle}>
-            <ImageButton
-              source={this.state.upvoteSource}
-              style={upvoteStyle}
-              onPress={() => this.renderUpvote()}
-            />
-            <ImageButton
-              source={this.state.downvoteSource}
-              style={downvoteStyle}
-              onPress={() => this.renderDownvote()}
-            />
-          </View>
-        </View>
       </View>
     );
   }
@@ -205,8 +190,7 @@ class PhotoDetail extends Component {
 
 const styles = {
   photoFrameStyle: {
-    borderTopLeftRadius: 7,
-    borderTopRightRadius: 7,
+    borderRadius: 9,
     overflow: 'hidden'
   },
   photoStyle: { // The picture
@@ -250,11 +234,11 @@ const styles = {
   },
   likeCountTextStyle: { // Number of likes
     fontFamily: 'Avenir',
-    color: '#bababa',
-    fontSize: 13,
+    fontSize: 18,
     textAlign: 'justify',
     fontWeight: 'bold',
-    marginLeft: 5
+    marginRight: 10,
+    marginBottom: 10
   },
   likeContainerStyle: { // Upvote/downvote container
     flexDirection: 'row',
