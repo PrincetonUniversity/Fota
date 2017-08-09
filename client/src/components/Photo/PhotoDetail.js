@@ -207,12 +207,13 @@ const styles = {
   photoFrameStyle: {
     borderTopLeftRadius: 7,
     borderTopRightRadius: 7,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    elevation: 2
   },
   photoStyle: { // The picture
     flex: 1,
     width: null,
-    height: Dimensions.get('window').width - 65
+    height: Dimensions.get('window').width - 65,
   },
   restaurantPageStyle: { // Entire restaurant page
     //marginVertical: 20,
@@ -229,7 +230,8 @@ const styles = {
     position: 'relative',
     shadowOffset: { width: 1, height: 5 },
     shadowOpacity: 0.1,
-    shadowRadius: 15
+    shadowRadius: 15,
+    elevation: 1
   },
   upvoteStyle: { // Upvote/downvote
     height: 35,

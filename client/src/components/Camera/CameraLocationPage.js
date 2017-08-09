@@ -1,6 +1,6 @@
 /******************************************************************************
  * Called by: ./CameraNavigator
- * Dependencies: request, common/Input, common/Header, ./CameraPage/deleteImage
+ * Dependencies: request, common/Button, common/Header, ./CameraPage/deleteImage
  *
  * Description: Step 2 of 3 in uploading a photo. Presents options for
  * selecting a restaurant to be associated with the picture. Users can retake
@@ -12,52 +12,17 @@
 
 import React, { Component } from 'react';
 import {
-  View,
-  Image,
-  Text,
-  FlatList,
-  AsyncStorage,
-  TouchableWithoutFeedback,
-  Keyboard,
-  TouchableOpacity
+  View, Image, Text, FlatList, AsyncStorage, TouchableWithoutFeedback,
+  Keyboard, TouchableOpacity, Dimensions, TextInput
 } from 'react-native';
+import Ionicon from 'react-native-vector-icons/Ionicons';
 import { NavigationActions } from 'react-navigation';
 import request from '../../helpers/axioshelper';
-import { Input, Header } from '../common';
+import { Header, Button } from '../common';
 import { deleteImage } from './CameraPage';
 
-const styles = {
-  pageStyle: {
-    flex: 1,
-    flexDirection: 'column'
-  },
-  headerTextStyle: {
-    fontSize: 15,
-    fontFamily: 'Avenir'
-  },
-  imageStyle: {
-    width: 150,
-    height: 150,
-    marginBottom: 10
-  },
-  containerStyle: {
-    backgroundColor: '#ddd',
-    marginHorizontal: 10,
-    paddingHorizontal: 12,
-    marginBottom: 10,
-    borderRadius: 16,
-    height: 32
-  }
-};
-
-const { pageStyle,
-        headerTextStyle,
-        imageStyle,
-        containerStyle
-      } = styles;
-
 class CameraLocationPage extends Component {
-  state = { uploadPath: null, query: '', rlist: [], totalList: [] }
+  state = { uploadPath: null, query: '', rlist: [], totalList: [], selected: null, showList: false }
 
   componentWillMount() {
     navigator.geolocation.getCurrentPosition(position => {
@@ -76,6 +41,9 @@ class CameraLocationPage extends Component {
   }
 
   updateQuery(query) {
+    if (this.state.selected || !this.state.showList) {
+      this.setState({ selected: null, showList: true });
+    }
     let rlist = this.state.totalList;
     const qarr = query.toLowerCase().split(' ');
     if (qarr.length === 0 || qarr[0] === '') {
@@ -102,15 +70,48 @@ class CameraLocationPage extends Component {
     this.setState({ query, rlist });
   }
 
+  submitPhoto() {
+    console.log('Not finished yet!');
+  }
+
+  renderListOrPhoto() {
+    if (this.state.showList && this.state.rlist.length > 0) {
+      return (
+        <FlatList
+          data={this.state.rlist}
+          keyExtractor={restaurant => restaurant.id}
+          renderItem={restaurant => this.renderRestaurant(restaurant.item)}
+          keyboardShouldPersistTaps={'handled'}
+          bounces={false}
+          removeClippedSubviews={false}
+        />
+      );
+    }
+    return (
+      <View>
+        <View style={photoFrameStyle}>
+          <Image
+            style={photoStyle}
+            source={{ uri: this.state.uploadPath }}
+          />
+        </View>
+
+        <View style={buttonHolderStyle}>
+          {this.renderButton()}
+        </View>
+      </View>
+    );
+  }
+
   renderRestaurant(restaurant) {
     return (
       <TouchableOpacity
         onPress={() => {
-          AsyncStorage.setItem('UploadRestaurant', String(restaurant.id));
-          this.renderCameraComments();
+          Keyboard.dismiss();
+          this.setState({ query: restaurant.name, selected: restaurant.id, showList: false });
         }}
       >
-        <View style={{ flexDirection: 'row', padding: 10 }}>
+        <View style={restaurantDisplayStyle}>
           <Text style={{ fontFamily: 'Avenir', fontSize: 15 }}>
             {restaurant.name}
           </Text>
@@ -123,59 +124,75 @@ class CameraLocationPage extends Component {
     );
   }
 
-  renderCameraPage() {
-    const backAction = NavigationActions.back();
-    this.props.navigation.dispatch(backAction);
-  }
-
-  renderCameraComments() {
-    this.props.navigation.navigate('Comments');
+  renderButton() {
+    if (this.state.selected) {
+      return (
+        <Button
+          onPress={() => this.submitPhoto()}
+          colors={{ text: '#fff', fill: '#ff9700', border: '#ff9700' }}
+        >
+          Post
+        </Button>
+      );
+    }
+    return (
+      <Button
+        onPress={() => {}}
+        colors={{ text: '#fff', fill: '#ffcb7f', border: '#ffcb7f' }}
+      >
+        Post
+      </Button>
+    );
   }
 
   render() {
     if (this.state.uploadPath) {
       return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            Keyboard.dismiss();
+            if (this.state.rlist.length === 1) {
+              const restaurant = this.state.rlist[0];
+              this.setState({ query: restaurant.name, selected: restaurant.id, showList: false });
+            } else {
+              this.setState({ showList: false });
+            }
+          }}
+        >
           <View style={pageStyle}>
             <Header>
-              <Text
-                style={headerTextStyle}
+              <Ionicon.Button
+                name='ios-arrow-back'
+                backgroundColor='white'
+                color='black'
+                size={30}
                 onPress={() => {
                   deleteImage(this.state.uploadPath);
                   AsyncStorage.setItem('UploadPath', '');
-                  this.renderCameraPage();
+                  this.props.navigation.dispatch(NavigationActions.back());
                 }}
-              >
-                Cancel
-              </Text>
+              />
             </Header>
 
-            <View style={{ alignItems: 'center' }}>
-              <Image
-                source={{ uri: this.state.uploadPath }}
-                style={imageStyle}
-              />
+            <View style={{ margin: 70, marginTop: 30 }}>
+              <Text style={headerTextStyle}>You took this picture at</Text>
+              <View style={containerStyle}>
+                <TextInput
+                  style={inputTextStyle}
+                  value={this.state.query}
+                  onChangeText={query => this.updateQuery(query)}
+                  onFocus={() => this.setState({ showList: true })}
+                  autoCorrect={false}
+                  underlineColorAndroid={'transparent'}
+                />
+              </View>
+
+              {this.renderListOrPhoto()}
+
             </View>
-
-            <Header>
-              <Input
-                style={containerStyle}
-                placeholder='Where are you?'
-                value={this.state.query}
-                onChangeText={query => this.updateQuery(query)}
-              />
-            </Header>
-
-            <FlatList
-              data={this.state.rlist}
-              keyExtractor={restaurant => restaurant.id}
-              renderItem={restaurant => this.renderRestaurant(restaurant.item)}
-              keyboardShouldPersistTaps={'handled'}
-              bounces={false}
-              removeClippedSubviews={false}
-            />
           </View>
         </TouchableWithoutFeedback>
+
       );
     }
     return (
@@ -183,5 +200,67 @@ class CameraLocationPage extends Component {
     );
   }
 }
+
+const styles = {
+  pageStyle: {
+    flex: 1,
+    flexDirection: 'column'
+  },
+  headerTextStyle: {
+    fontSize: 18,
+    color: '#aaa',
+    fontWeight: '500',
+    fontFamily: 'Avenir'
+  },
+  containerStyle: {
+    flexDirection: 'row',
+    marginBottom: 10,
+    height: 32,
+    borderBottomWidth: 2,
+    borderColor: '#000'
+  },
+  photoFrameStyle: {
+    flexDirection: 'row',
+    borderRadius: 7,
+    overflow: 'hidden',
+    marginTop: 35,
+    marginBottom: 60,
+    elevation: 2
+  },
+  photoStyle: { // The picture
+    flex: 1,
+    width: null,
+    height: Dimensions.get('window').width - 140,
+  },
+  buttonHolderStyle: {
+    flexDirection: 'row',
+    marginHorizontal: 50,
+  },
+  inputTextStyle: {
+    fontFamily: 'Avenir',
+    paddingVertical: 1,
+    color: '#000',
+    fontSize: 16,
+    flex: 1
+  },
+  restaurantDisplayStyle: {
+    flexDirection: 'row',
+    padding: 10,
+    borderBottomWidth: 2,
+    borderLeftWidth: 2,
+    borderRightWidth: 2
+  }
+};
+
+const {
+  pageStyle,
+  headerTextStyle,
+  containerStyle,
+  photoFrameStyle,
+  photoStyle,
+  buttonHolderStyle,
+  inputTextStyle,
+  restaurantDisplayStyle
+} = styles;
 
 export default CameraLocationPage;

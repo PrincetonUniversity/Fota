@@ -27,7 +27,7 @@ import AccountPage from './components/Account/AccountPage';
 import SettingsPage from './components/Settings/SettingsPage';
 import Navbar from './components/Navbar';
 import CameraNavigator from './components/Camera/CameraNavigator';
-import { footerSize } from './components/common';
+//import { footerSize } from './components/common';
 import { setCameraState, logInOrOut } from './actions';
 
 class Base extends Component {
@@ -43,7 +43,7 @@ class Base extends Component {
     });
   }
 
-  renderScene(route) {
+  /*renderScene(route) {
     switch (route.id) {
       case 0:
         return <PhotoList />;
@@ -56,13 +56,14 @@ class Base extends Component {
       default:
         return <BlankPage />;
     }
-  }
+  }*/
 
   render() {
     if (this.state.loginFinished) {
       return (
         <View style={{ flex: 1 }}>
           <Modal
+            animationType={'slide'}
             visible={this.props.cameraVisible}
             style={{ flex: 1 }}
             onRequestClose={() => this.props.setCameraState(false)}
@@ -92,9 +93,9 @@ const FotaNavigator = TabNavigator({
   Search: {
     screen: SearchPage
   },
-  Camera: {
+  /*Camera: {
     screen: CameraNavigator
-  },
+  },*/
   Account: {
     screen: AccountPage
   },
@@ -104,6 +105,7 @@ const FotaNavigator = TabNavigator({
 },
 {
   tabBarComponent: Navbar,
+  tabBarPosition: 'bottom',
   initialRouteName: 'Home',
   backBehavior: 'initalRoute',
   // tabBarOptions: {

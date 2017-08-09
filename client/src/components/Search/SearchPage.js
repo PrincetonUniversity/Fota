@@ -23,8 +23,6 @@ import RestaurantModal from '../Restaurant/RestaurantModal';
 const homeUnactivated = require('../../img/fota_home_unactivated.png');
 
 class SearchPage extends Component {
-  state = { query: '', rlist: [], totalList: [] }
-
   static navigationOptions = {
     tabBarIcon: ({ tintColor }) => (
       <Image
@@ -33,6 +31,8 @@ class SearchPage extends Component {
       />
     ),
   };
+
+  state = { query: '', rlist: [], totalList: [] }
 
   componentWillMount() {
     request.get('https://fotafood.herokuapp.com/api/restaurant')

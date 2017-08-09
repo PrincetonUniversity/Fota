@@ -16,8 +16,8 @@
 
 import React, { Component } from 'react';
 import { View, Text, Dimensions, AsyncStorage, Alert } from 'react-native';
+import Ionicon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
-import { NavigationActions } from 'react-navigation';
 import Camera, { constants } from 'react-native-camera';
 // eslint-disable-next-line
 import ImageResizer from 'react-native-image-resizer';
@@ -31,7 +31,8 @@ const styles = {
     flexDirection: 'column'
   },
   headerTextStyle: {
-    fontSize: 15,
+    fontSize: 17,
+    fontWeight: '500',
     fontFamily: 'Avenir'
   },
   cameraStyle: {
@@ -47,8 +48,8 @@ const styles = {
     alignItems: 'center'
   },
   cameraButtonStyle: {
-    width: 100,
-    height: 100
+    width: 80,
+    height: 80
   }
 };
 
@@ -98,16 +99,18 @@ class CameraPage extends Component {
   }
 
   render() {
-    const backAction = NavigationActions.back({ key: this.props.screenProps.key });
     return (
       <View style={pageStyle}>
         <Header>
-          <Text
-            style={headerTextStyle}
-            onPress={() => this.props.screenProps.rootNav.navigate('Home')}
-          >
-            Cancel
-          </Text>
+          <Ionicon.Button
+            name='md-close'
+            backgroundColor='white'
+            color='black'
+            size={20}
+            onPress={() => this.props.setCameraState(false)}
+          />
+          <Text style={headerTextStyle}>Add a Photo</Text>
+          <Ionicon.Button name='md-close' backgroundColor='white' color='white' size={20} />
         </Header>
 
         <Camera

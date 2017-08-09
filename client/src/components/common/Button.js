@@ -9,12 +9,19 @@
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 
-const Button = ({ onPress, children }) => {
-  const { buttonStyles, textStyle } = styles;
+const Button = (props) => {
+  let colors = props.colors;
+  if (colors == null) {
+    colors = { text: '#aaa', fill: '#fff', border: '#aaa' };
+  }
   return (
-      <TouchableOpacity onPress={onPress} style={buttonStyles}>
-          <Text style={textStyle}>
-              {children}
+      <TouchableOpacity
+        onPress={props.onPress}
+        style={{ backgroundColor: colors.fill, borderColor: colors.border, ...styles.buttonStyle }}
+      >
+          {props.children}
+          <Text style={{ color: colors.text, ...styles.textStyle }}>
+              {props.text}
           </Text>
       </TouchableOpacity>
   );
@@ -23,17 +30,17 @@ const Button = ({ onPress, children }) => {
 const styles = {
   textStyle: {
       alignSelf: 'center',
-      color: '#fff',
-      fontSize: 16,
-      fontWeight: '600',
-      padding: 7
+      fontSize: 18,
+      fontWeight: '500',
+      padding: 10,
   },
-  buttonStyles: {
+  buttonStyle: {
       flex: 1,
-      alignSelf: 'stretch',
-      backgroundColor: '#ff9700',
-      marginLeft: 10,
-      marginRight: 10,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      borderRadius: 18,
+      borderWidth: 1,
+      margin: 1
   }
 };
 
