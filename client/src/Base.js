@@ -26,10 +26,6 @@ import AccountPage from './components/Account/AccountPage';
 import SettingsPage from './components/Settings/SettingsPage';
 import Navbar from './components/Navbar';
 import CameraNavigator from './components/Camera/CameraNavigator';
-<<<<<<< HEAD
-//import { footerSize } from './components/common';
-=======
->>>>>>> 9c2fd687bf3cd8e8f4677913e716ef6fa65336b1
 import { setCameraState, logInOrOut } from './actions';
 
 class Base extends Component {
@@ -45,7 +41,6 @@ class Base extends Component {
     });
   }
 
-<<<<<<< HEAD
   /*renderScene(route) {
     switch (route.id) {
       case 0:
@@ -61,8 +56,6 @@ class Base extends Component {
     }
   }*/
 
-=======
->>>>>>> 9c2fd687bf3cd8e8f4677913e716ef6fa65336b1
   render() {
     if (this.state.loginFinished) {
       return (
