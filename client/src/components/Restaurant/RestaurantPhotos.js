@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import { View, Image, Text, FlatList } from 'react-native';
+import {
+  View, Text, FlatList, Image, TouchableOpacity, Modal
+} from 'react-native';
 import request from '../../helpers/axioshelper';
+import { PhotoGallery } from '../common';
 
 const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
 
@@ -9,7 +12,7 @@ class RestaurantPhotos extends Component {
     tabBarLabel: 'Photos'
   };
 
-  state = { photos: [], loading: true }
+  state = { photos: [], loading: true, selectedPhoto: null, modalVisible: false }
 
   componentWillMount() {
     request.get(restaurantDetails + this.props.screenProps.restaurant.id)
@@ -19,16 +22,26 @@ class RestaurantPhotos extends Component {
     })).catch(e => request.showErrorAlert(e));
   }
 
-  renderPhoto(photo) {
+  setSelectedPhoto(index) {
+    this.setState({ selectedPhoto: index, modalVisible: true });
+  }
+
+  resetSelectedPhoto() {
+    this.setState({ selectedPhoto: null, modalVisible: false });
+  }
+
+  renderPhoto(photo, index) {
     return (
-      <View key={photo.id} style={{ marginVertical: 5, marginHorizontal: 5 }}>
-        <View style={{ shadowOpacity: 0.1, shadowRadius: 5, shadowOffset: { height: 1 } }}>
+      <TouchableOpacity
+        onPress={() => this.setSelectedPhoto(index)}
+      >
+        <View key={photo.id} style={photoContainerStyle}>
           <Image
             source={{ uri: photo.link }}
-            style={styles.photoStyle}
+            style={photoStyle}
           />
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 
@@ -36,19 +49,32 @@ class RestaurantPhotos extends Component {
     if (!this.state.loading && this.state.photos.length === 0) {
       return (
         <View style={{ height: 150, justifyContent: 'center' }}>
-          <Text style={styles.emptyTextStyle}>
+          <Text style={emptyTextStyle}>
             Be the first to upload a photo here!
           </Text>
         </View>
-
       );
     }
+
     return (
-      <View style={{ flex: 1, alignItems: 'center', paddingTop: 5 }}>
+      <View style={{ flex: 1, paddingTop: 5, paddingLeft: 7 }}>
+        <Modal
+          animationType={'fade'}
+          transparent
+          visible={this.state.modalVisible}
+          onRequestClose={() => { this.resetSelectedPhoto(); }}
+        >
+          <PhotoGallery
+            data={this.state.photos}
+            initialIndex={this.state.selectedPhoto || undefined}
+            onSwipeVertical={this.resetSelectedPhoto.bind(this)}
+          />
+        </Modal>
+
         <FlatList
           data={this.state.photos}
           keyExtractor={photo => photo.id}
-          renderItem={photo => this.renderPhoto(photo.item)}
+          renderItem={(photo) => this.renderPhoto(photo.item, photo.index)}
           showsHorizontalScrollIndicator={false}
           numColumns={3}
           removeClippedSubviews={false}
@@ -65,11 +91,25 @@ const styles = {
     color: '#aaa',
     fontFamily: 'Avenir',
   },
+  photoContainerStyle: {
+    backgroundColor: 'gray',
+    marginVertical: 5,
+    marginHorizontal: 5,
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    shadowOffset: { height: 1 }
+  },
   photoStyle: { // Individual photos
     height: 110,
     width: 110,
     borderRadius: 4
   }
 };
+
+const {
+  emptyTextStyle,
+  photoContainerStyle,
+  photoStyle
+} = styles;
 
 export default RestaurantPhotos;

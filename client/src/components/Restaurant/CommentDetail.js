@@ -21,10 +21,9 @@ class CommentDetail extends Component {
     }
     return (
       <FlatList
-        style={{ alignSelf: 'center' }}
+        style={{ flex: 1 }}
         data={this.props.nouns}
         keyExtractor={noun => noun.noun}
-        numColumns={2}
         showsVerticalScrollIndicator={false}
         renderItem={noun => this.renderNoun(noun.item, navigator)}
         bounces={false}
@@ -45,7 +44,7 @@ class CommentDetail extends Component {
   render() {
     return (
       <Navigator
-        style={{ flex: 1, marginHorizontal: 10 }}
+        style={{ flex: 1 }}
         initialRoute={{ noun: null }}
         renderScene={this.renderScene.bind(this)}
         // eslint-disable-next-line

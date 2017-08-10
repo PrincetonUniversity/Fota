@@ -21,17 +21,18 @@ const CommentDisplay = (props) => (
 
 const styles = {
     containerStyle: {
-      flex: -1,
+      flex: 1,
       flexDirection: 'row',
-      justifyContent: 'space-around',
-      borderRadius: 20,
-      backgroundColor: '#ff9700',
+      height: 50,
+      backgroundColor: 'white',
       alignItems: 'center',
       padding: 8,
-      margin: 5
+      // borderTopWidth: 1,
+      borderBottomWidth: 1
+      // margin: 5
     },
     textStyle: {
-      color: 'white',
+      color: 'black',
       fontFamily: 'Avenir',
       fontSize: 12,
       marginLeft: 3,

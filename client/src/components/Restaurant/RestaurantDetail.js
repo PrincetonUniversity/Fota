@@ -25,7 +25,13 @@ const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
 const commentDetails = 'https://fotafood.herokuapp.com/api/comment/';
 
 class RestaurantDetail extends Component {
-  state = { photos: [], nouns: [], loading: true }
+  state = {
+    photos: [],
+    nouns: [],
+    selectedPhoto: null,
+    modalVisible: false,
+    loading: true
+  }
 
   componentWillMount() {
     request.get(restaurantDetails + this.props.restaurant.id)
@@ -232,7 +238,11 @@ class RestaurantDetail extends Component {
           </View>
         </View>
 
-        <RestaurantNavigator screenProps={{ restaurant: this.props.restaurant }} />
+        <RestaurantNavigator
+          screenProps={{
+            restaurant: this.props.restaurant,
+          }}
+        />
 
         <View style={{ flexDirection: 'row' }}>
           <View style={bottomSpacerStyle} />
@@ -287,7 +297,12 @@ const RestaurantNavigator = TabNavigator({
     indicatorStyle: {
       height: 5,
     },
-    style: { backgroundColor: 'white' }
+    style: {
+      backgroundColor: 'white',
+      // shadowOffset: { width: 1, height: 5 },
+      // shadowOpacity: 0.07,
+      // shadowRadius: 3
+    }
   }
 });
 

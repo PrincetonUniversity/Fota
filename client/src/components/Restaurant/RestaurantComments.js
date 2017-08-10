@@ -23,7 +23,7 @@ class RestaurantComments extends Component {
   render() {
     if (!this.state.loading && this.state.nouns.length === 0) {
       return (
-        <View style={{ flex: 1, marginHorizontal: 20, marginTop: 5 }}>
+        <View style={{ height: 150, justifyContent: 'center' }}>
           <Text style={styles.emptyTextStyle}>
             There are no comments for this restaurant yet. Be the first to write one!
           </Text>
