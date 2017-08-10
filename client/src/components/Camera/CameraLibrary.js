@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { FlatList, CameraRoll, Dimensions } from 'react-native';
+import { FlatList, CameraRoll, Dimensions, Platform } from 'react-native';
+import RNGRP from 'react-native-get-real-path';
 import { ImageButton } from '../common';
 
-const imageSize = 100;
+const imageSize = Dimensions.get('window').width / 4;
 
 class CameraLibrary extends Component {
   state = { photos: [] };
@@ -10,13 +11,25 @@ class CameraLibrary extends Component {
   componentWillMount() {
     CameraRoll.getPhotos({
       first: 20,
-      assetType: 'Photos'
-    })
-    .then(r => this.setState({ photos: r.edges }));
+      assetType: 'Photos',
+    }).then(r => {
+      if (Platform.OS === 'android') {
+        const promises = r.edges.map(p => {
+          console.log(p.node.image);
+          return RNGRP.getRealPathFromURI(p.node.image.uri).then(filePath => filePath);
+        });
+        Promise.all(promises).then(results => {
+          const uris = results.map(uri => `file://${uri}`);
+          this.setState({ photos: uris });
+        });
+      } else {
+        const uris = r.edges.map(p => p.node.image.uri);
+        this.setState({ photos: uris });
+      }
+    });
   }
 
   renderPhoto(uri) {
-    console.log(uri);
     return (
       <ImageButton
         source={{ uri }}
@@ -30,8 +43,8 @@ class CameraLibrary extends Component {
     return (
       <FlatList
         data={this.state.photos}
-        keyExtractor={photo => photo.node.image.uri}
-        renderItem={photo => this.renderPhoto(photo.item.node.image.uri)}
+        keyExtractor={photo => photo}
+        renderItem={photo => this.renderPhoto(photo.item)}
         bounces={false}
         removeClippedSubviews={false}
         getItemLayout={(data, index) => (

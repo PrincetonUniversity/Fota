@@ -100,12 +100,17 @@ class CameraPage extends Component {
   }
 
   choosePhoto(uri) {
-    this.setState({ selectedImage: { uri } });
+    if (uri === this.state.selectedImage.uri) {
+      this.setState({ selectedImage: unselected });
+    } else {
+      this.setState({ selectedImage: { uri } });
+    }
   }
 
   resizeImage(uri, del) {
     ImageResizer.createResizedImage(uri, 800, 1600, 'JPEG', 100).then(reuri => {
       if (del) {
+        console.log(uri);
         deleteImage(uri);
       }
       AsyncStorage.setItem('UploadPath', reuri);

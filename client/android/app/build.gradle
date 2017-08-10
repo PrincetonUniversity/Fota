@@ -147,6 +147,7 @@ dependencies {
     compile project(':react-native-vector-icons')
     compile project(':react-native-linear-gradient')
     compile project(':react-native-fetch-blob')
+    compile project(':react-native-get-real-path')
     compile project(':react-native-camera')
     compile project(':react-native-image-resizer')
     compile fileTree(dir: "libs", include: ["*.jar"])
