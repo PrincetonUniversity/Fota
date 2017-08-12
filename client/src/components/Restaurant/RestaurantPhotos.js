@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import {
   View, Text, FlatList, Image, TouchableOpacity, Modal
 } from 'react-native';
-import request from '../../helpers/axioshelper';
 import { PhotoGallery } from '../common';
 
-const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
-
 class RestaurantPhotos extends Component {
+  static defaultProps = {
+    //photos: []
+  }
+
   static navigationOptions = {
     tabBarLabel: 'Photos'
   };
@@ -15,12 +16,14 @@ class RestaurantPhotos extends Component {
   state = { photos: [], loading: true, selectedPhoto: null, modalVisible: false }
 
   componentWillMount() {
-    request.get(restaurantDetails + this.props.screenProps.restaurant.id)
-    .then(response => this.setState({
-      photos: response.data,
-      loading: false,
-    })).catch(e => request.showErrorAlert(e));
+    this.setState({ photos: this.props.screenProps.photos, loading: false });
   }
+
+  // componentWillReceiveProps(nextProps) {
+  //   if (this.props.screenProps.photos !== nextProps.screenProps.photos) {
+  //     this.setState({ photos: nextProps.screenProps.photos, loading: false });
+  //   }
+  // }
 
   setSelectedPhoto(index) {
     this.setState({ selectedPhoto: index, modalVisible: true });
@@ -35,9 +38,9 @@ class RestaurantPhotos extends Component {
       <TouchableOpacity
         onPress={() => this.setSelectedPhoto(index)}
       >
-        <View key={photo.id} style={photoContainerStyle}>
+        <View key={index} style={photoContainerStyle}>
           <Image
-            source={{ uri: photo.link }}
+            source={{ uri: photo.url }}
             style={photoStyle}
           />
         </View>
@@ -56,6 +59,7 @@ class RestaurantPhotos extends Component {
       );
     }
 
+    const photoLinks = this.state.photos.map((photo) => photo.url);
     return (
       <View style={{ flex: 1, paddingTop: 5, paddingLeft: 7 }}>
         <Modal
@@ -64,20 +68,23 @@ class RestaurantPhotos extends Component {
           visible={this.state.modalVisible}
           onRequestClose={() => { this.resetSelectedPhoto(); }}
         >
-          <PhotoGallery
-            data={this.state.photos}
-            initialIndex={this.state.selectedPhoto || undefined}
-            onSwipeVertical={this.resetSelectedPhoto.bind(this)}
-          />
+          <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
+            <PhotoGallery
+              photos={photoLinks}
+              initialIndex={this.state.selectedPhoto}
+              onSwipeVertical={this.resetSelectedPhoto.bind(this)}
+            />
+          </View>
         </Modal>
 
         <FlatList
           data={this.state.photos}
-          keyExtractor={photo => photo.id}
+          keyExtractor={(photo, index) => index}
           renderItem={(photo) => this.renderPhoto(photo.item, photo.index)}
           showsHorizontalScrollIndicator={false}
           numColumns={3}
           removeClippedSubviews={false}
+          {...this.props.screenProps.panResponder.panHandlers}
         />
       </View>
     );

@@ -25,9 +25,10 @@ const styles = {
     alignItems: 'center',
     height: 50,
     marginTop: (Platform.OS === 'ios') ? 15 : 0,
-    // paddingHorizontal: 10,
+    paddingHorizontal: 10,
     position: 'relative',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    elevation: 1
   },
 };
 

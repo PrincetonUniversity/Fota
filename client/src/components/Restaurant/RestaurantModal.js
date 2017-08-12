@@ -14,12 +14,20 @@ import {
   Text, View, Modal,
   TouchableOpacity, TouchableWithoutFeedback
 } from 'react-native';
+import request from '../../helpers/axioshelper';
+import { restRequest } from '../../helpers/URL';
 import { CardSection } from '../common';
 import RestaurantDetail from './RestaurantDetail';
 import CommentUpload from './CommentUpload';
 
 class RestaurantModal extends Component {
-  state = { modalVisible: false, longPressed: false }
+  state = { modalVisible: false, longPressed: false, restaurant: null }
+
+  // componentWillMount() {
+  //   request.get(restRequest(this.props.restaurantid))
+  //   .then(response => this.setState({ restaurant: response.data }))
+  //   .catch(e => request.showErrorAlert(e));
+  // }
 
   onPressed(long) {
     if (long) {
@@ -29,7 +37,9 @@ class RestaurantModal extends Component {
     } else if (this.state.longPressed) {
       this.setState({ longPressed: false }, () => this.setModalVisible(true));
     } else {
-      this.setModalVisible(true);
+      request.get(restRequest(this.props.restaurantid))
+      .then(response => this.setState({ restaurant: response.data, modalVisible: true }))
+      .catch(e => request.showErrorAlert(e));
     }
   }
 
@@ -39,34 +49,6 @@ class RestaurantModal extends Component {
 
   closeModal() {
     this.setState({ modalVisible: false });
-  }
-
-  renderScene(route, navigator) {
-    switch (route.id) {
-      case 0:
-        return (
-          <RestaurantDetail
-            navigator={navigator}
-            restaurant={this.props.restaurant}
-            close={this.closeModal.bind(this)}
-          />
-        );
-      case 1:
-        return (
-          <CommentUpload
-            restaurant={this.props.restaurant}
-            navigator={navigator}
-          />
-        );
-      default:
-        return (
-          <RestaurantDetail
-            navigator={navigator}
-            restaurant={this.props.restaurant}
-            close={this.closeModal.bind(this)}
-          />
-        );
-    }
   }
 
   renderOptions() {
@@ -104,7 +86,7 @@ class RestaurantModal extends Component {
       <View style={styles.modalStyle}>
         <RestaurantDetail
           navigator={navigator}
-          restaurant={this.props.restaurant}
+          restaurant={this.state.restaurant}
           close={this.closeModal.bind(this)}
         />
       </View>

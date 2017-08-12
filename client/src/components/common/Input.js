@@ -11,14 +11,16 @@
 import React from 'react';
 import { View, TextInput } from 'react-native';
 
-const Input = ({ style, children, placeholder, secure, value, onChangeText }) => (
+const Input = ({ style, children, placeholder, placeholderAlign, secure, value, onChangeText }) => (
   <View style={{ ...style, ...styles.containerStyle }}>
     {children}
     <TextInput
       style={styles.inputStyle}
       value={value}
       placeholder={placeholder}
+      textAlign={placeholderAlign}
       onChangeText={onChangeText}
+      //onFocus={onFocus}
       autoCorrect={false}
       secureTextEntry={secure}
       underlineColorAndroid={'transparent'}
@@ -31,7 +33,7 @@ const styles = {
     fontFamily: 'Avenir',
     padding: 1,
     borderRadius: 3,
-    color: '#000',
+    color: '#444',
     paddingRight: 5,
     paddingLeft: 5,
     fontSize: 16,

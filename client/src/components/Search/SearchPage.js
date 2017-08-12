@@ -17,14 +17,13 @@
 import React, { Component } from 'react';
 import { Text, View, FlatList, Image, Platform } from 'react-native';
 import request from '../../helpers/axioshelper';
+import { restRequest } from '../../helpers/URL';
 import { Header, Input } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 
 const homeUnactivated = require('../../img/fota_home_unactivated.png');
 
 class SearchPage extends Component {
-  state = { query: '', rlist: [], totalList: [] }
-
   static navigationOptions = {
     tabBarIcon: ({ tintColor }) => (
       <Image
@@ -34,10 +33,12 @@ class SearchPage extends Component {
     ),
   };
 
+  state = { query: '', rlist: [], totalList: [] }
+
   componentWillMount() {
-    request.get('https://fotafood.herokuapp.com/api/restaurant')
-      .then(response => this.setState({ totalList: response.data }))
-      .catch(e => request.showErrorAlert(e));
+    // request.get('https://fotafood.herokuapp.com/api/restaurant')
+    //   .then(response => this.setState({ totalList: response.data }))
+    //   .catch(e => request.showErrorAlert(e));
   }
 
   updateQuery(query) {

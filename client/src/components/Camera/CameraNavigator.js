@@ -16,8 +16,7 @@ import { StackNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
 import CameraPage from './CameraPage';
 import CameraLocationPage from './CameraLocationPage';
-import CameraCommentsPage from './CameraCommentsPage';
-import CameraLoginForm from './CameraLoginForm';
+//import CameraLoginForm from './CameraLoginForm';
 
 class CameraNavigator extends Component {
   static navigationOptions = {
@@ -25,14 +24,14 @@ class CameraNavigator extends Component {
   };
 
   render() {
-    if (this.props.loginState) {
+    /*if (this.props.loginState) {
       return (
         <CameraLoginForm navigation={this.props.navigation} />
       );
-    }
+    }*/
     return (
       <View style={{ flex: 1 }}>
-        <CameraNav screenProps={{ rootNav: this.props.navigation, key: this.props.navigation.state.key }} />
+        <CameraNav />
       </View>
     );
   }
@@ -44,9 +43,6 @@ const CameraNav = StackNavigator({
   },
   Location: {
     screen: CameraLocationPage
-  },
-  Comments: {
-    screen: CameraCommentsPage
   },
 },
 {

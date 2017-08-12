@@ -19,6 +19,7 @@ import { View, Image, Text, Dimensions, Alert, TouchableOpacity } from 'react-na
 import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import request from '../../helpers/axioshelper';
+import { photoVote } from '../../helpers/URL';
 import { ImageButton } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 import saveVote from '../../helpers/getasyncstorage';
@@ -28,8 +29,8 @@ class PhotoDetail extends Component {
     super(props);
     if (!props.vote) {
       this.state = {
-        link: props.photo.link,
-        likecount: props.photo.likecount,
+        url: props.photo.url,
+        votecount: props.photo.vote_count,
         id: props.photo.id,
         userLiked: false,
         userDisliked: false,
@@ -38,8 +39,8 @@ class PhotoDetail extends Component {
       };
     } else if (props.vote === 'liked') {
         this.state = {
-          link: props.photo.link,
-          likecount: props.photo.likecount,
+          url: props.photo.url,
+          votecount: props.photo.vote_count,
           id: props.photo.id,
           userLiked: true,
           userDisliked: false,
@@ -48,8 +49,8 @@ class PhotoDetail extends Component {
         };
     } else if (props.vote === 'disliked') {
         this.state = {
-          link: props.photo.link,
-          likecount: props.photo.likecount,
+          url: props.photo.url,
+          votecount: props.photo.vote_count,
           id: props.photo.id,
           userLiked: false,
           userDisliked: true,
@@ -69,39 +70,40 @@ class PhotoDetail extends Component {
 
   // Sends the update request to the fota server.
   // type can either be "downvote" or "upvote"
-  sendUpdateRequest(type, amount) {
-    const user = this.props.loginState;
-    let queryString = '';
-    if (!user) {
-      queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}`;
-    } else {
-      queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}&user=${user.uid}`;
-    }
-    request.patch(queryString)
-    .catch(e => request.showErrorAlert(e));
+  sendUpdateRequest(type) {
+    // const user = this.props.loginState;
+    // let queryString = '';
+    // if (!user) {
+    //   queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}`;
+    // } else {
+    //   queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}&user=${user.uid}`;
+    // }
+    request.patch(photoVote(this.state.id, type))
+    //request.patch(queryString)
+    .catch(e => { console.log(e); request.showErrorAlert(e); });
   }
 
   renderUpvote() {
-    let newLikeCount = this.state.likecount;
+    let newVoteCount = this.state.votecount;
     let userNewLike = true;
     let userVoted = true;
     if (!this.state.userHasVoted) {
-      newLikeCount += 1;
+      newVoteCount += 1;
       saveVote(1, this.state.id).done();
-      this.sendUpdateRequest('upvote', '1');
+      this.sendUpdateRequest('up');
     } else if (this.state.userDisliked) {
-        newLikeCount += 2;
+        newVoteCount += 2;
         saveVote(4, this.state.id).done();
-        this.sendUpdateRequest('upvote', '2');
+        this.sendUpdateRequest('up');
     } else if (this.state.userLiked) {
-        newLikeCount -= 1;
+        newVoteCount -= 1;
         userNewLike = false;
         userVoted = false;
         saveVote(5, this.state.id).done();
-        this.sendUpdateRequest('downvote', '1');
+        this.sendUpdateRequest('clear');
     }
     this.setState({
-      likecount: newLikeCount,
+      votecount: newVoteCount,
       userLiked: userNewLike,
       userDisliked: false,
       userHasVoted: userVoted,
@@ -109,26 +111,26 @@ class PhotoDetail extends Component {
   }
 
   renderDownvote() {
-    let newLikeCount = this.state.likecount;
+    let newVoteCount = this.state.votecount;
     let userHasDisliked = true;
     let userVoted = true;
     if (!this.state.userHasVoted) {
-      newLikeCount -= 1;
+      newVoteCount -= 1;
       saveVote(2, this.state.id).done();
-      this.sendUpdateRequest('downvote', '1');
+      this.sendUpdateRequest('down');
     } else if (this.state.userLiked) {
-      newLikeCount -= 2;
+      newVoteCount -= 2;
       saveVote(3, this.state.id).done();
-      this.sendUpdateRequest('downvote', '2');
+      this.sendUpdateRequest('down');
     } else if (this.state.userDisliked) {
-      newLikeCount += 1;
+      newVoteCount += 1;
       userHasDisliked = false;
       userVoted = false;
       saveVote(6, this.state.id).done();
-      this.sendUpdateRequest('upvote', 1);
+      this.sendUpdateRequest('clear');
     }
     this.setState({
-      likecount: newLikeCount,
+      votecount: newVoteCount,
       userLiked: false,
       userDisliked: userHasDisliked,
       userHasVoted: userVoted,
@@ -142,7 +144,7 @@ class PhotoDetail extends Component {
     return (
       <View>
         <RestaurantModal
-          restaurant={this.props.restaurant}
+          restaurantid={this.props.restaurantid}
           pageStyle={restaurantPageStyle}
           options={[{
             name: 'Report as Spam',
@@ -154,12 +156,12 @@ class PhotoDetail extends Component {
           }]}
         >
           <View style={photoFrameStyle}>
-            <Image style={photoStyle} source={{ uri: this.state.link }}>
+            <Image style={photoStyle} source={{ uri: this.state.url }}>
               <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end' }}>
                 <View style={{ flex: 2 }} />
 
-                <Text style={{ color: voteCountColor, ...likeCountTextStyle }}>
-                  {this.state.likecount.toString()}
+                <Text style={{ color: voteCountColor, ...voteCountTextStyle }}>
+                  {this.state.votecount.toString()}
                 </Text>
                 <TouchableOpacity onPress={() => this.renderDownvote()}>
                   <Ionicon
@@ -222,17 +224,17 @@ const styles = {
     marginLeft: 20,
     marginRight: 10
   },
-  likeCountContainerStyle: { // Upvote arrow + number of likes container
+  voteCountContainerStyle: { // Upvote arrow + number of likes container
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginLeft: 10
   },
-  likeCountArrowStyle: { // the arrow next to number of likes
+  voteCountArrowStyle: { // the arrow next to number of likes
     height: 13,
     width: 13
   },
-  likeCountTextStyle: { // Number of likes
+  voteCountTextStyle: { // Number of likes
     fontFamily: 'Avenir',
     fontSize: 18,
     textAlign: 'justify',
@@ -240,7 +242,7 @@ const styles = {
     marginRight: 10,
     marginBottom: 10
   },
-  likeContainerStyle: { // Upvote/downvote container
+  voteContainerStyle: { // Upvote/downvote container
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'stretch',
@@ -254,10 +256,10 @@ const {
   photoInfoStyle,
   upvoteStyle,
   downvoteStyle,
-  likeCountContainerStyle,
-  likeCountArrowStyle,
-  likeCountTextStyle,
-  likeContainerStyle
+  voteCountContainerStyle,
+  voteCountArrowStyle,
+  voteCountTextStyle,
+  voteContainerStyle
 } = styles;
 
 function mapStateToProps({ loginState }) {

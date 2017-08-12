@@ -17,38 +17,41 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
 import Ionicon from 'react-native-vector-icons/Ionicons';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { NavigationActions } from 'react-navigation';
 import firebase from 'firebase';
+import request from '../../helpers/axioshelper';
 import LoginInput from './LoginInput';
 import { loginStyles } from './LoginPage';
 import { Spinner, Button } from '../common';
 
-class LoginForm extends Component {
-  state = { email: '', pass: '', error: '', loading: false };
+class SignupForm extends Component {
+  state = { first: '', last: '', email: '', pass: '', error: '', loading: false };
 
-  onLoginButtonPress() {
+  onSignupButtonPress() {
     const { email, pass } = this.state;
 
     this.setState({ error: '', loading: true });
 
-    firebase.auth().signInWithEmailAndPassword(email, pass)
-      .then(this.onLoginSuccess.bind(this))
-      .catch(this.onLoginFail.bind(this));
+    firebase.auth().createUserWithEmailAndPassword(email, pass)
+      .then(this.onCreateUserSuccess.bind(this))
+      .catch(this.onCreateUserFail.bind(this));
   }
 
-  onLoginSuccess() {
-    this.setState({ email: '', pass: '', loading: false });
-    this.props.onLoginFinished();
+  onCreateUserSuccess(user) {
+    this.setState({ first: '', last: '', email: '', pass: '', loading: false });
+    request.post('https://fotafood.herokuapp.com/api/user', { id: user.uid })
+      .then(this.props.onLoginFinished())
+      .catch(e => request.showErrorAlert(e));
   }
 
-  onLoginFail(error) {
-    console.log(error);
+  onCreateUserFail(error) {
     let message = 'Authentication error.';
-    if (error.code === 'auth/invalid-email') {
+    if (error.code === 'auth/email-already-in-use') {
+      message = 'Email is already in use.';
+    } else if (error.code === 'auth/invalid-email') {
       message = 'Invalid email.';
-    } else if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-      message = 'Incorrect email or password.';
+    } else if (error.code === 'auth/weak-password') {
+      message = 'Password is too weak.';
     }
     this.setState({ error: message, loading: false });
   }
@@ -57,10 +60,11 @@ class LoginForm extends Component {
     if (this.state.loading) {
       return <Spinner size="large" />;
     }
-    if (this.state.email.length > 0 && this.state.pass.length > 0) {
+    if (this.state.first.length > 0 && this.state.last.length > 0
+        && this.state.email.length > 0 && this.state.pass.length > 0) {
       return (
         <Button
-          onPress={this.onLoginButtonPress.bind(this)}
+          onPress={this.onSignupButtonPress.bind(this)}
           colors={{ text: '#0097ff', fill: '#fff', border: '#fff' }}
           text={'DONE'}
         />
@@ -87,11 +91,23 @@ class LoginForm extends Component {
               size={30}
               onPress={() => this.props.navigation.dispatch(NavigationActions.back())}
             />
-            <Text style={loginStyles.headerText}>Log in</Text>
+            <Text style={loginStyles.headerText}>Sign up</Text>
           </View>
 
-          <Text style={styles.welcomeStyle}>Welcome back!</Text>
-
+          <View style={{ paddingRight: 75 }}>
+            <LoginInput
+              label='First Name'
+              value={this.state.first}
+              onChangeText={first => this.setState({ first })}
+            />
+          </View>
+          <View style={{ paddingRight: 75 }}>
+            <LoginInput
+              label='Last Name'
+              value={this.state.last}
+              onChangeText={last => this.setState({ last })}
+            />
+          </View>
           <LoginInput
             label='Email'
             value={this.state.email}
@@ -104,21 +120,9 @@ class LoginForm extends Component {
             secure
           />
 
-          <Text style={loginStyles.small}>Forgot your password?</Text>
-          <View style={{ flexDirection: 'row', marginVertical: 15, marginRight: 90 }}>
-            <Button
-              onPress={() => console.log('Facebook.')}
-              colors={{ text: '#0097ff', fill: '#fff', border: '#fff' }}
-              text={'Log in with Facebook'}
-            >
-              <Icon
-                name='facebook'
-                color='#0097ff'
-                style={{ paddingVertical: 15, paddingRight: 10 }}
-                size={18}
-              />
-            </Button>
-          </View>
+          <Text style={loginStyles.small}>
+            By signing up, I agree to Fota's Terms of Service and Privacy Policy.
+          </Text>
           <Text style={styles.errorTextStyle}>{this.state.error}</Text>
         </View>
 
@@ -131,14 +135,6 @@ class LoginForm extends Component {
 }
 
 const styles = {
-  welcomeStyle: {
-    fontFamily: 'Avenir',
-    color: '#444',
-    fontSize: 25,
-    fontWeight: '400',
-    marginTop: 20,
-    marginBottom: 10
-  },
   doneButtonStyle: {
     height: 60,
     borderTopWidth: 1,
@@ -146,6 +142,7 @@ const styles = {
     flexDirection: 'row',
   },
   errorTextStyle: {
+    marginTop: 20,
     fontSize: 20,
     fontFamily: 'Avenir',
     alignSelf: 'center',
@@ -153,4 +150,4 @@ const styles = {
   }
 };
 
-export default LoginForm;
+export default SignupForm;

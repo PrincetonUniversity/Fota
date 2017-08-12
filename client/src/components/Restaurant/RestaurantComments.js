@@ -1,27 +1,22 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
-import request from '../../helpers/axioshelper';
 import CommentDetail from './CommentDetail';
-
-const commentDetails = 'https://fotafood.herokuapp.com/api/comment/';
 
 class RestaurantComments extends Component {
   static navigationOptions = {
     tabBarLabel: 'Comments'
   };
 
-  state = { nouns: [], loading: true }
+  state = { comments: [], loading: true }
 
-  componentWillMount() {
-    request.get(commentDetails + this.props.screenProps.restaurant.id)
-    .then(response => this.setState({
-      nouns: response.data,
-      loading: false
-    })).catch(e => request.showErrorAlert(e));
+  componentWillReceiveProps(nextProps) {
+    if (this.props.screenProps.comments !== nextProps.screenProps.comments) {
+      this.setState({ comments: nextProps.screenProps.comments, loading: false });
+    }
   }
 
   render() {
-    if (!this.state.loading && this.state.nouns.length === 0) {
+    if (!this.state.loading && this.state.comments.length === 0) {
       return (
         <View style={{ height: 150, justifyContent: 'center' }}>
           <Text style={styles.emptyTextStyle}>
@@ -30,7 +25,7 @@ class RestaurantComments extends Component {
         </View>
       );
     }
-    return <CommentDetail nouns={this.state.nouns} />;
+    return <CommentDetail nouns={this.state.comments} />;
   }
 }
 

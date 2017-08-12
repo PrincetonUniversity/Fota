@@ -15,14 +15,17 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, Dimensions, AsyncStorage, Alert } from 'react-native';
+import { View, Text, Dimensions, AsyncStorage, Alert, Image } from 'react-native';
+import Ionicon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
-import { NavigationActions } from 'react-navigation';
+import { TabNavigator, TabBarTop } from 'react-navigation';
 import Camera, { constants } from 'react-native-camera';
 // eslint-disable-next-line
 import ImageResizer from 'react-native-image-resizer';
 import RNFetchBlob from 'react-native-fetch-blob';
-import { Header, ImageButton } from '../common/';
+import CameraButton from './CameraButton';
+import CameraLibrary from './CameraLibrary';
+import { Header } from '../common/';
 import { setCameraState } from '../../actions';
 
 const styles = {
@@ -31,8 +34,18 @@ const styles = {
     flexDirection: 'column'
   },
   headerTextStyle: {
-    fontSize: 15,
-    fontFamily: 'Avenir'
+    fontSize: 17,
+    fontWeight: '500',
+    fontFamily: 'Avenir',
+    color: '#444',
+    textAlign: 'center',
+    flex: 1,
+  },
+  nextTextStyle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    position: 'absolute',
+    right: 20
   },
   cameraStyle: {
     height: Dimensions.get('window').width,
@@ -40,15 +53,10 @@ const styles = {
     alignSelf: 'center',
     backgroundColor: 'white'
   },
-  footerStyle: {
-    flex: 1,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  cameraButtonStyle: {
-    width: 100,
-    height: 100
+  imageStyle: {
+    height: Dimensions.get('window').width,
+    width: Dimensions.get('window').width,
+    resizeMode: 'cover'
   }
 };
 
@@ -56,11 +64,11 @@ const {
   pageStyle,
   headerTextStyle,
   cameraStyle,
-  footerStyle,
-  cameraButtonStyle
+  imageStyle,
+  nextTextStyle
 } = styles;
 
-const cameraButton = require('../../img/camera_button.png');
+const unselected = require('../../img/no_image_selected.png');
 
 function cameraErrorAlert() {
   Alert.alert(
@@ -83,33 +91,52 @@ export function deleteImage(path) {
 }
 
 class CameraPage extends Component {
+  state = { showCamera: true, selectedImage: unselected };
+
   takePicture() {
     this.camera.capture().then(data => {
-      ImageResizer.createResizedImage(data.path, 800, 1600, 'JPEG', 100).then(reuri => {
-        deleteImage(data.path);
-        AsyncStorage.setItem('UploadPath', reuri);
-        this.renderCameraLocation();
-      }).catch(() => cameraErrorAlert());
+      this.resizeImage(data.path, true);
     }).catch(() => cameraErrorAlert());
   }
 
-  renderCameraLocation() {
-    this.props.navigation.navigate('Location');
+  choosePhoto(uri) {
+    if (uri === this.state.selectedImage.uri) {
+      this.setState({ selectedImage: unselected });
+    } else {
+      this.setState({ selectedImage: { uri } });
+    }
   }
 
-  render() {
-    const backAction = NavigationActions.back({ key: this.props.screenProps.key });
-    return (
-      <View style={pageStyle}>
-        <Header>
-          <Text
-            style={headerTextStyle}
-            onPress={() => this.props.screenProps.rootNav.navigate('Home')}
-          >
-            Cancel
-          </Text>
-        </Header>
+  resizeImage(uri, del) {
+    ImageResizer.createResizedImage(uri, 800, 1600, 'JPEG', 100).then(reuri => {
+      if (del) {
+        console.log(uri);
+        deleteImage(uri);
+      }
+      AsyncStorage.setItem('UploadPath', reuri);
+      this.props.navigation.navigate('Location');
+    }).catch(() => cameraErrorAlert());
+  }
 
+  renderNextButton() {
+    if (!this.state.showCamera) {
+      if (this.state.selectedImage === unselected) {
+        return <Text style={{ color: '#aaa', ...nextTextStyle }}>NEXT</Text>;
+      }
+      return (
+        <Text
+          style={{ color: '#0097ff', ...nextTextStyle }}
+          onPress={() => this.resizeImage(this.state.selectedImage.uri, false)}
+        >
+          NEXT
+        </Text>
+      );
+    }
+  }
+
+  renderCamera() {
+    if (this.state.showCamera) {
+      return (
         <Camera
           ref={(cam) => { this.camera = cam; }}
           style={cameraStyle}
@@ -118,17 +145,73 @@ class CameraPage extends Component {
           onFocusChanged={() => {}}
           onZoomChanged={() => {}}
         />
+      );
+    }
+    return (
+      <Image
+        source={this.state.selectedImage}
+        style={imageStyle}
+      />
+    );
+  }
 
-        <View style={footerStyle}>
-          <ImageButton
-            source={cameraButton}
-            style={cameraButtonStyle}
-            onPress={this.takePicture.bind(this)}
-          />
-        </View>
+  render() {
+    return (
+      <View style={pageStyle}>
+        <Header>
+          <Text style={headerTextStyle} onPress={() => this.setState({ showCamera: !this.state.showCamera })}>Add a Photo</Text>
+          <View style={{ position: 'absolute', left: 10 }}>
+            <Ionicon.Button
+              name='md-close'
+              backgroundColor='white'
+              color='black'
+              size={20}
+              onPress={() => this.props.setCameraState(false)}
+            />
+          </View>
+          {this.renderNextButton()}
+        </Header>
+
+        {this.renderCamera()}
+
+        <PictureNavigator
+          screenProps={{ 
+            takePicture: this.takePicture.bind(this),
+            choosePhoto: this.choosePhoto.bind(this)
+          }} 
+        />
     </View>
     );
   }
 }
+
+const PictureNavigator = TabNavigator({
+  Photo: {
+    screen: CameraButton
+  },
+  Library: {
+    screen: CameraLibrary
+  }
+},
+{
+  tabBarPosition: 'top',
+  tabBarComponent: TabBarTop,
+  tabBarOptions: {
+    activeTintColor: '#ff9700',
+    inactiveTintColor: '#ccc',
+    labelStyle: {
+      fontSize: 14,
+      fontWeight: '500',
+      marginVertical: 2
+    },
+    indicatorStyle: {
+      height: 3,
+      backgroundColor: '#ff9700',
+      position: 'absolute',
+      top: 0
+    },
+    style: { elevation: 0, backgroundColor: 'white' }
+  }
+});
 
 export default connect(null, { setCameraState })(CameraPage);

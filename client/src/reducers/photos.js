@@ -14,7 +14,7 @@ export default function (state = [], action) {
   switch (action.type) {
     case PHOTOS_AND_RESTS:
       if (action.payload) {
-        return action.payload.data.photos;
+        return action.payload.data;
       }
       return state;
     default:

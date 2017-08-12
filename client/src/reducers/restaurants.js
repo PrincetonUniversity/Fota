@@ -1,6 +1,6 @@
 /******************************************************************************
  * Called by: Base, Camera/CameraCommentsPage, Camera/CameraLoginPage,
- * Camera/CameraPage, Navbar
+ * Camera/CameraPage
  * Dependencies: actions/
  *
  * Description: Global state containing a list of all nearby restaurants
@@ -15,7 +15,7 @@ export default function (state = [], action) {
   switch (action.type) {
     case PHOTOS_AND_RESTS:
       if (action.payload) {
-        return action.payload.data.restaurants;
+        return action.payload.data;
       }
       return state;
     default:

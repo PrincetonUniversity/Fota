@@ -17,8 +17,6 @@ const checkmark = require('../../img/fota_home_activated.png');
 const homeUnactivated = require('../../img/fota_home_unactivated.png');
 
 class SettingsPage extends Component {
-  state = { radius: '' }
-
   static navigationOptions = {
     tabBarIcon: ({ tintColor }) => (
       <Image
@@ -27,6 +25,8 @@ class SettingsPage extends Component {
       />
     ),
   };
+
+  state = { radius: '' }
 
   componentWillMount() {
     AsyncStorage.getItem('SearchRadius').then(currentRadius =>

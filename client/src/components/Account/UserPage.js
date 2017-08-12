@@ -10,7 +10,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { Text, View, FlatList, Image, Platform } from 'react-native';
+import { Text, View, FlatList, Image, Platform, AsyncStorage } from 'react-native';
 import firebase from 'firebase';
 import request from '../../helpers/axioshelper';
 import { Header, Button, CardSection } from '../common';
@@ -24,16 +24,18 @@ class UserPage extends Component {
   }
 
   componentWillMount() {
-    request.get(`https://fotafood.herokuapp.com/api/user/${this.props.user.uid}`)
-    .then(response => {
-      request.get('https://fotafood.herokuapp.com/api/restaurant')
-      .then(res2 => this.setState({
-        uploaded: response.data.uploadedPhotos,
-        upvoted: response.data.likedPhotos,
-        restaurants: res2.data,
-        loading: false
-      })).catch(e => request.showErrorAlert(e));
-    }).catch(e => request.showErrorAlert(e));
+    // AsyncStorage.getItem('JWT').then(
+    //   request.get(`https://fotafood.herokuapp.com/api/user/${this.props.user.uid}`)
+    //   .then(response => {
+    //     request.get('https://fotafood.herokuapp.com/api/restaurant')
+    //     .then(res2 => this.setState({
+    //       uploaded: response.data.uploadedPhotos,
+    //       upvoted: response.data.likedPhotos,
+    //       restaurants: res2.data,
+    //       loading: false
+    //     })).catch(e => request.showErrorAlert(e));
+    //   }).catch(e => request.showErrorAlert(e));
+    // );
   }
 
   deleteFromServer(photo) {
@@ -110,7 +112,7 @@ class UserPage extends Component {
         {this.renderPhotoList(this.state.upvoted, 'See all your upvoted photos here!', false)}
 
         <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-          <Button onPress={() => firebase.auth().signOut()}>Log out</Button>
+          <Button onPress={() => firebase.auth().signOut()}><Text>Log out</Text></Button>
         </View>
       </View>
     );

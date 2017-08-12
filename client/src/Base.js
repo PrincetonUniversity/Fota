@@ -1,13 +1,13 @@
 /******************************************************************************
  * Called by: App
  *
- * Dependencies: redux, firebase, Photo/PhotoList, Search/SearchPage,
+ * Dependencies: redux, firebase, Photo/HomePage, Search/SearchPage,
  * common/BlankPage, Account/AccountPage, Settings/SettingsPage,
  * Camera/CameraNavigator, common/Footer, Navbar, actions/setCameraState,
  * actions/logInOrOut
  *
  * Description: Base page for Fota. Displays all content on screen, including
- * the navigation bar (Navbar), the currently loaded page (Photo/PhotoList,
+ * the navigation bar (Navbar), the currently loaded page (Photo/HomePage,
  * Search/SearchPage, Camera/CameraNavigator, Account/AccountPage,
  * Settings/SettingsPage). Initializes login state.
  *
@@ -16,7 +16,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Modal } from 'react-native';
+import { View, Modal, AsyncStorage } from 'react-native';
 import { TabNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
@@ -34,10 +34,38 @@ class Base extends Component {
     this.state = { loginFinished: false };
   }
 
+  // componentWillMount() {
+  //   firebase.auth().onAuthStateChanged((user) => {
+  //     this.props.logInOrOut(user);
+  //     this.setState({ loginFinished: true });
+  //   });
+  // }
   componentWillMount() {
     firebase.auth().onAuthStateChanged((user) => {
-      this.props.logInOrOut(user);
-      this.setState({ loginFinished: true });
+      if (!user) {
+        firebase.auth().signInAnonymously().then(() => {
+          firebase.auth().currentUser.getToken(true).then((idToken) => {
+            AsyncStorage.setItem('JWT', idToken);
+            this.props.logInOrOut(user);
+            this.setState({ loginFinished: true });
+          })
+          .catch((error) => {
+            console.log('error with jwt 1');
+          });
+        })
+        .catch((error) => {
+          console.log('error with anonymous login');
+        });
+      } else {
+        firebase.auth().currentUser.getToken(true).then((idToken) => {
+          AsyncStorage.setItem('JWT', idToken);
+          this.props.logInOrOut(user);
+          this.setState({ loginFinished: true });
+        })
+        .catch((error) => {
+          console.log('error with jwt 2');
+        });
+      }
     });
   }
 
@@ -46,6 +74,7 @@ class Base extends Component {
       return (
         <View style={{ flex: 1 }}>
           <Modal
+            animationType={'slide'}
             visible={this.props.cameraVisible}
             style={{ flex: 1 }}
             onRequestClose={() => this.props.setCameraState(false)}
@@ -67,9 +96,9 @@ const FotaNavigator = TabNavigator({
   Search: {
     screen: SearchPage
   },
-  Camera: {
+  /*Camera: {
     screen: CameraNavigator
-  },
+  },*/
   Account: {
     screen: AccountPage
   },
@@ -79,6 +108,7 @@ const FotaNavigator = TabNavigator({
 },
 {
   tabBarComponent: Navbar,
+  tabBarPosition: 'bottom',
   initialRouteName: 'Home',
   backBehavior: 'initalRoute',
   // tabBarOptions: {

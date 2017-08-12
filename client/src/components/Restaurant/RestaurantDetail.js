@@ -8,7 +8,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, ScrollView, Platform } from 'react-native';
+import { View, Text, ScrollView, Platform, PanResponder } from 'react-native';
 import moment from 'moment';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import FoundationIcon from 'react-native-vector-icons/Foundation';
@@ -17,32 +17,56 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { phonecall } from 'react-native-communications';
 import getDirections from 'react-native-google-maps-directions';
 import request from '../../helpers/axioshelper';
-import { FilterDisplay } from '../common';
+import { restRequest } from '../../helpers/URL';
+import { FilterDisplay, Banner } from '../common';
 import RestaurantPhotos from './RestaurantPhotos';
 import RestaurantComments from './RestaurantComments';
 
-const restaurantDetails = 'https://fotafood.herokuapp.com/api/restaurant/';
 const commentDetails = 'https://fotafood.herokuapp.com/api/comment/';
 
 class RestaurantDetail extends Component {
-  state = {
-    photos: [],
-    nouns: [],
-    selectedPhoto: null,
-    modalVisible: false,
-    loading: true
+
+
+  constructor(props) {
+    super(props);
+
+    const panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (event, gesture) => {
+        console.log(`dx: ${gesture.dx}`);
+        console.log(`dy: ${gesture.dy}`);
+        //position.setValue({ x: gesture.dx, y: gesture.dy });
+        //position.setValue({ x: 0, y: gesture.dy });
+        //console.log(position)
+      },
+      onPanResponderRelease: (event, gesture) => {
+        // console.log(`dx: ${gesture.dx}`);
+        // console.log(`dy: ${gesture.dy}`);
+
+      }
+    });
+
+    this.state = {
+      photos: undefined,
+      comments: undefined,
+      selectedPhoto: null,
+      modalVisible: false,
+      loading: true,
+      panResponder
+    };
   }
 
   componentWillMount() {
-    request.get(restaurantDetails + this.props.restaurant.id)
-    .then(response => {
-      request.get(commentDetails + this.props.restaurant.id)
-      .then(res2 => this.setState({
-        photos: response.data,
-        loading: false,
-        nouns: res2.data
-      })).catch(e => request.showErrorAlert(e));
-    }).catch(e => request.showErrorAlert(e));
+    this.setState({ photos: this.props.restaurant.photos, loading: false });
+    // request.get(restRequest(this.props.restaurant.id))
+    // .then(response => {
+    //   request.get(commentDetails + this.props.restaurant.id)
+    //   .then(res2 => this.setState({
+    //     photos: response.data,
+    //     loading: false,
+    //     comments: res2.data
+    //   })).catch(e => request.showErrorAlert(e));
+    // }).catch(e => request.showErrorAlert(e));
   }
 
   getTrueHours(hours) {
@@ -147,79 +171,93 @@ class RestaurantDetail extends Component {
     return `Open until ${time}`;
   }
 
-  handleGetDirections() {
-    navigator.geolocation.getCurrentPosition(position => {
-      const lat = position.coords.latitude; // position.coords.latitude
-      const lng = position.coords.longitude; // position.coords.longitude
-      const data = {
-        source: {
-          latitude: lat,
-          longitude: lng
-        },
-        destination: {
-          latitude: this.props.restaurant.lat,
-          longitude: this.props.restaurant.lng
-        },
-        params: [
-          {
-            key: 'dirflg',
-            value: 'w'
-          }
-        ]
-      };
-
-      getDirections(data);
-    });
-  }
+  // handleGetDirections() {
+  //   navigator.geolocation.getCurrentPosition(position => {
+  //     const lat = position.coords.latitude; // position.coords.latitude
+  //     const lng = position.coords.longitude; // position.coords.longitude
+  //     const data = {
+  //       source: {
+  //         latitude: lat,
+  //         longitude: lng
+  //       },
+  //       destination: {
+  //         latitude: this.props.restaurant.lat,
+  //         longitude: this.props.restaurant.lng
+  //       },
+  //       params: [
+  //         {
+  //           key: 'dirflg',
+  //           value: 'w'
+  //         }
+  //       ]
+  //     };
+  //
+  //     getDirections(data);
+  //   });
+  // }
 
   renderFilters() {
-    return this.props.restaurant.type.map(filterName =>
+    return this.props.restaurant.categories.map((filterName, index) =>
       <FilterDisplay
-        key={filterName}
-        text={filterName}
+        key={index}
+        text={filterName.title}
       />
     );
   }
 
-  render() {
+  renderHeader() {
     const restaurant = this.props.restaurant;
     return (
-      <View style={pageStyle}>
-        <View style={headerStyle}>
-          <View style={{ flex: 0.13, marginTop: 10 }}>
-            <Ionicon.Button
-              name='ios-arrow-back'
-              backgroundColor='white'
-              color='black'
-              size={30}
-              onPress={() => this.props.close()}
-            />
+      <View>
+        <Banner
+          photo={this.state.photos === undefined ? undefined : this.state.photos[0].url}
+          containerStyle={{ height: 150 }}
+          photoStyle={{ flex: 1 }}
+        >
+          <View style={headerStyle}>
+            <View style={{ flex: 0.13, marginTop: 10 }}>
+              <Ionicon.Button
+                name='ios-arrow-back'
+                backgroundColor='transparent'
+                color='white'
+                size={30}
+                onPress={() => this.props.close()}
+              />
+            </View>
+
+            <View style={titleContainerStyle}>
+              <Text style={titleStyle}>
+                {restaurant.name}
+              </Text>
+            </View>
+
+            <View style={{ flex: 0.13 }} />
           </View>
 
-          <View style={titleContainerStyle}>
-            <Text style={titleStyle}>
-              {restaurant.name}
-            </Text>
+          <View style={{ flex: 0.5 }} />
+
+          <View style={filterContainerStyle}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              bounces={false}
+            >
+              {this.renderFilters()}
+            </ScrollView>
           </View>
+        </Banner>
 
-          <View style={{ flex: 0.13 }} />
-        </View>
 
-        <View style={filterContainerStyle}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            bounces={false}
-          >
-            {this.renderFilters()}
-          </ScrollView>
+        <View style={ratingContainerStyle}>
+          <Text style={{ fontSize: 23, fontFamily: 'Avenir' }}>96%</Text>
+          <Text style={{ fontSize: 12, fontFamily: 'Avenir' }}>103 votes</Text>
         </View>
 
         <View style={infoContainerStyle}>
           <View style={infoObjectStyle}>
             <MaterialIcon name='access-time' size={30} />
             <Text style={timeUntilCloseStyle}>
-              {this.timeUntilCloseLabel(this.props.restaurant.hours)}
+              {/* {this.timeUntilCloseLabel(this.props.restaurant.hours)} */}
             </Text>
           </View>
 
@@ -237,42 +275,65 @@ class RestaurantDetail extends Component {
             </Text>
           </View>
         </View>
-
-        <RestaurantNavigator
-          screenProps={{
-            restaurant: this.props.restaurant,
-          }}
-        />
-
-        <View style={{ flexDirection: 'row' }}>
-          <View style={bottomSpacerStyle} />
-          <FoundationIcon.Button
-            name='telephone'
-            borderRadius={0}
-            backgroundColor='#FF9700'
-            onPress={() => phonecall(restaurant.phoneNumber.substring(1), false)}
-          >
-            CALL
-          </FoundationIcon.Button>
-          <View style={{ flexDirection: 'column', ...bottomSpacerStyle }}>
-            <View style={bottomSpacerStyle} />
-            <View style={bottomLineStyle} />
-            <View style={bottomSpacerStyle} />
-          </View>
-
-          <View style={bottomSpacerStyle} />
-          <MaterialIcon.Button
-            name='directions'
-            borderRadius={0}
-            backgroundColor='#FF9700'
-            onPress={() => phonecall(restaurant.phoneNumber.substring(1), false)}
-          >
-            DIRECTIONS
-          </MaterialIcon.Button>
-          <View style={bottomSpacerStyle} />
-        </View>
       </View>
     );
+  }
+
+  renderFooter() {
+    const restaurant = this.props.restaurant;
+    return (
+      <View style={{ flexDirection: 'row', borderColor: 'gray' }}>
+        <View style={bottomSpacerStyle} />
+        <FoundationIcon.Button
+          name='telephone'
+          borderRadius={0}
+          color='gray'
+          backgroundColor='white'
+          onPress={() => phonecall(restaurant.phone.substring(1), false)}
+        >
+          <Text style={{ color: 'gray' }}>CALL</Text>
+        </FoundationIcon.Button>
+        <View style={{ flexDirection: 'column', ...bottomSpacerStyle }}>
+          <View style={bottomSpacerStyle} />
+          <View style={bottomLineStyle} />
+          <View style={bottomSpacerStyle} />
+        </View>
+
+        <View style={bottomSpacerStyle} />
+        <MaterialIcon.Button
+          name='directions'
+          borderRadius={0}
+          color='gray'
+          backgroundColor='white'
+          onPress={() => phonecall(restaurant.phone.substring(1), false)}
+        >
+          <Text style={{ color: 'gray' }}>DIRECTIONS</Text>
+        </MaterialIcon.Button>
+        <View style={bottomSpacerStyle} />
+      </View>
+    );
+  }
+
+  render() {
+    if (this.props.restaurant) {
+      console.log(this.props.restaurant.id);
+      return (
+        <View style={pageStyle}>
+          {this.renderHeader()}
+
+          <RestaurantNavigator
+            screenProps={{
+              restaurant: this.props.restaurant,
+              photos: this.state.photos,
+              comments: this.state.comments,
+              panResponder: this.state.panResponder
+            }}
+          />
+
+          {this.renderFooter()}
+        </View>
+      );
+    }
   }
 }
 
@@ -312,7 +373,7 @@ const styles = {
     flexDirection: 'column',
     justifyContent: 'space-between',
     backgroundColor: '#FFFFFF',
-    paddingTop: (Platform.OS === 'ios') ? 15 : 0,
+    //paddingTop: (Platform.OS === 'ios') ? 15 : 0,
     //paddingBottom: 10
   },
   headerStyle: { // Header including back button, name, time until close, call button
@@ -329,13 +390,15 @@ const styles = {
     alignItems: 'center',
     marginTop: 10,
     justifyContent: 'center',
-    flex: 1
+    //flex: 1,
   },
   titleStyle: { // Restaurant name
+    color: 'white',
     fontFamily: 'Avenir',
     fontSize: 20,
     fontWeight: 'bold',
-    textAlign: 'center'
+    textAlign: 'center',
+    backgroundColor: 'transparent'
   },
   timeUntilCloseStyle: { // Time until close
     fontFamily: 'Avenir',
@@ -352,12 +415,20 @@ const styles = {
     marginLeft: 5,
     marginRight: 5,
   },
+  ratingContainerStyle: {
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.2)'
+  },
   infoContainerStyle: {
     flexDirection: 'row',
     paddingHorizontal: 10,
     paddingVertical: 10,
     justifyContent: 'space-around',
-    borderTopWidth: 1,
+    //borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.2)'
   },
@@ -367,13 +438,13 @@ const styles = {
   },
   bottomSpacerStyle: {
     flex: 1,
-    backgroundColor: '#FF9700'
+    backgroundColor: 'white'
   },
   bottomLineStyle: {
     borderRightWidth: 1,
-    borderColor: 'white',
+    borderColor: 'gray',
     flex: 2,
-    backgroundColor: '#FF9700'
+    backgroundColor: 'white'
   }
 };
 
@@ -384,6 +455,7 @@ const {
   titleStyle,
   timeUntilCloseStyle,
   filterContainerStyle,
+  ratingContainerStyle,
   infoContainerStyle,
   infoObjectStyle,
   bottomSpacerStyle,

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import {
   View, Animated, PanResponder, Image,
-  Dimensions, LayoutAnimation, UIManager
+  Dimensions, LayoutAnimation, UIManager, ScrollView
 } from 'react-native';
+import { Pages } from 'react-native-pages';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -16,26 +17,47 @@ class PhotoGallery extends Component {
 
   constructor(props) {
     super(props);
-
     const position = new Animated.ValueXY();
     const panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (event, gesture) => {
+        // console.log(`dx: ${gesture.dx}`);
+        // console.log(`dy: ${gesture.dy}`);
         position.setValue({ x: gesture.dx, y: gesture.dy });
+        //position.setValue({ x: 0, y: gesture.dy });
+        //console.log(position)
       },
       onPanResponderRelease: (event, gesture) => {
+        // console.log(`dx: ${gesture.dx}`);
+        // console.log(`dy: ${gesture.dy}`);
         if (gesture.dy > SWIPE_THRESHOLD) {
           this.forceSwipe('down');
+          //this.props.onSwipeVertical();
         } else if (gesture.dy < -SWIPE_THRESHOLD) {
           this.forceSwipe('up');
-        }
-        if (gesture.dx > SWIPE_THRESHOLD) {
-          this.forceSwipe('right');
-        } else if (gesture.dx < -SWIPE_THRESHOLD) {
-          this.forceSwipe('left');
+          //this.props.onSwipeVertical();
         } else {
           this.resetPosition();
         }
+      },
+      // onPanResponderReject: (e, gestureState) => {
+      //
+      // },
+      // onPanResponderGrant: (e, gestureState) => {
+      //   console.log('grant')
+      // },
+      // onPanResponderStart: (e, gestureState) => {
+      //   console.log('start')
+      // },
+      // onPanResponderEnd: (e, gestureState) => {
+      //   console.log('end')
+      // },
+      // onPanResponderTerminate: (event, gesture) => {
+      //   console.log('terminate')
+      // },
+      onPanResponderTerminationRequest: (event, gesture) => {
+        //console.log('terminationrequest')
+        //this.resetPosition();
       }
     });
 
@@ -52,27 +74,20 @@ class PhotoGallery extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps !== this.props.data) {
+    if (nextProps.photos !== this.props.photos) {
       this.setState({ index: nextProps.initialIndex });
     }
-  }
-
-  onSwipeLeft() {
-    this.setState({ index: this.state.index + 1 });
-  }
-
-  onSwipeRight() {
-    console.log('stupid');
-    this.setState({ index: this.state.index - 1 });
   }
 
   onSwipeComplete(direction) {
     if (direction === 'up' || direction === 'down') {
       this.props.onSwipeVertical();
-    } else {
-      direction === 'right' ? this.onSwipeRight() : this.onSwipeLeft();
       this.state.position.setValue({ x: 0, y: 0 });
     }
+    // else {
+    //   direction === 'right' ? this.onSwipeRight() : this.onSwipeLeft();
+    //   this.state.position.setValue({ x: 0, y: 0 });
+    // }
   }
 
   getCardStyle() {
@@ -81,25 +96,12 @@ class PhotoGallery extends Component {
   }
 
   forceSwipe(direction) {
-    if (this.state.index === 0 && direction === 'right') {
-      this.resetPosition();
-    } else if (this.state.index === this.props.data.length - 1 && direction === 'left') {
-      this.resetPosition();
-    } else {
-      if (direction === 'up' || direction === 'down') {
-        const y = direction === 'down' ? SCREEN_HEIGHT : -SCREEN_HEIGHT;
-        Animated.timing(this.state.position, {
-          toValue: { x: 0, y },
-          duration: SWIPE_OUT_DURATION
-        }).start(() => this.onSwipeComplete(direction));
-      } else {
-        const x = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
-        Animated.timing(this.state.position, {
-          toValue: { x, y: 0 },
-          duration: SWIPE_OUT_DURATION
-        }).start(() => this.onSwipeComplete(direction));
-      }
-    }
+    const y = direction === 'down' ? SCREEN_HEIGHT : -SCREEN_HEIGHT;
+    console.log('forceswipe');
+    Animated.timing(this.state.position, {
+      toValue: { x: 0, y },
+      duration: SWIPE_OUT_DURATION
+    }).start(() => this.onSwipeComplete(direction));
   }
 
   resetPosition() {
@@ -108,27 +110,34 @@ class PhotoGallery extends Component {
     }).start();
   }
 
-  renderCard() {
-    const currentPhoto = this.props.data[this.state.index];
-    return (
-      <Animated.View
-        key={currentPhoto.id}
-        style={this.getCardStyle()}
-        {...this.state.panResponder.panHandlers}
-      >
-        <Image
-          source={{ uri: currentPhoto.link }}
-          style={{ height: 200, width: 200 }}
-        />
-      </Animated.View>
+  renderPhotos() {
+    return this.props.photos.map((photo, index) =>
+
+        <ScrollView
+          key={index}
+          maximumZoomScale={3.0}
+          scrollEnabled={false}
+          contentContainerStyle={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Animated.View
+            key={index}
+            style={this.getCardStyle()}
+            {...this.state.panResponder.panHandlers}
+          >
+            <Image
+              source={{ uri: photo }}
+              style={{ height: 200, width: 200 }}
+            />
+          </Animated.View>
+       </ScrollView>
     );
   }
 
   render() {
     return (
-      <View style={styles.modalStyle}>
-        {this.renderCard()}
-      </View>
+      <Pages startPage={this.props.initialIndex}>
+        {this.renderPhotos()}
+      </Pages>
     );
   }
 }
@@ -137,8 +146,7 @@ const styles = {
   modalStyle: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.2)'
+    alignItems: 'center'
   }
 };
 

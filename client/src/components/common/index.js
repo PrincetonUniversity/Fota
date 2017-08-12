@@ -11,3 +11,4 @@ export * from './CommentDisplayInput';
 export * from './Spinner';
 export * from './GradientHeader';
 export * from './PhotoGallery';
+export * from './Banner';

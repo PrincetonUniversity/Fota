@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 import request from '../helpers/axioshelper';
+import { photoRequest } from '../helpers/URL';
 
 export const PHOTOS_AND_RESTS = '12308asdas';
 export const CAMERA_STATE = 'a9x8c7vm1';
@@ -18,8 +19,9 @@ export const SORTING = ')!sdj0ad!SDAD::L';
 export const NAVIGATOR = 'fjiq3vfojvew';
 
 export function getPhotosAndRests(sort, lat, lng, radius) {
-  const req = request.get(`https://fotafood.herokuapp.com/api/photo?order=${sort}&lat=${lat}&lng=${lng}&distance=${radius}`)
-    .catch(e => request.showErrorAlert(e));
+  //console.log(request.get(photoRequest(sort, lat, lng, radius)));
+  const req = request.get(photoRequest(sort, lat, lng, radius))
+     .catch(e => request.showErrorAlert(e));
   return {
     type: PHOTOS_AND_RESTS,
     payload: req

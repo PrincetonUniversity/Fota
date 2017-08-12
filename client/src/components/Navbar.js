@@ -81,6 +81,7 @@ class Navbar extends Component {
   }
 
   renderAccount() {
+    console.log('Pressed!');
     //if (this.props.navigator.getCurrentRoutes().pop().id === 2) return;
     this.setState({
       homeSource: homeUnactivated,
@@ -105,8 +106,7 @@ class Navbar extends Component {
   }
 
   renderCamera() {
-    //this.props.setCameraState(true);
-    this.props.navigation.navigate('Camera');
+    this.props.setCameraState(true);
   }
 
   render() {
