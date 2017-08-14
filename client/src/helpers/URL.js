@@ -15,3 +15,7 @@ export function photoVote(id, type) {
 export function restRequest(id) {
   return `${REST_REQ}${id}?key=${CLIENT_API_KEY}`;
 }
+
+export function restCommentRequest(id) {
+  return `${REST_REQ}/${id}/comments/?key=${CLIENT_API_KEY}`;
+}

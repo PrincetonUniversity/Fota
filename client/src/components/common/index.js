@@ -10,5 +10,6 @@ export * from './CommentDisplay';
 export * from './CommentDisplayInput';
 export * from './Spinner';
 export * from './GradientHeader';
+export * from './GradientImage';
 export * from './PhotoGallery';
 export * from './Banner';

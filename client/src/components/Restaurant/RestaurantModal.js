@@ -1,6 +1,6 @@
 /******************************************************************************
  * Called by: Account/UserPage, Photo/PhotoDetail, Search/SearchPage
- * Dependencies: common/CardSection, ./RestaurantDetail, ./CommentUpload
+ * Dependencies: common/CardSection, ./RestaurantDetail
  *
  * Description: Either returns a pop-up (long press) or a Navigator component
  * for switching between the different restaurant pages. Displayed when the user
@@ -18,10 +18,9 @@ import request from '../../helpers/axioshelper';
 import { restRequest } from '../../helpers/URL';
 import { CardSection } from '../common';
 import RestaurantDetail from './RestaurantDetail';
-import CommentUpload from './CommentUpload';
 
 class RestaurantModal extends Component {
-  state = { modalVisible: false, longPressed: false, restaurant: null }
+  state = { modalVisible: false, longPressed: false, loadingRestaurant: false, restaurant: null }
 
   // componentWillMount() {
   //   request.get(restRequest(this.props.restaurantid))
@@ -37,9 +36,11 @@ class RestaurantModal extends Component {
     } else if (this.state.longPressed) {
       this.setState({ longPressed: false }, () => this.setModalVisible(true));
     } else {
+      this.setState({ loadingRestaurant: true });
       request.get(restRequest(this.props.restaurantid))
-      .then(response => this.setState({ restaurant: response.data, modalVisible: true }))
+      .then(response => this.setState({ restaurant: response.data, loadingRestaurant: false }))
       .catch(e => request.showErrorAlert(e));
+      this.setModalVisible(true);
     }
   }
 
@@ -85,7 +86,7 @@ class RestaurantModal extends Component {
     return (
       <View style={styles.modalStyle}>
         <RestaurantDetail
-          navigator={navigator}
+          loadingRestaurant={this.state.loadingRestaurant}
           restaurant={this.state.restaurant}
           close={this.closeModal.bind(this)}
         />
@@ -97,7 +98,7 @@ class RestaurantModal extends Component {
     return (
       <View>
         <Modal
-          animationType={'fade'}
+          animationType={'slide'}
           transparent
           visible={this.state.modalVisible}
           onRequestClose={() => { this.setModalVisible(false); }}

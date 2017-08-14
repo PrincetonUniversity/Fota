@@ -18,9 +18,10 @@ import React, { Component } from 'react';
 import { View, Image, Text, Dimensions, Alert, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
+import LinearGradient from 'react-native-linear-gradient';
 import request from '../../helpers/axioshelper';
 import { photoVote } from '../../helpers/URL';
-import { ImageButton } from '../common';
+import { GradientImage, ImageButton } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 import saveVote from '../../helpers/getasyncstorage';
 
@@ -156,7 +157,14 @@ class PhotoDetail extends Component {
           }]}
         >
           <View style={photoFrameStyle}>
-            <Image style={photoStyle} source={{ uri: this.state.url }}>
+            <GradientImage
+              start={{ x: 0.5, y: 0.58 }}
+              end={{ x: 0.5, y: 1.0 }}
+              colors={['transparent', 'rgba(0, 0, 0, 0.3)']}
+              photoStyle={photoStyle}
+              gradientStyle={{ flex: 1 }}
+              source={this.state.url}
+            >
               <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end' }}>
                 <View style={{ flex: 2 }} />
 
@@ -182,7 +190,7 @@ class PhotoDetail extends Component {
                   />
                 </TouchableOpacity>
               </View>
-            </Image>
+            </GradientImage>
           </View>
         </RestaurantModal>
       </View>
@@ -193,10 +201,12 @@ class PhotoDetail extends Component {
 const styles = {
   photoFrameStyle: {
     borderRadius: 9,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   photoStyle: { // The picture
     flex: 1,
+    // width: 327,
+    // height: 327,
     width: null,
     height: Dimensions.get('window').width - 65,
     backgroundColor: 'rgba(0, 0, 0, 0.1)'

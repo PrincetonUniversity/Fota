@@ -6,7 +6,7 @@ import { PhotoGallery } from '../common';
 
 class RestaurantPhotos extends Component {
   static defaultProps = {
-    //photos: []
+    photos: []
   }
 
   static navigationOptions = {
@@ -38,7 +38,7 @@ class RestaurantPhotos extends Component {
       <TouchableOpacity
         onPress={() => this.setSelectedPhoto(index)}
       >
-        <View key={index} style={photoContainerStyle}>
+        <View key={index} style={photoFrameStyle}>
           <Image
             source={{ uri: photo.url }}
             style={photoStyle}
@@ -77,15 +77,16 @@ class RestaurantPhotos extends Component {
           </View>
         </Modal>
 
-        <FlatList
-          data={this.state.photos}
-          keyExtractor={(photo, index) => index}
-          renderItem={(photo) => this.renderPhoto(photo.item, photo.index)}
-          showsHorizontalScrollIndicator={false}
-          numColumns={3}
-          removeClippedSubviews={false}
-          {...this.props.screenProps.panResponder.panHandlers}
-        />
+        <View style={{ height: 500 }}>
+          <FlatList
+            data={this.state.photos}
+            keyExtractor={(photo, index) => index}
+            renderItem={(photo) => this.renderPhoto(photo.item, photo.index)}
+            showsHorizontalScrollIndicator={false}
+            numColumns={3}
+            removeClippedSubviews={false}
+          />
+        </View>
       </View>
     );
   }
@@ -98,10 +99,12 @@ const styles = {
     color: '#aaa',
     fontFamily: 'Avenir',
   },
-  photoContainerStyle: {
+  photoFrameStyle: {
     backgroundColor: 'gray',
+    borderRadius: 4,
     marginVertical: 5,
     marginHorizontal: 5,
+    overflow: 'hidden',
     shadowOpacity: 0.1,
     shadowRadius: 5,
     shadowOffset: { height: 1 }
@@ -109,13 +112,12 @@ const styles = {
   photoStyle: { // Individual photos
     height: 110,
     width: 110,
-    borderRadius: 4
   }
 };
 
 const {
   emptyTextStyle,
-  photoContainerStyle,
+  photoFrameStyle,
   photoStyle
 } = styles;
 

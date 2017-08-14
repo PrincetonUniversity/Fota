@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
 import CommentDetail from './CommentDetail';
+import request from '../../helpers/axioshelper';
 
 class RestaurantComments extends Component {
   static navigationOptions = {
@@ -8,6 +9,10 @@ class RestaurantComments extends Component {
   };
 
   state = { comments: [], loading: true }
+
+  componentWillMount() {
+
+  }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.screenProps.comments !== nextProps.screenProps.comments) {
