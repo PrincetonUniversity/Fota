@@ -28,10 +28,7 @@ const styles = {
       alignItems: 'center',
       paddingHorizontal: 8,
       paddingVertical: 1,
-      marginLeft: 5,
-      marginRight: 5,
-      marginTop: 5,
-      marginBottom: 5
+      margin: 5
     },
     textStyle: {
       color: 'white',

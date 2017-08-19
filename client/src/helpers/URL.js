@@ -21,3 +21,7 @@ export function restRequest(id) {
 export function profileRequest(user) {
   return `${USER_REQ}/${user}?key=${CLIENT_API_KEY}`;
 }
+
+export function restCommentRequest(id) {
+  return `${REST_REQ}/${id}/comments/?key=${CLIENT_API_KEY}`;
+}
