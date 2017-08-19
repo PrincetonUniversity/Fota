@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, CameraRoll, Dimensions, Platform } from 'react-native';
-//import RNGRP from 'react-native-get-real-path';
+import RNGRP from 'react-native-get-real-path';
 import { ImageButton } from '../common';
 
 const imageSize = Dimensions.get('window').width / 4;
@@ -16,7 +16,7 @@ class CameraLibrary extends Component {
       if (Platform.OS === 'android') {
         const promises = r.edges.map(p => {
           console.log(p.node.image);
-          //return RNGRP.getRealPathFromURI(p.node.image.uri).then(filePath => filePath);
+          return RNGRP.getRealPathFromURI(p.node.image.uri).then(filePath => filePath);
         });
         Promise.all(promises).then(results => {
           const uris = results.map(uri => `file://${uri}`);

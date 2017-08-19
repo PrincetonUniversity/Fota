@@ -15,7 +15,6 @@ class LoginInput extends Component {
   state = { hidePassword: true };
 
   renderShowHide() {
-    console.log(this.props.secure);
     if (this.props.secure) {
       return (
         <Text

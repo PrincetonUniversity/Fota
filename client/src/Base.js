@@ -16,14 +16,15 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Modal, AsyncStorage } from 'react-native';
+import { View, Modal, AsyncStorage, Alert, Text } from 'react-native';
 import { TabNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
+import LoginPage from './components/Account/LoginPage';
 import PhotoList from './components/Photo/PhotoList';
-import SearchPage from './components/Search/SearchPage';
-import AccountPage from './components/Account/AccountPage';
-import SettingsPage from './components/Settings/SettingsPage';
+//import SearchPage from './components/Search/SearchPage';
+import ProfilePage from './components/Profile/ProfilePage';
+//import SettingsPage from './components/Settings/SettingsPage';
 import Navbar from './components/Navbar';
 import CameraNavigator from './components/Camera/CameraNavigator';
 import { setCameraState, logInOrOut } from './actions';
@@ -42,50 +43,60 @@ class Base extends Component {
   // }
   componentWillMount() {
     firebase.auth().onAuthStateChanged((user) => {
-      if (!user) {
-        firebase.auth().signInAnonymously().then(() => {
-          firebase.auth().currentUser.getToken(true).then((idToken) => {
-            AsyncStorage.setItem('JWT', idToken);
-            this.props.logInOrOut(user);
-            this.setState({ loginFinished: true });
-          })
-          .catch((error) => {
-            console.log('error with jwt 1');
-          });
-        })
-        .catch((error) => {
-          console.log('error with anonymous login');
-        });
-      } else {
+      if (user) {
         firebase.auth().currentUser.getToken(true).then((idToken) => {
           AsyncStorage.setItem('JWT', idToken);
           this.props.logInOrOut(user);
           this.setState({ loginFinished: true });
         })
-        .catch((error) => {
-          console.log('error with jwt 2');
+        .catch(e => {
+          console.log(e);
         });
+      } else {
+        this.props.logInOrOut(user);
+        this.setState({ loginFinished: true });
       }
     });
   }
 
-  render() {
-    if (this.state.loginFinished) {
-      return (
-        <View style={{ flex: 1 }}>
-          <Modal
-            animationType={'slide'}
-            visible={this.props.cameraVisible}
-            style={{ flex: 1 }}
-            onRequestClose={() => this.props.setCameraState(false)}
-          >
-            <CameraNavigator />
-          </Modal>
-
-          <FotaNavigator />
-        </View>
+  logInAnonymously() {
+    this.setState({ loginFinished: false });
+    firebase.auth().signInAnonymously().catch(() => {
+      console.log('im here');
+      Alert.alert(
+        'Error',
+        'Oops! Something went wrong. Please restart the app and try again.',
+        [{ text: 'OK' }]
       );
-    } return (<View />);
+    });
+  }
+
+  render() {
+    console.log(this.props.loginState);
+    if (this.state.loginFinished) {
+      if (this.props.loginState) {
+        return (
+          <View style={{ flex: 1 }}>
+            <Modal
+              animationType={'slide'}
+              visible={this.props.cameraVisible}
+              style={{ flex: 1 }}
+              onRequestClose={() => this.props.setCameraState(false)}
+            >
+              <CameraNavigator />
+            </Modal>
+  
+            <FotaNavigator />
+          </View>
+        );
+      }
+      return (
+        <LoginPage onSkip={this.logInAnonymously.bind(this)} />
+      );
+    }
+    return (
+      <View />
+    );
   }
 }
 
@@ -93,18 +104,18 @@ const FotaNavigator = TabNavigator({
   Home: {
     screen: PhotoList
   },
-  Search: {
+  /*Search: {
     screen: SearchPage
   },
-  /*Camera: {
+  Camera: {
     screen: CameraNavigator
   },*/
   Account: {
-    screen: AccountPage
+    screen: ProfilePage
   },
-  Settings: {
+  /*Settings: {
     screen: SettingsPage
-  }
+  }*/
 },
 {
   tabBarComponent: Navbar,
@@ -125,8 +136,8 @@ const FotaNavigator = TabNavigator({
   // }
 });
 
-function mapStateToProps({ cameraVisible }) {
-  return { cameraVisible };
+function mapStateToProps({ cameraVisible, loginState }) {
+  return { cameraVisible, loginState };
 }
 
 export default connect(mapStateToProps, { setCameraState, logInOrOut })(Base);

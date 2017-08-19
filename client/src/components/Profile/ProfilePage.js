@@ -8,34 +8,28 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { Image } from 'react-native';
 import { connect } from 'react-redux';
 import UserPage from './UserPage';
-import LoginPage from './LoginPage';
+import LoginPage from '../Account/LoginPage';
 
-const homeUnactivated = require('../../img/fota_home_unactivated.png');
-
-class AccountPage extends Component {
-  static navigationOptions = {
-    tabBarVisible: false,
-    tabBarIcon: ({ tintColor }) => (
-      <Image
-        source={homeUnactivated}
-        style={{ width: 26, height: 26, tintColor }}
-      />
-    ),
-  };
-
+class ProfilePage extends Component {
   render() {
-    if (this.props.loginState) {
-      return <UserPage user={this.props.loginState} />;
+    if (!this.props.loginState || this.props.loginState.isAnonymous) {
+      return <LoginPage onSkip={() => this.props.navigation.navigate('Home')} />;
     }
-    return <LoginPage />;
+    return <UserPage user={this.props.loginState} testuser={testuser} />;
   }
 }
+
+const testuser = {
+  bookmarked: [],
+  upvoted: [],
+  uploaded: [],
+  comments: []
+};
 
 function mapStateToProps({ loginState }) {
   return { loginState };
 }
 
-export default connect(mapStateToProps)(AccountPage);
+export default connect(mapStateToProps)(ProfilePage);

@@ -39,7 +39,7 @@ class LoginForm extends Component {
 
   onLoginSuccess() {
     this.setState({ email: '', pass: '', loading: false });
-    this.props.onLoginFinished();
+    //this.props.screenProps.onLoginFinished();
   }
 
   onLoginFail(error) {

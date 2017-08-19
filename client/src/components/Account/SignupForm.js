@@ -40,7 +40,7 @@ class SignupForm extends Component {
   onCreateUserSuccess(user) {
     this.setState({ first: '', last: '', email: '', pass: '', loading: false });
     request.post('https://fotafood.herokuapp.com/api/user', { id: user.uid })
-      .then(this.props.onLoginFinished())
+      //.then(this.props.onLoginFinished())
       .catch(e => request.showErrorAlert(e));
   }
 

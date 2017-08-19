@@ -15,14 +15,30 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import firebase from 'firebase';
 import { Button } from '../common';
 import { loginStyles } from './LoginPage';
 
 const fotaLogo = require('../../img/fota_home_activated.png');
 
 class LoginWelcome extends Component {
+  logInWithFacebook() {
+    const provider = new firebase.auth.FacebookAuthProvider();
+    firebase.auth().signInWithRedirect(provider);
+    firebase.auth().getRedirectResult().then(result => {
+      console.log(result.user);
+      //this.props.screenProps.onLoginFinished();
+    }).catch(error => {
+      Alert.alert(
+        'Error',
+        error.message,
+        [{ text: 'OK' }]
+      );
+    });
+  }
+
   render() {
     return (
       <View style={{ flex: 1, justifyContent: 'space-between' }}>
@@ -35,7 +51,7 @@ class LoginWelcome extends Component {
         <View style={loginStyles.pageEnd}>
           <View style={styles.buttonHolderStyle}>
             <Button
-              onPress={() => console.log('Facebook.')}
+              onPress={this.logInWithFacebook.bind(this)}
               colors={{ text: '#fff', fill: '#ff9700', border: '#ff9700' }}
               text={'Continue with Facebook'}
             >
@@ -66,9 +82,9 @@ class LoginWelcome extends Component {
             </Text>
             <Text
               style={styles.skipTextStyle}
-              onPress={() => console.log('Skip me!')}
+              onPress={this.props.screenProps.onSkip}
             >
-              Skip
+              Not now
             </Text>
           </View>
         </View>
@@ -106,7 +122,7 @@ const styles = {
     fontFamily: 'Avenir',
   },
   skipTextStyle: {
-    fontSize: 18,
+    fontSize: 17,
     color: '#aaa',
     fontFamily: 'Avenir',
     position: 'absolute',

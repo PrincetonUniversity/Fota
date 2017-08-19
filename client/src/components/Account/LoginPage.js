@@ -23,7 +23,12 @@ class LoginPage extends Component {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ flex: 1, backgroundColor: '#fff' }}>
-          <LoginNavigator />
+          <LoginNavigator 
+            screenProps={{ 
+              onSkip: this.props.onSkip, 
+              onLoginFinished: this.props.onLoginFinished 
+            }} 
+          />
         </View>
       </TouchableWithoutFeedback>
     );

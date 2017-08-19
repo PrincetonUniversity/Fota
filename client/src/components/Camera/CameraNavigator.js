@@ -16,19 +16,14 @@ import { StackNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
 import CameraPage from './CameraPage';
 import CameraLocationPage from './CameraLocationPage';
-//import CameraLoginForm from './CameraLoginForm';
+import LoginPage from '../Account/LoginPage';
+import { setCameraState } from '../../actions';
 
 class CameraNavigator extends Component {
-  static navigationOptions = {
-    tabBarVisible: false
-  };
-
   render() {
-    /*if (this.props.loginState) {
-      return (
-        <CameraLoginForm navigation={this.props.navigation} />
-      );
-    }*/
+    if (this.props.loginState && !this.props.loginState.isAnonymous) {
+      return <LoginPage onSkip={() => this.props.setCameraState(false)} />;
+    }
     return (
       <View style={{ flex: 1 }}>
         <CameraNav />
@@ -54,4 +49,4 @@ function mapStateToProps({ loginState }) {
   return { loginState };
 }
 
-export default connect(mapStateToProps)(CameraNavigator);
+export default connect(mapStateToProps, { setCameraState })(CameraNavigator);
