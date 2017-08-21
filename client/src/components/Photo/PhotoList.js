@@ -22,8 +22,12 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import Icon from 'react-native-vector-icons/Foundation';
 import request from '../../helpers/axioshelper';
 import PhotoDetail from './PhotoDetail';
+<<<<<<< HEAD
 import Headbar from '../Headbar';
 import Navbar from '../Navbar';
+=======
+import Headbar from './Headbar';
+>>>>>>> 61bd4dd161467260936e3f8007a5f88a94dcc4bd
 import { getPhotosAndRests, loadingTrue } from '../../actions/index';
 
 class PhotoList extends Component {
@@ -61,38 +65,6 @@ class PhotoList extends Component {
     });
   }
 
-  // getLikedAndDislikedFromServer = async () => {
-  //   try {
-  //     this.setState({ likesLoading: false });
-  //     // request.get(`https://fotafood.herokuapp.com/api/user/${this.props.loginState.uid}`)
-  //     // .then((userInfo) => {
-  //     //   let liked = userInfo.data.likedPhotoIds;
-  //     //   let disliked = userInfo.data.dislikedPhotoIds;
-  //     //   if (!liked) liked = [];
-  //     //   if (!disliked) disliked = [];
-  //     //   this.setState({ liked, disliked, likesLoading: false });
-  //     // })
-  //     //.catch(() => this.setState({ likesLoading: false }));
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-  //
-  // getLikedAndDislikedFromDevice = async () => {
-  //   try {
-  //     // await AsyncStorage.clear();
-  //     const liked = await AsyncStorage.getItem('liked');
-  //     const disliked = await AsyncStorage.getItem('disliked');
-  //     this.setState({
-  //       liked: JSON.parse(liked),
-  //       disliked: JSON.parse(disliked),
-  //       likesLoading: false
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   // given an id of a picutre, returns "liked" if the user has liked it,
   // "disliked" if user has not liked it, and null if neither.
   findVote(upvote, downvote) {
@@ -113,7 +85,7 @@ class PhotoList extends Component {
 
   refreshListView() {
     this.setState({ refreshing: true }, () => this.getPhotoList());
-    // this.setState({ refreshing: false });
+    this.setState({ refreshing: false });
   }
 
   renderPhoto(photo) {
