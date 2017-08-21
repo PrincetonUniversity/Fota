@@ -15,77 +15,16 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { FlatList, View, AsyncStorage } from 'react-native';
-import _ from 'lodash';
-import { connect } from 'react-redux';
-import Spinner from 'react-native-loading-spinner-overlay';
-import Icon from 'react-native-vector-icons/Foundation';
-import request from '../../helpers/axioshelper';
+import { FlatList, View, } from 'react-native';
 import PhotoDetail from './PhotoDetail';
-<<<<<<< HEAD
-import Headbar from '../Headbar';
-import Navbar from '../Navbar';
-=======
-import Headbar from './Headbar';
->>>>>>> 61bd4dd161467260936e3f8007a5f88a94dcc4bd
-import { getPhotosAndRests, loadingTrue } from '../../actions/index';
 
 class PhotoList extends Component {
-  static navigationOptions = {
-    tabBarIcon: ({ focused }) => {
-      let color = '#ccc';
-      if (focused) color = '#ff9700';
-      return (
-        <Icon
-          name={'home'}
-          color={color}
-          size={38}
-        />
-      );
-    }
-  };
-
-  state = { refreshing: false, liked: null, disliked: null };
-    
-  componentWillMount() {
-    this.getPhotoList();
-  }
-
-  getPhotoList() {
-    if (!this.state.refreshing) {
-      this.props.loadingTrue();
-    }
-    navigator.geolocation.getCurrentPosition(position => {
-      const lat = 40.34; // position.coords.latitude
-      const lng = -74.656; // position.coords.longitude
-      AsyncStorage.getItem('SearchRadius').then(radius => {
-        this.props.getPhotosAndRests(this.props.sorting, lat, lng, parseInt(radius, 10));
-        this.setState({ refreshing: false });
-      });
-    });
-  }
-
   // given an id of a picutre, returns "liked" if the user has liked it,
   // "disliked" if user has not liked it, and null if neither.
   findVote(upvote, downvote) {
     if (upvote) return 'liked';
     if (downvote) return 'disliked';
     return null;
-  }
-
-  // Returns the restaurant associated with a given id
-  // findRestaurant(restaurantid) {
-  //   for (let i = 0; i < this.props.restaurants.length; i++) {
-  //     if (restaurantid === this.props.restaurants[i].id) {
-  //       return this.props.restaurants[i];
-  //     }
-  //   }
-  //   return null;
-  // }
-
-  refreshListView() {
-    this.setState({ refreshing: true }, () => this.getPhotoList());
-    this.setState({ refreshing: false });
   }
 
   renderPhoto(photo) {
@@ -102,34 +41,21 @@ class PhotoList extends Component {
   }
 
   render() {
-    if (this.props.loading || this.state.refreshing) {
-      return (
-        <View>
-          <Headbar />
-          <Spinner visible color='#ff9700' />
-        </View>
-      );
-    }
     return (
-      <View style={{ backgroundColor: '#FFFFFF' }}>
-        <FlatList
-          data={this.props.photos}
-          extraData={Headbar}
-          keyExtractor={photo => photo.id}
-          renderItem={photo => this.renderPhoto(photo.item)}
-          ListHeaderComponent={() => <Headbar update={this.getPhotoList.bind(this)} />}
-          onRefresh={() => this.refreshListView()}
-          refreshing={this.state.refreshing}
-          showVerticalScrollIndicator={false}
-          windowSize={10}
-        />
-      </View>
+      <FlatList
+        data={this.props.list}
+        extraData={this.props.extraData}
+        keyExtractor={photo => photo.id}
+        renderItem={photo => this.renderPhoto(photo.item)}
+        ListHeaderComponent={this.props.header}
+        onRefresh={this.props.onRefresh}
+        refreshing={this.props.refreshing}
+        showVerticalScrollIndicator={false}
+        windowSize={10}
+      />
     );
   }
 }
 
-function mapStateToProps({ photos, restaurants, loginState, loading, sorting }) {
-  return { photos, restaurants, loginState, loading, sorting };
-}
 
-export default connect(mapStateToProps, { getPhotosAndRests, loadingTrue })(PhotoList);
+export default PhotoList;

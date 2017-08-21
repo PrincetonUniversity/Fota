@@ -49,6 +49,8 @@ class RestaurantPhotos extends Component {
   }
 
   render() {
+    console.log(this.state);
+    
     if (!this.state.loading && this.state.photos.length === 0) {
       return (
         <View style={{ height: 150, justifyContent: 'center' }}>
@@ -60,6 +62,7 @@ class RestaurantPhotos extends Component {
     }
 
     const photoLinks = this.state.photos.map((photo) => photo.url);
+    
     return (
       <View style={{ flex: 1, paddingTop: 5, paddingLeft: 7 }}>
         <Modal

@@ -332,20 +332,20 @@ class RestaurantDetail extends Component {
               //{ useNativeDriver: true },
             )}
           >
-            <Animated.View style={{ opacity }}>
-              {this.renderRating()}
+              <Animated.View style={{ opacity }}>
+                {this.renderRating()}
 
-              {this.renderInfo()}
-            </Animated.View>
+                {this.renderInfo()}
+              </Animated.View>
 
-            <Animated.View style={{ transform: [{ translateY: tabY }] }}>
-              <RestaurantNavigator
-                screenProps={{
-                  restaurant: this.state.restaurant,
-                  photos: this.state.photos,
-                }}
-              />
-            </Animated.View>
+              <Animated.View style={{ transform: [{ translateY: tabY }] }}>
+                <RestaurantNavigator
+                  screenProps={{
+                    restaurant: this.state.restaurant,
+                    photos: this.state.photos,
+                  }}
+                />
+              </Animated.View>
           </ScrollView>
         </Animated.View>
 

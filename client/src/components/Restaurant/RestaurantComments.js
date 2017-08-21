@@ -15,12 +15,15 @@ class RestaurantComments extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log(this.props);
+    console.log(nextProps);
     if (this.props.screenProps.comments !== nextProps.screenProps.comments) {
       this.setState({ comments: nextProps.screenProps.comments, loading: false });
     }
   }
 
   render() {
+    console.log(this.state);
     if (!this.state.loading && this.state.comments.length === 0) {
       return (
         <View style={{ height: 150, justifyContent: 'center' }}>

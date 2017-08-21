@@ -21,11 +21,11 @@ import { TabNavigator, TabBarBottom } from 'react-navigation';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
 import LoginPage from './components/Account/LoginPage';
-import PhotoList from './components/Photo/PhotoList';
+import HomePage from './components/Photo/HomePage';
 //import SearchPage from './components/Search/SearchPage';
 import AccountPage from './components/Profile/AccountPage';
 //import SettingsPage from './components/Settings/SettingsPage';
-import Navbar from './components/Navbar';
+//import Navbar from './components/Navbar';
 import CameraNavigator from './components/Camera/CameraNavigator';
 import { setCameraState, logInOrOut } from './actions';
 
@@ -100,7 +100,7 @@ class Base extends Component {
 
 const FotaNavigator = TabNavigator({
   Home: {
-    screen: PhotoList
+    screen: HomePage
   },
   Camera: {
     screen: CameraNavigator

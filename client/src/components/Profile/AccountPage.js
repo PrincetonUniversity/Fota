@@ -21,7 +21,6 @@ class AccountPage extends Component {
       if (focused) {
         color = '#ff9700';
       }
-      console.log(color);
       return (
         <Icon
           name={'person'}
@@ -53,7 +52,9 @@ const testuser = {
     {"id":"cfb07820-726d-11e7-aa1d-957dec4cbef2","url":"https://s3-media2.fl.yelpcdn.com/bphoto/b0TW6XRrAB0Pgbo9PhUUng/o.jpg","vote_count":0,"rest_id":"paradise-biryani-pointe-lawrenceville-2","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:21.669Z"}
   ],
   uploaded: [
-
+    {"id":"dfae3ff0-726d-11e7-9d5a-3b58874f0c3d","url":"https://s3-media2.fl.yelpcdn.com/bphoto/v9312pqoGXOk4EX2Kpzo0Q/o.jpg","vote_count":0,"rest_id":"roots-princeton","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:48.500Z"},
+    {"id":"e060ee20-726d-11e7-9d5a-3b58874f0c3d","url":"https://s3-media2.fl.yelpcdn.com/bphoto/bRhajOhfEIGNvO77xkQraQ/o.jpg","vote_count":0,"rest_id":"trattoria-procaccini-princeton","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:49.670Z"},
+    {"id":"e0751260-726d-11e7-9d5a-3b58874f0c3d","url":"https://s3-media2.fl.yelpcdn.com/bphoto/YVDKLYbXvGqDYfCiVIs6XQ/o.jpg","vote_count":0,"rest_id":"salt-creek-grille-princeton","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:50.035Z"}    
   ],
   comments: [
     
