@@ -33,6 +33,7 @@ class RestaurantPhotos extends Component {
     this.setState({ selectedPhoto: null, modalVisible: false });
   }
 
+
   renderPhoto(photo, index) {
     return (
       <TouchableOpacity
@@ -50,7 +51,7 @@ class RestaurantPhotos extends Component {
 
   render() {
     console.log(this.state);
-    
+
     if (!this.state.loading && this.state.photos.length === 0) {
       return (
         <View style={{ height: 150, justifyContent: 'center' }}>
@@ -61,10 +62,13 @@ class RestaurantPhotos extends Component {
       );
     }
 
-    const photoLinks = this.state.photos.map((photo) => photo.url);
-    
+    const photoLinks = this.state.photos.map(photo => photo.url);
+    let listHeight = 500;
+    if (this.state.photos.length < 7) {
+      listHeight = 285;
+    }
     return (
-      <View style={{ flex: 1, paddingTop: 5, paddingLeft: 7 }}>
+      <View style={{ flex: 1, paddingTop: 5, paddingHorizontal: 7 }}>
         <Modal
           animationType={'fade'}
           transparent
@@ -80,7 +84,7 @@ class RestaurantPhotos extends Component {
           </View>
         </Modal>
 
-        <View style={{ height: 500 }}>
+        <View style={{ height: listHeight }}>
           <FlatList
             data={this.state.photos}
             keyExtractor={(photo, index) => index}

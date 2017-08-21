@@ -129,12 +129,12 @@ class RestaurantDetail extends Component {
     });
   }
 
-  checkScroll(distance) {
-    if (this.state.scrollY > distance) {
-      return false;
-    }
-    return true;
-  }
+  // checkScroll() {
+  //   if (this.state.photos.length < 7) {
+  //     return false;
+  //   }
+  //   return true;
+  // }
 
   renderFilters() {
     return this.state.restaurant.categories.map((filterName, index) =>
@@ -170,6 +170,12 @@ class RestaurantDetail extends Component {
           containerStyle={{ flex: 1 }} // height: 150
           photoStyle={{ flex: 1 }}
         >
+          <LinearGradient
+            start={{ x: 0.5, y: 0.1 }}
+            end={{ x: 0.5, y: 1.0 }}
+            colors={['transparent', 'rgba(0, 0, 0, 0.36)']}
+            style={{ flex: 1 }}
+          >
           <Animated.View style={[headerStyle, { transform: [{ translateY: backTranslateY }] }]}>
             <View style={{ marginTop: 10 }}>
               <Ionicon.Button
@@ -206,6 +212,7 @@ class RestaurantDetail extends Component {
               </ScrollView>
             </Animated.View>
           </Animated.View>
+          </LinearGradient>
         </Banner>
       </Animated.View>
     );
@@ -255,7 +262,7 @@ class RestaurantDetail extends Component {
       extrapolate: 'clamp',
     });
     return (
-      <Animated.View style={{ flexDirection: 'row', borderColor: 'gray', transform: [{ translateY: pageY }] }}>
+      <Animated.View style={[footerStyle, { transform: [{ translateY: pageY }] }]}>
         <View style={bottomSpacerStyle} />
         <FoundationIcon.Button
           name='telephone'
@@ -324,7 +331,7 @@ class RestaurantDetail extends Component {
 
         <Animated.View style={{ height: pageHeight, transform: [{ translateY: pageY }] }}>
           <ScrollView
-            scrollEnabled={this.checkScroll(headerScrollDistance)}
+            //scrollEnabled={this.checkScroll()}
             scrollEventThrottle={1}
             overScrollMode='never'
             onScroll={Animated.event(
@@ -461,6 +468,14 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center'
   },
+  footerStyle: {
+    flexDirection: 'row',
+    borderColor: 'gray',
+    elevation: 2,
+    shadowOffset: { width: -1, height: -5 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3
+  },
   bottomSpacerStyle: {
     flex: 1,
     backgroundColor: 'white'
@@ -484,6 +499,7 @@ const {
   ratingContainerStyle,
   infoContainerStyle,
   infoObjectStyle,
+  footerStyle,
   bottomSpacerStyle,
   bottomLineStyle
 } = styles;

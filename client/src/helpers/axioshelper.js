@@ -13,6 +13,9 @@
 import { Alert, NetInfo, AsyncStorage } from 'react-native';
 import axios from 'axios';
 
+const CancelToken = axios.CancelToken;
+let cancel;
+
 function isNetworkConnected() {
   return NetInfo.fetch().then(reachability => {
     if (reachability === 'unknown') {
@@ -33,7 +36,12 @@ function request(method, url, data, resolve, reject) {
   isNetworkConnected().then(isConnected => {
     if (isConnected) {
       AsyncStorage.getItem('JWT').then((idToken) => {
-        axios({ method, url, data, headers: { Authorization: `Bearer ${idToken}` } })
+        axios({
+          method,
+          url,
+          data,
+          cancelToken: new CancelToken(c => { cancel = c; }),
+          headers: { Authorization: `Bearer ${idToken}` } })
           .then(response => { /*console.log(response);*/ resolve(response); })
           .catch(e => {
             console.log(e);
@@ -78,6 +86,16 @@ exports.delete = (url, data = null) => (
     request('delete', url, data, resolve, reject);
   })
 );
+
+exports.cancel = () => {
+  if (cancel !== undefined) {
+    console.log('canceling...');
+    console.log(CancelToken);
+    cancel();
+  } else {
+    console.log(cancel)
+  }
+};
 
 exports.showErrorAlert = (error) => {
   if (error.etype === 0) {

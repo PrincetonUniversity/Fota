@@ -38,8 +38,8 @@ class RestaurantModal extends Component {
     } else {
       this.setState({ loadingRestaurant: true });
       request.get(restRequest(this.props.restaurantid))
-      .then(response => this.setState({ restaurant: response.data, loadingRestaurant: false }))
-      .catch(e => request.showErrorAlert(e));
+        .then(response => this.setState({ restaurant: response.data, loadingRestaurant: false }))
+        .catch(e => request.showErrorAlert(e));
       this.setModalVisible(true);
     }
   }

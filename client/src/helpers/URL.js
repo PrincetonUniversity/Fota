@@ -1,9 +1,8 @@
-//import { AsyncStorage } from 'react-native';
-
 const URL = 'https://fotabackend-173714.appspot.com/api';
 const PHOTO_REQ = `${URL}/photos`;
 const REST_REQ = `${URL}/restaurants`;
 const USER_REQ = `${URL}/user`;
+const SEARCH_REQ = `${URL}/search`;
 const CLIENT_API_KEY = 'AIzaSyCGhec-cpivaFlYfFQJ9T-kIZ8BlDs66P8'; //'AIzaSyBZSHaR5yI2dgyWXQ0CjCHOrHZ5NQvsUHc';
 
 export function photoRequest(sort, lat, lng, radius) {
@@ -24,4 +23,8 @@ export function profileRequest(user) {
 
 export function restCommentRequest(id) {
   return `${REST_REQ}/${id}/comments/?key=${CLIENT_API_KEY}`;
+}
+
+export function searchRequest(lat, lng, term) {
+  return `${SEARCH_REQ}?key=${CLIENT_API_KEY}&latitude=${lat}&longitude=${lng}&term=${term}`;
 }

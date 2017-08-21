@@ -9,49 +9,42 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { FlatList, TouchableOpacity } from 'react-native';
-import { Navigator } from 'react-native-deprecated-custom-components';
-import NounDetail from './NounDetail';
-import { CommentDisplay } from '../common';
+import { View, Text } from 'react-native';
+//import { Navigator } from 'react-native-deprecated-custom-components';
+//import NounDetail from './NounDetail';
+//import { CommentDisplay } from '../common';
 
 class CommentDetail extends Component {
-  renderScene(route, navigator) {
-    if (route.noun) {
-      return <NounDetail noun={route.noun} navigator={navigator} />;
-    }
-    return (
-      <FlatList
-        style={{ flex: 1 }}
-        data={this.props.nouns}
-        keyExtractor={noun => noun.noun}
-        showsVerticalScrollIndicator={false}
-        renderItem={noun => this.renderNoun(noun.item, navigator)}
-        bounces={false}
-        removeClippedSubviews={false}
-      />
-    );
-  }
-
-  renderNoun(noun, navigator) {
-    const commentString = `${noun.adj[0].word} ${noun.noun}`;
-    return (
-      <TouchableOpacity onPress={() => navigator.push({ noun })}>
-        <CommentDisplay text={commentString} />
-      </TouchableOpacity>
-    );
-  }
-
   render() {
     return (
-      <Navigator
-        style={{ flex: 1 }}
-        initialRoute={{ noun: null }}
-        renderScene={this.renderScene.bind(this)}
-        // eslint-disable-next-line
-        configureScene={(route, routeStack) => Navigator.SceneConfigs.HorizontalSwipeJump}
-      />
+      <View style={styles.containerStyle}>
+        <Text style={styles.textStyle}>
+          {this.props.comment.message}
+        </Text>
+      </View>
     );
   }
 }
+
+const styles = {
+    containerStyle: {
+      flex: 1,
+      flexDirection: 'column',
+      height: 50,
+      backgroundColor: 'white',
+      alignItems: 'center',
+      padding: 8,
+      // borderTopWidth: 1,
+      borderBottomWidth: 1
+      // margin: 5
+    },
+    textStyle: {
+      color: 'black',
+      fontFamily: 'Avenir',
+      fontSize: 12,
+      marginLeft: 3,
+      marginRight: 3,
+    }
+};
 
 export default CommentDetail;

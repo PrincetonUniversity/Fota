@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import CommentDetail from './CommentDetail';
 import request from '../../helpers/axioshelper';
+import { restCommentRequest } from '../../helpers/URL';
 
 class RestaurantComments extends Component {
   static navigationOptions = {
@@ -11,16 +12,16 @@ class RestaurantComments extends Component {
   state = { comments: [], loading: true }
 
   componentWillMount() {
-
+    request.get(restCommentRequest(this.props.screenProps.restaurant.id))
+      .then(response => this.setState({ comments: response.data, loading: false }))
+      .catch(e => request.showErrorAlert(e));
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log(this.props);
-    console.log(nextProps);
-    if (this.props.screenProps.comments !== nextProps.screenProps.comments) {
-      this.setState({ comments: nextProps.screenProps.comments, loading: false });
-    }
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   if (this.props.screenProps.comments !== nextProps.screenProps.comments) {
+  //     this.setState({ comments: nextProps.screenProps.comments, loading: false });
+  //   }
+  // }
 
   render() {
     console.log(this.state);
@@ -33,7 +34,21 @@ class RestaurantComments extends Component {
         </View>
       );
     }
-    return <CommentDetail nouns={this.state.comments} />;
+    let listHeight = 500;
+    if (this.state.comments.length < 3) {
+      listHeight = 285;
+    }
+    return (
+      <FlatList
+        style={{ height: listHeight, paddingTop: 5 }}
+        data={this.state.comments}
+        keyExtractor={comment => comment.id}
+        showsVerticalScrollIndicator
+        renderItem={comment => <CommentDetail comment={comment.item} />}
+        bounces={false}
+        removeClippedSubviews={false}
+      />
+    );
   }
 }
 
