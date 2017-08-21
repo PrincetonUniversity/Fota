@@ -81,7 +81,7 @@ class PhotoDetail extends Component {
     // }
     request.patch(photoVote(this.state.id, type))
     //request.patch(queryString)
-    .catch(e => { console.log(e); request.showErrorAlert(e); });
+    .catch(e => request.showErrorAlert(e));
   }
 
   renderUpvote() {
@@ -146,7 +146,6 @@ class PhotoDetail extends Component {
       <View>
         <RestaurantModal
           restaurantid={this.props.restaurantid}
-          pageStyle={restaurantPageStyle}
           options={[{
             name: 'Report as Spam',
             onClick: () => setTimeout(() => Alert.alert(
@@ -262,7 +261,6 @@ const styles = {
 const {
   photoFrameStyle,
   photoStyle,
-  restaurantPageStyle,
   photoInfoStyle,
   upvoteStyle,
   downvoteStyle,

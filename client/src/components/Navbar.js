@@ -32,20 +32,18 @@ const { imgStyle, camImgStyle } = styles;
 
 const homeActivated = require('../img/fota_home_activated.png');
 const homeUnactivated = require('../img/fota_home_unactivated.png');
-const searchActivated = require('../img/magnifying_glass_activated.png');
-const searchUnactivated = require('../img/magnifying_glass_unactivated.png');
+//const searchActivated = require('../img/magnifying_glass_activated.png');
+//const searchUnactivated = require('../img/magnifying_glass_unactivated.png');
 const accountActivated = require('../img/account_activated.png');
 const accountUnactivated = require('../img/account_unactivated.png');
-const settingsActivated = require('../img/settings_activated.png');
-const settingsUnactivated = require('../img/settings_unactivated.png');
+//const settingsActivated = require('../img/settings_activated.png');
+//const settingsUnactivated = require('../img/settings_unactivated.png');
 const cameraButton = require('../img/camera_button.png');
 
 class Navbar extends Component {
   state = {
     homeSource: homeActivated,
-    searchSource: searchUnactivated,
     accountSource: accountUnactivated,
-    settingsSource: settingsUnactivated,
   }
 
   componentWillMount() {
@@ -57,43 +55,25 @@ class Navbar extends Component {
   }*/
 
   renderHome() {
-    //if (this.props.navigator.getCurrentRoutes().pop().id === 0) return;
+    //console.log(this.props.navigation);
     this.setState({
       homeSource: homeActivated,
-      searchSource: searchUnactivated,
-      accountSource: accountUnactivated,
-      settingsSource: settingsUnactivated,
+      accountSource: accountUnactivated
     });
-    //this.props.navigator.replace({ id: 0 });
     this.props.navigation.navigate('Home');
   }
 
-  renderSearch() {
-    //if (this.props.navigation.state().pop().id === 1) return;
-    this.setState({
-      homeSource: homeUnactivated,
-      searchSource: searchActivated,
-      accountSource: accountUnactivated,
-      settingsSource: settingsUnactivated,
-    });
-    //this.props.navigator.replace({ id: 1 });
-    this.props.navigation.navigate('Search');
-  }
-
   renderAccount() {
-    console.log('Pressed!');
-    //if (this.props.navigator.getCurrentRoutes().pop().id === 2) return;
+    //console.log(this.props.navigation);
     this.setState({
       homeSource: homeUnactivated,
-      searchSource: searchUnactivated,
       accountSource: accountActivated,
-      settingsSource: settingsUnactivated,
     });
     //this.props.navigator.replace({ id: 2 });
     this.props.navigation.navigate('Account');
   }
 
-  renderSettings() {
+  /*renderSettings() {
     //if (this.props.navigator.getCurrentRoutes().pop().id === 3) return;
     this.setState({
       homeSource: homeUnactivated,
@@ -103,7 +83,7 @@ class Navbar extends Component {
     });
     //this.props.navigator.replace({ id: 3 });
     this.props.navigation.navigate('Settings');
-  }
+  }*/
 
   renderCamera() {
     this.props.setCameraState(true);

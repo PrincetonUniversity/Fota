@@ -43,7 +43,6 @@ class LoginForm extends Component {
   }
 
   onLoginFail(error) {
-    console.log(error);
     let message = 'Authentication error.';
     if (error.code === 'auth/invalid-email') {
       message = 'Invalid email.';

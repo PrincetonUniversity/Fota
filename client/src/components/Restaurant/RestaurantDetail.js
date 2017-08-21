@@ -141,6 +141,7 @@ class RestaurantDetail extends Component {
       <FilterDisplay
         key={index}
         text={filterName.title}
+        color='white'
       />
     );
   }
@@ -165,7 +166,7 @@ class RestaurantDetail extends Component {
     return (
       <Animated.View style={{ zIndex: 2, height: 150, transform: [{ translateY: pageY }] }}>
         <Banner
-          photo={this.state.photos === undefined ? undefined : this.state.photos[2].url}
+          photo={this.state.photos === undefined ? undefined : this.state.photos[0].url}
           containerStyle={{ flex: 1 }} // height: 150
           photoStyle={{ flex: 1 }}
         >
@@ -317,7 +318,6 @@ class RestaurantDetail extends Component {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     });
-    console.log(pageY);
     return (
       <View style={pageStyle}>
         {this.renderHeader(headerScrollDistance, pageY)}

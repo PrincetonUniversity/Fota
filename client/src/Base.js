@@ -16,14 +16,14 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Modal, AsyncStorage, Alert, Text } from 'react-native';
-import { TabNavigator } from 'react-navigation';
+import { View, AsyncStorage, Alert } from 'react-native';
+import { TabNavigator, TabBarBottom } from 'react-navigation';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
 import LoginPage from './components/Account/LoginPage';
 import PhotoList from './components/Photo/PhotoList';
 //import SearchPage from './components/Search/SearchPage';
-import ProfilePage from './components/Profile/ProfilePage';
+import AccountPage from './components/Profile/AccountPage';
 //import SettingsPage from './components/Settings/SettingsPage';
 import Navbar from './components/Navbar';
 import CameraNavigator from './components/Camera/CameraNavigator';
@@ -62,7 +62,6 @@ class Base extends Component {
   logInAnonymously() {
     this.setState({ loginFinished: false });
     firebase.auth().signInAnonymously().catch(() => {
-      console.log('im here');
       Alert.alert(
         'Error',
         'Oops! Something went wrong. Please restart the app and try again.',
@@ -72,19 +71,18 @@ class Base extends Component {
   }
 
   render() {
-    console.log(this.props.loginState);
     if (this.state.loginFinished) {
       if (this.props.loginState) {
         return (
           <View style={{ flex: 1 }}>
-            <Modal
+            {/*<Modal
               animationType={'slide'}
               visible={this.props.cameraVisible}
               style={{ flex: 1 }}
               onRequestClose={() => this.props.setCameraState(false)}
             >
               <CameraNavigator />
-            </Modal>
+            </Modal>*/}
   
             <FotaNavigator />
           </View>
@@ -104,36 +102,29 @@ const FotaNavigator = TabNavigator({
   Home: {
     screen: PhotoList
   },
+  Camera: {
+    screen: CameraNavigator
+  },
+  Account: {
+    screen: AccountPage
+  },
   /*Search: {
     screen: SearchPage
   },
-  Camera: {
-    screen: CameraNavigator
-  },*/
-  Account: {
-    screen: ProfilePage
-  },
-  /*Settings: {
+  Settings: {
     screen: SettingsPage
   }*/
 },
 {
-  tabBarComponent: Navbar,
+  tabBarComponent: TabBarBottom,
   tabBarPosition: 'bottom',
+  swipeEnabled: false,
+  animationEnabled: false,
   initialRouteName: 'Home',
-  backBehavior: 'initalRoute',
-  // tabBarOptions: {
-  //   showLabel: false,
-  //   activeTintColor: '#FD9627',
-  //   inactiveTintColor: '#CBCBCB',
-  //   tabStyle: {
-  //     height: 30
-  //   },
-  //   iconStyle: {
-  //     width: 10,
-  //     height: 10
-  //   }
-  // }
+  tabBarOptions: {
+    showLabel: false,
+    showIcon: true
+  }
 });
 
 function mapStateToProps({ cameraVisible, loginState }) {

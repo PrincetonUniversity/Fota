@@ -15,7 +15,6 @@ class CameraLibrary extends Component {
     }).then(r => {
       if (Platform.OS === 'android') {
         const promises = r.edges.map(p => {
-          console.log(p.node.image);
           return RNGRP.getRealPathFromURI(p.node.image.uri).then(filePath => filePath);
         });
         Promise.all(promises).then(results => {

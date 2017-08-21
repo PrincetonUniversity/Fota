@@ -10,8 +10,8 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 const FilterDisplay = (props) => (
-  <View style={styles.containerStyle}>
-    <Text style={styles.textStyle}>
+  <View style={{ borderColor: props.color, ...styles.containerStyle }}>
+    <Text style={{ color: props.color, ...styles.textStyle }}>
       {props.text}
     </Text>
   </View>
@@ -23,7 +23,6 @@ const styles = {
       flex: -1,
       borderRadius: 20,
       backgroundColor: 'transparent',
-      borderColor: 'white',
       borderWidth: 1,
       alignItems: 'center',
       paddingHorizontal: 8,
@@ -31,7 +30,6 @@ const styles = {
       margin: 5
     },
     textStyle: {
-      color: 'white',
       fontFamily: 'Avenir',
       fontSize: 12,
       marginLeft: 3,

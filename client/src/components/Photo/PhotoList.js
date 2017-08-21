@@ -19,23 +19,30 @@ import { FlatList, View, AsyncStorage } from 'react-native';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Icon from 'react-native-vector-icons/Foundation';
 import request from '../../helpers/axioshelper';
 import PhotoDetail from './PhotoDetail';
 import Headbar from '../Headbar';
+import Navbar from '../Navbar';
 import { getPhotosAndRests, loadingTrue } from '../../actions/index';
 
 class PhotoList extends Component {
+  static navigationOptions = {
+    tabBarIcon: ({ focused }) => {
+      let color = '#ccc';
+      if (focused) color = '#ff9700';
+      return (
+        <Icon
+          name={'home'}
+          color={color}
+          size={38}
+        />
+      );
+    }
+  };
+
   state = { refreshing: false, liked: null, disliked: null };
-
-  // static navigationOptions = {
-  //   tabBarIcon: ({ tintColor }) => (
-  //     <Image
-  //       source={homeUnactivated}
-  //       style={{ width: 26, height: 26, tintColor }}
-  //     />
-  //   ),
-  // };
-
+    
   componentWillMount() {
     this.getPhotoList();
   }

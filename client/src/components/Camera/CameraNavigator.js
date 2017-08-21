@@ -12,21 +12,46 @@
 
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import { StackNavigator } from 'react-navigation';
+import { StackNavigator, NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
+import Icon from 'react-native-vector-icons/Ionicons';
 import CameraPage from './CameraPage';
 import CameraLocationPage from './CameraLocationPage';
 import LoginPage from '../Account/LoginPage';
 import { setCameraState } from '../../actions';
 
 class CameraNavigator extends Component {
+  static navigationOptions = {
+    tabBarVisible: false,
+    tabBarIcon: () => (
+      <Icon
+        name={'md-add'}
+        color='#ccc'
+        size={30}
+        style={{
+          borderColor: '#ccc',
+          borderRadius: 5,
+          borderWidth: 2,
+          width: 38,
+          height: 38,
+          padding: 4,
+          textAlign: 'center',
+        }}
+      />
+    )
+  };
+
   render() {
-    if (this.props.loginState && !this.props.loginState.isAnonymous) {
-      return <LoginPage onSkip={() => this.props.setCameraState(false)} />;
+    if (!this.props.loginState || this.props.loginState.isAnonymous) {
+      return <LoginPage onSkip={() => this.props.navigation.dispatch(NavigationActions.back())} />;
     }
     return (
       <View style={{ flex: 1 }}>
-        <CameraNav />
+        <CameraNav 
+          screenProps={{
+            goBack: () => this.props.navigation.navigate('Home')
+          }} 
+        />
       </View>
     );
   }
