@@ -1,10 +1,27 @@
 import React, { Component } from 'react';
 import { View, FlatList, Dimensions, Image } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 
 const photoSize = (Dimensions.get('window').width - 56) / 3;
 
 class UpvotedPhotos extends Component {
+  static navigationOptions = {
+    tabBarIcon: ({ focused }) => {
+      let color = '#ccc';
+      if (focused) {
+        color = '#ff9700';
+      }
+      return (
+        <Icon
+          name={'ios-arrow-up'}
+          color={color}
+          size={45}
+        />
+      );
+    }
+  };
+
   renderPhoto(photo) {
     return (
       <RestaurantModal restaurantid={photo.rest_id}>
@@ -29,6 +46,7 @@ class UpvotedPhotos extends Component {
             { length: photoSize, offset: photoSize * index, index }
           )}
           numColumns={3}
+          style={{ paddingVertical: 10 }}
         />
       </View>
     );

@@ -19,7 +19,6 @@ import BookmarkedRestaurants from './BookmarkedRestaurants';
 import UpvotedPhotos from './UpvotedPhotos';
 import UploadedPhotos from './UploadedPhotos';
 import SubmittedComments from './SubmittedComments';
-import Navbar from '../Navbar';
 
 class ProfilePage extends Component {
   constructor(props) {
@@ -69,74 +68,19 @@ class ProfilePage extends Component {
       this.setState({ uploaded: newUploaded });
     })
     .catch(e => request.showErrorAlert(e));
-  }
-
-  renderPhoto(photo, allowDelete) {
-    let options = null;
-    if (allowDelete) {
-      options = [{ name: 'Delete', onClick: () => this.deleteFromServer(photo) }];
-    }
-    const restaurant = this.state.restaurants.filter(
-      rest => rest.id === photo.RestaurantId
-    )[0];
-
-    return (
-      <RestaurantModal
-        restaurant={restaurant}
-        pageStyle={{ paddingTop: (Platform.OS === 'ios') ? 15 : 0 }}
-        options={options}
-      >
-        <Image
-          key={photo.id}
-          source={{ uri: photo.link }}
-          style={styles.photoStyle}
-        />
-      </RestaurantModal>
-    );
-  }
-
-  renderPhotoList(list, message, allowDelete) {
-    if (!this.state.loading && list.length === 0) {
-      return <Text style={styles.emptyTextStyle}>{message}</Text>;
-    }
-    return (
-      <FlatList
-        data={list}
-        keyExtractor={photo => photo.id}
-        renderItem={photo => this.renderPhoto(photo.item, allowDelete)}
-        showsHorizontalScrollIndicator={false}
-        style={{ marginBottom: 10 }}
-        horizontal
-        removeClippedSubviews={false}
-      />
-    );
   }*/
 
   render() {
-    return (/*
-      <View>
-        <Header><Text style={styles.headerTextStyle}>{this.props.user.email}</Text></Header>
-
-        <CardSection>
-          <Text style={styles.sectionTextStyle}>My Photos</Text>
-        </CardSection>
-        {this.renderPhotoList(this.state.uploaded, 'Take your first photo to see it here!', true)}
-
-        <CardSection>
-          <Text style={styles.sectionTextStyle}>My Upvotes</Text>
-        </CardSection>
-        {this.renderPhotoList(this.state.upvoted, 'See all your upvoted photos here!', false)}
-
-        <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-          <Button onPress={() => firebase.auth().signOut()}><Text>Log out</Text></Button>
-        </View>
-      </View>
-    */
+    let name = this.props.user.displayName;
+    if (!name) {
+      name = this.props.user.email;
+    }
+    return (
       <View style={{ backgroundColor: '#fff', flex: 1 }}>
         <View style={headerStyle}>
           <View style={{ borderColor: '#ddd', borderBottomWidth: 1, ...headerSectionStyle }}>
             <View>
-              <Text style={nameTextStyle}>{this.props.user.email}</Text>
+              <Text style={nameTextStyle}>{name}</Text>
               <View style={{ flexDirection: 'row', paddingBottom: 10 }} >
                 <Ionicon 
                   name={'md-star'} 
@@ -206,20 +150,29 @@ const ProfileNavigator = TabNavigator({
   tabBarPosition: 'top',
   tabBarComponent: TabBarTop,
   tabBarOptions: {
-    activeTintColor: '#ff9700',
-    inactiveTintColor: '#ccc',
-    labelStyle: {
-      fontSize: 14,
-      fontWeight: '500',
-      marginVertical: 2
-    },
+    showIcon: true,
+    showLabel: false,
     indicatorStyle: {
-      height: 3,
-      backgroundColor: '#ff9700',
-      position: 'absolute',
-      top: 0
+      height: 0,
     },
-    style: { elevation: 0, backgroundColor: 'white' }
+    tabStyle: {
+      marginVertical: 10,
+      paddingVertical: 3,
+      borderRightWidth: 1,
+      borderColor: '#e0e0e0'
+    },
+    style: {
+      marginTop: 10,
+      backgroundColor: '#f8f8f8',
+      elevation: 0,
+      borderTopWidth: 1,
+      borderBottomWidth: 1,
+      borderColor: '#e8e8e8'
+    },
+    iconStyle: {
+      height: 30,
+      width: 30
+    }
   }
 });
 

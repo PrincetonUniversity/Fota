@@ -1,11 +1,28 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, ScrollView, Dimensions } from 'react-native';
+import { View, Text, FlatList, Dimensions } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { Banner, FilterDisplay } from '../common';
-import RestaurantModal from '../Restaurant/RestaurantModal'
+import RestaurantModal from '../Restaurant/RestaurantModal';
 
 const itemWidth = Dimensions.get('window').width / 2 - 40;
 
 class BookmarkedRestaurants extends Component {
+  static navigationOptions = {
+    tabBarIcon: ({ focused }) => {
+      let color = '#ccc';
+      if (focused) {
+        color = '#ff9700';
+      }
+      return (
+        <Icon
+          name={'ios-bookmark'}
+          color={color}
+          size={30}
+        />
+      );
+    }
+  };
+
   renderFilters(rest) {
     return rest.categories.map((filterName, index) =>
       <FilterDisplay
@@ -22,17 +39,21 @@ class BookmarkedRestaurants extends Component {
     return (
       <RestaurantModal restaurantid={rest.id}>
         <View style={styles.cardStyle}>
-          <Banner
-            photo={rest.photos === undefined ? undefined : rest.photos[0].url}
-            containerStyle={{ height: 75 }}
-            photoStyle={{ flex: 1 }}
-          />
-          <View style={{ margin: 10 }}>
-            <Text style={styles.addressStyle}>{address}</Text>
-            <Text style={styles.titleStyle}>{rest.name}</Text>
-            <Text style={styles.ratingStyle}>96%</Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-              {this.renderFilters(rest)}
+          <View style={{ borderRadius: 7, overflow: 'hidden', flex: 1 }}>
+            <Banner
+              photo={rest.photos === undefined ? undefined : rest.photos[0].url}
+              containerStyle={{ height: 75 }}
+              photoStyle={{ flex: 1 }}
+            />
+            <View style={{ margin: 10, flex: 1, justifyContent: 'space-between' }}>
+              <View>
+                <Text style={styles.addressStyle}>{address}</Text>
+                <Text style={styles.titleStyle}>{rest.name}</Text>
+              </View>
+              <Text style={styles.ratingStyle}>96%</Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                {this.renderFilters(rest)}
+              </View>
             </View>
           </View>
         </View>
@@ -50,6 +71,7 @@ class BookmarkedRestaurants extends Component {
           bounces={false}
           removeClippedSubviews={false}
           numColumns={2}
+          style={{ paddingVertical: 10 }}
         />
       </View>
     );
@@ -61,7 +83,9 @@ const styles = {
     margin: 10,
     width: itemWidth,
     elevation: 2,
-    borderRadius: 7
+    borderRadius: 7,
+    flex: 1,
+    overflow: 'hidden'
   },
   addressStyle: {
     fontFamily: 'Avenir',

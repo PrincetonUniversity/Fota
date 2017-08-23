@@ -82,7 +82,7 @@ class LoginWelcome extends Component {
             </Text>
             <Text
               style={styles.skipTextStyle}
-              onPress={this.props.screenProps.onSkip}
+              onPress={this.props.screenProps.onSkip.bind(this)}
             >
               Not now
             </Text>

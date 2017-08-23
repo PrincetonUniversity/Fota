@@ -8,32 +8,51 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
+import { View, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
-import { NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import LoginPage from '../Account/LoginPage';
+//mport LoginPage from '../Account/LoginPage';
 import ProfilePage from './ProfilePage';
+import { tabWidth, tabHeight } from '../../Base';
 
 class AccountPage extends Component {
-  static navigationOptions = {
+  static navigationOptions = ({ navigation, screenProps }) => ({
     tabBarIcon: ({ focused }) => {
       let color = '#ccc';
       if (focused) {
         color = '#ff9700';
       }
       return (
-        <Icon
-          name={'person'}
-          color={color}
-          size={38}
-        />
+        <TouchableOpacity
+          style={{
+            width: tabWidth,
+            height: tabHeight,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+          onPress={() => {
+            if (screenProps.user && !screenProps.user.isAnonymous) {
+              if (!focused) {
+                navigation.navigate('Account');
+              }
+            } else {
+              navigation.navigate('Login', { onLoginFinished: 'openAccount' });
+            }
+          }}
+        >
+          <Icon
+            name={'person'}
+            color={color}
+            size={38}
+          />
+        </TouchableOpacity>
       );
     }
-  };
+  });
 
   render() {
     if (!this.props.loginState || this.props.loginState.isAnonymous) {
-      return <LoginPage onSkip={() => this.props.navigation.dispatch(NavigationActions.back())} />;
+      return <View />;
     }
     return <ProfilePage user={this.props.loginState} testuser={testuser} />;
   }
@@ -61,8 +80,8 @@ const testuser = {
   ]
 };
 
-function mapStateToProps({ loginState }) {
-  return { loginState };
+function mapStateToProps({ loginState, mainNavigator }) {
+  return { loginState, mainNavigator };
 }
 
 export default connect(mapStateToProps)(AccountPage);

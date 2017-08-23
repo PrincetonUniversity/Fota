@@ -12,6 +12,7 @@ export const CAMERA_STATE = 'a9x8c7vm1';
 export const LOGIN = 'randomtext';
 export const LOADING = '9(AA6969asD)';
 export const SORTING = ')!sdj0ad!SDAD::L';
+export const NAVIGATOR = '4982ivfru';
 
 export function setCameraState(visible) {
   return {
@@ -40,5 +41,12 @@ export function changeSorting(order) {
   return {
     type: SORTING,
     payload: order
+  };
+}
+
+export function setFotaNavigator(nav) {
+  return {
+    type: NAVIGATOR,
+    payload: nav
   };
 }

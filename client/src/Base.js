@@ -16,8 +16,8 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, AsyncStorage, Alert } from 'react-native';
-import { TabNavigator, TabBarBottom } from 'react-navigation';
+import { View, AsyncStorage, Alert, Dimensions } from 'react-native';
+import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
 import LoginPage from './components/Account/LoginPage';
@@ -27,7 +27,11 @@ import AccountPage from './components/Profile/AccountPage';
 //import SettingsPage from './components/Settings/SettingsPage';
 //import Navbar from './components/Navbar';
 import CameraNavigator from './components/Camera/CameraNavigator';
+import CameraHelper from './components/Camera/CameraHelper';
 import { setCameraState, logInOrOut } from './actions';
+
+export const tabWidth = (Dimensions.get('window').width / 3);
+export const tabHeight = 50;
 
 class Base extends Component {
   constructor(props) {
@@ -84,7 +88,7 @@ class Base extends Component {
               <CameraNavigator />
             </Modal>*/}
   
-            <FotaNavigator />
+            <FotaNavigator screenProps={{ user: this.props.loginState }} />
           </View>
         );
       }
@@ -98,33 +102,48 @@ class Base extends Component {
   }
 }
 
-const FotaNavigator = TabNavigator({
+const MainNavigator = TabNavigator({
   Home: {
     screen: HomePage
   },
-  Camera: {
-    screen: CameraNavigator
+  CameraOpener: {
+    screen: CameraHelper
   },
   Account: {
     screen: AccountPage
   },
-  /*Search: {
-    screen: SearchPage
-  },
-  Settings: {
-    screen: SettingsPage
-  }*/
 },
 {
   tabBarComponent: TabBarBottom,
   tabBarPosition: 'bottom',
   swipeEnabled: false,
   animationEnabled: false,
+  //lazy: true,
   initialRouteName: 'Home',
   tabBarOptions: {
     showLabel: false,
     showIcon: true
+  },
+  style: {
+    height: tabHeight
   }
+});
+
+const FotaNavigator = StackNavigator({
+  Main: {
+    screen: MainNavigator
+  },
+  Camera: {
+    screen: CameraNavigator
+  },
+  Login: {
+    screen: LoginPage
+  }
+},
+{
+  mode: 'modal',
+  headerMode: 'none',
+
 });
 
 function mapStateToProps({ cameraVisible, loginState }) {

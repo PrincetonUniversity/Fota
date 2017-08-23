@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, Dimensions, AsyncStorage, Alert, Image } from 'react-native';
+import { View, Text, Dimensions, AsyncStorage, Alert } from 'react-native';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
 import { TabNavigator, TabBarTop } from 'react-navigation';
@@ -41,12 +41,6 @@ const styles = {
     textAlign: 'center',
     flex: 1,
   },
-  nextTextStyle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    position: 'absolute',
-    right: 20
-  },
   cameraStyle: {
     height: Dimensions.get('window').width,
     width: Dimensions.get('window').width,
@@ -64,11 +58,7 @@ const {
   pageStyle,
   headerTextStyle,
   cameraStyle,
-  imageStyle,
-  nextTextStyle
 } = styles;
-
-const unselected = require('../../img/no_image_selected.png');
 
 function cameraErrorAlert() {
   Alert.alert(
@@ -91,7 +81,7 @@ export function deleteImage(path) {
 }
 
 class CameraPage extends Component {
-  state = { showCamera: true, selectedImage: unselected };
+  state = { showCamera: true };
 
   takePicture() {
     this.camera.capture().then(data => {
@@ -100,11 +90,7 @@ class CameraPage extends Component {
   }
 
   choosePhoto(uri) {
-    if (uri === this.state.selectedImage.uri) {
-      this.setState({ selectedImage: unselected });
-    } else {
-      this.setState({ selectedImage: { uri } });
-    }
+    this.resizeImage(uri, false);
   }
 
   resizeImage(uri, del) {
@@ -115,22 +101,6 @@ class CameraPage extends Component {
       AsyncStorage.setItem('UploadPath', reuri);
       this.props.navigation.navigate('Location');
     }).catch(() => cameraErrorAlert());
-  }
-
-  renderNextButton() {
-    if (!this.state.showCamera) {
-      if (this.state.selectedImage === unselected) {
-        return <Text style={{ color: '#aaa', ...nextTextStyle }}>NEXT</Text>;
-      }
-      return (
-        <Text
-          style={{ color: '#0097ff', ...nextTextStyle }}
-          onPress={() => this.resizeImage(this.state.selectedImage.uri, false)}
-        >
-          NEXT
-        </Text>
-      );
-    }
   }
 
   renderCamera() {
@@ -146,12 +116,6 @@ class CameraPage extends Component {
         />
       );
     }
-    return (
-      <Image
-        source={this.state.selectedImage}
-        style={imageStyle}
-      />
-    );
   }
 
   render() {
@@ -165,10 +129,12 @@ class CameraPage extends Component {
               backgroundColor='white'
               color='black'
               size={20}
-              onPress={() => this.props.screenProps.goBack()}
+              onPress={() => {
+                console.log(this.props);
+                this.props.screenProps.goBack();
+              }}
             />
           </View>
-          {this.renderNextButton()}
         </Header>
 
         {this.renderCamera()}

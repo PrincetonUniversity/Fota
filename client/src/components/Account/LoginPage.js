@@ -20,14 +20,31 @@ import SignupForm from './SignupForm';
 
 class LoginPage extends Component {
   render() {
+    console.log(this.props);
+    let screenProps = {
+      onSkip: this.props.onSkip,
+      onLoginFinished: this.props.onLoginFinished
+    };
+    if (this.props.navigation) {
+      const goBack = () => this.props.navigation.goBack();
+      const openCamera = () => this.props.navigation.navigate('Camera', { goBack });
+      screenProps = { onSkip: goBack, onLoginFinished: goBack };
+      if (this.props.navigation.state.params.onLoginFinished === 'openCamera') {
+        screenProps.onLoginFinished = openCamera;
+      } 
+      if (this.props.navigation.state.params.onLoginFinished === 'openAccount') {
+        screenProps.onLoginFinished = () => {
+          goBack();
+          this.props.navigation.navigate('Account');
+        };
+      } 
+    }
+
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ flex: 1, backgroundColor: '#fff' }}>
           <LoginNavigator 
-            screenProps={{ 
-              onSkip: this.props.onSkip, 
-              onLoginFinished: this.props.onLoginFinished 
-            }} 
+            screenProps={screenProps} 
           />
         </View>
       </TouchableWithoutFeedback>

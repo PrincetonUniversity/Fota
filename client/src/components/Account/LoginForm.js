@@ -39,7 +39,9 @@ class LoginForm extends Component {
 
   onLoginSuccess() {
     this.setState({ email: '', pass: '', loading: false });
-    //this.props.screenProps.onLoginFinished();
+    if (this.props.screenProps.onLoginFinished) {
+      this.props.screenProps.onLoginFinished();
+    }
   }
 
   onLoginFail(error) {
@@ -104,20 +106,6 @@ class LoginForm extends Component {
           />
 
           <Text style={loginStyles.small}>Forgot your password?</Text>
-          <View style={{ flexDirection: 'row', marginVertical: 15, marginRight: 90 }}>
-            <Button
-              onPress={() => console.log('Facebook.')}
-              colors={{ text: '#0097ff', fill: '#fff', border: '#fff' }}
-              text={'Log in with Facebook'}
-            >
-              <Icon
-                name='facebook'
-                color='#0097ff'
-                style={{ paddingVertical: 15, paddingRight: 10 }}
-                size={18}
-              />
-            </Button>
-          </View>
           <Text style={styles.errorTextStyle}>{this.state.error}</Text>
         </View>
 

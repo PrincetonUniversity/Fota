@@ -16,10 +16,10 @@
 
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
+import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import { NavigationActions } from 'react-navigation';
 import firebase from 'firebase';
-import request from '../../helpers/axioshelper';
 import LoginInput from './LoginInput';
 import { loginStyles } from './LoginPage';
 import { Spinner, Button } from '../common';
@@ -32,16 +32,26 @@ class SignupForm extends Component {
 
     this.setState({ error: '', loading: true });
 
-    firebase.auth().createUserWithEmailAndPassword(email, pass)
+    if (this.props.loginState && this.props.loginState.isAnonymous) {
+      const credential = firebase.auth.EmailAuthProvider.credential(email, pass);
+      this.props.loginState.linkWithCredential(credential)
       .then(this.onCreateUserSuccess.bind(this))
       .catch(this.onCreateUserFail.bind(this));
+    } else {
+      firebase.auth().createUserWithEmailAndPassword(email, pass)
+      .then(this.onCreateUserSuccess.bind(this))
+      .catch(this.onCreateUserFail.bind(this));
+    }
   }
 
   onCreateUserSuccess(user) {
+    user.updateProfile({
+      displayName: `${this.state.first} ${this.state.last}`
+    });
     this.setState({ first: '', last: '', email: '', pass: '', loading: false });
-    request.post('https://fotafood.herokuapp.com/api/user', { id: user.uid })
-      //.then(this.props.onLoginFinished())
-      .catch(e => request.showErrorAlert(e));
+    if (this.props.screenProps.onLoginFinished) {
+      this.props.screenProps.onLoginFinished();
+    }
   }
 
   onCreateUserFail(error) {
@@ -150,4 +160,9 @@ const styles = {
   }
 };
 
-export default SignupForm;
+function mapStateToProps({ loginState }) {
+  return { loginState };
+}
+
+
+export default connect(mapStateToProps)(SignupForm);

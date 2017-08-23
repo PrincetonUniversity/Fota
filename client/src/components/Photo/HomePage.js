@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, AsyncStorage } from 'react-native';
+import { View, AsyncStorage, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Icon from 'react-native-vector-icons/Foundation';
@@ -24,21 +24,37 @@ import { photoRequest } from '../../helpers/URL';
 import PhotoList from './PhotoList';
 import Headbar from './Headbar';
 import { setLoading } from '../../actions/index';
+import { tabWidth, tabHeight } from '../../Base';
 
 class HomePage extends Component {
-  static navigationOptions = {
+  static navigationOptions = ({ navigation }) => ({
     tabBarIcon: ({ focused }) => {
       let color = '#ccc';
       if (focused) color = '#ff9700';
       return (
-        <Icon
-          name={'home'}
-          color={color}
-          size={38}
-        />
+        <TouchableOpacity
+          style={{
+            width: tabWidth,
+            height: tabHeight,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+          onPress={() => {
+            if (!focused) {
+              navigation.navigate('Home');
+            }
+          }}
+        >
+          <Icon
+            name={'home'}
+            color={color}
+            size={38}
+          />
+        </TouchableOpacity>
+        
       );
     }
-  };
+  });
 
   state = { photoList: [], loading: true, refreshing: false };
     
@@ -66,7 +82,6 @@ class HomePage extends Component {
 
   refreshListView() {
     this.setState({ refreshing: true }, () => this.getPhotoList());
-    this.setState({ refreshing: false });
   }
 
   render() {
@@ -80,10 +95,11 @@ class HomePage extends Component {
     }
     return (
       <View style={{ backgroundColor: '#FFFFFF' }}>
+        <Headbar update={this.getPhotoList.bind(this)} />
         <PhotoList 
           list={this.state.photoList}
-          extraData={Headbar}
-          header={() => <Headbar update={this.getPhotoList.bind(this)} />}
+          //extraData={Headbar}
+          //header={() => <Headbar update={this.getPhotoList.bind(this)} />}
           onRefresh={() => this.refreshListView()}
           refreshing={this.state.refreshing}
         />
@@ -92,8 +108,8 @@ class HomePage extends Component {
   }
 }
 
-function mapStateToProps({ loginState, loading, sorting }) {
-  return { loginState, loading, sorting };
+function mapStateToProps({ loading, sorting }) {
+  return { loading, sorting };
 }
 
 export default connect(mapStateToProps, { setLoading })(HomePage);

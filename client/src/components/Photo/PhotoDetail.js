@@ -15,13 +15,12 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Image, Text, Dimensions, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, Dimensions, Alert, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
-import LinearGradient from 'react-native-linear-gradient';
 import request from '../../helpers/axioshelper';
 import { photoVote } from '../../helpers/URL';
-import { GradientImage, ImageButton } from '../common';
+import { GradientImage } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 import saveVote from '../../helpers/getasyncstorage';
 
@@ -164,7 +163,7 @@ class PhotoDetail extends Component {
               gradientStyle={{ flex: 1 }}
               source={this.state.url}
             >
-              <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end' }}>
+              <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end', zIndex: 6 }}>
                 <View style={{ flex: 2 }} />
 
                 <Text style={{ color: voteCountColor, ...voteCountTextStyle }}>
@@ -201,6 +200,7 @@ const styles = {
   photoFrameStyle: {
     borderRadius: 9,
     overflow: 'hidden',
+    zIndex: 1
   },
   photoStyle: { // The picture
     flex: 1,
@@ -208,7 +208,8 @@ const styles = {
     // height: 327,
     width: null,
     height: Dimensions.get('window').width - 65,
-    backgroundColor: 'rgba(0, 0, 0, 0.1)'
+    //backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: 9
   },
   photoInfoStyle: {
     paddingTop: 10,
