@@ -7,7 +7,7 @@ import { Pages } from 'react-native-pages';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
-const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;
+const SWIPE_THRESHOLD = SCREEN_HEIGHT;
 const SWIPE_OUT_DURATION = 250;
 
 class PhotoGallery extends Component {
@@ -112,24 +112,34 @@ class PhotoGallery extends Component {
 
   renderPhotos() {
     return this.props.photos.map((photo, index) =>
-
         <ScrollView
           key={index}
           maximumZoomScale={3.0}
-          scrollEnabled={false}
-          contentContainerStyle={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+          bouncesZoom={false}
+          pagingEnabled
+          contentOffset={{ y: SCREEN_HEIGHT }}
+          onMomentumScrollEnd={e => {
+            const diffY = e.nativeEvent.contentOffset.y;
+            if (diffY >= SWIPE_THRESHOLD * 2 || diffY <= 0) {
+              this.props.onSwipeVertical();
+            }
+          }}
         >
-          <Animated.View
+          {/* <Animated.View
             key={index}
             style={this.getCardStyle()}
             {...this.state.panResponder.panHandlers}
-          >
+          > */}
+          <View style={styles.spacerStyle} />
+          <View key={index} style={styles.photoFrameStyle}>
             <Image
               source={{ uri: photo }}
-              style={{ height: 200, width: 200 }}
+              style={styles.photoStyle}
             />
-          </Animated.View>
-       </ScrollView>
+          </View>
+          <View style={styles.spacerStyle} />
+          {/* </Animated.View> */}
+        </ScrollView>
     );
   }
 
@@ -147,6 +157,19 @@ const styles = {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  spacerStyle: {
+    height: SCREEN_HEIGHT
+  },
+  photoFrameStyle: {
+    height: SCREEN_HEIGHT,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  photoStyle: {
+    height: 200,
+    width: 200,
+    backgroundColor: 'gray'
   }
 };
 

@@ -5,11 +5,11 @@ import LinearGradient from 'react-native-linear-gradient';
 export const dealWithAndroidBeingStupid = (borderRadius) => {
   if (Platform.OS === 'android') {
     return (
-      <View 
+      <View
         style={{
           position: 'absolute',
           top: -borderRadius,
-          bottom: -borderRadius, 
+          bottom: -borderRadius,
           right: -borderRadius,
           left: -borderRadius,
           borderRadius: borderRadius * 2,

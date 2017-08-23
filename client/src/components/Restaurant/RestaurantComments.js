@@ -1,30 +1,19 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import CommentDetail from './CommentDetail';
-import request from '../../helpers/axioshelper';
-import { restCommentRequest } from '../../helpers/URL';
 
 class RestaurantComments extends Component {
-  static navigationOptions = {
-    tabBarLabel: 'Comments'
-  };
+  static navigationOptions = ({ screenProps }) => ({
+    tabBarLabel: `${screenProps.comments.length} COMMENTS`
+  });
 
   state = { comments: [], loading: true }
 
   componentWillMount() {
-    request.get(restCommentRequest(this.props.screenProps.restaurant.id))
-      .then(response => this.setState({ comments: response.data, loading: false }))
-      .catch(e => request.showErrorAlert(e));
+    this.setState({ comments: this.props.screenProps.comments, loading: false });
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   if (this.props.screenProps.comments !== nextProps.screenProps.comments) {
-  //     this.setState({ comments: nextProps.screenProps.comments, loading: false });
-  //   }
-  // }
-
   render() {
-    console.log(this.state);
     if (!this.state.loading && this.state.comments.length === 0) {
       return (
         <View style={{ height: 150, justifyContent: 'center' }}>
@@ -43,8 +32,9 @@ class RestaurantComments extends Component {
         style={{ height: listHeight, paddingTop: 5 }}
         data={this.state.comments}
         keyExtractor={comment => comment.id}
-        showsVerticalScrollIndicator
         renderItem={comment => <CommentDetail comment={comment.item} />}
+        showsVerticalScrollIndicator
+        overScrollMode='never'
         bounces={false}
         removeClippedSubviews={false}
       />

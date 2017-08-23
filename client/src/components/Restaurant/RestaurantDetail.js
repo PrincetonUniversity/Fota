@@ -8,7 +8,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, ScrollView, Platform, Animated } from 'react-native';
+import { View, Text, ScrollView, Animated, Linking } from 'react-native';
 import moment from 'moment';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import FoundationIcon from 'react-native-vector-icons/Foundation';
@@ -18,9 +18,9 @@ import { phonecall } from 'react-native-communications';
 import getDirections from 'react-native-google-maps-directions';
 import Spinner from 'react-native-loading-spinner-overlay';
 import LinearGradient from 'react-native-linear-gradient';
-import request from '../../helpers/axioshelper';
-import { restRequest } from '../../helpers/URL';
 import { FilterDisplay, Banner } from '../common';
+import { request } from '../../helpers/axioshelper';
+import { directionsURL } from '../../helpers/URL';
 import RestaurantPhotos from './RestaurantPhotos';
 import RestaurantComments from './RestaurantComments';
 
@@ -32,7 +32,8 @@ class RestaurantDetail extends Component {
 
     this.state = {
       restaurant: null,
-      photos: undefined,
+      photos: [],
+      comments: [],
       selectedPhoto: null,
       modalVisible: false,
       loading: true,
@@ -47,49 +48,10 @@ class RestaurantDetail extends Component {
       this.setState({
         restaurant: nextProps.restaurant,
         photos: nextProps.restaurant.photos,
-        loading: nextProps.loadingRestaurant
+        comments: nextProps.comments,
+        loading: nextProps.loading
       });
     }
-  }
-
-  getHours(hours) {
-    const today = new Date();
-    const dayNumber = (today.getDay() + 6) % 7;
-    const hoursToday = hours.open[dayNumber];
-    const start = hoursToday.start;
-    const end = hoursToday.end;
-    const overnight = hoursToday.is_overnight;
-    return { start, end, overnight };
-  }
-
-  timeString(time) {
-    const timeHours = Math.floor(time / 100);
-    const timeMinutes = time - timeHours * 100;
-    const timeDate = moment({ hours: timeHours, minutes: timeMinutes });
-    return timeDate.format('h:mm A');
-  }
-
-  isOpen(hours) {
-    return hours.is_open_now;
-  }
-
-  timeUntilCloseLabel(hours) {
-    if (!hours) return '';
-    const trueHours = this.getHours(hours);
-    if (!trueHours) return '';
-    if (trueHours.start === 'closed') {
-      return 'Closed for today';
-    }
-
-    const openTime = trueHours.start;
-    const closeTime = trueHours.end;
-
-    if (!this.isOpen(hours)) {
-      const time = this.timeString(openTime);
-      return `Closed until ${time}`;
-    }
-    const time = this.timeString(closeTime);
-    return `Open until ${time}`;
   }
 
   // handleGetDirections() {
@@ -129,12 +91,55 @@ class RestaurantDetail extends Component {
     });
   }
 
-  // checkScroll() {
-  //   if (this.state.photos.length < 7) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
+  getHours(hours) {
+    const today = new Date();
+    const dayNumber = (today.getDay() + 6) % 7;
+    const hoursToday = hours.open[dayNumber];
+    const start = hoursToday.start;
+    const end = hoursToday.end;
+    const overnight = hoursToday.is_overnight;
+    return { start, end, overnight };
+  }
+
+  timeUntilCloseLabel(hours) {
+    if (!hours) return '';
+    const trueHours = this.getHours(hours);
+    if (!trueHours) return '';
+    if (trueHours.start === 'closed') {
+      return 'Closed for today';
+    }
+
+    const openTime = trueHours.start;
+    const closeTime = trueHours.end;
+
+    if (!this.isOpen(hours)) {
+      const time = this.timeString(openTime);
+      return `Closed until ${time}`;
+    }
+    const time = this.timeString(closeTime);
+    return `Open until ${time}`;
+  }
+
+  isOpen(hours) {
+    return hours.is_open_now;
+  }
+
+  timeString(time) {
+    const timeHours = Math.floor(time / 100);
+    const timeMinutes = time - timeHours * 100;
+    const timeDate = moment({ hours: timeHours, minutes: timeMinutes });
+    if (timeMinutes === 0) {
+      return timeDate.format('h A');
+    }
+    return timeDate.format('h:mm A');
+  }
+
+  checkScroll() {
+    if (this.state.photos.length < 7) {
+      return false;
+    }
+    return true;
+  }
 
   renderFilters() {
     return this.state.restaurant.categories.map((filterName, index) =>
@@ -227,6 +232,75 @@ class RestaurantDetail extends Component {
     );
   }
 
+  // Price section of the horizontal info bar
+  renderPrice() {
+    if (this.state.restaurant.price.length === 1) {
+      return (
+        <View style={infoObjectStyle}>
+          <FoundationIcon name='dollar' size={30} />
+          <Text style={timeUntilCloseStyle}>
+            Cheap
+          </Text>
+        </View>
+      );
+    } else if (this.state.restaurant.price.length === 2) {
+      return (
+        <View style={infoObjectStyle}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <FoundationIcon name='dollar' size={30} />
+            <FoundationIcon name='dollar' size={30} />
+          </View>
+          <Text style={timeUntilCloseStyle}>
+            Moderate
+          </Text>
+        </View>
+      );
+    } else if (this.state.restaurant.price.length === 3) {
+      return (
+        <View style={infoObjectStyle}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <FoundationIcon name='dollar' size={30} />
+            <FoundationIcon name='dollar' size={30} />
+            <FoundationIcon name='dollar' size={30} />
+          </View>
+          <Text style={timeUntilCloseStyle}>
+            Expensive
+          </Text>
+        </View>
+      );
+    } else if (this.state.restaurant.price.length === 4) {
+      return (
+        <View style={infoObjectStyle}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <FoundationIcon name='dollar' size={30} />
+            <FoundationIcon name='dollar' size={30} />
+            <FoundationIcon name='dollar' size={30} />
+            <FoundationIcon name='dollar' size={30} />
+          </View>
+          <Text style={timeUntilCloseStyle}>
+            Very Expensive
+          </Text>
+        </View>
+      );
+    } else if (this.state.restaurant.price.length === 5) {
+      return (
+        <View style={infoObjectStyle}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <FoundationIcon name='dollar' size={30} />
+            <FoundationIcon name='dollar' size={30} />
+            <FoundationIcon name='dollar' size={30} />
+            <FoundationIcon name='dollar' size={30} />
+            <FoundationIcon name='dollar' size={30} />
+          </View>
+          <Text style={timeUntilCloseStyle}>
+            Take My Wallet
+          </Text>
+        </View>
+      );
+    }
+  }
+
+  // Horizontal info bar containing restaurant hours, distance away, and price
   renderInfo() {
     return (
       <View style={infoContainerStyle} onLayout={e => this.setInfoHeight(e)}>
@@ -244,23 +318,13 @@ class RestaurantDetail extends Component {
           </Text>
         </View>
 
-        <View style={infoObjectStyle}>
-          <FoundationIcon name='dollar' size={30} />
-          <Text style={timeUntilCloseStyle}>
-            $11 - $30
-          </Text>
-        </View>
+        {this.renderPrice()}
       </View>
     );
   }
 
-  renderFooter(headerScrollDistance) {
+  renderFooter(pageY) {
     const restaurant = this.state.restaurant;
-    const pageY = this.state.scrollY.interpolate({
-      inputRange: [0, headerScrollDistance],
-      outputRange: [0, -headerScrollDistance / 3],
-      extrapolate: 'clamp',
-    });
     return (
       <Animated.View style={[footerStyle, { transform: [{ translateY: pageY }] }]}>
         <View style={bottomSpacerStyle} />
@@ -285,7 +349,20 @@ class RestaurantDetail extends Component {
           borderRadius={0}
           color='gray'
           backgroundColor='white'
-          onPress={() => phonecall(restaurant.phone.substring(1), false)}
+          onPress={() => {
+            console.log(this.state.restaurant);
+            navigator.geolocation.getCurrentPosition(position => {
+              const lat = position.coords.latitude;
+              const lng = position.coords.longitude;
+              let formattedAddress = this.state.restaurant.location.display_address.map(address =>
+                address.replace(/\s/g, '+')
+              );
+              //formattedAddress = formattedAddress.reduce((total, line) => `${total}+${line}`);
+              console.log(formattedAddress);
+              Linking.openURL(directionsURL(lat, lng, formattedAddress))
+                .catch(e => request.showErrorAlert(e));
+            });
+          }}
         >
           <Text style={{ color: 'gray' }}>DIRECTIONS</Text>
         </MaterialIcon.Button>
@@ -302,7 +379,6 @@ class RestaurantDetail extends Component {
         </View>
       );
     }
-
     const height = 480;
     const headerScrollDistance = this.state.ratingHeight + this.state.infoHeight;
     const pageY = this.state.scrollY.interpolate({
@@ -318,7 +394,8 @@ class RestaurantDetail extends Component {
     const tabY = this.state.scrollY.interpolate({
       inputRange: [headerScrollDistance, 2 * headerScrollDistance],
       outputRange: [0, headerScrollDistance],
-      extrapolate: 'clamp',
+      extrapolateLeft: 'clamp'
+      //extrapolate: 'clamp',
     });
     const opacity = this.state.scrollY.interpolate({
       inputRange: [0, headerScrollDistance],
@@ -331,32 +408,34 @@ class RestaurantDetail extends Component {
 
         <Animated.View style={{ height: pageHeight, transform: [{ translateY: pageY }] }}>
           <ScrollView
-            //scrollEnabled={this.checkScroll()}
+            scrollEnabled={this.checkScroll()}
             scrollEventThrottle={1}
             overScrollMode='never'
+            bounces={false}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
               //{ useNativeDriver: true },
             )}
           >
-              <Animated.View style={{ opacity }}>
-                {this.renderRating()}
+            <Animated.View style={{ opacity }}>
+              {this.renderRating()}
 
-                {this.renderInfo()}
-              </Animated.View>
+              {this.renderInfo()}
+            </Animated.View>
 
-              <Animated.View style={{ transform: [{ translateY: tabY }] }}>
-                <RestaurantNavigator
-                  screenProps={{
-                    restaurant: this.state.restaurant,
-                    photos: this.state.photos,
-                  }}
-                />
-              </Animated.View>
+            <Animated.View style={{ transform: [{ translateY: tabY }] }}>
+              <RestaurantNavigator
+                screenProps={{
+                  restaurant: this.state.restaurant,
+                  photos: this.state.photos,
+                  comments: this.state.comments
+                }}
+              />
+            </Animated.View>
           </ScrollView>
         </Animated.View>
 
-        {this.renderFooter(headerScrollDistance)}
+        {this.renderFooter(pageY)}
       </View>
     );
   }
@@ -367,21 +446,23 @@ const RestaurantNavigator = TabNavigator({
     screen: RestaurantPhotos
   },
   Comments: {
-    screen: RestaurantComments
+    screen: RestaurantComments,
   }
 },
 {
   tabBarPosition: 'top',
   tabBarComponent: TabBarTop,
   tabBarOptions: {
-    activeTintColor: '#FF9700',
-    inactiveTintColor: '#CBCBCB',
+    activeTintColor: 'rgba(0, 0, 0, 0.77)',
+    inactiveTintColor: 'rgba(0, 0, 0, 0.23)',
     labelStyle: {
       fontSize: 13,
-      color: 'black'
+      fontFamily: 'Avenir',
+      fontWeight: '900'
     },
     indicatorStyle: {
       height: 5,
+      backgroundColor: '#ff9700'
     },
     style: {
       backgroundColor: 'white',
@@ -459,14 +540,15 @@ const styles = {
     flexDirection: 'row',
     paddingHorizontal: 10,
     paddingVertical: 10,
-    justifyContent: 'space-around',
+    //justifyContent: 'space-around',
     //borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.2)'
   },
   infoObjectStyle: {
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
+    flex: 1
   },
   footerStyle: {
     flexDirection: 'row',
