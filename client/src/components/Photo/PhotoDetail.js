@@ -71,15 +71,7 @@ class PhotoDetail extends Component {
   // Sends the update request to the fota server.
   // type can either be "downvote" or "upvote"
   sendUpdateRequest(type) {
-    // const user = this.props.loginState;
-    // let queryString = '';
-    // if (!user) {
-    //   queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}`;
-    // } else {
-    //   queryString = `https://fotafood.herokuapp.com/api/photo/${this.state.id}?type=${type}&amount=${amount}&user=${user.uid}`;
-    // }
     request.patch(photoVote(this.state.id, type))
-    //request.patch(queryString)
     .catch(e => request.showErrorAlert(e));
   }
 
@@ -208,7 +200,7 @@ const styles = {
     // height: 327,
     width: null,
     height: Dimensions.get('window').width - 65,
-    //backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 9
   },
   photoInfoStyle: {

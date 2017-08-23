@@ -5,6 +5,7 @@ import { Banner, FilterDisplay } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 
 const itemWidth = Dimensions.get('window').width / 2 - 40;
+const PHOTO_BORDER_RADIUS = 7;
 
 class BookmarkedRestaurants extends Component {
   static navigationOptions = {
@@ -39,7 +40,7 @@ class BookmarkedRestaurants extends Component {
     return (
       <RestaurantModal restaurantid={rest.id}>
         <View style={styles.cardStyle}>
-          <View style={{ borderRadius: 7, overflow: 'hidden', flex: 1 }}>
+          <View style={{ borderRadius: PHOTO_BORDER_RADIUS, overflow: 'hidden', flex: 1 }}>
             <Banner
               photo={rest.photos === undefined ? undefined : rest.photos[0].url}
               containerStyle={{ height: 75 }}
@@ -83,9 +84,10 @@ const styles = {
     margin: 10,
     width: itemWidth,
     elevation: 2,
-    borderRadius: 7,
-    flex: 1,
-    overflow: 'hidden'
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    borderRadius: PHOTO_BORDER_RADIUS
   },
   addressStyle: {
     fontFamily: 'Avenir',

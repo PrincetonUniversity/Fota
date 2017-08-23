@@ -9,9 +9,9 @@ class RestaurantPhotos extends Component {
     photos: []
   }
 
-  static navigationOptions = {
-    tabBarLabel: 'Photos'
-  };
+  static navigationOptions = ({ screenProps }) => ({
+    tabBarLabel: `${screenProps.photos.length} PHOTOS`
+  });
 
   state = { photos: [], loading: true, selectedPhoto: null, modalVisible: false }
 
@@ -50,8 +50,6 @@ class RestaurantPhotos extends Component {
   }
 
   render() {
-    console.log(this.state);
-
     if (!this.state.loading && this.state.photos.length === 0) {
       return (
         <View style={{ height: 150, justifyContent: 'center' }}>
@@ -61,7 +59,6 @@ class RestaurantPhotos extends Component {
         </View>
       );
     }
-
     const photoLinks = this.state.photos.map(photo => photo.url);
     let listHeight = 500;
     if (this.state.photos.length < 7) {
@@ -89,7 +86,8 @@ class RestaurantPhotos extends Component {
             data={this.state.photos}
             keyExtractor={(photo, index) => index}
             renderItem={(photo) => this.renderPhoto(photo.item, photo.index)}
-            showsHorizontalScrollIndicator={false}
+            showVerticalScrollIndicator={false}
+            bounces={false}
             numColumns={3}
             removeClippedSubviews={false}
           />

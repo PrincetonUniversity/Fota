@@ -15,18 +15,18 @@ import {
   TouchableOpacity, TouchableWithoutFeedback
 } from 'react-native';
 import request from '../../helpers/axioshelper';
-import { restRequest } from '../../helpers/URL';
+import { restRequest, restCommentRequest } from '../../helpers/URL';
 import { CardSection } from '../common';
 import RestaurantDetail from './RestaurantDetail';
 
 class RestaurantModal extends Component {
-  state = { modalVisible: false, longPressed: false, loadingRestaurant: false, restaurant: null }
-
-  // componentWillMount() {
-  //   request.get(restRequest(this.props.restaurantid))
-  //   .then(response => this.setState({ restaurant: response.data }))
-  //   .catch(e => request.showErrorAlert(e));
-  // }
+  state = {
+    modalVisible: false,
+    longPressed: false,
+    loading: false,
+    restaurant: null,
+    comments: []
+  }
 
   onPressed(long) {
     if (long) {
@@ -36,9 +36,18 @@ class RestaurantModal extends Component {
     } else if (this.state.longPressed) {
       this.setState({ longPressed: false }, () => this.setModalVisible(true));
     } else {
-      this.setState({ loadingRestaurant: true });
+      this.setState({ loading: true });
       request.get(restRequest(this.props.restaurantid))
-        .then(response => this.setState({ restaurant: response.data, loadingRestaurant: false }))
+        .then(response => {
+          request.get(restCommentRequest(this.props.restaurantid))
+            .then(response2 =>
+              this.setState({
+                restaurant: response.data,
+                comments: response2.data,
+                loading: false
+              }))
+            .catch(e => request.showErrorAlert(e));
+        })
         .catch(e => request.showErrorAlert(e));
       this.setModalVisible(true);
     }
@@ -86,8 +95,9 @@ class RestaurantModal extends Component {
     return (
       <View style={styles.modalStyle}>
         <RestaurantDetail
-          loadingRestaurant={this.state.loadingRestaurant}
+          loading={this.state.loading}
           restaurant={this.state.restaurant}
+          comments={this.state.comments}
           close={this.closeModal.bind(this)}
         />
       </View>

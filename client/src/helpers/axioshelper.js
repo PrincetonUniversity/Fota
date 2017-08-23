@@ -93,7 +93,7 @@ exports.cancel = () => {
     console.log(CancelToken);
     cancel();
   } else {
-    console.log(cancel)
+    console.log(cancel);
   }
 };
 

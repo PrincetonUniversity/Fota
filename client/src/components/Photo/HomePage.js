@@ -57,7 +57,7 @@ class HomePage extends Component {
   });
 
   state = { photoList: [], loading: true, refreshing: false };
-    
+
   componentWillMount() {
     this.getPhotoList();
   }
