@@ -208,7 +208,7 @@ const styles = {
     // height: 327,
     width: null,
     height: Dimensions.get('window').width - 65,
-    //backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 9
   },
   photoInfoStyle: {

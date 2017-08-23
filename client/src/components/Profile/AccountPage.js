@@ -19,9 +19,7 @@ class AccountPage extends Component {
   static navigationOptions = ({ navigation, screenProps }) => ({
     tabBarIcon: ({ focused }) => {
       let color = '#ccc';
-      if (focused) {
-        color = '#ff9700';
-      }
+      if (focused) color = '#ff9700';
       return (
         <TouchableOpacity
           style={{

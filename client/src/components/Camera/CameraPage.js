@@ -28,6 +28,17 @@ import CameraLibrary from './CameraLibrary';
 import { Header } from '../common/';
 import { setCameraState } from '../../actions';
 
+export const tabStyle = {
+    height: 35,
+    width: (Dimensions.get('window').width / 2),
+    justifyContent: 'center',
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '500',
+    paddingTop: 7,
+    paddingBottom: 0
+};
+
 const styles = {
   pageStyle: {
     flex: 1,
@@ -142,7 +153,8 @@ class CameraPage extends Component {
         <PictureNavigator
           screenProps={{ 
             takePicture: this.takePicture.bind(this),
-            choosePhoto: this.choosePhoto.bind(this)
+            choosePhoto: this.choosePhoto.bind(this),
+            showCamera: (showCamera) => this.setState({ showCamera })
           }} 
         />
     </View>
@@ -161,21 +173,30 @@ const PictureNavigator = TabNavigator({
 {
   tabBarPosition: 'top',
   tabBarComponent: TabBarTop,
+  swipeEnabled: false,
+  animationEnabled: false,
   tabBarOptions: {
-    activeTintColor: '#ff9700',
-    inactiveTintColor: '#ccc',
-    labelStyle: {
-      fontSize: 14,
-      fontWeight: '500',
-      marginVertical: 2
+    showIcon: true,
+    showLabel: false,
+    iconStyle: {
+      width: tabStyle.width,
+      height: tabStyle.height,
+    },
+    tabStyle: {
+      height: tabStyle.height + 5,
     },
     indicatorStyle: {
       height: 3,
       backgroundColor: '#ff9700',
       position: 'absolute',
-      top: 0
+      top: 0,
+      zIndex: 3
     },
-    style: { elevation: 0, backgroundColor: 'white' }
+    style: {
+      elevation: 0,
+      backgroundColor: 'white',
+      height: tabStyle.height + 5
+    }
   }
 });
 

@@ -1,10 +1,31 @@
 import React, { Component } from 'react';
-import { FlatList, CameraRoll, Dimensions, Platform } from 'react-native';
+import { Text, FlatList, CameraRoll, Dimensions, Platform } from 'react-native';
 import { ImageButton } from '../common';
+import { tabStyle } from './CameraPage';
 
 const imageSize = Dimensions.get('window').width / 4;
 
 class CameraLibrary extends Component {
+  static navigationOptions = ({ navigation, screenProps }) => ({
+    tabBarIcon: ({ focused }) => {
+      let color = '#ccc';
+      if (focused) color = '#ff9700';
+      return (
+          <Text
+            onPress={() => {
+              if (!focused) {
+                screenProps.showCamera(false);
+                navigation.navigate('Library');
+              } 
+            }}
+            style={{ color, ...tabStyle }}
+          >
+            LIBRARY
+          </Text>
+      );
+    }
+  });
+
   state = { photos: [] };
 
   componentWillMount() {

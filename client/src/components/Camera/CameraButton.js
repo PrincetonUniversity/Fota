@@ -1,10 +1,31 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { ImageButton } from '../common';
+import { tabStyle } from './CameraPage';
 
 const buttonImage = require('../../img/camera_button.png');
 
 class CameraButton extends Component {
+  static navigationOptions = ({ navigation, screenProps }) => ({
+    tabBarIcon: ({ focused }) => {
+      let color = '#ccc';
+      if (focused) color = '#ff9700';
+      return (
+          <Text
+            onPress={() => {
+              if (!focused) {
+                screenProps.showCamera(true);
+                navigation.navigate('Photo');
+              } 
+            }}
+            style={{ color, ...tabStyle }}
+          >
+            PHOTO
+          </Text>
+      );
+    }
+  });
+
   render() {
     return (
       <View style={styles.containerStyle}>
