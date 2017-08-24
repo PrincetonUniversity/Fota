@@ -423,7 +423,7 @@ class RestaurantDetail extends Component {
               {this.renderInfo()}
             </Animated.View>
 
-            <Animated.View style={{ transform: [{ translateY: tabY }] }}>
+            <Animated.View style={{ transform: [{ translateY: tabY }], height: pageHeight }}>
               <RestaurantNavigator
                 screenProps={{
                   restaurant: this.state.restaurant,

@@ -30,7 +30,7 @@ class CameraLibrary extends Component {
 
   componentWillMount() {
     CameraRoll.getPhotos({
-      first: 20,
+      first: 40,
       assetType: 'Photos',
     }).then(r => {
       if (Platform.OS === 'android') {

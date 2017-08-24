@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import {
-  View, Text, FlatList, Image, TouchableOpacity, Modal
+  View, Text, FlatList, Image, TouchableOpacity, Modal, Dimensions
 } from 'react-native';
 import { PhotoGallery } from '../common';
+import { dealWithAndroidBeingStupid } from '../common/GradientImage';
+
+const photoSize = (Dimensions.get('window').width - 44) / 3;
 
 class RestaurantPhotos extends Component {
   static defaultProps = {
@@ -44,6 +47,7 @@ class RestaurantPhotos extends Component {
             source={{ uri: photo.url }}
             style={photoStyle}
           />
+          {dealWithAndroidBeingStupid(4)}
         </View>
       </TouchableOpacity>
     );
@@ -115,8 +119,8 @@ const styles = {
     shadowOffset: { height: 1 }
   },
   photoStyle: { // Individual photos
-    height: 110,
-    width: 110,
+    height: photoSize,
+    width: photoSize,
   }
 };
 

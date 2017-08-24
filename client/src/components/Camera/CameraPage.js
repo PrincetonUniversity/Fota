@@ -175,6 +175,7 @@ const PictureNavigator = TabNavigator({
   tabBarComponent: TabBarTop,
   swipeEnabled: false,
   animationEnabled: false,
+  backBehavior: 'none',
   tabBarOptions: {
     showIcon: true,
     showLabel: false,

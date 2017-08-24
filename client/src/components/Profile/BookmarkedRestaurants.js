@@ -87,7 +87,8 @@ const styles = {
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.5,
     shadowRadius: 3,
-    borderRadius: PHOTO_BORDER_RADIUS
+    borderRadius: PHOTO_BORDER_RADIUS,
+    flex: 1
   },
   addressStyle: {
     fontFamily: 'Avenir',
