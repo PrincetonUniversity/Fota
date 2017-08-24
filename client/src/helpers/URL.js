@@ -1,4 +1,5 @@
 const URL = 'https://fotabackend-173714.appspot.com/api';
+const GOOGLE_MAPS_API_URL = 'https://maps.googleapis.com/maps/api/directions/json'
 const GOOGLE_MAPS_URL = 'https://www.google.com/maps/dir';
 const PHOTO_REQ = `${URL}/photos`;
 const REST_REQ = `${URL}/restaurants`;
@@ -28,6 +29,10 @@ export function restCommentRequest(id) {
 
 export function searchRequest(lat, lng, term) {
   return `${SEARCH_REQ}?key=${CLIENT_API_KEY}&latitude=${lat}&longitude=${lng}&term=${term}`;
+}
+
+export function directionsRequest(curLat, curLng, dest, mode) {
+  return `${GOOGLE_MAPS_API_URL}?origin=${curLat},${curLng}&destination=${dest}&mode=${mode}&key=${CLIENT_API_KEY}`;
 }
 
 export function directionsURL(curLat, curLng, dest) {
