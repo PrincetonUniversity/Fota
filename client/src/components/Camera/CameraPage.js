@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, Dimensions, AsyncStorage, Alert } from 'react-native';
+import { View, Text, Dimensions, AsyncStorage, Alert, LayoutAnimation } from 'react-native';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Camera, { constants } from 'react-native-camera';
@@ -92,6 +92,10 @@ export function deleteImage(path) {
 class CameraPage extends Component {
   state = { showCamera: true };
 
+  componentWillUpdate() {
+    LayoutAnimation.easeInEaseOut();
+  }
+
   takePicture() {
     this.camera.capture().then(data => {
       this.resizeImage(data.path, true);
@@ -148,11 +152,11 @@ class CameraPage extends Component {
         {this.renderCamera()}
 
         <PictureNavigator
-          screenProps={{ 
+          screenProps={{
             takePicture: this.takePicture.bind(this),
             choosePhoto: this.choosePhoto.bind(this),
             showCamera: (showCamera) => this.setState({ showCamera })
-          }} 
+          }}
         />
     </View>
     );

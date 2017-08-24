@@ -29,7 +29,17 @@ class RestaurantPhotos extends Component {
           </Text>
         </View>
       );
-    }
+    },
+    // tabBar: () => ({
+    //   indicatorStyle: {
+    //     marginLeft: 50
+    //   },
+    //   labelStyle: {
+    //     fontSize: 100,
+    //     fontFamily: 'Avenir',
+    //     fontWeight: '900'
+    //   },
+    // })
   });
 
   // static navigationOptions = ({ screenProps }) => ({

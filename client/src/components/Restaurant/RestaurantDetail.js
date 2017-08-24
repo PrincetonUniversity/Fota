@@ -8,7 +8,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, ScrollView, Animated, Linking } from 'react-native';
+import { View, Text, ScrollView, Animated, Linking, Dimensions } from 'react-native';
 import moment from 'moment';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import FoundationIcon from 'react-native-vector-icons/Foundation';
@@ -36,9 +36,10 @@ class RestaurantDetail extends Component {
       comments: [],
       selectedPhoto: null,
       navLoading: true,
+      distance: '',
       driving: false,
       walking: false,
-      navTime: 0,
+      navTime: '',
       modalVisible: false,
       loading: true,
       ratingHeight: 0,
@@ -82,15 +83,16 @@ class RestaurantDetail extends Component {
         .then(response => {
           const walkDirections = response.data;
           const walkTime = walkDirections.routes[0].legs[0].duration.text;
+          const distance = walkDirections.routes[0].legs[0].distance.text;
           console.log(this.state.navLoading)
           if (!walkTime.includes('hour') && parseInt(walkTime) <= 15) {
-            this.setState({ navLoading: false, driving: false, walking: true, navTime: walkTime });
+            this.setState({ navLoading: false, driving: false, walking: true, navTime: walkTime, distance });
           } else {
             request.get(directionsRequest(lat, lng, formattedAddress, 'driving'))
               .then(response2 => {
                 const driveDirections = response2.data;
                 const driveTime = driveDirections.routes[0].legs[0].duration.text;
-                this.setState({ navLoading: false, driving: true, walking: false, navTime: driveTime });
+                this.setState({ navLoading: false, driving: true, walking: false, navTime: driveTime, distance });
               })
               .catch(e => { console.log(e); request.showErrorAlert(e); });
           }
@@ -195,6 +197,7 @@ class RestaurantDetail extends Component {
                   name='ios-arrow-back'
                   backgroundColor='transparent'
                   underlayColor='transparent'
+                  activeOpacity={0}
                   color='white'
                   size={30}
                   onPress={() => this.props.close()}
@@ -205,7 +208,7 @@ class RestaurantDetail extends Component {
             <Animated.View style={{ flex: 1, justifyContent: 'flex-end', marginRight: 35, transform: [{ translateY: nameTranslateY }] }}>
               <Animated.View style={[titleContainerStyle, { opacity }]}>
                 <Text style={addressStyle}>
-                  {restaurant.location.display_address[0]}
+                  {`${restaurant.location.display_address[0]} | ${this.state.distance}`}
                 </Text>
               </Animated.View>
 
@@ -219,7 +222,7 @@ class RestaurantDetail extends Component {
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
-                  bounces={false}
+                  //bounces={false}
                 >
                   {this.renderFilters()}
                 </ScrollView>
@@ -247,7 +250,7 @@ class RestaurantDetail extends Component {
       //const timeString = `${this.state.navTime} min`
       return (
         <View style={infoObjectStyle}>
-          <MaterialIcon name='directions-walk' size={31} color={'rgba(0,0,0,0.63)'} />
+          <MaterialIcon name='directions-walk' size={30} style={{ height: 30 }} color={'rgba(0,0,0,0.63)'} />
           <Text style={infoIconStyle}>
             {this.state.navTime}
           </Text>
@@ -256,7 +259,7 @@ class RestaurantDetail extends Component {
     } else if (this.state.driving) {
       return (
         <View style={infoObjectStyle}>
-          <MaterialCommunityIcon name='car' size={31} color={'rgba(0,0,0,0.63)'} />
+          <MaterialCommunityIcon name='car' size={30} style={{ height: 30 }} color={'rgba(0,0,0,0.63)'} />
           <Text style={infoIconStyle}>
             {this.state.navTime}
           </Text>
@@ -270,7 +273,7 @@ class RestaurantDetail extends Component {
     if (this.state.restaurant.price.length === 1) {
       return (
         <View style={infoObjectStyle}>
-          <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+          <FoundationIcon name='dollar' size={30} style={{ height: 30 }} color={'rgba(0,0,0,0.63)'} />
           <Text style={infoIconStyle}>
             Cheap
           </Text>
@@ -280,8 +283,8 @@ class RestaurantDetail extends Component {
       return (
         <View style={infoObjectStyle}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={30} style={{ height: 30 }} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={30} style={{ height: 30 }} color={'rgba(0,0,0,0.63)'} />
           </View>
           <Text style={infoIconStyle}>
             Moderate
@@ -292,9 +295,9 @@ class RestaurantDetail extends Component {
       return (
         <View style={infoObjectStyle}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
           </View>
           <Text style={infoIconStyle}>
             Expensive
@@ -305,10 +308,10 @@ class RestaurantDetail extends Component {
       return (
         <View style={infoObjectStyle}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
           </View>
           <Text style={infoIconStyle}>
             Very Expensive
@@ -319,11 +322,11 @@ class RestaurantDetail extends Component {
       return (
         <View style={infoObjectStyle}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
           </View>
           <Text style={infoIconStyle}>
             Take My Wallet
@@ -338,7 +341,7 @@ class RestaurantDetail extends Component {
     return (
       <View style={infoContainerStyle} onLayout={e => this.setInfoHeight(e)}>
         <View style={infoObjectStyle}>
-          <MaterialIcon name='access-time' size={31} color={'rgba(0,0,0,0.63)'} />
+          <MaterialIcon name='access-time' size={31} style={{ height: 30 }} color={'rgba(0,0,0,0.63)'} />
           <Text style={infoIconStyle}>
             {this.timeUntilCloseLabel(this.state.restaurant.hours[0])}
           </Text>
@@ -479,8 +482,8 @@ const RestaurantNavigator = TabNavigator({
 {
   tabBarPosition: 'top',
   tabBarComponent: TabBarTop,
-  swipeEnabled: true,
-  animationEnabled: true,
+  swipeEnabled: false,
+  animationEnabled: false,
   tabBarOptions: {
     activeTintColor: 'rgba(0, 0, 0, 0.77)',
     inactiveTintColor: 'rgba(0, 0, 0, 0.23)',
@@ -491,10 +494,14 @@ const RestaurantNavigator = TabNavigator({
     },
     indicatorStyle: {
       height: 5,
-      backgroundColor: '#ff9700'
+      backgroundColor: '#ff9700',
+      //flex:
+      //width: (Dimensions.get('window').width - 100) / 2
     },
     style: {
       backgroundColor: 'white',
+      //marginHorizontal: 75,
+      //borderWidth: 1
       // shadowOffset: { width: 1, height: 5 },
       // shadowOpacity: 0.07,
       // shadowRadius: 3
@@ -541,7 +548,7 @@ const styles = {
     fontWeight: '900',
     textAlign: 'left',
     letterSpacing: 0.6,
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
   },
   infoIconStyle: { // Time until close
     fontFamily: 'Avenir',

@@ -20,7 +20,10 @@ class RestaurantComments extends Component {
           </Text>
         </View>
       );
-    }
+    },
+    indicatorStyle: () => ({
+      marginRight: 50
+    })
   });
 
   state = { comments: [], loading: true }
