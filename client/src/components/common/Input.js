@@ -11,7 +11,16 @@
 import React from 'react';
 import { View, TextInput } from 'react-native';
 
-const Input = ({ style, children, placeholder, placeholderAlign, secure, value, onChangeText }) => (
+const Input = ({ 
+  style,
+  children,
+  placeholder,
+  onFocus,
+  placeholderAlign,
+  secure,
+  value,
+  onChangeText
+}) => (
   <View style={{ ...style, ...styles.containerStyle }}>
     {children}
     <TextInput
@@ -20,7 +29,7 @@ const Input = ({ style, children, placeholder, placeholderAlign, secure, value, 
       placeholder={placeholder}
       textAlign={placeholderAlign}
       onChangeText={onChangeText}
-      //onFocus={onFocus}
+      onFocus={onFocus}
       autoCorrect={false}
       secureTextEntry={secure}
       underlineColorAndroid={'transparent'}

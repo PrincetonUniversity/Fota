@@ -28,7 +28,7 @@ import AccountPage from './components/Profile/AccountPage';
 //import Navbar from './components/Navbar';
 import CameraNavigator from './components/Camera/CameraNavigator';
 import CameraHelper from './components/Camera/CameraHelper';
-import { setCameraState, logInOrOut } from './actions';
+import { logInOrOut } from './actions';
 
 export const tabWidth = (Dimensions.get('window').width / 3);
 export const tabHeight = 50;
@@ -79,15 +79,6 @@ class Base extends Component {
       if (this.props.loginState) {
         return (
           <View style={{ flex: 1 }}>
-            {/*<Modal
-              animationType={'slide'}
-              visible={this.props.cameraVisible}
-              style={{ flex: 1 }}
-              onRequestClose={() => this.props.setCameraState(false)}
-            >
-              <CameraNavigator />
-            </Modal>*/}
-  
             <FotaNavigator screenProps={{ user: this.props.loginState }} />
           </View>
         );
@@ -146,8 +137,8 @@ const FotaNavigator = StackNavigator({
 
 });
 
-function mapStateToProps({ cameraVisible, loginState }) {
-  return { cameraVisible, loginState };
+function mapStateToProps({ loginState }) {
+  return { loginState };
 }
 
-export default connect(mapStateToProps, { setCameraState, logInOrOut })(Base);
+export default connect(mapStateToProps, { logInOrOut })(Base);

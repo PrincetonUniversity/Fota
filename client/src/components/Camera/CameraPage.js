@@ -17,7 +17,6 @@
 import React, { Component } from 'react';
 import { View, Text, Dimensions, AsyncStorage, Alert } from 'react-native';
 import Ionicon from 'react-native-vector-icons/Ionicons';
-import { connect } from 'react-redux';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Camera, { constants } from 'react-native-camera';
 // eslint-disable-next-line
@@ -26,7 +25,6 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import CameraButton from './CameraButton';
 import CameraLibrary from './CameraLibrary';
 import { Header } from '../common/';
-import { setCameraState } from '../../actions';
 
 export const tabStyle = {
     height: 35,
@@ -71,7 +69,7 @@ const {
   cameraStyle,
 } = styles;
 
-function cameraErrorAlert() {
+export function cameraErrorAlert() {
   Alert.alert(
     'Error',
     'Oops! Something went wrong. Please restart the app and try again.',
@@ -133,7 +131,7 @@ class CameraPage extends Component {
     return (
       <View style={pageStyle}>
         <Header>
-          <Text style={headerTextStyle} onPress={() => this.setState({ showCamera: !this.state.showCamera })}>Add a Photo</Text>
+          <Text style={headerTextStyle}>Add a Photo</Text>
           <View style={{ position: 'absolute', left: 10 }}>
             <Ionicon.Button
               name='md-close'
@@ -141,7 +139,6 @@ class CameraPage extends Component {
               color='black'
               size={20}
               onPress={() => {
-                console.log(this.props);
                 this.props.screenProps.goBack();
               }}
             />
@@ -201,4 +198,4 @@ const PictureNavigator = TabNavigator({
   }
 });
 
-export default connect(null, { setCameraState })(CameraPage);
+export default CameraPage;

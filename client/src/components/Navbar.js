@@ -12,10 +12,8 @@
 // Navigation bar at the bottom
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { ImageButton, Footer } from './common';
 import { footerSize, circleSize } from './common/Footer';
-import { setCameraState, setNavigator } from '../actions';
 
 const styles = {
   imgStyle: {
@@ -86,7 +84,6 @@ class Navbar extends Component {
   }*/
 
   renderCamera() {
-    this.props.setCameraState(true);
   }
 
   render() {
@@ -122,4 +119,4 @@ class Navbar extends Component {
   }
 }
 
-export default connect(null, { setCameraState, setNavigator })(Navbar);
+export default Navbar;

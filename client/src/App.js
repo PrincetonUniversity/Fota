@@ -21,7 +21,7 @@ class App extends Component {
     AsyncStorage.setItem('SearchRadius', '1');
 
     return (
-      <Provider store={createStoreWithMiddleware(reducers, { cameraVisible: false })}>
+      <Provider store={createStoreWithMiddleware(reducers)}>
         <Base />
       </Provider>
     );

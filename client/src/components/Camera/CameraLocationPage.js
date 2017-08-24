@@ -15,12 +15,26 @@ import {
   View, Image, Text, FlatList, AsyncStorage, TouchableWithoutFeedback,
   Keyboard, TouchableOpacity
 } from 'react-native';
+import { connect } from 'react-redux';
+import { NavigationActions } from 'react-navigation';
+import RNFetchBlob from 'react-native-fetch-blob';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { NavigationActions } from 'react-navigation';
+import firebase from 'firebase';
+import uuid from 'uuid/v1';
 import request from '../../helpers/axioshelper';
 import { Header, Button, Input, Spinner } from '../common';
-import { deleteImage } from './CameraPage';
+import { deleteImage, cameraErrorAlert } from './CameraPage';
+
+const Blob = RNFetchBlob.polyfill.Blob;
+const fs = RNFetchBlob.fs;
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+window.Blob = Blob;
+
+// why doesn't javascript have printf() or format()?
+const dayformat = (day) => {
+  return (day < 10 && day >= 0) ? `0${day}` : `${day}`;
+};
 
 class CameraLocationPage extends Component {
   constructor(props) {
@@ -37,12 +51,11 @@ class CameraLocationPage extends Component {
     this.submitting = false;
     this.selectedName = null;
   }
-  
 
   componentWillMount() {
     navigator.geolocation.getCurrentPosition(position => {
-      const lat = 40.34; // position.coords.latitude
-      const lng = -74.656; // position.coords.longitude
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
       request.get(`https://fotafood.herokuapp.com/api/restaurantnear?lat=${lat}&lng=${lng}`)
         .then(response => this.setState({ totalList: response.data, rlist: response.data }))
         .catch(e => request.showErrorAlert(e));
@@ -65,6 +78,7 @@ class CameraLocationPage extends Component {
         }
         return true;
       });
+      rlist = rlist.slice(0, 20);
       this.setState({ query, rlist });
       return;
     }
@@ -88,7 +102,37 @@ class CameraLocationPage extends Component {
       }
       return false;
     });
+    rlist = rlist.slice(0, 20);
     this.setState({ query, rlist });
+  }
+
+  uploadImage(path, mime = 'image/jpg') {
+    const filepath = path.replace(/^(file:)/, '');
+    const d = new Date();
+    const today = `${d.getFullYear()}${dayformat(d.getMonth())}${dayformat(d.getDate())}`;
+    const imageName = `${this.props.loginState.uid}-${uuid()}.jpg`;
+    return new Promise((resolve, reject) => {
+      let uploadBlob = null;
+      const imageRef = firebase.storage().ref().child(`fota_photos/${today}/${imageName}`);
+      fs.readFile(filepath, 'base64')
+        .then((data) => {
+          return Blob.build(data, { type: `${mime};BASE64` });
+        })
+        .then((blob) => {
+          uploadBlob = blob;
+          return imageRef.put(blob, { contentType: mime });
+        })
+        .then(() => {
+          uploadBlob.close();
+          return imageRef.getDownloadURL();
+        })
+        .then((url) => {
+          resolve(url);
+        })
+        .catch((error) => {
+          reject(error);
+      });
+    });
   }
 
   submitPhoto() {
@@ -96,8 +140,13 @@ class CameraLocationPage extends Component {
       return;
     }
     this.submitting = true;
-    this.setState({ submitting: true });
-    console.log('Not finished yet!');
+    this.setState({ hidePhoto: false, submitting: true });
+    this.uploadImage(this.state.uploadPath)
+      .then(() => {
+        console.log('Not finished yet!');
+        this.props.screenProps.goBack();
+      })
+      .catch(() => cameraErrorAlert());
   }
 
   renderSelectedRestaurant() {
@@ -111,6 +160,7 @@ class CameraLocationPage extends Component {
       <TouchableOpacity
         onPress={() => {
           Keyboard.dismiss();
+          if (this.submitting) return;
           if (chosen) {
             this.setState({ selected: null });
             this.selectedName = null;
@@ -128,7 +178,7 @@ class CameraLocationPage extends Component {
             {restaurant.name}
           </Text>
           <Text style={restaurantSubtextStyle}>
-            {restaurant.distance.toPrecision(2)} mi.
+            {restaurant.distance.toPrecision(1)} mi.
           </Text>
         </View>
       </TouchableOpacity>
@@ -203,6 +253,7 @@ class CameraLocationPage extends Component {
                   color='black'
                   size={20}
                   onPress={() => {
+                    if (this.submitting) return;
                     deleteImage(this.state.uploadPath);
                     AsyncStorage.setItem('UploadPath', '');
                     this.props.navigation.dispatch(NavigationActions.back());
@@ -229,7 +280,10 @@ class CameraLocationPage extends Component {
                     placeholder="Where'd you take this sick flick?"
                     value={this.state.query}
                     onChangeText={query => this.updateQuery(query)}
-                    onFocus={() => this.setState({ hidePhoto: true })}
+                    onFocus={() => {
+                      if (this.submitting) return;
+                      this.setState({ hidePhoto: true });
+                    }}
                   >
                     <Image
                       style={labelStyle}
@@ -374,4 +428,8 @@ const {
   restaurantSubtextStyle
 } = styles;
 
-export default CameraLocationPage;
+function mapStateToProps({ loginState }) {
+  return { loginState };
+}
+
+export default connect(mapStateToProps)(CameraLocationPage);

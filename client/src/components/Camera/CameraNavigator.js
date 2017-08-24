@@ -16,7 +16,6 @@ import { StackNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
 import CameraPage from './CameraPage';
 import CameraLocationPage from './CameraLocationPage';
-import { setCameraState } from '../../actions';
 
 class CameraNavigator extends Component {
   render() {
@@ -54,4 +53,4 @@ function mapStateToProps({ loginState }) {
   return { loginState };
 }
 
-export default connect(mapStateToProps, { setCameraState })(CameraNavigator);
+export default connect(mapStateToProps)(CameraNavigator);
