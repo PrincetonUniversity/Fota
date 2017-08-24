@@ -57,7 +57,10 @@ class CameraLocationPage extends Component {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
       request.get(`https://fotafood.herokuapp.com/api/restaurantnear?lat=${lat}&lng=${lng}`)
-        .then(response => this.setState({ totalList: response.data, rlist: response.data }))
+        .then(response => {
+          this.setState({ totalList: response.data });
+          this.updateQuery('');
+        })
         .catch(e => request.showErrorAlert(e));
     });
   }
@@ -72,12 +75,6 @@ class CameraLocationPage extends Component {
     let rlist = this.state.totalList;
     const qarr = query.toLowerCase().split(' ');
     if (qarr.length === 0 || qarr[0] === '') {
-      rlist = rlist.filter(restaurant => {
-        if (restaurant.name === this.selectedName) {
-          return false;
-        }
-        return true;
-      });
       rlist = rlist.slice(0, 20);
       this.setState({ query, rlist });
       return;
@@ -93,9 +90,6 @@ class CameraLocationPage extends Component {
       });
     }
     rlist = rlist.filter(restaurant => {
-      if (restaurant.name === this.selectedName) {
-        return false;
-      }
       const arr = restaurant.name.toLowerCase().split(' ');
       for (const word of arr) {
         if (word.startsWith(current)) return true;
@@ -147,12 +141,6 @@ class CameraLocationPage extends Component {
         this.props.screenProps.goBack();
       })
       .catch(() => cameraErrorAlert());
-  }
-
-  renderSelectedRestaurant() {
-    if (this.state.selected) {
-      return this.renderRestaurant(this.state.selected, true);
-    }
   }
 
   renderRestaurant(restaurant, chosen) {
@@ -292,12 +280,13 @@ class CameraLocationPage extends Component {
                   </Input>
                 </View>
 
-                {this.renderSelectedRestaurant()}
-
                 <FlatList
                   data={this.state.rlist}
                   keyExtractor={restaurant => restaurant.id}
-                  renderItem={restaurant => this.renderRestaurant(restaurant.item, false)}
+                  renderItem={restaurant => this.renderRestaurant(
+                    restaurant.item, 
+                    restaurant.item.name === this.selectedName
+                  )}
                   keyboardShouldPersistTaps={'handled'}
                   bounces={false}
                   removeClippedSubviews={false}
