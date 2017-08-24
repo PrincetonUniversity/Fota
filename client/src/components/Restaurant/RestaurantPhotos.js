@@ -13,8 +13,28 @@ class RestaurantPhotos extends Component {
   }
 
   static navigationOptions = ({ screenProps }) => ({
-    tabBarLabel: `${screenProps.photos.length} PHOTOS`
+    tabBarLabel: ({ focused, tintColor }) => {
+      const numColor = focused ? '#ff9700' : 'rgba(0, 0, 0, 0.23)';
+      let labelText = ' PHOTOS';
+      if (screenProps.photos.length === 1) {
+        labelText = ' PHOTO';
+      }
+      return (
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={[tabLabelStyle, { color: numColor }]}>
+            {screenProps.photos.length}
+          </Text>
+          <Text style={[tabLabelStyle, { color: tintColor }]}>
+            {labelText}
+          </Text>
+        </View>
+      );
+    }
   });
+
+  // static navigationOptions = ({ screenProps }) => ({
+  //   tabBarLabel: `${screenProps.photos.length} PHOTOS`
+  // });
 
   state = { photos: [], loading: true, selectedPhoto: null, modalVisible: false }
 
@@ -64,9 +84,9 @@ class RestaurantPhotos extends Component {
       );
     }
     const photoLinks = this.state.photos.map(photo => photo.url);
-    let listHeight = 500;
+    let listHeight = 490;
     if (this.state.photos.length < 7) {
-      listHeight = 285;
+      listHeight = 275;
     }
     return (
       <View style={{ flex: 1, paddingTop: 5, paddingHorizontal: 7 }}>
@@ -85,7 +105,7 @@ class RestaurantPhotos extends Component {
           </View>
         </Modal>
 
-        <View style={{ height: listHeight }}>
+        <View style={{ flex: 1 }}>
           <FlatList
             data={this.state.photos}
             keyExtractor={(photo, index) => index}
@@ -102,6 +122,12 @@ class RestaurantPhotos extends Component {
 }
 
 const styles = {
+  tabLabelStyle: {
+    fontSize: 14,
+    fontFamily: 'Avenir',
+    fontWeight: '900',
+    paddingVertical: 5
+  },
   emptyTextStyle: {
     fontSize: 16,
     textAlign: 'center',
@@ -125,6 +151,7 @@ const styles = {
 };
 
 const {
+  tabLabelStyle,
   emptyTextStyle,
   photoFrameStyle,
   photoStyle

@@ -14,13 +14,13 @@ import { TabNavigator, TabBarTop } from 'react-navigation';
 import FoundationIcon from 'react-native-vector-icons/Foundation';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { phonecall } from 'react-native-communications';
-import getDirections from 'react-native-google-maps-directions';
 import Spinner from 'react-native-loading-spinner-overlay';
 import LinearGradient from 'react-native-linear-gradient';
 import { FilterDisplay, Banner } from '../common';
-import { request } from '../../helpers/axioshelper';
-import { directionsURL } from '../../helpers/URL';
+import request from '../../helpers/axioshelper';
+import { directionsRequest, directionsURL } from '../../helpers/URL';
 import RestaurantPhotos from './RestaurantPhotos';
 import RestaurantComments from './RestaurantComments';
 
@@ -35,6 +35,10 @@ class RestaurantDetail extends Component {
       photos: [],
       comments: [],
       selectedPhoto: null,
+      navLoading: true,
+      driving: false,
+      walking: false,
+      navTime: 0,
       modalVisible: false,
       loading: true,
       ratingHeight: 0,
@@ -51,33 +55,9 @@ class RestaurantDetail extends Component {
         comments: nextProps.comments,
         loading: nextProps.loading
       });
+      this.getNavigation(nextProps.restaurant);
     }
   }
-
-  // handleGetDirections() {
-  //   navigator.geolocation.getCurrentPosition(position => {
-  //     const lat = position.coords.latitude; // position.coords.latitude
-  //     const lng = position.coords.longitude; // position.coords.longitude
-  //     const data = {
-  //       source: {
-  //         latitude: lat,
-  //         longitude: lng
-  //       },
-  //       destination: {
-  //         latitude: this.props.restaurant.lat,
-  //         longitude: this.props.restaurant.lng
-  //       },
-  //       params: [
-  //         {
-  //           key: 'dirflg',
-  //           value: 'w'
-  //         }
-  //       ]
-  //     };
-  //
-  //     getDirections(data);
-  //   });
-  // }
 
   setRatingHeight(event) {
     this.setState({
@@ -88,6 +68,34 @@ class RestaurantDetail extends Component {
   setInfoHeight(event) {
     this.setState({
       infoHeight: event.nativeEvent.layout.height
+    });
+  }
+
+  getNavigation(restaurant) {
+    navigator.geolocation.getCurrentPosition(position => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const formattedAddress = restaurant.location.display_address.map(address =>
+        address.replace(/\s/g, '+')
+      );
+      request.get(directionsRequest(lat, lng, formattedAddress, 'walking'))
+        .then(response => {
+          const walkDirections = response.data;
+          const walkTime = walkDirections.routes[0].legs[0].duration.text;
+          console.log(this.state.navLoading)
+          if (!walkTime.includes('hour') && parseInt(walkTime) <= 15) {
+            this.setState({ navLoading: false, driving: false, walking: true, navTime: walkTime });
+          } else {
+            request.get(directionsRequest(lat, lng, formattedAddress, 'driving'))
+              .then(response2 => {
+                const driveDirections = response2.data;
+                const driveTime = driveDirections.routes[0].legs[0].duration.text;
+                this.setState({ navLoading: false, driving: true, walking: false, navTime: driveTime });
+              })
+              .catch(e => { console.log(e); request.showErrorAlert(e); });
+          }
+        })
+        .catch(e => { console.log(e); request.showErrorAlert(e); });
     });
   }
 
@@ -169,7 +177,7 @@ class RestaurantDetail extends Component {
       extrapolate: 'clamp',
     });
     return (
-      <Animated.View style={{ zIndex: 2, height: 150, transform: [{ translateY: pageY }] }}>
+      <Animated.View style={{ zIndex: 2, height: 175, transform: [{ translateY: pageY }] }}>
         <Banner
           photo={this.state.photos === undefined ? undefined : this.state.photos[0].url}
           containerStyle={{ flex: 1 }} // height: 150
@@ -181,48 +189,49 @@ class RestaurantDetail extends Component {
             colors={['transparent', 'rgba(0, 0, 0, 0.36)']}
             style={{ flex: 1 }}
           >
-          <Animated.View style={[headerStyle, { transform: [{ translateY: backTranslateY }] }]}>
-            <View style={{ marginTop: 10 }}>
-              <Ionicon.Button
-                name='ios-arrow-back'
-                backgroundColor='transparent'
-                underlayColor='transparent'
-                color='white'
-                size={30}
-                onPress={() => this.props.close()}
-              />
-            </View>
-          </Animated.View>
-
-          <Animated.View style={{ flex: 1, justifyContent: 'flex-end', transform: [{ translateY: nameTranslateY }] }}>
-            <Animated.View style={[titleContainerStyle, { opacity }]}>
-              <Text style={addressStyle}>
-                {restaurant.location.display_address[0]}
-              </Text>
+            <Animated.View style={[headerStyle, { transform: [{ translateY: backTranslateY }] }]}>
+              <View style={{ marginTop: 10 }}>
+                <Ionicon.Button
+                  name='ios-arrow-back'
+                  backgroundColor='transparent'
+                  underlayColor='transparent'
+                  color='white'
+                  size={30}
+                  onPress={() => this.props.close()}
+                />
+              </View>
             </Animated.View>
 
-            <View style={titleContainerStyle}>
-              <Text style={titleStyle}>
-                {restaurant.name}
-              </Text>
-            </View>
+            <Animated.View style={{ flex: 1, justifyContent: 'flex-end', marginRight: 35, transform: [{ translateY: nameTranslateY }] }}>
+              <Animated.View style={[titleContainerStyle, { opacity }]}>
+                <Text style={addressStyle}>
+                  {restaurant.location.display_address[0]}
+                </Text>
+              </Animated.View>
 
-            <Animated.View style={[filterContainerStyle, { opacity }]}>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                bounces={false}
-              >
-                {this.renderFilters()}
-              </ScrollView>
+              <View style={titleContainerStyle}>
+                <Text style={titleStyle}>
+                  {restaurant.name}
+                </Text>
+              </View>
+
+              <Animated.View style={[filterContainerStyle, { opacity }]}>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  bounces={false}
+                >
+                  {this.renderFilters()}
+                </ScrollView>
+              </Animated.View>
             </Animated.View>
-          </Animated.View>
           </LinearGradient>
         </Banner>
       </Animated.View>
     );
   }
 
+  // Restaurant rating
   renderRating() {
     return (
       <View style={ratingContainerStyle} onLayout={e => this.setRatingHeight(e)}>
@@ -232,13 +241,37 @@ class RestaurantDetail extends Component {
     );
   }
 
+  // Navigation section of the horizontal info bar
+  renderNav() {
+    if (this.state.walking) {
+      //const timeString = `${this.state.navTime} min`
+      return (
+        <View style={infoObjectStyle}>
+          <MaterialIcon name='directions-walk' size={31} color={'rgba(0,0,0,0.63)'} />
+          <Text style={infoIconStyle}>
+            {this.state.navTime}
+          </Text>
+        </View>
+      );
+    } else if (this.state.driving) {
+      return (
+        <View style={infoObjectStyle}>
+          <MaterialCommunityIcon name='car' size={31} color={'rgba(0,0,0,0.63)'} />
+          <Text style={infoIconStyle}>
+            {this.state.navTime}
+          </Text>
+        </View>
+      );
+    }
+  }
+
   // Price section of the horizontal info bar
   renderPrice() {
     if (this.state.restaurant.price.length === 1) {
       return (
         <View style={infoObjectStyle}>
-          <FoundationIcon name='dollar' size={30} />
-          <Text style={timeUntilCloseStyle}>
+          <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+          <Text style={infoIconStyle}>
             Cheap
           </Text>
         </View>
@@ -247,10 +280,10 @@ class RestaurantDetail extends Component {
       return (
         <View style={infoObjectStyle}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FoundationIcon name='dollar' size={30} />
-            <FoundationIcon name='dollar' size={30} />
+            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
           </View>
-          <Text style={timeUntilCloseStyle}>
+          <Text style={infoIconStyle}>
             Moderate
           </Text>
         </View>
@@ -259,11 +292,11 @@ class RestaurantDetail extends Component {
       return (
         <View style={infoObjectStyle}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FoundationIcon name='dollar' size={30} />
-            <FoundationIcon name='dollar' size={30} />
-            <FoundationIcon name='dollar' size={30} />
+            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
           </View>
-          <Text style={timeUntilCloseStyle}>
+          <Text style={infoIconStyle}>
             Expensive
           </Text>
         </View>
@@ -272,12 +305,12 @@ class RestaurantDetail extends Component {
       return (
         <View style={infoObjectStyle}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FoundationIcon name='dollar' size={30} />
-            <FoundationIcon name='dollar' size={30} />
-            <FoundationIcon name='dollar' size={30} />
-            <FoundationIcon name='dollar' size={30} />
+            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
           </View>
-          <Text style={timeUntilCloseStyle}>
+          <Text style={infoIconStyle}>
             Very Expensive
           </Text>
         </View>
@@ -286,13 +319,13 @@ class RestaurantDetail extends Component {
       return (
         <View style={infoObjectStyle}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FoundationIcon name='dollar' size={30} />
-            <FoundationIcon name='dollar' size={30} />
-            <FoundationIcon name='dollar' size={30} />
-            <FoundationIcon name='dollar' size={30} />
-            <FoundationIcon name='dollar' size={30} />
+            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon name='dollar' size={28} color={'rgba(0,0,0,0.63)'} />
           </View>
-          <Text style={timeUntilCloseStyle}>
+          <Text style={infoIconStyle}>
             Take My Wallet
           </Text>
         </View>
@@ -305,18 +338,13 @@ class RestaurantDetail extends Component {
     return (
       <View style={infoContainerStyle} onLayout={e => this.setInfoHeight(e)}>
         <View style={infoObjectStyle}>
-          <MaterialIcon name='access-time' size={30} />
-          <Text style={timeUntilCloseStyle}>
+          <MaterialIcon name='access-time' size={31} color={'rgba(0,0,0,0.63)'} />
+          <Text style={infoIconStyle}>
             {this.timeUntilCloseLabel(this.state.restaurant.hours[0])}
           </Text>
         </View>
 
-        <View style={infoObjectStyle}>
-          <MaterialIcon name='directions-walk' size={30} />
-          <Text style={timeUntilCloseStyle}>
-            5 min walk
-          </Text>
-        </View>
+        {this.renderNav()}
 
         {this.renderPrice()}
       </View>
@@ -335,7 +363,7 @@ class RestaurantDetail extends Component {
           backgroundColor='white'
           onPress={() => phonecall(restaurant.phone.substring(1), false)}
         >
-          <Text style={{ color: 'gray' }}>CALL</Text>
+          <Text style={footerTextStyle}>CALL</Text>
         </FoundationIcon.Button>
         <View style={{ flexDirection: 'column', ...bottomSpacerStyle }}>
           <View style={bottomSpacerStyle} />
@@ -350,11 +378,10 @@ class RestaurantDetail extends Component {
           color='gray'
           backgroundColor='white'
           onPress={() => {
-            console.log(this.state.restaurant);
             navigator.geolocation.getCurrentPosition(position => {
               const lat = position.coords.latitude;
               const lng = position.coords.longitude;
-              let formattedAddress = this.state.restaurant.location.display_address.map(address =>
+              const formattedAddress = this.state.restaurant.location.display_address.map(address =>
                 address.replace(/\s/g, '+')
               );
               //formattedAddress = formattedAddress.reduce((total, line) => `${total}+${line}`);
@@ -364,7 +391,7 @@ class RestaurantDetail extends Component {
             });
           }}
         >
-          <Text style={{ color: 'gray' }}>DIRECTIONS</Text>
+          <Text style={footerTextStyle}>DIRECTIONS</Text>
         </MaterialIcon.Button>
         <View style={bottomSpacerStyle} />
       </Animated.View>
@@ -372,14 +399,14 @@ class RestaurantDetail extends Component {
   }
 
   render() {
-    if (this.state.loading) {
+    if (this.state.loading || this.state.navLoading) {
       return (
-        <View>
-          <Spinner visible color='#ff9700' />
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+          <Spinner visible overlayColor='transparent' color='#ff9700' />
         </View>
       );
     }
-    const height = 480;
+    const height = 440;
     const headerScrollDistance = this.state.ratingHeight + this.state.infoHeight;
     const pageY = this.state.scrollY.interpolate({
       inputRange: [0, headerScrollDistance],
@@ -423,7 +450,7 @@ class RestaurantDetail extends Component {
               {this.renderInfo()}
             </Animated.View>
 
-            <Animated.View style={{ transform: [{ translateY: tabY }], height: pageHeight }}>
+            <Animated.View style={{ height: pageHeight, transform: [{ translateY: tabY }] }}>
               <RestaurantNavigator
                 screenProps={{
                   restaurant: this.state.restaurant,
@@ -452,6 +479,8 @@ const RestaurantNavigator = TabNavigator({
 {
   tabBarPosition: 'top',
   tabBarComponent: TabBarTop,
+  swipeEnabled: true,
+  animationEnabled: true,
   tabBarOptions: {
     activeTintColor: 'rgba(0, 0, 0, 0.77)',
     inactiveTintColor: 'rgba(0, 0, 0, 0.23)',
@@ -494,7 +523,8 @@ const styles = {
     paddingLeft: 35,
     alignItems: 'flex-start',
     marginLeft: 5,
-    marginRight: 5
+    marginRight: 5,
+    //marginBottom: 10
   },
   addressStyle: {
     color: 'white',
@@ -506,16 +536,20 @@ const styles = {
   },
   titleStyle: { // Restaurant name
     color: 'white',
-    fontFamily: 'Avenir',
+    fontFamily: 'Avenir-Black',
     fontSize: 23,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: '900',
+    textAlign: 'left',
+    letterSpacing: 0.6,
     backgroundColor: 'transparent'
   },
-  timeUntilCloseStyle: { // Time until close
+  infoIconStyle: { // Time until close
     fontFamily: 'Avenir',
-    fontSize: 10,
-    textAlign: 'justify'
+    fontSize: 12,
+    marginTop: 5,
+    color: 'rgba(0, 0, 0, 0.63)',
+    fontWeight: '500',
+    textAlign: 'center'
   },
   phoneButtonStyle: {
     width: 60,
@@ -523,7 +557,7 @@ const styles = {
   },
   filterContainerStyle: {
     alignItems: 'flex-start',
-    marginBottom: 5,
+    marginBottom: 15,
     paddingLeft: 30,
     marginLeft: 5,
     marginRight: 5,
@@ -531,32 +565,47 @@ const styles = {
   ratingContainerStyle: {
     justifyContent: 'space-around',
     alignItems: 'center',
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
+    paddingVertical: 16,
+    //borderTopWidth: 1,
+    //borderBottomWidth: 1,
+    //marginHorizontal: 30,
     borderColor: 'rgba(0, 0, 0, 0.2)'
   },
   infoContainerStyle: {
     flexDirection: 'row',
-    paddingHorizontal: 10,
+  //  paddingHorizontal: 10,
     paddingVertical: 10,
     //justifyContent: 'space-around',
-    //borderTopWidth: 1,
+  //  borderWidth: 1,
+    marginHorizontal: 30,
+    borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.2)'
   },
   infoObjectStyle: {
     flexDirection: 'column',
     alignItems: 'center',
+//    borderWidth: 1,
     flex: 1
   },
   footerStyle: {
+    // position: 'absolute',
+    // bottom: 0,
+    // left: 0,
+    // right: 0,
     flexDirection: 'row',
+    paddingVertical: 10,
     borderColor: 'gray',
     elevation: 2,
     shadowOffset: { width: -1, height: -5 },
     shadowOpacity: 0.05,
     shadowRadius: 3
+  },
+  footerTextStyle: {
+    fontFamily: 'Avenir',
+    fontWeight: '900',
+    fontSize: 13,
+    color: 'gray'
   },
   bottomSpacerStyle: {
     flex: 1,
@@ -567,7 +616,7 @@ const styles = {
     borderColor: 'gray',
     flex: 2,
     backgroundColor: 'white'
-  }
+  },
 };
 
 const {
@@ -576,12 +625,13 @@ const {
   titleContainerStyle,
   addressStyle,
   titleStyle,
-  timeUntilCloseStyle,
+  infoIconStyle,
   filterContainerStyle,
   ratingContainerStyle,
   infoContainerStyle,
   infoObjectStyle,
   footerStyle,
+  footerTextStyle,
   bottomSpacerStyle,
   bottomLineStyle
 } = styles;

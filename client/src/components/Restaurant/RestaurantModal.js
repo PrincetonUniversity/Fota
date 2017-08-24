@@ -11,9 +11,10 @@
 
 import React, { Component } from 'react';
 import {
-  Text, View, Modal,
+  Text, View,
   TouchableOpacity, TouchableWithoutFeedback
 } from 'react-native';
+import Modal from 'react-native-modal';
 import request from '../../helpers/axioshelper';
 import { restRequest, restCommentRequest } from '../../helpers/URL';
 import { CardSection } from '../common';
@@ -58,6 +59,7 @@ class RestaurantModal extends Component {
   }
 
   closeModal() {
+    console.log('closing modal...');
     this.setState({ modalVisible: false });
   }
 
@@ -108,10 +110,12 @@ class RestaurantModal extends Component {
     return (
       <View>
         <Modal
-          animationType={'slide'}
+          animationIn='slideInRight'
+          animationOut='slideOutRight'
           transparent
-          visible={this.state.modalVisible}
-          onRequestClose={() => { this.setModalVisible(false); }}
+          style={{ margin: 0, padding: 0 }}
+          isVisible={this.state.modalVisible}
+          onBackButtonPress={() => { this.setModalVisible(false); }}
         >
           {this.renderPopup()}
         </Modal>
@@ -130,7 +134,7 @@ class RestaurantModal extends Component {
 const styles = {
   modalStyle: { // For the faded out part
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'center'
     //backgroundColor: 'rgba(0,0,0,0.5)'
   },
   popupStyle: {

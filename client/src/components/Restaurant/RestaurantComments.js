@@ -4,7 +4,23 @@ import CommentDetail from './CommentDetail';
 
 class RestaurantComments extends Component {
   static navigationOptions = ({ screenProps }) => ({
-    tabBarLabel: `${screenProps.comments.length} COMMENTS`
+    tabBarLabel: ({ focused, tintColor }) => {
+      const numColor = focused ? '#ff9700' : 'rgba(0, 0, 0, 0.23)';
+      let labelText = ' COMMENTS';
+      if (screenProps.comments.length === 1) {
+        labelText = ' COMMENT';
+      }
+      return (
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={[styles.tabLabelStyle, { color: numColor }]}>
+            {screenProps.comments.length}
+          </Text>
+          <Text style={[styles.tabLabelStyle, { color: tintColor }]}>
+            {labelText}
+          </Text>
+        </View>
+      );
+    }
   });
 
   state = { comments: [], loading: true }
@@ -23,13 +39,13 @@ class RestaurantComments extends Component {
         </View>
       );
     }
-    let listHeight = 500;
+    let listHeight = 490;
     if (this.state.comments.length < 3) {
-      listHeight = 285;
+      listHeight = 275;
     }
     return (
       <FlatList
-        style={{ height: listHeight, paddingTop: 5 }}
+        style={{ flex: 1, paddingTop: 5 }}
         data={this.state.comments}
         keyExtractor={comment => comment.id}
         renderItem={comment => <CommentDetail comment={comment.item} />}
@@ -43,6 +59,12 @@ class RestaurantComments extends Component {
 }
 
 const styles = {
+  tabLabelStyle: {
+    fontSize: 14,
+    fontFamily: 'Avenir',
+    fontWeight: '900',
+    paddingVertical: 5
+  },
   emptyTextStyle: {
     fontSize: 16,
     textAlign: 'center',

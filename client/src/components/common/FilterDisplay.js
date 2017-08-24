@@ -31,7 +31,8 @@ const styles = {
     },
     textStyle: {
       fontFamily: 'Avenir',
-      fontSize: 12,
+      fontSize: 14,
+      fontWeight: '500',
       marginLeft: 3,
       marginRight: 3,
       textAlign: 'justify'
