@@ -13,7 +13,7 @@
 import React, { Component } from 'react';
 import {
   View, Image, Text, FlatList, AsyncStorage, TouchableWithoutFeedback,
-  Keyboard, TouchableOpacity
+  Keyboard, TouchableOpacity, Alert
 } from 'react-native';
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
@@ -25,6 +25,7 @@ import uuid from 'uuid/v1';
 import request from '../../helpers/axioshelper';
 import { Header, Button, Input, Spinner } from '../common';
 import { deleteImage, cameraErrorAlert } from './CameraPage';
+import { nearbyRestRequest, uploadPhotoRequest } from '../../helpers/URL';
 
 const Blob = RNFetchBlob.polyfill.Blob;
 const fs = RNFetchBlob.fs;
@@ -32,9 +33,9 @@ window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
 window.Blob = Blob;
 
 // why doesn't javascript have printf() or format()?
-const dayformat = (day) => {
-  return (day < 10 && day >= 0) ? `0${day}` : `${day}`;
-};
+const dayformat = (day) => (
+  (day < 10 && day >= 0) ? `0${day}` : `${day}`
+);
 
 class CameraLocationPage extends Component {
   constructor(props) {
@@ -50,14 +51,18 @@ class CameraLocationPage extends Component {
     };
     this.submitting = false;
     this.selectedName = null;
+    this.firebaseRef = null;
   }
 
   componentWillMount() {
     navigator.geolocation.getCurrentPosition(position => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
-      request.get(`https://fotafood.herokuapp.com/api/restaurantnear?lat=${lat}&lng=${lng}`)
-        .then(response => this.setState({ totalList: response.data, rlist: response.data }))
+      request.get(nearbyRestRequest(lat, lng))
+        .then(response => {
+          this.setState({ totalList: response.data });
+          this.updateQuery('');
+        })
         .catch(e => request.showErrorAlert(e));
     });
   }
@@ -72,12 +77,6 @@ class CameraLocationPage extends Component {
     let rlist = this.state.totalList;
     const qarr = query.toLowerCase().split(' ');
     if (qarr.length === 0 || qarr[0] === '') {
-      rlist = rlist.filter(restaurant => {
-        if (restaurant.name === this.selectedName) {
-          return false;
-        }
-        return true;
-      });
       rlist = rlist.slice(0, 20);
       this.setState({ query, rlist });
       return;
@@ -93,9 +92,6 @@ class CameraLocationPage extends Component {
       });
     }
     rlist = rlist.filter(restaurant => {
-      if (restaurant.name === this.selectedName) {
-        return false;
-      }
       const arr = restaurant.name.toLowerCase().split(' ');
       for (const word of arr) {
         if (word.startsWith(current)) return true;
@@ -106,18 +102,19 @@ class CameraLocationPage extends Component {
     this.setState({ query, rlist });
   }
 
-  uploadImage(path, mime = 'image/jpg') {
+  uploadPhotoToFirebase(path, mime = 'image/jpg') {
     const filepath = path.replace(/^(file:)/, '');
     const d = new Date();
     const today = `${d.getFullYear()}${dayformat(d.getMonth())}${dayformat(d.getDate())}`;
     const imageName = `${this.props.loginState.uid}-${uuid()}.jpg`;
+    this.firebaseRef = `fota_photos/${today}/${imageName}`;
     return new Promise((resolve, reject) => {
       let uploadBlob = null;
       const imageRef = firebase.storage().ref().child(`fota_photos/${today}/${imageName}`);
       fs.readFile(filepath, 'base64')
-        .then((data) => {
-          return Blob.build(data, { type: `${mime};BASE64` });
-        })
+        .then((data) => (
+           Blob.build(data, { type: `${mime};BASE64` })
+        ))
         .then((blob) => {
           uploadBlob = blob;
           return imageRef.put(blob, { contentType: mime });
@@ -135,24 +132,41 @@ class CameraLocationPage extends Component {
     });
   }
 
+  deletePhotoFromFirebase() {
+    if (!this.firebaseRef) return;
+    const deleteRef = firebase.storage().ref().child(this.firebaseRef);
+    deleteRef.delete();
+  }
+
   submitPhoto() {
     if (this.submitting) {
       return;
     }
     this.submitting = true;
     this.setState({ hidePhoto: false, submitting: true });
-    this.uploadImage(this.state.uploadPath)
-      .then(() => {
-        console.log('Not finished yet!');
-        this.props.screenProps.goBack();
-      })
-      .catch(() => cameraErrorAlert());
-  }
-
-  renderSelectedRestaurant() {
-    if (this.state.selected) {
-      return this.renderRestaurant(this.state.selected, true);
-    }
+    this.uploadPhotoToFirebase(this.state.uploadPath)
+    .then(url => {
+      request.post(uploadPhotoRequest(), { url, restaurantId: this.state.selected.id })
+      .then(() => this.props.screenProps.goBack())
+      .catch(error => {
+        if (error.etype === 1 && error.response.status === 400) {
+          Alert.alert(
+            'Invalid Photo',
+            'You may have uploaded an invalid photo. Please make sure you submit a picture of food.',
+            [{
+              text: 'OK', 
+              onPress: () => {
+                this.deletePhotoFromFirebase();
+                this.props.navigation.goBack(); 
+              } 
+            }]
+          );
+        } else {
+          request.showErrorAlert(error);              
+        }
+      });
+    })
+    .catch(() => cameraErrorAlert());
   }
 
   renderRestaurant(restaurant, chosen) {
@@ -292,12 +306,13 @@ class CameraLocationPage extends Component {
                   </Input>
                 </View>
 
-                {this.renderSelectedRestaurant()}
-
                 <FlatList
                   data={this.state.rlist}
                   keyExtractor={restaurant => restaurant.id}
-                  renderItem={restaurant => this.renderRestaurant(restaurant.item, false)}
+                  renderItem={restaurant => this.renderRestaurant(
+                    restaurant.item, 
+                    restaurant.item.name === this.selectedName
+                  )}
                   keyboardShouldPersistTaps={'handled'}
                   bounces={false}
                   removeClippedSubviews={false}
