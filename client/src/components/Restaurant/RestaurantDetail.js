@@ -603,20 +603,6 @@ const styles = {
     letterSpacing: 0.6,
     backgroundColor: 'transparent',
   },
-<<<<<<< HEAD
-  infoIconStyle: { // Time until close
-    fontSize: 12,
-    marginTop: 5,
-    color: 'rgba(0, 0, 0, 0.63)',
-    fontWeight: '500',
-    textAlign: 'center'
-  },
-  phoneButtonStyle: {
-    width: 60,
-    height: 60
-  },
-=======
->>>>>>> 4c70c6668fb5c61990c61352cfa4ed0a65ee740f
   filterContainerStyle: {
     alignItems: 'flex-start',
     marginBottom: 15,
