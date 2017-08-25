@@ -15,7 +15,10 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, Dimensions, AsyncStorage, Alert, LayoutAnimation } from 'react-native';
+import { 
+  View, Text, Dimensions, AsyncStorage, 
+  Alert, UIManager, LayoutAnimation 
+} from 'react-native';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Camera, { constants } from 'react-native-camera';
@@ -91,6 +94,12 @@ export function deleteImage(path) {
 
 class CameraPage extends Component {
   state = { showCamera: true };
+
+  componentWillMount() {
+    if (UIManager.setLayoutAnimationEnabledExperimental) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }
 
   componentWillUpdate() {
     LayoutAnimation.easeInEaseOut();

@@ -1,5 +1,5 @@
 const URL = 'https://fotabackend-173714.appspot.com/api';
-const GOOGLE_MAPS_API_URL = 'https://maps.googleapis.com/maps/api/directions/json'
+const GOOGLE_MAPS_API_URL = 'https://maps.googleapis.com/maps/api/directions/json';
 const GOOGLE_MAPS_URL = 'https://www.google.com/maps/dir';
 const PHOTO_REQ = `${URL}/photos`;
 const REST_REQ = `${URL}/restaurants`;
@@ -37,4 +37,12 @@ export function directionsRequest(curLat, curLng, dest, mode) {
 
 export function directionsURL(curLat, curLng, dest) {
   return `${GOOGLE_MAPS_URL}/'${curLat},${curLng}'/${dest}/`;
+}
+
+export function nearbyRestRequest(lat, lng) {
+  return `${REST_REQ}?key=${CLIENT_API_KEY}&latitude=${lat}&longitude=${lng}`;
+}
+
+export function uploadPhotoRequest() {
+  return `${PHOTO_REQ}?key=${CLIENT_API_KEY}`;
 }

@@ -44,8 +44,6 @@ function request(method, url, data, resolve, reject) {
           headers: { Authorization: `Bearer ${idToken}` } })
           .then(response => { /*console.log(response);*/ resolve(response); })
           .catch(e => {
-            console.log(e);
-            console.log({ method, url, data, headers: { Authorization: `Bearer ${idToken}` } });
             reject({ etype: 1, ...e });
           });
       });
