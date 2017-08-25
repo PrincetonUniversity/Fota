@@ -24,7 +24,7 @@ import { photoRequest } from '../../helpers/URL';
 import PhotoList from './PhotoList';
 import Headbar from './Headbar';
 import { setLoading } from '../../actions/index';
-import { tabWidth, tabHeight } from '../../Base';
+import { tabWidth, tabHeight, horizontalPadding } from '../../Base';
 
 class HomePage extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -34,10 +34,10 @@ class HomePage extends Component {
       return (
         <TouchableOpacity
           style={{
-            width: tabWidth,
+            width: tabWidth + horizontalPadding * 2,
             height: tabHeight,
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
           }}
           onPress={() => {
             if (!focused) {
@@ -49,9 +49,13 @@ class HomePage extends Component {
             name={'home'}
             color={color}
             size={38}
+            style={{
+              width: 38,
+              textAlign: 'center',
+            }}
           />
         </TouchableOpacity>
-        
+
       );
     }
   });
@@ -96,7 +100,7 @@ class HomePage extends Component {
     return (
       <View style={{ backgroundColor: '#FFFFFF' }}>
         <Headbar update={this.getPhotoList.bind(this)} />
-        <PhotoList 
+        <PhotoList
           list={this.state.photoList}
           //extraData={Headbar}
           //header={() => <Headbar update={this.getPhotoList.bind(this)} />}

@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 //mport LoginPage from '../Account/LoginPage';
 import ProfilePage from './ProfilePage';
-import { tabWidth, tabHeight } from '../../Base';
+import { tabWidth, tabHeight, horizontalPadding } from '../../Base';
 
 class AccountPage extends Component {
   static navigationOptions = ({ navigation, screenProps }) => ({
@@ -23,7 +23,7 @@ class AccountPage extends Component {
       return (
         <TouchableOpacity
           style={{
-            width: tabWidth,
+            width: tabWidth + horizontalPadding * 2,
             height: tabHeight,
             justifyContent: 'center',
             alignItems: 'center'
@@ -42,6 +42,10 @@ class AccountPage extends Component {
             name={'person'}
             color={color}
             size={38}
+            style={{
+              width: 38,
+              textAlign: 'center',
+            }}
           />
         </TouchableOpacity>
       );
@@ -71,10 +75,10 @@ const testuser = {
   uploaded: [
     {"id":"dfae3ff0-726d-11e7-9d5a-3b58874f0c3d","url":"https://s3-media2.fl.yelpcdn.com/bphoto/v9312pqoGXOk4EX2Kpzo0Q/o.jpg","vote_count":0,"rest_id":"roots-princeton","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:48.500Z"},
     {"id":"e060ee20-726d-11e7-9d5a-3b58874f0c3d","url":"https://s3-media2.fl.yelpcdn.com/bphoto/bRhajOhfEIGNvO77xkQraQ/o.jpg","vote_count":0,"rest_id":"trattoria-procaccini-princeton","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:49.670Z"},
-    {"id":"e0751260-726d-11e7-9d5a-3b58874f0c3d","url":"https://s3-media2.fl.yelpcdn.com/bphoto/YVDKLYbXvGqDYfCiVIs6XQ/o.jpg","vote_count":0,"rest_id":"salt-creek-grille-princeton","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:50.035Z"}    
+    {"id":"e0751260-726d-11e7-9d5a-3b58874f0c3d","url":"https://s3-media2.fl.yelpcdn.com/bphoto/YVDKLYbXvGqDYfCiVIs6XQ/o.jpg","vote_count":0,"rest_id":"salt-creek-grille-princeton","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:50.035Z"}
   ],
   comments: [
-    
+
   ]
 };
 

@@ -43,7 +43,7 @@ class CameraHelper extends Component {
               width: 38,
               height: 38,
               padding: 4,
-              textAlign: 'center'
+              textAlign: 'center',
             }}
           />
         </TouchableOpacity>
