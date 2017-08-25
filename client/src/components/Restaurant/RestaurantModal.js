@@ -21,20 +21,21 @@ import { CardSection } from '../common';
 import RestaurantDetail from './RestaurantDetail';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height;
+//const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SWIPE_THRESHOLD = SCREEN_WIDTH / 2;
-const SWIPE_OUT_DURATION = 250;
+//const SWIPE_OUT_DURATION = 250;
 
 class RestaurantModal extends Component {
 
   constructor(props) {
     super(props);
-    let position = new Animated.ValueXY();
+    const position = new Animated.ValueXY();
     const panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (event, gesture) => {
-        position.setValue({ x: gesture.dx });
-        //console.log(position)
+        if (gesture.dx > 0) {
+          position.setValue({ x: gesture.dx });
+        }
       },
       onPanResponderRelease: (event, gesture) => {
         // console.log(`dx: ${gesture.dx}`);
@@ -74,7 +75,7 @@ class RestaurantModal extends Component {
       comments: [],
       panResponder,
       position
-    }
+    };
   }
 
   onPressed(long) {

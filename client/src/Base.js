@@ -37,12 +37,6 @@ class Base extends Component {
     this.state = { loginFinished: false };
   }
 
-  // componentWillMount() {
-  //   firebase.auth().onAuthStateChanged((user) => {
-  //     this.props.logInOrOut(user);
-  //     this.setState({ loginFinished: true });
-  //   });
-  // }
   componentWillMount() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -107,15 +101,12 @@ const MainNavigator = TabNavigator({
   tabBarPosition: 'bottom',
   swipeEnabled: false,
   animationEnabled: false,
-  //lazy: true,
   initialRouteName: 'Home',
   tabBarOptions: {
     showLabel: false,
     showIcon: true,
     style: {
-      //borderWidth: 5,
       paddingHorizontal: horizontalPadding,
-      //backgroundColor: 'white'
     },
     tabStyle: {
       borderWidth: 5

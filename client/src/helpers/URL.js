@@ -16,15 +16,16 @@ export function photoVote(id, type) {
 }
 
 export function restRequest(id) {
+  console.log(`${REST_REQ}/${id}?key=${CLIENT_API_KEY}`);
   return `${REST_REQ}/${id}?key=${CLIENT_API_KEY}`;
-}
-
-export function profileRequest(user) {
-  return `${USER_REQ}/${user}?key=${CLIENT_API_KEY}`;
 }
 
 export function restCommentRequest(id) {
   return `${REST_REQ}/${id}/comments/?key=${CLIENT_API_KEY}`;
+}
+
+export function profileRequest(user) {
+  return `${USER_REQ}/${user}?key=${CLIENT_API_KEY}`;
 }
 
 export function searchRequest(lat, lng, term) {
