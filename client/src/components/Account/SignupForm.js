@@ -107,6 +107,7 @@ class SignupForm extends Component {
           <View style={{ paddingRight: 75 }}>
             <LoginInput
               label='First Name'
+              autoCapitalize='words'
               value={this.state.first}
               onChangeText={first => this.setState({ first })}
             />
@@ -114,12 +115,14 @@ class SignupForm extends Component {
           <View style={{ paddingRight: 75 }}>
             <LoginInput
               label='Last Name'
+              autoCapitalize='words'
               value={this.state.last}
               onChangeText={last => this.setState({ last })}
             />
           </View>
           <LoginInput
             label='Email'
+            keyboardType='email-address'
             value={this.state.email}
             onChangeText={email => this.setState({ email })}
           />
@@ -154,7 +157,6 @@ const styles = {
   errorTextStyle: {
     marginTop: 20,
     fontSize: 20,
-    fontFamily: 'Avenir',
     alignSelf: 'center',
     color: 'red'
   }

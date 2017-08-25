@@ -15,32 +15,38 @@ const Button = (props) => {
     colors = { text: '#aaa', fill: '#fff', border: '#aaa' };
   }
   return (
-      <TouchableOpacity
-        onPress={props.onPress}
-        style={{ backgroundColor: colors.fill, borderColor: colors.border, ...styles.buttonStyle }}
-      >
-          {props.children}
-          <Text style={{ color: colors.text, ...styles.textStyle }}>
-              {props.text}
-          </Text>
-      </TouchableOpacity>
+    <TouchableOpacity
+      onPress={props.onPress}
+      style={{ 
+        backgroundColor: colors.fill,
+        borderColor: colors.border,
+        borderRadius: props.round ? 18 : 0,
+        ...styles.buttonStyle
+      }}
+    >
+      {props.children}
+      <Text style={{ color: colors.text, ...styles.textStyle }}>
+        {props.text}
+      </Text>
+    </TouchableOpacity>
   );
 };
 
 const styles = {
   textStyle: {
-      alignSelf: 'center',
-      fontSize: 18,
-      fontWeight: '500',
-      padding: 10,
+    alignSelf: 'center',
+    fontSize: 18,
+    fontWeight: '500',
+    padding: 10,
   },
   buttonStyle: {
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'center',
-      borderRadius: 18,
-      borderWidth: 1,
-      margin: 1
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 18,
+    borderWidth: 1,
+    margin: 1
   }
 };
 

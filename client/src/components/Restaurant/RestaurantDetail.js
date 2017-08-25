@@ -237,8 +237,8 @@ class RestaurantDetail extends Component {
   renderRating() {
     return (
       <View style={ratingContainerStyle} onLayout={e => this.setRatingHeight(e)}>
-        <Text style={{ fontSize: 23, fontFamily: 'Avenir' }}>96%</Text>
-        <Text style={{ fontSize: 12, fontFamily: 'Avenir' }}>103 votes</Text>
+        <Text style={{ fontSize: 23 }}>96%</Text>
+        <Text style={{ fontSize: 12 }}>103 votes</Text>
       </View>
     );
   }
@@ -487,7 +487,6 @@ const RestaurantNavigator = TabNavigator({
     inactiveTintColor: 'rgba(0, 0, 0, 0.23)',
     labelStyle: {
       fontSize: 13,
-      fontFamily: 'Avenir',
       fontWeight: '900'
     },
     indicatorStyle: {
@@ -533,7 +532,6 @@ const styles = {
   },
   addressStyle: {
     color: 'white',
-    fontFamily: 'Avenir',
     fontSize: 14,
     //fontWeight: 'bold',
     textAlign: 'center',
@@ -541,7 +539,7 @@ const styles = {
   },
   titleStyle: { // Restaurant name
     color: 'white',
-    fontFamily: 'Avenir-Black',
+    //fontFamily: 'Avenir-Black',
     fontSize: 23,
     fontWeight: '900',
     textAlign: 'left',
@@ -549,7 +547,6 @@ const styles = {
     backgroundColor: 'transparent',
   },
   infoIconStyle: { // Time until close
-    fontFamily: 'Avenir',
     fontSize: 12,
     marginTop: 5,
     color: 'rgba(0, 0, 0, 0.63)',
@@ -607,7 +604,6 @@ const styles = {
     shadowRadius: 3
   },
   footerTextStyle: {
-    fontFamily: 'Avenir',
     fontWeight: '900',
     fontSize: 13,
     color: 'gray'

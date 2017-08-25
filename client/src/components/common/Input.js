@@ -39,7 +39,6 @@ const Input = ({
 
 const styles = {
   inputStyle: {
-    fontFamily: 'Avenir',
     padding: 1,
     borderRadius: 3,
     color: '#444',

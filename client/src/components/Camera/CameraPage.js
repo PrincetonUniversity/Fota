@@ -48,7 +48,6 @@ const styles = {
   headerTextStyle: {
     fontSize: 17,
     fontWeight: '500',
-    fontFamily: 'Avenir',
     color: '#444',
     textAlign: 'center',
     flex: 1,
@@ -143,8 +142,7 @@ class CameraPage extends Component {
   render() {
     return (
       <View style={pageStyle}>
-        <Header>
-          <Text style={headerTextStyle}>Add a Photo</Text>
+        <Header text='Add a Photo'>
           <View style={{ position: 'absolute', left: 10 }}>
             <Ionicon.Button
               name='md-close'

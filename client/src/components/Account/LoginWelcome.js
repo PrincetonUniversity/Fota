@@ -54,12 +54,13 @@ class LoginWelcome extends Component {
               onPress={this.logInWithFacebook.bind(this)}
               colors={{ text: '#fff', fill: '#ff9700', border: '#ff9700' }}
               text={'Continue with Facebook'}
+              round
             >
               <Icon
                 name='facebook'
                 backgroundColor='rgba(255, 255, 255, 0.0)'
                 color='white'
-                style={{ paddingVertical: 15, paddingRight: 15 }}
+                style={{ paddingRight: 15 }}
                 size={18}
               />
             </Button>
@@ -70,6 +71,7 @@ class LoginWelcome extends Component {
               onPress={() => this.props.navigation.navigate('Signup')}
               colors={{ text: '#888', fill: '#fff', border: '#aaa' }}
               text={'Create an Account'}
+              round
             />
           </View>
 
@@ -103,14 +105,12 @@ const styles = {
     fontSize: 32,
     fontWeight: 'bold',
     color: '#444',
-    fontFamily: 'Avenir',
     marginTop: 20,
     marginBottom: 10
   },
   subtitleStyle: {
     fontSize: 22,
     color: '#aaa',
-    fontFamily: 'Avenir',
     paddingBottom: 20,
     borderBottomWidth: 1,
     borderColor: '#bbb'
@@ -119,12 +119,10 @@ const styles = {
     fontSize: 18,
     fontWeight: '500',
     color: '#ff9700',
-    fontFamily: 'Avenir',
   },
   skipTextStyle: {
     fontSize: 17,
     color: '#aaa',
-    fontFamily: 'Avenir',
     position: 'absolute',
     right: 0
   },

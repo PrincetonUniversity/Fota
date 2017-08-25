@@ -10,10 +10,11 @@
  ******************************************************************************/
 
 import React from 'react';
-import { View, Platform } from 'react-native';
+import { View, Platform, Text } from 'react-native';
 
 const Header = (props) => (
   <View style={styles.viewStyle}>
+    {props.text && <Text style={styles.headerTextStyle}>{props.text}</Text>}
     {props.children}
   </View>
 );
@@ -29,6 +30,13 @@ const styles = {
     position: 'relative',
     flexDirection: 'row',
     elevation: 1
+  },
+  headerTextStyle: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: 'rgba(0, 0, 0, 0.7)',
+    textAlign: 'center',
+    flex: 1
   },
 };
 

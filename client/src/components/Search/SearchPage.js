@@ -178,7 +178,7 @@ class SearchPage extends Component {
   //       pageStyle={{ paddingTop: (Platform.OS === 'ios') ? 15 : 0 }}
   //     >
   //       <View style={{ flexDirection: 'row', padding: 10 }}>
-  //         <Text style={{ fontFamily: 'Avenir', fontSize: 15 }}>
+  //         <Text style={{ fontSize: 15 }}>
   //           {restaurant.name}
   //         </Text>
   //       </View>

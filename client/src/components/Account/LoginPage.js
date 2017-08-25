@@ -85,7 +85,6 @@ export const loginStyles = {
     marginBottom: 15
   },
   headerText: {
-    fontFamily: 'Avenir',
     color: '#444',
     fontSize: 25,
     fontWeight: '500',
@@ -93,7 +92,6 @@ export const loginStyles = {
   },
   small: {
     marginTop: 10,
-    fontFamily: 'Avenir',
     color: '#aaa',
     fontSize: 14
   }

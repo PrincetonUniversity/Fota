@@ -91,19 +91,16 @@ const styles = {
     flex: 1
   },
   addressStyle: {
-    fontFamily: 'Avenir',
     fontSize: 12,
     color: '#aaa'
   },
   titleStyle: {
-    fontFamily: 'Avenir',
     fontSize: 16,
     fontWeight: '500',
     color: '#444',
     marginVertical: 7
   },
   ratingStyle: {
-    fontFamily: 'Avenir',
     fontSize: 16,
     fontWeight: '500',
     color: '#aaa',

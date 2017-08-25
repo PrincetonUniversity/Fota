@@ -30,12 +30,10 @@ const styles = {
       margin: 5
     },
     textStyle: {
-      fontFamily: 'Avenir',
       fontSize: 14,
       fontWeight: '500',
       marginLeft: 3,
       marginRight: 3,
-      textAlign: 'justify'
     }
 };
 

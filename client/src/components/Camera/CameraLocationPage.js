@@ -258,8 +258,7 @@ class CameraLocationPage extends Component {
           }}
         >
           <View style={pageStyle}>
-            <Header>
-              <Text style={headerTextStyle}>Ready to Share?</Text>
+            <Header text='Ready to Share?'>
               <View style={{ position: 'absolute', left: 10 }}>
                 <Ionicon.Button
                   name='ios-arrow-back'
@@ -342,7 +341,6 @@ const styles = {
   headerTextStyle: {
     fontSize: 17,
     fontWeight: '500',
-    fontFamily: 'Avenir',
     color: '#444',
     textAlign: 'center',
     flex: 1
@@ -361,14 +359,12 @@ const styles = {
   },
   rHeaderStyle: {
     fontSize: 18,
-    fontFamily: 'Avenir',
     fontWeight: '400',
     marginHorizontal: 5,
     color: '#444'
   },
   cancelTextStyle: {
     fontSize: 17,
-    fontFamily: 'Avenir',
     color: '#aaa',
     paddingRight: 5
   },
@@ -412,14 +408,12 @@ const styles = {
     alignItems: 'center'
   },
   restaurantTextStyle: { 
-    fontFamily: 'Avenir',
     fontSize: 16, 
     color: '#444',
     fontWeight: '500',
     flex: 1
   },
   restaurantSubtextStyle: {
-    fontFamily: 'Avenir',
     fontSize: 12,
     color: '#aaa',
     paddingLeft: 5

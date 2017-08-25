@@ -46,7 +46,6 @@ const styles = {
     paddingRight: 5,
     paddingLeft: 5,
     fontSize: 12,
-    fontFamily: 'Avenir',
     flex: 1,
     textAlign: 'center'
   },

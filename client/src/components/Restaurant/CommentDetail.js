@@ -40,7 +40,6 @@ const styles = {
     },
     textStyle: {
       color: 'black',
-      fontFamily: 'Avenir',
       fontSize: 12,
       marginLeft: 3,
       marginRight: 3,

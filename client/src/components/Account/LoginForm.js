@@ -97,6 +97,7 @@ class LoginForm extends Component {
           <LoginInput
             label='Email'
             value={this.state.email}
+            keyboardType='email-address'
             onChangeText={email => this.setState({ email })}
           />
           <LoginInput
@@ -120,7 +121,6 @@ class LoginForm extends Component {
 
 const styles = {
   welcomeStyle: {
-    fontFamily: 'Avenir',
     color: '#444',
     fontSize: 25,
     fontWeight: '400',
@@ -135,7 +135,6 @@ const styles = {
   },
   errorTextStyle: {
     fontSize: 20,
-    fontFamily: 'Avenir',
     alignSelf: 'center',
     color: 'red'
   }

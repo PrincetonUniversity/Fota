@@ -28,7 +28,7 @@ class LoginInput extends Component {
   }
 
   render() {
-    const { label, secure, value, onChangeText } = this.props;
+    const { label, secure, value, onChangeText, keyboardType, autoCapitalize } = this.props;
     return (
       <View style={{ marginVertical: 15 }}>
         <Text style={styles.labelStyle}>{label}</Text>
@@ -37,9 +37,11 @@ class LoginInput extends Component {
             style={styles.textStyle}
             value={value}
             onChangeText={onChangeText}
+            autoCapitalize={autoCapitalize || 'none'}
             autoCorrect={false}
             secureTextEntry={secure ? this.state.hidePassword : false}
             underlineColorAndroid={'transparent'}
+            keyboardType={keyboardType || 'default'}
           />
           {this.renderShowHide()}
         </View>
@@ -50,7 +52,6 @@ class LoginInput extends Component {
 
 const styles = {
   textStyle: {
-    fontFamily: 'Avenir',
     fontWeight: 'bold',
     padding: 0,
     color: '#444',
@@ -58,7 +59,6 @@ const styles = {
     flex: 1,
   },
   showHideStyle: {
-    fontFamily: 'Avenir',
     fontWeight: 'bold',
     padding: 0,
     marginLeft: 10,
@@ -68,7 +68,6 @@ const styles = {
   labelStyle: {
     fontSize: 15,
     color: '#aaa',
-    fontFamily: 'Avenir',
     marginBottom: 5
   },
   containerStyle: {

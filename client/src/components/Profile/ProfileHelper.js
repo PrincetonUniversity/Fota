@@ -10,12 +10,14 @@
 import React, { Component } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
+import { StackNavigator } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 //mport LoginPage from '../Account/LoginPage';
 import ProfilePage from './ProfilePage';
+import SettingsPage from '../Settings/SettingsPage';
 import { tabWidth, tabHeight, horizontalPadding } from '../../Base';
 
-class AccountPage extends Component {
+class ProfileHelper extends Component {
   static navigationOptions = ({ navigation, screenProps }) => ({
     tabBarIcon: ({ focused }) => {
       let color = '#ccc';
@@ -56,9 +58,28 @@ class AccountPage extends Component {
     if (!this.props.loginState || this.props.loginState.isAnonymous) {
       return <View />;
     }
-    return <ProfilePage user={this.props.loginState} testuser={testuser} />;
+    return (
+      <ProfileNavigator 
+        screenProps={{ user: this.props.loginState, testuser }}
+      />
+    );
   }
 }
+
+const ProfileNavigator = StackNavigator({
+  Profile: {
+    screen: ProfilePage
+  },
+  Settings: {
+    screen: SettingsPage
+  }
+},
+{
+  headerMode: 'none',
+  cardStyle: {
+    backgroundColor: '#fff'
+  }
+});
 
 const testuser = {
   bookmarked: [
@@ -86,4 +107,4 @@ function mapStateToProps({ loginState, mainNavigator }) {
   return { loginState, mainNavigator };
 }
 
-export default connect(mapStateToProps)(AccountPage);
+export default connect(mapStateToProps)(ProfileHelper);

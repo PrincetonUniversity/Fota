@@ -30,12 +30,10 @@ const styles = {
     height: 35,
   },
   promptStyle: {
-    fontFamily: 'Avenir',
     fontSize: 20,
     textAlign: 'center'
   },
   restaurantNameStyle: {
-    fontFamily: 'Avenir',
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -60,7 +58,6 @@ const styles = {
   },
   commentTextStyle: {
     color: 'gray',
-    fontFamily: 'Avenir',
     fontSize: 13,
     marginLeft: 7,
     opacity: 0.8

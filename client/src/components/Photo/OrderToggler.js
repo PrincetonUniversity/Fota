@@ -75,7 +75,6 @@ const styles = {
   orderSelectedStyle: {
     flex: 1,
     textAlign: 'center',
-    fontFamily: 'Avenir',
     fontWeight: '900',
     color: '#FF9700',
     fontSize: 18,
@@ -84,7 +83,6 @@ const styles = {
   orderUnselectedStyle: {
     flex: 1,
     textAlign: 'center',
-    fontFamily: 'Avenir',
     fontWeight: '900',
     color: 'gray',
     fontSize: 18,

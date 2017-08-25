@@ -22,10 +22,7 @@ import { connect } from 'react-redux';
 import firebase from 'firebase';
 import LoginPage from './components/Account/LoginPage';
 import HomePage from './components/Photo/HomePage';
-//import SearchPage from './components/Search/SearchPage';
-import AccountPage from './components/Profile/AccountPage';
-//import SettingsPage from './components/Settings/SettingsPage';
-//import Navbar from './components/Navbar';
+import ProfileHelper from './components/Profile/ProfileHelper';
 import CameraNavigator from './components/Camera/CameraNavigator';
 import CameraHelper from './components/Camera/CameraHelper';
 import { logInOrOut } from './actions';
@@ -102,7 +99,7 @@ const MainNavigator = TabNavigator({
     screen: CameraHelper
   },
   Account: {
-    screen: AccountPage
+    screen: ProfileHelper
   },
 },
 {

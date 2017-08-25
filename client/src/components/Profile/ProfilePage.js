@@ -36,7 +36,7 @@ class ProfilePage extends Component {
 
   componentWillMount() {
     /*
-    request.get(photoRequest(this.props.user)).then(response => this.setState({
+    request.get(photoRequest(this.props.screenProps.user)).then(response => this.setState({
       bookmarked: response.data.bookmarked,
       upvoted: response.data.upvoted,
       uploaded: response.data.uploaded,
@@ -45,10 +45,10 @@ class ProfilePage extends Component {
     })).catch(e => request.showErrorAlert(e));
     */
     this.setState({
-      bookmarked: this.props.testuser.bookmarked,
-      upvoted: this.props.testuser.upvoted,
-      uploaded: this.props.testuser.uploaded,
-      comments: this.props.testuser.comments,
+      bookmarked: this.props.screenProps.testuser.bookmarked,
+      upvoted: this.props.screenProps.testuser.upvoted,
+      uploaded: this.props.screenProps.testuser.uploaded,
+      comments: this.props.screenProps.testuser.comments,
       loading: false
     });
   }
@@ -71,9 +71,9 @@ class ProfilePage extends Component {
   }*/
 
   render() {
-    let name = this.props.user.displayName;
+    let name = this.props.screenProps.user.displayName;
     if (!name) {
-      name = this.props.user.email;
+      name = this.props.screenProps.user.email;
     }
     return (
       <View style={{ backgroundColor: '#fff', flex: 1 }}>
@@ -96,7 +96,7 @@ class ProfilePage extends Component {
               backgroundColor={'#fff'}
               color={'#ccc'}
               size={30}
-              onPress={() => firebase.auth().signOut()}
+              onPress={() => this.props.navigation.navigate('Settings')}
               style={{ marginTop: 10 }}
             />
           </View>
@@ -187,14 +187,12 @@ const styles = {
     paddingVertical: 10,
   },
   nameTextStyle: {
-    fontFamily: 'Avenir',
     fontSize: 22,
     fontWeight: '500',
     color: '#444',
     paddingVertical: 5
   },
   infoTextStyle: {
-    fontFamily: 'Avenir',
     fontSize: 17,
     fontWeight: '400',
     color: '#ff9700'
@@ -204,13 +202,11 @@ const styles = {
     paddingHorizontal: 10
   },
   statNumberStyle: {
-    fontFamily: 'Avenir',
     fontSize: 20,
     fontWeight: '500',
     color: '#444'
   },
   statLabelStyle: {
-    fontFamily: 'Avenir',
     fontSize: 15,
     color: '#aaa'
   },

@@ -237,7 +237,6 @@ const styles = {
     width: 13
   },
   voteCountTextStyle: { // Number of likes
-    fontFamily: 'Avenir',
     fontSize: 18,
     textAlign: 'justify',
     fontWeight: 'bold',

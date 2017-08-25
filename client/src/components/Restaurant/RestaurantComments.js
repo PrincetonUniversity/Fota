@@ -64,7 +64,6 @@ class RestaurantComments extends Component {
 const styles = {
   tabLabelStyle: {
     fontSize: 14,
-    fontFamily: 'Avenir',
     fontWeight: '900',
     paddingVertical: 5
   },
@@ -72,7 +71,6 @@ const styles = {
     fontSize: 16,
     textAlign: 'center',
     color: '#aaa',
-    fontFamily: 'Avenir',
   }
 };
 
