@@ -11,7 +11,7 @@
 
 import React, { Component } from 'react';
 import {
-  Text, View,
+  Text, View, Animated, PanResponder, Dimensions,
   TouchableOpacity, TouchableWithoutFeedback
 } from 'react-native';
 import Modal from 'react-native-modal';
@@ -20,13 +20,61 @@ import { restRequest, restCommentRequest } from '../../helpers/URL';
 import { CardSection } from '../common';
 import RestaurantDetail from './RestaurantDetail';
 
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+const SWIPE_THRESHOLD = SCREEN_WIDTH / 2;
+const SWIPE_OUT_DURATION = 250;
+
 class RestaurantModal extends Component {
-  state = {
-    modalVisible: false,
-    longPressed: false,
-    loading: false,
-    restaurant: null,
-    comments: []
+
+  constructor(props) {
+    super(props);
+    let position = new Animated.ValueXY();
+    const panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (event, gesture) => {
+        position.setValue({ x: gesture.dx });
+        //console.log(position)
+      },
+      onPanResponderRelease: (event, gesture) => {
+        // console.log(`dx: ${gesture.dx}`);
+        // console.log(`dy: ${gesture.dy}`);
+        if (gesture.dx > SWIPE_THRESHOLD) {
+          this.setState({ modalVisible: false });
+        } else {
+          this.resetPosition();
+        }
+      },
+      // onPanResponderReject: (e, gestureState) => {
+      //
+      // },
+      // onPanResponderGrant: (e, gestureState) => {
+      //   console.log('grant')
+      // },
+      // onPanResponderStart: (e, gestureState) => {
+      //   console.log('start')
+      // },
+      // onPanResponderEnd: (e, gestureState) => {
+      //   console.log('end')
+      // },
+      // onPanResponderTerminate: (event, gesture) => {
+      //  console.log('terminating panresponder');
+      // },
+      onPanResponderTerminationRequest: (event, gesture) => {
+        //console.log('terminationrequest')
+        //this.resetPosition();
+      }
+    });
+
+    this.state = {
+      modalVisible: false,
+      longPressed: false,
+      loading: false,
+      restaurant: null,
+      comments: [],
+      panResponder,
+      position
+    }
   }
 
   onPressed(long) {
@@ -51,6 +99,9 @@ class RestaurantModal extends Component {
         })
         .catch(e => request.showErrorAlert(e));
       this.setModalVisible(true);
+      Animated.timing(this.state.position, {
+        toValue: { x: 0, y: 0 }
+      }).start();
     }
   }
 
@@ -58,9 +109,10 @@ class RestaurantModal extends Component {
     this.setState({ modalVisible: visible });
   }
 
-  closeModal() {
-    console.log('closing modal...');
-    this.setState({ modalVisible: false });
+  resetPosition() {
+    Animated.spring(this.state.position, {
+      toValue: { x: 0, y: 0 }
+    }).start();
   }
 
   renderOptions() {
@@ -95,14 +147,17 @@ class RestaurantModal extends Component {
       );
     }
     return (
-      <View style={styles.modalStyle}>
+      <Animated.View
+        {...this.state.panResponder.panHandlers}
+        style={[this.state.position.getLayout(), styles.modalStyle]}
+      >
         <RestaurantDetail
           loading={this.state.loading}
           restaurant={this.state.restaurant}
           comments={this.state.comments}
-          close={this.closeModal.bind(this)}
+          close={() => this.setModalVisible(false)}
         />
-      </View>
+      </Animated.View>
     );
   }
 

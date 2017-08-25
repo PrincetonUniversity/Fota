@@ -30,7 +30,8 @@ import CameraNavigator from './components/Camera/CameraNavigator';
 import CameraHelper from './components/Camera/CameraHelper';
 import { logInOrOut } from './actions';
 
-export const tabWidth = (Dimensions.get('window').width / 3);
+export const tabWidth = (Dimensions.get('window').width / 4) + 9;
+export const horizontalPadding = (Dimensions.get('window').width - 114) / 8;
 export const tabHeight = 50;
 
 class Base extends Component {
@@ -113,7 +114,15 @@ const MainNavigator = TabNavigator({
   initialRouteName: 'Home',
   tabBarOptions: {
     showLabel: false,
-    showIcon: true
+    showIcon: true,
+    style: {
+      //borderWidth: 5,
+      paddingHorizontal: horizontalPadding,
+      //backgroundColor: 'white'
+    },
+    tabStyle: {
+      borderWidth: 5
+    }
   },
   style: {
     height: tabHeight

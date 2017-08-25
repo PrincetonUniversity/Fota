@@ -68,23 +68,25 @@ const styles = {
     alignSelf: 'flex-end',
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.2)',
+    borderColor: 'rgba(0, 0, 0, 0.09)',
     height: 30,
     //paddingBottom: 5
   },
   orderSelectedStyle: {
     flex: 1,
     textAlign: 'center',
+    fontFamily: 'Avenir',
+    fontWeight: '900',
     color: '#FF9700',
-    fontWeight: 'bold',
     fontSize: 18,
     lineHeight: 22
   },
   orderUnselectedStyle: {
     flex: 1,
     textAlign: 'center',
+    fontFamily: 'Avenir',
+    fontWeight: '900',
     color: 'gray',
-    fontWeight: 'bold',
     fontSize: 18,
     lineHeight: 22,
     opacity: 0.6

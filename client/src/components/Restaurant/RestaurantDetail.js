@@ -84,7 +84,6 @@ class RestaurantDetail extends Component {
           const walkDirections = response.data;
           const walkTime = walkDirections.routes[0].legs[0].duration.text;
           const distance = walkDirections.routes[0].legs[0].distance.text;
-          console.log(this.state.navLoading)
           if (!walkTime.includes('hour') && parseInt(walkTime) <= 15) {
             this.setState({ navLoading: false, driving: false, walking: true, navTime: walkTime, distance });
           } else {
@@ -388,7 +387,6 @@ class RestaurantDetail extends Component {
                 address.replace(/\s/g, '+')
               );
               //formattedAddress = formattedAddress.reduce((total, line) => `${total}+${line}`);
-              console.log(formattedAddress);
               Linking.openURL(directionsURL(lat, lng, formattedAddress))
                 .catch(e => request.showErrorAlert(e));
             });
