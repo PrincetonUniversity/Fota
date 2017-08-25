@@ -8,7 +8,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, ScrollView, Animated, Linking, Dimensions } from 'react-native';
+import { View, Text, ScrollView, Animated, Linking, LayoutAnimation, TouchableWithoutFeedback } from 'react-native';
 import moment from 'moment';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import FoundationIcon from 'react-native-vector-icons/Foundation';
@@ -42,6 +42,7 @@ class RestaurantDetail extends Component {
       navTime: '',
       modalVisible: false,
       loading: true,
+      showRecommend: false,
       ratingHeight: 0,
       infoHeight: 0,
       scrollY: new Animated.Value(0)
@@ -59,6 +60,10 @@ class RestaurantDetail extends Component {
       this.getNavigation(nextProps.restaurant);
     }
   }
+
+  // componentWillUpdate() {
+  //   LayoutAnimation.easeInEaseOut();
+  // }
 
   setRatingHeight(event) {
     this.setState({
@@ -110,8 +115,9 @@ class RestaurantDetail extends Component {
     return { start, end, overnight };
   }
 
-  timeUntilCloseLabel(hours) {
-    if (!hours) return '';
+  timeUntilCloseLabel(hoursArray) {
+    if (!hoursArray) return '';
+    const hours = hoursArray[0];
     const trueHours = this.getHours(hours);
     if (!trueHours) return '';
     if (trueHours.start === 'closed') {
@@ -141,6 +147,12 @@ class RestaurantDetail extends Component {
       return timeDate.format('h A');
     }
     return timeDate.format('h:mm A');
+  }
+
+  changeRecommendDisplay() {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    console.log(this.state.showRecommend);
+    this.setState({ showRecommend: !this.state.showRecommend });
   }
 
   checkScroll() {
@@ -235,12 +247,48 @@ class RestaurantDetail extends Component {
 
   // Restaurant rating
   renderRating() {
+    let button = 'ios-arrow-dropdown-circle';
+    if (this.state.showRecommend) {
+      button = 'ios-arrow-dropup-circle';
+    }
     return (
-      <View style={ratingContainerStyle} onLayout={e => this.setRatingHeight(e)}>
-        <Text style={{ fontSize: 23, fontFamily: 'Avenir' }}>96%</Text>
-        <Text style={{ fontSize: 12, fontFamily: 'Avenir' }}>103 votes</Text>
+      <View>
+        <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ height: 20, width: 20, marginRight: 15 }} />
+          {/* <TouchableWithoutFeedback>
+
+          </TouchableWithoutFeedback> */}
+          <View style={ratingContainerStyle} onLayout={e => this.setRatingHeight(e)}>
+            <Text style={ratingPercentStyle} onPress={() => this.changeRecommendDisplay()}>96%</Text>
+            <Text style={ratingCountStyle} onPress={() => this.changeRecommendDisplay()}>103 votes</Text>
+          </View>
+          <Ionicon
+            name={button}
+            style={{ marginLeft: 15, height: 20, width: 20 }}
+            size={20}
+            //borderRadius={0}
+            color='rgba(0, 0, 0, 0.4)'
+            backgroundColor='white'
+            onPress={() => this.changeRecommendDisplay()}
+          />
+        </View>
+        {this.renderRecommend()}
       </View>
     );
+  }
+
+  renderRecommend() {
+    if (this.state.showRecommend) {
+      return (
+        <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)' }}>
+          <View style={recommendContainerStyle}>
+            <Text style={recommendPromptStyle}>Do you recommend this restaurant?</Text>
+            <Text style={recommendVoteStyle}>YES</Text>
+            <Text style={recommendVoteStyle}>NO</Text>
+          </View>
+        </View>
+      );
+    }
   }
 
   // Navigation section of the horizontal info bar
@@ -338,11 +386,14 @@ class RestaurantDetail extends Component {
   // Horizontal info bar containing restaurant hours, distance away, and price
   renderInfo() {
     return (
-      <View style={infoContainerStyle} onLayout={e => this.setInfoHeight(e)}>
+      <View
+        style={{ borderTopWidth: this.state.showRecommend ? 0 : 1, ...infoContainerStyle }}
+        onLayout={e => this.setInfoHeight(e)}
+      >
         <View style={infoObjectStyle}>
-          <MaterialIcon name='access-time' size={31} style={{ height: 30 }} color={'rgba(0,0,0,0.63)'} />
+            <MaterialIcon name='access-time' size={31} style={{ height: 30 }} color={'rgba(0,0,0,0.63)'} />
           <Text style={infoIconStyle}>
-            {this.timeUntilCloseLabel(this.state.restaurant.hours[0])}
+            {this.timeUntilCloseLabel(this.state.restaurant.hours)}
           </Text>
         </View>
 
@@ -356,17 +407,18 @@ class RestaurantDetail extends Component {
   renderFooter(pageY) {
     const restaurant = this.state.restaurant;
     return (
-      <Animated.View style={[footerStyle, { transform: [{ translateY: pageY }] }]}>
+      //<Animated.View style={[footerStyle, { transform: [{ translateY: pageY }] }]}>
+      <View style={footerStyle}>
         <View style={bottomSpacerStyle} />
-        <FoundationIcon.Button
-          name='telephone'
+        <Ionicon.Button
+          name='ios-call'
           borderRadius={0}
           color='gray'
           backgroundColor='white'
           onPress={() => phonecall(restaurant.phone.substring(1), false)}
         >
           <Text style={footerTextStyle}>CALL</Text>
-        </FoundationIcon.Button>
+        </Ionicon.Button>
         <View style={{ flexDirection: 'column', ...bottomSpacerStyle }}>
           <View style={bottomSpacerStyle} />
           <View style={bottomLineStyle} />
@@ -395,7 +447,8 @@ class RestaurantDetail extends Component {
           <Text style={footerTextStyle}>DIRECTIONS</Text>
         </MaterialIcon.Button>
         <View style={bottomSpacerStyle} />
-      </Animated.View>
+      </View>
+      //</Animated.View>
     );
   }
 
@@ -407,8 +460,12 @@ class RestaurantDetail extends Component {
         </View>
       );
     }
-    const height = 440;
-    const headerScrollDistance = this.state.ratingHeight + this.state.infoHeight;
+    let height = 500;
+    let headerScrollDistance = this.state.ratingHeight + this.state.infoHeight;
+    if (this.state.showRecommend) {
+      height += 50;
+      headerScrollDistance += 50;
+    }
     const pageY = this.state.scrollY.interpolate({
       inputRange: [0, headerScrollDistance],
       outputRange: [0, -headerScrollDistance / 3],
@@ -492,7 +549,7 @@ const RestaurantNavigator = TabNavigator({
     },
     indicatorStyle: {
       height: 5,
-      backgroundColor: '#ff9700',
+      backgroundColor: '#ff9700'
       //flex:
       //width: (Dimensions.get('window').width - 100) / 2
     },
@@ -512,7 +569,7 @@ const styles = {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FFFFFF'
   },
   headerStyle: { // Header including back button, name, time until close, call button
     flexDirection: 'row',
@@ -548,18 +605,6 @@ const styles = {
     letterSpacing: 0.6,
     backgroundColor: 'transparent',
   },
-  infoIconStyle: { // Time until close
-    fontFamily: 'Avenir',
-    fontSize: 12,
-    marginTop: 5,
-    color: 'rgba(0, 0, 0, 0.63)',
-    fontWeight: '500',
-    textAlign: 'center'
-  },
-  phoneButtonStyle: {
-    width: 60,
-    height: 60
-  },
   filterContainerStyle: {
     alignItems: 'flex-start',
     marginBottom: 15,
@@ -574,18 +619,57 @@ const styles = {
     //borderTopWidth: 1,
     //borderBottomWidth: 1,
     //marginHorizontal: 30,
-    borderColor: 'rgba(0, 0, 0, 0.2)'
+    borderColor: 'rgba(0, 0, 0, 0.1)'
+  },
+  ratingPercentStyle: {
+    fontSize: 25,
+    fontFamily: 'Avenir',
+    fontWeight: '900',
+    color: 'rgba(0, 0, 0, 0.63)'
+  },
+  ratingCountStyle: {
+    fontSize: 13,
+    fontFamily: 'Avenir',
+    fontWeight: '300',
+    color: 'rgba(0, 0, 0, 0.63)'
+  },
+  recommendContainerStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginLeft: 30,
+    marginRight: 45,
+    //paddingHorizontal: 30,
+    paddingVertical: 15,
+    height: 50
+    //backgroundColor: '#eee',
+  },
+  recommendPromptStyle: {
+    fontFamily: 'Avenir',
+    fontSize: 14,
+    color: 'rgba(0, 0, 0, 0.31)',
+  },
+  recommendVoteStyle: {
+    fontFamily: 'Avenir',
+    fontSize: 12,
+    fontWeight: '900',
+    color: 'rgba(0, 0, 0, 0.31)',
   },
   infoContainerStyle: {
     flexDirection: 'row',
   //  paddingHorizontal: 10,
     paddingVertical: 10,
-    //justifyContent: 'space-around',
-  //  borderWidth: 1,
     marginHorizontal: 30,
-    borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.2)'
+  },
+  infoIconStyle: { // Time until close
+    fontFamily: 'Avenir',
+    fontSize: 12,
+    marginTop: 5,
+    color: 'rgba(0, 0, 0, 0.63)',
+    fontWeight: '500',
+    textAlign: 'center'
   },
   infoObjectStyle: {
     flexDirection: 'column',
@@ -594,10 +678,11 @@ const styles = {
     flex: 1
   },
   footerStyle: {
-    // position: 'absolute',
-    // bottom: 0,
-    // left: 0,
-    // right: 0,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 50,
     flexDirection: 'row',
     paddingVertical: 10,
     borderColor: 'gray',
@@ -630,10 +715,15 @@ const {
   titleContainerStyle,
   addressStyle,
   titleStyle,
-  infoIconStyle,
   filterContainerStyle,
   ratingContainerStyle,
+  ratingPercentStyle,
+  ratingCountStyle,
+  recommendContainerStyle,
+  recommendPromptStyle,
+  recommendVoteStyle,
   infoContainerStyle,
+  infoIconStyle,
   infoObjectStyle,
   footerStyle,
   footerTextStyle,

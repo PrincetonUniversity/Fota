@@ -71,8 +71,8 @@ class HomePage extends Component {
       this.props.setLoading(true);
     }
     navigator.geolocation.getCurrentPosition(position => {
-      const lat = 40.34; // position.coords.latitude
-      const lng = -74.656; // position.coords.longitude
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
       AsyncStorage.getItem('SearchRadius').then(radius => {
         request.get(photoRequest(this.props.sorting, lat, lng, parseInt(radius, 10)))
         .then(response => {

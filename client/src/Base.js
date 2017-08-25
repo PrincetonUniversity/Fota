@@ -22,10 +22,7 @@ import { connect } from 'react-redux';
 import firebase from 'firebase';
 import LoginPage from './components/Account/LoginPage';
 import HomePage from './components/Photo/HomePage';
-//import SearchPage from './components/Search/SearchPage';
 import AccountPage from './components/Profile/AccountPage';
-//import SettingsPage from './components/Settings/SettingsPage';
-//import Navbar from './components/Navbar';
 import CameraNavigator from './components/Camera/CameraNavigator';
 import CameraHelper from './components/Camera/CameraHelper';
 import { logInOrOut } from './actions';
@@ -40,12 +37,6 @@ class Base extends Component {
     this.state = { loginFinished: false };
   }
 
-  // componentWillMount() {
-  //   firebase.auth().onAuthStateChanged((user) => {
-  //     this.props.logInOrOut(user);
-  //     this.setState({ loginFinished: true });
-  //   });
-  // }
   componentWillMount() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -110,15 +101,12 @@ const MainNavigator = TabNavigator({
   tabBarPosition: 'bottom',
   swipeEnabled: false,
   animationEnabled: false,
-  //lazy: true,
   initialRouteName: 'Home',
   tabBarOptions: {
     showLabel: false,
     showIcon: true,
     style: {
-      //borderWidth: 5,
       paddingHorizontal: horizontalPadding,
-      //backgroundColor: 'white'
     },
     tabStyle: {
       borderWidth: 5
