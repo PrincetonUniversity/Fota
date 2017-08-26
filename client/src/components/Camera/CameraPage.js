@@ -16,7 +16,7 @@
 
 import React, { Component } from 'react';
 import { 
-  View, Text, Dimensions, AsyncStorage, 
+  View, Text, Dimensions, AsyncStorage, StatusBar,
   Alert, UIManager, LayoutAnimation 
 } from 'react-native';
 import Ionicon from 'react-native-vector-icons/Ionicons';
@@ -35,7 +35,7 @@ export const tabStyle = {
     justifyContent: 'center',
     textAlign: 'center',
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '900',
     paddingTop: 7,
     paddingBottom: 0
 };
@@ -142,13 +142,14 @@ class CameraPage extends Component {
   render() {
     return (
       <View style={pageStyle}>
-        <Header text='Add a Photo'>
+        <StatusBar hidden />
+        <Header text='Add a Photo' iosHideStatusBar>
           <View style={{ position: 'absolute', left: 10 }}>
             <Ionicon.Button
               name='md-close'
               backgroundColor='white'
               color='black'
-              size={20}
+              size={24}
               onPress={() => {
                 this.props.screenProps.goBack();
               }}

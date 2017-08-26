@@ -41,10 +41,11 @@ const styles = {
   inputStyle: {
     padding: 1,
     borderRadius: 3,
-    color: '#444',
+    color: 'rgba(0,0,0,0.11)',
     paddingRight: 5,
     paddingLeft: 5,
-    fontSize: 16,
+    fontSize: 14,
+    fontWeight: '300',
     flex: 1
   },
   containerStyle: {

@@ -81,8 +81,8 @@ class SearchPage extends Component {
     } else {
       this.setState({ query, terms: [], businesses: [], categories: [] });
       navigator.geolocation.getCurrentPosition(position => {
-        const lat = 40.34; // position.coords.latitude
-        const lng = -74.656; // position.coords.longitude
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
         request.get(searchRequest(lat, lng, query))
           .then(response => {
             this.setState({
