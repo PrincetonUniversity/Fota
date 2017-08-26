@@ -49,8 +49,9 @@ class CameraLocationPage extends Component {
       totalList: [], 
       selected: null, 
       index: -1,
+      nearBottom: false,
       hidePhoto: false, 
-      submitting: false 
+      submitting: false
     };
     this.submitting = false;
     this.selectedName = null;
@@ -172,6 +173,19 @@ class CameraLocationPage extends Component {
     .catch(() => cameraErrorAlert());
   }
 
+  onViewableItemsChanged = ({ viewableItems }) => {
+    console.log(viewableItems);
+    if (!this.state.hidePhoto) {
+      if (viewableItems[0].index >= this.state.rlist.length - 7) {
+        this.setState({ nearBottom: true });
+      } else {
+        if (this.state.nearBottom) {
+          this.setState({ nearBottom: false });
+        }
+      }
+    }
+  }
+
   renderRestaurant(restaurant, chosen, index) {
     return (
       <TouchableOpacity
@@ -184,10 +198,12 @@ class CameraLocationPage extends Component {
             this.selectedName = null;
             this.updateQuery(this.state.query);
           } else {
-            if (index > this.state.rlist.length - 4) {
-              this.flatListRef.scrollToEnd({ animated: true });
-            } else {
-              this.flatListRef.scrollToIndex({ animated: true, index });
+            if (this.state.rlist.length > 4) {
+              if (index > this.state.rlist.length - 4) {
+                this.flatListRef.scrollToIndex({ animated: true, index: this.state.rlist.length - 4 });
+              } else {
+                this.flatListRef.scrollToIndex({ animated: true, index });
+              }
             }
             this.setState({ selected: restaurant, index, hidePhoto: false });
             this.selectedName = restaurant.name;
@@ -234,6 +250,9 @@ class CameraLocationPage extends Component {
           onPress={() => {
             Keyboard.dismiss();
             LayoutAnimation.easeInEaseOut();
+            if (this.state.selected && this.state.rlist.length > 4 && this.state.index > this.state.rlist.length - 4) {
+              this.flatListRef.scrollToIndex({ animated: true, index: this.state.rlist.length - 4 });
+            }
             this.setState({ hidePhoto: false });
           }}
         >
@@ -266,6 +285,10 @@ class CameraLocationPage extends Component {
 
   render() {
     if (this.state.uploadPath) {
+      let listHeight = restaurantDisplayHeight * 4;
+      if (this.state.hidePhoto) {
+        listHeight = restaurantDisplayHeight * 7;
+      }
       return (
         <TouchableWithoutFeedback
           onPress={() => {
@@ -293,7 +316,7 @@ class CameraLocationPage extends Component {
             <View style={{ paddingHorizontal: 50, marginVertical: 10, flex: 1, justifyContent: 'flex-start' }}>
               {this.renderPhoto()}
 
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 12 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10 }}>
                 <View style={{ flexDirection: 'row' }}>
                   <Icon name='location-on' size={25} color='#444' />
                   <Text style={rHeaderStyle}>Restaurant</Text>
@@ -311,6 +334,13 @@ class CameraLocationPage extends Component {
                     onFocus={() => {
                       if (this.submitting) return;
                       LayoutAnimation.easeInEaseOut();
+                      if (this.state.nearBottom && this.state.rlist.length !== 0) {
+                        if (this.state.rlist.length < 7) {
+                          this.flatListRef.scrollToIndex({ animated: true, index: 0 });
+                        } else {
+                          this.flatListRef.scrollToIndex({ animated: true, index: this.state.rlist.length - 7 });
+                        }
+                      }
                       this.setState({ hidePhoto: true });
                     }}
                   >
@@ -327,23 +357,27 @@ class CameraLocationPage extends Component {
                     this.renderRestaurant(restaurant, restaurant.item.name, index);
                   })}
                 </ScrollView> */}
-                <FlatList
-                  ref={(ref) => { this.flatListRef = ref; }}
-                  data={this.state.rlist}
-                  keyExtractor={restaurant => restaurant.id}
-                  renderItem={restaurant => this.renderRestaurant(
-                    restaurant.item, 
-                    restaurant.item.name === this.selectedName,
-                    restaurant.index
-                  )}
-                  getItemLayout={(data, index) => (
-                    { length: restaurantDisplayHeight, offset: restaurantDisplayHeight * index, index }
-                  )}
-                  overScrollMode='never'
-                  keyboardShouldPersistTaps={'handled'}
-                  bounces={false}
-                  removeClippedSubviews={false}
-                />
+                {/* <View style={{ height: listHeight, borderWidth: 1 }}> */}
+                  <FlatList
+                    ref={(ref) => { this.flatListRef = ref; }}
+                    data={this.state.rlist}
+                    keyExtractor={restaurant => restaurant.id}
+                    renderItem={restaurant => this.renderRestaurant(
+                      restaurant.item, 
+                      restaurant.item.name === this.selectedName,
+                      restaurant.index
+                    )}
+                    getItemLayout={(data, index) => (
+                      { length: restaurantDisplayHeight, offset: restaurantDisplayHeight * index, index }
+                    )}
+                    onViewableItemsChanged={this.onViewableItemsChanged}
+                    overScrollMode='never'
+                    style={{ height: listHeight }}
+                    keyboardShouldPersistTaps={'handled'}
+                    bounces={false}
+                    removeClippedSubviews={false}
+                  />
+                {/* </View> */}
               </View>
             </View>
 
@@ -364,7 +398,7 @@ const styles = {
   pageStyle: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-between'
+    //justifyContent: 'space-between'
   },
   headerTextStyle: {
     fontSize: 17,
@@ -401,7 +435,7 @@ const styles = {
     overflow: 'hidden',
     borderColor: 'rgba(0,0,0,0.1)',
     borderWidth: 1,
-    flex: 1
+    //flex: 1
   },
   searchBarStyle: {
     backgroundColor: 'rgba(0,0,0,0.06)',
@@ -418,7 +452,8 @@ const styles = {
     borderTopWidth: 1,
     borderColor: '#eee',
     flexDirection: 'row',
-    marginTop: 25
+    borderWidth: 1,
+    marginTop: 30
   },
   chosenIndicatorStyle: {
     width: 5,
