@@ -189,7 +189,7 @@ class CameraLocationPage extends Component {
       if (this.state.rlist.length < 7) {
         this.flatListRef.scrollToIndex({ animated: true, index: 0 });
       } else {
-        this.flatListRef.scrollToIndex({ animated: true, index: this.state.rlist.length - 7 });
+        this.flatListRef.scrollToIndex({ animated: false, index: this.state.rlist.length - 7 });
       }
     }
   }
@@ -213,7 +213,7 @@ class CameraLocationPage extends Component {
   handleSelectOnIOS(restaurant, index) {
     if (this.state.rlist.length > 4) {
       if (index > this.state.rlist.length - 4) {
-        this.flatListRef.scrollToIndex({ animated: true, index: this.state.rlist.length - 4 });
+        this.flatListRef.scrollToIndex({ animated: false, index: this.state.rlist.length - 4 });
       } else {
         this.flatListRef.scrollToIndex({ animated: true, index });
       }
@@ -358,10 +358,10 @@ class CameraLocationPage extends Component {
               </View>
             </Header>
 
-            <View style={{ paddingHorizontal: 50, marginVertical: 10, flex: 1, justifyContent: 'flex-start' }}>
+            <View style={{ paddingHorizontal: 50, marginVertical: 10, flex: 1, backgroundColor: 'white', justifyContent: 'flex-start' }}>
               {this.renderPhoto()}
 
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'white', zIndex: 7, paddingVertical: 10 }}>
                 <View style={{ flexDirection: 'row' }}>
                   <Icon name='location-on' size={25} color='#444' />
                   <Text style={rHeaderStyle}>Restaurant</Text>
@@ -436,7 +436,8 @@ const styles = {
     borderColor: '#eee',
     paddingTop: 10,
     paddingBottom: 20,
-    alignItems: 'center'
+    alignItems: 'center',
+    zIndex: 1
   },
   photoStyle: {
     width: 150,
@@ -459,6 +460,8 @@ const styles = {
     overflow: 'hidden',
     borderColor: 'rgba(0,0,0,0.1)',
     borderWidth: 1,
+    backgroundColor: 'white',
+    zIndex: 3
     //flex: 1
   },
   searchBarStyle: {
