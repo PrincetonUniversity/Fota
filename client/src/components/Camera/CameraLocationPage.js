@@ -12,8 +12,8 @@
 
 import React, { Component } from 'react';
 import {
-  View, Image, Text, FlatList, AsyncStorage, TouchableWithoutFeedback, ScrollView,
-  Keyboard, TouchableOpacity, Alert, LayoutAnimation
+  View, Image, Text, FlatList, AsyncStorage, TouchableWithoutFeedback, 
+    Keyboard, TouchableOpacity, Alert, LayoutAnimation, Platform
 } from 'react-native';
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
@@ -75,6 +75,17 @@ class CameraLocationPage extends Component {
     AsyncStorage.getItem('UploadPath').then((path) => {
       this.setState({ uploadPath: path });
     }).done();
+  }
+
+  onViewableItemsChanged = ({ viewableItems }) => {
+    //console.log(viewableItems);
+    if (!this.state.hidePhoto && viewableItems[0]) {
+      if (viewableItems[0].index >= this.state.rlist.length - 7) {
+        this.setState({ nearBottom: true });
+      } else if (this.state.nearBottom) {
+        this.setState({ nearBottom: false });
+      }
+    }
   }
 
   updateQuery(query) {
@@ -173,16 +184,52 @@ class CameraLocationPage extends Component {
     .catch(() => cameraErrorAlert());
   }
 
-  onViewableItemsChanged = ({ viewableItems }) => {
-    console.log(viewableItems);
-    if (!this.state.hidePhoto) {
-      if (viewableItems[0].index >= this.state.rlist.length - 7) {
-        this.setState({ nearBottom: true });
+  handleOpeningBoxOnIOS() {
+    if (this.state.nearBottom && this.state.rlist.length !== 0) {
+      if (this.state.rlist.length < 7) {
+        this.flatListRef.scrollToIndex({ animated: true, index: 0 });
       } else {
-        if (this.state.nearBottom) {
-          this.setState({ nearBottom: false });
-        }
+        this.flatListRef.scrollToIndex({ animated: true, index: this.state.rlist.length - 7 });
       }
+    }
+  }
+
+  handleClosingBoxOnIOS() {
+    if (this.state.selected && this.state.rlist.length > 4 && this.state.index > this.state.rlist.length - 4) {
+      this.flatListRef.scrollToIndex({ animated: true, index: this.state.rlist.length - 4 });
+    }
+    this.setState({ hidePhoto: false });
+  }
+
+  handleClosingBoxOnAndroid() {
+    this.setState({ hidePhoto: false });
+    if (this.state.selected && this.state.rlist.length > 4 && this.state.index > this.state.rlist.length - 4) {
+      setTimeout(() => {
+        this.flatListRef.scrollToIndex({ animated: true, index: this.state.index });
+      }, 350);
+    }
+  }
+
+  handleSelectOnIOS(restaurant, index) {
+    if (this.state.rlist.length > 4) {
+      if (index > this.state.rlist.length - 4) {
+        this.flatListRef.scrollToIndex({ animated: true, index: this.state.rlist.length - 4 });
+      } else {
+        this.flatListRef.scrollToIndex({ animated: true, index });
+      }
+    }
+    this.setState({ selected: restaurant, index, hidePhoto: false });
+  }
+
+  handleSelectOnAndroid(restaurant, index) {
+    const needTimeout = (this.state.hidePhoto && this.state.rlist.length > 4 && index > this.state.rlist.length - 4);
+    this.setState({ selected: restaurant, index, hidePhoto: false });
+    if (needTimeout) {
+      setTimeout(() => {
+        this.flatListRef.scrollToIndex({ animated: true, index });
+      }, 350);
+    } else {
+      this.flatListRef.scrollToIndex({ animated: true, index });
     }
   }
 
@@ -198,14 +245,11 @@ class CameraLocationPage extends Component {
             this.selectedName = null;
             this.updateQuery(this.state.query);
           } else {
-            if (this.state.rlist.length > 4) {
-              if (index > this.state.rlist.length - 4) {
-                this.flatListRef.scrollToIndex({ animated: true, index: this.state.rlist.length - 4 });
-              } else {
-                this.flatListRef.scrollToIndex({ animated: true, index });
-              }
+            if (Platform.OS === 'ios') {
+              this.handleSelectOnIOS(restaurant, index);
+            } else {
+              this.handleSelectOnAndroid(restaurant, index);
             }
-            this.setState({ selected: restaurant, index, hidePhoto: false });
             this.selectedName = restaurant.name;
             this.updateQuery(this.state.query);
           }
@@ -250,10 +294,11 @@ class CameraLocationPage extends Component {
           onPress={() => {
             Keyboard.dismiss();
             LayoutAnimation.easeInEaseOut();
-            if (this.state.selected && this.state.rlist.length > 4 && this.state.index > this.state.rlist.length - 4) {
-              this.flatListRef.scrollToIndex({ animated: true, index: this.state.rlist.length - 4 });
+            if (Platform.OS === 'ios') {
+              this.handleClosingBoxOnIOS();
+            } else {
+              this.handleClosingBoxOnAndroid();
             }
-            this.setState({ hidePhoto: false });
           }}
         >
           Cancel
@@ -334,13 +379,7 @@ class CameraLocationPage extends Component {
                     onFocus={() => {
                       if (this.submitting) return;
                       LayoutAnimation.easeInEaseOut();
-                      if (this.state.nearBottom && this.state.rlist.length !== 0) {
-                        if (this.state.rlist.length < 7) {
-                          this.flatListRef.scrollToIndex({ animated: true, index: 0 });
-                        } else {
-                          this.flatListRef.scrollToIndex({ animated: true, index: this.state.rlist.length - 7 });
-                        }
-                      }
+                      if (Platform.OS === 'ios') this.handleOpeningBoxOnIOS();
                       this.setState({ hidePhoto: true });
                     }}
                   >
@@ -351,33 +390,25 @@ class CameraLocationPage extends Component {
                   </Input>
                 </View>
 
-                {/* <ScrollView>
-                  ref={(ref) => { this.scrollViewRef = ref; }}
-                  {() => this.state.rlist.map((restaurant, index) => {
-                    this.renderRestaurant(restaurant, restaurant.item.name, index);
-                  })}
-                </ScrollView> */}
-                {/* <View style={{ height: listHeight, borderWidth: 1 }}> */}
-                  <FlatList
-                    ref={(ref) => { this.flatListRef = ref; }}
-                    data={this.state.rlist}
-                    keyExtractor={restaurant => restaurant.id}
-                    renderItem={restaurant => this.renderRestaurant(
-                      restaurant.item, 
-                      restaurant.item.name === this.selectedName,
-                      restaurant.index
-                    )}
-                    getItemLayout={(data, index) => (
-                      { length: restaurantDisplayHeight, offset: restaurantDisplayHeight * index, index }
-                    )}
-                    onViewableItemsChanged={this.onViewableItemsChanged}
-                    overScrollMode='never'
-                    style={{ height: listHeight }}
-                    keyboardShouldPersistTaps={'handled'}
-                    bounces={false}
-                    removeClippedSubviews={false}
-                  />
-                {/* </View> */}
+                <FlatList
+                  ref={(ref) => { this.flatListRef = ref; }}
+                  data={this.state.rlist}
+                  keyExtractor={restaurant => restaurant.id}
+                  renderItem={restaurant => this.renderRestaurant(
+                    restaurant.item, 
+                    restaurant.item.name === this.selectedName,
+                    restaurant.index
+                  )}
+                  getItemLayout={(data, index) => (
+                    { length: restaurantDisplayHeight, offset: restaurantDisplayHeight * index, index }
+                  )}
+                  onViewableItemsChanged={this.onViewableItemsChanged}
+                  overScrollMode='never'
+                  style={{ height: listHeight }}
+                  keyboardShouldPersistTaps={'handled'}
+                  bounces={false}
+                  removeClippedSubviews={false}
+                />
               </View>
             </View>
 
@@ -399,13 +430,6 @@ const styles = {
     flex: 1,
     flexDirection: 'column',
     //justifyContent: 'space-between'
-  },
-  headerTextStyle: {
-    fontSize: 17,
-    fontWeight: '500',
-    color: '#444',
-    textAlign: 'center',
-    flex: 1
   },
   photoFrameStyle: {
     borderBottomWidth: 1,
@@ -486,7 +510,6 @@ const styles = {
 
 const {
   pageStyle,
-  headerTextStyle,
   photoFrameStyle,
   photoStyle,
   rHeaderStyle,

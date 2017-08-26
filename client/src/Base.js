@@ -77,7 +77,7 @@ class Base extends Component {
         );
       }
       return (
-        <View>
+        <View style={{ flex: 1 }}>
           <StatusBar hidden={false} />
           <LoginPage onSkip={this.logInAnonymously.bind(this)} />
         </View>
