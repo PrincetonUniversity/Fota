@@ -151,15 +151,11 @@ class RestaurantDetail extends Component {
 
   changeRecommendDisplay() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    console.log(this.state.showRecommend);
     this.setState({ showRecommend: !this.state.showRecommend });
   }
 
   checkScroll() {
-    if (this.state.photos.length < 7) {
-      return false;
-    }
-    return true;
+    return (this.state.photos.length >= 7);
   }
 
   renderFilters() {
@@ -168,6 +164,7 @@ class RestaurantDetail extends Component {
         key={index}
         text={filterName.title}
         color='white'
+        size={14}
       />
     );
   }
@@ -224,7 +221,10 @@ class RestaurantDetail extends Component {
               </Animated.View>
 
               <View style={titleContainerStyle}>
-                <Text style={titleStyle}>
+                <Text style={titleStyle} onPress={() => {
+                    console.log(this.state.scrollY._value);
+                    console.log(headerScrollDistance);
+                  }}>
                   {restaurant.name}
                 </Text>
               </View>
@@ -404,49 +404,53 @@ class RestaurantDetail extends Component {
     );
   }
 
-  renderFooter(pageY) {
+  renderFooter() {
     const restaurant = this.state.restaurant;
     return (
       //<Animated.View style={[footerStyle, { transform: [{ translateY: pageY }] }]}>
       <View style={footerStyle}>
-        <View style={bottomSpacerStyle} />
-        <Ionicon.Button
-          name='ios-call'
-          borderRadius={0}
-          color='gray'
-          backgroundColor='white'
-          onPress={() => phonecall(restaurant.phone.substring(1), false)}
-        >
-          <Text style={footerTextStyle}>CALL</Text>
-        </Ionicon.Button>
-        <View style={{ flexDirection: 'column', ...bottomSpacerStyle }}>
+        {/* <View style={bottomSpacerStyle} /> */}
+        <View style={bottomSpacerStyle}>
+          <Ionicon.Button
+            name='ios-call'
+            borderRadius={0}
+            color='gray'
+            backgroundColor='white'
+            onPress={() => phonecall(restaurant.phone.substring(1), false)}
+          >
+            <Text style={footerTextStyle}>CALL</Text>
+          </Ionicon.Button>
+        </View>
+        {/* <View style={{ flexDirection: 'column', ...bottomSpacerStyle }}>
           <View style={bottomSpacerStyle} />
           <View style={bottomLineStyle} />
           <View style={bottomSpacerStyle} />
-        </View>
+        </View> */}
 
-        <View style={bottomSpacerStyle} />
-        <MaterialIcon.Button
-          name='directions'
-          borderRadius={0}
-          color='gray'
-          backgroundColor='white'
-          onPress={() => {
-            navigator.geolocation.getCurrentPosition(position => {
-              const lat = position.coords.latitude;
-              const lng = position.coords.longitude;
-              const formattedAddress = this.state.restaurant.location.display_address.map(address =>
-                address.replace(/\s/g, '+')
-              );
-              //formattedAddress = formattedAddress.reduce((total, line) => `${total}+${line}`);
-              Linking.openURL(directionsURL(lat, lng, formattedAddress))
-                .catch(e => request.showErrorAlert(e));
-            });
-          }}
-        >
-          <Text style={footerTextStyle}>DIRECTIONS</Text>
-        </MaterialIcon.Button>
-        <View style={bottomSpacerStyle} />
+        {/* <View style={bottomSpacerStyle} /> */}
+        <View style={bottomSpacerStyle}>
+          <MaterialIcon.Button
+            name='directions'
+            borderRadius={0}
+            color='gray'
+            backgroundColor='white'
+            onPress={() => {
+              navigator.geolocation.getCurrentPosition(position => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const formattedAddress = this.state.restaurant.location.display_address.map(address =>
+                  address.replace(/\s/g, '+')
+                );
+                //formattedAddress = formattedAddress.reduce((total, line) => `${total}+${line}`);
+                Linking.openURL(directionsURL(lat, lng, formattedAddress))
+                  .catch(e => request.showErrorAlert(e));
+              });
+            }}
+          >
+            <Text style={footerTextStyle}>DIRECTIONS</Text>
+          </MaterialIcon.Button>
+        </View>
+        {/* <View style={bottomSpacerStyle} /> */}
       </View>
       //</Animated.View>
     );
@@ -495,7 +499,8 @@ class RestaurantDetail extends Component {
           <ScrollView
             scrollEnabled={this.checkScroll()}
             scrollEventThrottle={1}
-            overScrollMode='never'
+            showsVerticalScrollIndicator={false}
+            //overScrollMode='never'
             bounces={false}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
@@ -519,7 +524,6 @@ class RestaurantDetail extends Component {
             </Animated.View>
           </ScrollView>
         </Animated.View>
-
         {this.renderFooter(pageY)}
       </View>
     );
@@ -666,7 +670,7 @@ const styles = {
     fontSize: 12,
     marginTop: 5,
     color: 'rgba(0, 0, 0, 0.63)',
-    fontWeight: '500',
+    fontWeight: '400',
     textAlign: 'center'
   },
   infoObjectStyle: {
@@ -682,12 +686,13 @@ const styles = {
     right: 0,
     height: 50,
     flexDirection: 'row',
-    paddingVertical: 10,
+    alignItems: 'center',
+    backgroundColor: 'white',
     borderColor: 'gray',
     elevation: 2,
     shadowOffset: { width: -1, height: -5 },
     shadowOpacity: 0.05,
-    shadowRadius: 3
+    shadowRadius: 3,
   },
   footerTextStyle: {
     fontWeight: '900',
@@ -696,13 +701,11 @@ const styles = {
   },
   bottomSpacerStyle: {
     flex: 1,
-    backgroundColor: 'white'
-  },
-  bottomLineStyle: {
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'rgba(0, 0, 0, 0.2)',
     borderRightWidth: 1,
-    borderColor: 'gray',
-    flex: 2,
-    backgroundColor: 'white'
   },
 };
 
@@ -725,7 +728,6 @@ const {
   footerStyle,
   footerTextStyle,
   bottomSpacerStyle,
-  bottomLineStyle
 } = styles;
 
 export default RestaurantDetail;

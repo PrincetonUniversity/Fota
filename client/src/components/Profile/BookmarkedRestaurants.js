@@ -10,9 +10,9 @@ const PHOTO_BORDER_RADIUS = 7;
 class BookmarkedRestaurants extends Component {
   static navigationOptions = {
     tabBarIcon: ({ focused }) => {
-      let color = '#ccc';
+      let color = 'rgba(0, 0, 0, 0.2)';
       if (focused) {
-        color = '#ff9700';
+        color = '#ff9700';  
       }
       return (
         <Icon
@@ -29,7 +29,8 @@ class BookmarkedRestaurants extends Component {
       <FilterDisplay
         key={index}
         text={filterName.title}
-        color='#ccc'
+        color='rgba(0, 0, 0, 0.6)'
+        size={10}
       />
     );
   }
@@ -46,7 +47,7 @@ class BookmarkedRestaurants extends Component {
               containerStyle={{ height: 75 }}
               photoStyle={{ flex: 1 }}
             />
-            <View style={{ margin: 10, flex: 1, justifyContent: 'space-between' }}>
+            <View style={{ marginHorizontal: 14, marginVertical: 10, flex: 1, justifyContent: 'space-between' }}>
               <View>
                 <Text style={styles.addressStyle}>{address}</Text>
                 <Text style={styles.titleStyle}>{rest.name}</Text>
@@ -91,20 +92,21 @@ const styles = {
     flex: 1
   },
   addressStyle: {
-    fontSize: 12,
-    color: '#aaa'
+    fontSize: 11,
+    fontWeight: '300',
+    color: 'rgba(0, 0, 0, 0.6)'
   },
   titleStyle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#444',
+    fontSize: 14,
+    fontWeight: '900',
+    color: 'rgba(0, 0, 0, 0.75)',
     marginVertical: 7
   },
   ratingStyle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#aaa',
-    borderColor: '#ddd',
+    fontSize: 14,
+    fontWeight: '900',
+    color: 'rgba(0, 0, 0, 0.6)',
+    borderColor: 'rgba(0, 0, 0, 0.25)',
     borderTopWidth: 1,
     borderBottomWidth: 1,
     paddingVertical: 7,

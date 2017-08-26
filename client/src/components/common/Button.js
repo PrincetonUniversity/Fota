@@ -20,7 +20,7 @@ const Button = (props) => {
       style={{ 
         backgroundColor: colors.fill,
         borderColor: colors.border,
-        borderRadius: props.round ? 18 : 0,
+        borderRadius: props.round ? 14 : 0,
         ...styles.buttonStyle
       }}
     >
@@ -35,8 +35,8 @@ const Button = (props) => {
 const styles = {
   textStyle: {
     alignSelf: 'center',
-    fontSize: 18,
-    fontWeight: '500',
+    fontSize: 17,
+    fontWeight: '900',
     padding: 10,
   },
   buttonStyle: {
@@ -44,7 +44,6 @@ const styles = {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 18,
     borderWidth: 1,
     margin: 1
   }

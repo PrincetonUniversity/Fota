@@ -78,7 +78,13 @@ class ProfilePage extends Component {
     return (
       <View style={{ backgroundColor: '#fff', flex: 1 }}>
         <View style={headerStyle}>
-          <View style={{ borderColor: '#ddd', borderBottomWidth: 1, ...headerSectionStyle }}>
+          <View 
+            style={{ 
+              borderColor: 'rgba(0, 0, 0, 0.09)',
+              borderBottomWidth: 1,
+              ...headerSectionStyle
+            }}
+          >
             <View>
               <Text style={nameTextStyle}>{name}</Text>
               <View style={{ flexDirection: 'row', paddingBottom: 10 }} >
@@ -159,15 +165,15 @@ const ProfileNavigator = TabNavigator({
       marginVertical: 10,
       paddingVertical: 3,
       borderRightWidth: 1,
-      borderColor: '#e0e0e0'
+      borderColor: 'rgba(0, 0, 0, 0.09)'
     },
     style: {
       marginTop: 10,
-      backgroundColor: '#f8f8f8',
+      backgroundColor: 'rgba(0, 0, 0, 0.03)',
       elevation: 0,
       borderTopWidth: 1,
       borderBottomWidth: 1,
-      borderColor: '#e8e8e8'
+      borderColor: 'rgba(0, 0, 0, 0.09)'
     },
     iconStyle: {
       height: 30,
@@ -187,13 +193,13 @@ const styles = {
     paddingVertical: 10,
   },
   nameTextStyle: {
-    fontSize: 22,
-    fontWeight: '500',
-    color: '#444',
+    fontSize: 20,
+    fontWeight: '900',
+    color: 'rgba(0, 0, 0, 0.81)',
     paddingVertical: 5
   },
   infoTextStyle: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '400',
     color: '#ff9700'
   },
@@ -203,12 +209,13 @@ const styles = {
   },
   statNumberStyle: {
     fontSize: 20,
-    fontWeight: '500',
-    color: '#444'
+    fontWeight: '900',
+    color: 'rgba(0, 0, 0, 0.75)'
   },
   statLabelStyle: {
     fontSize: 15,
-    color: '#aaa'
+    fontWeight: '300',
+    color: '#555'
   },
 };
 

@@ -54,7 +54,7 @@ const styles = {
   textStyle: {
     fontWeight: 'bold',
     padding: 0,
-    color: '#444',
+    color: 'rgba(0, 0, 0, 0.8)',
     fontSize: 18,
     flex: 1,
   },
@@ -62,12 +62,12 @@ const styles = {
     fontWeight: 'bold',
     padding: 0,
     marginLeft: 10,
-    color: '#aaa',
-    fontSize: 15,
+    color: 'rgba(0, 0, 0, 0.5)',
+    fontSize: 13,
   },
   labelStyle: {
-    fontSize: 15,
-    color: '#aaa',
+    fontSize: 16,
+    color: 'rgba(0, 0, 0, 0.5)',
     marginBottom: 5
   },
   containerStyle: {

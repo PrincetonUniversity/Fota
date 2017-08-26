@@ -85,15 +85,27 @@ export const loginStyles = {
     marginBottom: 15
   },
   headerText: {
-    color: '#444',
-    fontSize: 25,
-    fontWeight: '500',
+    color: 'rgba(0, 0, 0, 0.75)',
+    fontSize: 24,
+    fontWeight: '900',
     paddingVertical: 5,
   },
   small: {
     marginTop: 10,
-    color: '#aaa',
-    fontSize: 14
+    color: 'rgba(0, 0, 0, 0.5)',
+    fontSize: 15
+  },
+  doneButton: {
+    height: 60,
+    borderTopWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.09)',
+    flexDirection: 'row',
+  },
+  error: {
+    marginTop: 20,
+    fontSize: 20,
+    alignSelf: 'center',
+    color: 'red'
   }
 };
 

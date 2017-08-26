@@ -15,6 +15,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 //mport LoginPage from '../Account/LoginPage';
 import ProfilePage from './ProfilePage';
 import SettingsPage from '../Settings/SettingsPage';
+import SettingsRadioButton from '../Settings/SettingsRadioButton';
 import { tabWidth, tabHeight, horizontalPadding } from '../../Base';
 
 class ProfileHelper extends Component {
@@ -66,13 +67,20 @@ class ProfileHelper extends Component {
   }
 }
 
+const SettingsRadius = (props) => (
+  <SettingsRadioButton
+    title='Search Radius'
+    name='SearchRadius'
+    extraText=' mi.'
+    options={['1', '3', '5', '10']}
+    navigation={props.navigation}
+  />
+);
+
 const ProfileNavigator = StackNavigator({
-  Profile: {
-    screen: ProfilePage
-  },
-  Settings: {
-    screen: SettingsPage
-  }
+  Profile: { screen: ProfilePage },
+  Settings: { screen: SettingsPage },
+  Radius: { screen: SettingsRadius }
 },
 {
   headerMode: 'none',

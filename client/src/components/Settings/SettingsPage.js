@@ -1,18 +1,32 @@
 import React, { Component } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import Ionicon from 'react-native-vector-icons/Ionicons';
+import firebase from 'firebase';
 import { Header } from '../common';
 
-const SettingsHeader = (props) => (
+export const SettingsHeader = (props) => (
   <View style={styles.sectionHeaderStyle}>
     <Text style={styles.sectionHeaderTextStyle}>{props.text}</Text>
   </View>
 );
 
-const SettingsButton = (props) => (
+export const SettingsButton = (props) => (
   <TouchableOpacity onPress={props.onPress} style={styles.buttonStyle}>
     <Text style={styles.buttonTextStyle}>{props.text}</Text>
+    {props.children}
   </TouchableOpacity>
+);
+
+export const BackButton = (props) => (
+  <View style={{ position: 'absolute', left: 10 }}>
+    <Ionicon.Button
+      name='ios-arrow-back'
+      backgroundColor='white'
+      color='black'
+      size={20}
+      onPress={props.onPress}
+    />
+  </View>
 );
 
 class SettingsPage extends Component {
@@ -20,20 +34,25 @@ class SettingsPage extends Component {
     return (
       <View>
         <Header text='Settings'>
-          <View style={{ position: 'absolute', left: 10 }}>
-            <Ionicon.Button
-              name='ios-arrow-back'
-              backgroundColor='white'
-              color='black'
-              size={20}
-              onPress={() => this.props.navigation.goBack()}
-            />
-          </View>
+          <BackButton onPress={() => this.props.navigation.goBack()} />
         </Header>
 
         <ScrollView>
           <SettingsHeader text='Location' />
-          <SettingsButton text='Search Radius' />
+          <SettingsButton 
+            text='Search Radius'
+            onPress={() => this.props.navigation.navigate('Radius')}
+          />
+
+          <SettingsHeader text='About' />
+          <SettingsButton text='Help &amp; Support' />
+          <SettingsButton text='Terms of Service' />
+          <SettingsButton text='Privacy Policy' />
+          <SettingsButton text='Acknowledgements' />
+          <SettingsButton text='Report a Bug' />
+
+          <SettingsHeader text='' />
+          <SettingsButton text='Sign out' onPress={() => firebase.auth().signOut()} />
         </ScrollView>
       </View>
     );
@@ -51,7 +70,7 @@ const styles = {
   sectionHeaderTextStyle: {
     color: 'rgba(0, 0, 0, 0.35)',
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: '500'
   },
   buttonStyle: {
     borderColor: 'rgba(0, 0, 0, 0.09)',
@@ -62,7 +81,7 @@ const styles = {
   buttonTextStyle: {
     color: 'rgba(0, 0, 0, 0.55)',
     fontSize: 15,
-    fontWeight: '500',
+    fontWeight: '500'
   },
 };
 

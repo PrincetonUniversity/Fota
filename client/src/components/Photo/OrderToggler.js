@@ -84,10 +84,9 @@ const styles = {
     flex: 1,
     textAlign: 'center',
     fontWeight: '900',
-    color: 'gray',
+    color: 'rgba(0, 0, 0, 0.13)',
     fontSize: 18,
-    lineHeight: 22,
-    opacity: 0.6
+    lineHeight: 22
   },
   barSelectedStyle: {
     flex: 1,

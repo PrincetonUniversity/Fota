@@ -11,7 +11,7 @@ import { Text, View } from 'react-native';
 
 const FilterDisplay = (props) => (
   <View style={{ borderColor: props.color, ...styles.containerStyle }}>
-    <Text style={{ color: props.color, ...styles.textStyle }}>
+    <Text style={{ fontSize: props.size, color: props.color, ...styles.textStyle }}>
       {props.text}
     </Text>
   </View>
@@ -30,8 +30,7 @@ const styles = {
       margin: 5
     },
     textStyle: {
-      fontSize: 14,
-      fontWeight: '500',
+      fontWeight: '400',
       marginLeft: 3,
       marginRight: 3,
     }

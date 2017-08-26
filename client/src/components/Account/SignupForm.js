@@ -97,8 +97,8 @@ class SignupForm extends Component {
             <Ionicon.Button
               name='ios-arrow-back'
               backgroundColor='#fff'
-              color='#444'
-              size={30}
+              color='rgba(0, 0, 0, 0.75)'
+              size={28}
               onPress={() => this.props.navigation.dispatch(NavigationActions.back())}
             />
             <Text style={loginStyles.headerText}>Sign up</Text>
@@ -136,31 +136,16 @@ class SignupForm extends Component {
           <Text style={loginStyles.small}>
             By signing up, I agree to Fota's Terms of Service and Privacy Policy.
           </Text>
-          <Text style={styles.errorTextStyle}>{this.state.error}</Text>
+          <Text style={loginStyles.error}>{this.state.error}</Text>
         </View>
 
-        <View style={styles.doneButtonStyle}>
+        <View style={loginStyles.doneButton}>
           {this.renderButton()}
         </View>
       </View>
     );
   }
 }
-
-const styles = {
-  doneButtonStyle: {
-    height: 60,
-    borderTopWidth: 1,
-    borderColor: '#eee',
-    flexDirection: 'row',
-  },
-  errorTextStyle: {
-    marginTop: 20,
-    fontSize: 20,
-    alignSelf: 'center',
-    color: 'red'
-  }
-};
 
 function mapStateToProps({ loginState }) {
   return { loginState };

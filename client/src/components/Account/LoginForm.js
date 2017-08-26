@@ -85,8 +85,8 @@ class LoginForm extends Component {
             <Ionicon.Button
               name='ios-arrow-back'
               backgroundColor='#fff'
-              color='#444'
-              size={30}
+              color='rgba(0, 0, 0, 0.75)'
+              size={28}
               onPress={() => this.props.navigation.dispatch(NavigationActions.back())}
             />
             <Text style={loginStyles.headerText}>Log in</Text>
@@ -108,10 +108,10 @@ class LoginForm extends Component {
           />
 
           <Text style={loginStyles.small}>Forgot your password?</Text>
-          <Text style={styles.errorTextStyle}>{this.state.error}</Text>
+          <Text style={loginStyles.error}>{this.state.error}</Text>
         </View>
 
-        <View style={styles.doneButtonStyle}>
+        <View style={loginStyles.doneButton}>
           {this.renderButton()}
         </View>
       </View>
@@ -121,22 +121,11 @@ class LoginForm extends Component {
 
 const styles = {
   welcomeStyle: {
-    color: '#444',
-    fontSize: 25,
-    fontWeight: '400',
+    color: 'rgba(0, 0, 0, 0.75)',
+    fontSize: 24,
+    fontWeight: '700',
     marginTop: 20,
     marginBottom: 10
-  },
-  doneButtonStyle: {
-    height: 60,
-    borderTopWidth: 1,
-    borderColor: '#eee',
-    flexDirection: 'row',
-  },
-  errorTextStyle: {
-    fontSize: 20,
-    alignSelf: 'center',
-    color: 'red'
   }
 };
 
