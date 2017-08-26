@@ -12,8 +12,8 @@
 
 import React, { Component } from 'react';
 import {
-  View, Image, Text, FlatList, AsyncStorage, TouchableWithoutFeedback,
-  Keyboard, TouchableOpacity, Alert
+  View, Image, Text, FlatList, AsyncStorage, TouchableWithoutFeedback, ScrollView,
+  Keyboard, TouchableOpacity, Alert, LayoutAnimation
 } from 'react-native';
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
@@ -32,6 +32,8 @@ const fs = RNFetchBlob.fs;
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
 window.Blob = Blob;
 
+const restaurantDisplayHeight = 60;
+
 // why doesn't javascript have printf() or format()?
 const dayformat = (day) => (
   (day < 10 && day >= 0) ? `0${day}` : `${day}`
@@ -46,6 +48,7 @@ class CameraLocationPage extends Component {
       rlist: [], 
       totalList: [], 
       selected: null, 
+      index: -1,
       hidePhoto: false, 
       submitting: false 
     };
@@ -169,18 +172,24 @@ class CameraLocationPage extends Component {
     .catch(() => cameraErrorAlert());
   }
 
-  renderRestaurant(restaurant, chosen) {
+  renderRestaurant(restaurant, chosen, index) {
     return (
       <TouchableOpacity
         onPress={() => {
           Keyboard.dismiss();
+          LayoutAnimation.easeInEaseOut();
           if (this.submitting) return;
           if (chosen) {
-            this.setState({ selected: null });
+            this.setState({ selected: null, index: -1 });
             this.selectedName = null;
             this.updateQuery(this.state.query);
           } else {
-            this.setState({ selected: restaurant, hidePhoto: false });
+            if (index > this.state.rlist.length - 4) {
+              this.flatListRef.scrollToEnd({ animated: true });
+            } else {
+              this.flatListRef.scrollToIndex({ animated: true, index });
+            }
+            this.setState({ selected: restaurant, index, hidePhoto: false });
             this.selectedName = restaurant.name;
             this.updateQuery(this.state.query);
           }
@@ -188,10 +197,15 @@ class CameraLocationPage extends Component {
       >
         <View style={restaurantDisplayStyle}>
           {chosen && <View style={chosenIndicatorStyle} />}
-          <Text style={restaurantTextStyle}>
-            {restaurant.name}
-          </Text>
-          <Text style={restaurantSubtextStyle}>
+          <View style={{ flexDirection: 'column', flex: 1, alignItems: 'flex-start' }}>
+            <Text ellipsizeMode='tail' numberOfLines={1} style={restaurantTextStyle}>
+              {restaurant.name}
+            </Text>
+            <Text ellipsizeMode='tail' numberOfLines={1} style={restaurantSubtextStyle}>
+              Frist Campus Center
+            </Text>
+          </View>
+          <Text style={[restaurantSubtextStyle, { paddingLeft: 5 }]}>
             {restaurant.distance.toPrecision(1)} mi.
           </Text>
         </View>
@@ -219,6 +233,7 @@ class CameraLocationPage extends Component {
           style={cancelTextStyle}
           onPress={() => {
             Keyboard.dismiss();
+            LayoutAnimation.easeInEaseOut();
             this.setState({ hidePhoto: false });
           }}
         >
@@ -244,7 +259,7 @@ class CameraLocationPage extends Component {
         colors={{ text: color, fill: '#fff', border: '#fff' }}
         text={'Upload'}
       >
-        <Icon name='file-upload' color={color} style={{ paddingVertical: 15 }} size={25} />
+        <Icon name='file-upload' color={color} size={25} />
       </Button>
     );
   }
@@ -258,7 +273,7 @@ class CameraLocationPage extends Component {
           }}
         >
           <View style={pageStyle}>
-            <Header text='Ready to Share?'>
+            <Header text='Ready to Share?' iosHideStatusBar>
               <View style={{ position: 'absolute', left: 10 }}>
                 <Ionicon.Button
                   name='ios-arrow-back'
@@ -275,7 +290,7 @@ class CameraLocationPage extends Component {
               </View>
             </Header>
 
-            <View style={{ marginHorizontal: 50, marginVertical: 10, justifyContent: 'flex-start', flex: 1 }}>
+            <View style={{ paddingHorizontal: 50, marginVertical: 10, flex: 1, justifyContent: 'flex-start' }}>
               {this.renderPhoto()}
 
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 12 }}>
@@ -290,11 +305,12 @@ class CameraLocationPage extends Component {
                 <View style={{ flexDirection: 'row' }}>
                   <Input
                     style={searchBarStyle}
-                    placeholder="Where'd you take this sick flick?"
+                    placeholder="Where'd you take this?"
                     value={this.state.query}
                     onChangeText={query => this.updateQuery(query)}
                     onFocus={() => {
                       if (this.submitting) return;
+                      LayoutAnimation.easeInEaseOut();
                       this.setState({ hidePhoto: true });
                     }}
                   >
@@ -305,13 +321,25 @@ class CameraLocationPage extends Component {
                   </Input>
                 </View>
 
+                {/* <ScrollView>
+                  ref={(ref) => { this.scrollViewRef = ref; }}
+                  {() => this.state.rlist.map((restaurant, index) => {
+                    this.renderRestaurant(restaurant, restaurant.item.name, index);
+                  })}
+                </ScrollView> */}
                 <FlatList
+                  ref={(ref) => { this.flatListRef = ref; }}
                   data={this.state.rlist}
                   keyExtractor={restaurant => restaurant.id}
                   renderItem={restaurant => this.renderRestaurant(
                     restaurant.item, 
-                    restaurant.item.name === this.selectedName
+                    restaurant.item.name === this.selectedName,
+                    restaurant.index
                   )}
+                  getItemLayout={(data, index) => (
+                    { length: restaurantDisplayHeight, offset: restaurantDisplayHeight * index, index }
+                  )}
+                  overScrollMode='never'
                   keyboardShouldPersistTaps={'handled'}
                   bounces={false}
                   removeClippedSubviews={false}
@@ -353,15 +381,15 @@ const styles = {
     alignItems: 'center'
   },
   photoStyle: {
-    width: 200,
-    height: 200,
+    width: 150,
+    height: 150,
     borderRadius: 15
   },
   rHeaderStyle: {
-    fontSize: 18,
-    fontWeight: '400',
+    fontSize: 16,
+    fontWeight: '500',
     marginHorizontal: 5,
-    color: '#444'
+    color: 'rgba(0,0,0,0.67)'
   },
   cancelTextStyle: {
     fontSize: 17,
@@ -371,12 +399,12 @@ const styles = {
   listContainerStyle: {
     borderRadius: 7,
     overflow: 'hidden',
-    borderColor: '#eee',
+    borderColor: 'rgba(0,0,0,0.1)',
     borderWidth: 1,
     flex: 1
   },
   searchBarStyle: {
-    backgroundColor: '#eee',
+    backgroundColor: 'rgba(0,0,0,0.06)',
     paddingHorizontal: 12,
     height: 32,
   },
@@ -386,10 +414,11 @@ const styles = {
     marginRight: 5
   },
   buttonHolderStyle: {
-    height: 60,
+    height: 70,
     borderTopWidth: 1,
     borderColor: '#eee',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    marginTop: 25
   },
   chosenIndicatorStyle: {
     width: 5,
@@ -403,20 +432,20 @@ const styles = {
   restaurantDisplayStyle: {
     flexDirection: 'row',
     padding: 10,
-    borderTopWidth: 2,
-    borderColor: '#eee',
+    height: 60,
+    borderTopWidth: 1,
+    borderColor: 'rgba(0,0,0,0.09)',
     alignItems: 'center'
   },
   restaurantTextStyle: { 
     fontSize: 16, 
-    color: '#444',
-    fontWeight: '500',
+    fontWeight: '700',
+    color: 'rgba(0,0,0,0.66)',
     flex: 1
   },
   restaurantSubtextStyle: {
-    fontSize: 12,
-    color: '#aaa',
-    paddingLeft: 5
+    fontSize: 13,
+    color: 'rgba(0,0,0,0.47)',
   }
 };
 

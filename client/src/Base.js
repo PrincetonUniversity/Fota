@@ -16,7 +16,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, AsyncStorage, Alert, Dimensions } from 'react-native';
+import { View, AsyncStorage, Alert, StatusBar, Dimensions } from 'react-native';
 import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
@@ -71,12 +71,16 @@ class Base extends Component {
       if (this.props.loginState) {
         return (
           <View style={{ flex: 1 }}>
+            <StatusBar hidden={false} />
             <FotaNavigator screenProps={{ user: this.props.loginState }} />
           </View>
         );
       }
       return (
-        <LoginPage onSkip={this.logInAnonymously.bind(this)} />
+        <View>
+          <StatusBar hidden={false} />
+          <LoginPage onSkip={this.logInAnonymously.bind(this)} />
+        </View>
       );
     }
     return (

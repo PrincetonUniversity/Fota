@@ -90,13 +90,25 @@ class RestaurantDetail extends Component {
           const walkTime = walkDirections.routes[0].legs[0].duration.text;
           const distance = walkDirections.routes[0].legs[0].distance.text;
           if (!walkTime.includes('hour') && parseInt(walkTime) <= 15) {
-            this.setState({ navLoading: false, driving: false, walking: true, navTime: walkTime, distance });
+            this.setState({
+              navLoading: false,
+              driving: false,
+              walking: true,
+              navTime: walkTime,
+              distance
+            });
           } else {
             request.get(directionsRequest(lat, lng, formattedAddress, 'driving'))
               .then(response2 => {
                 const driveDirections = response2.data;
                 const driveTime = driveDirections.routes[0].legs[0].duration.text;
-                this.setState({ navLoading: false, driving: true, walking: false, navTime: driveTime, distance });
+                this.setState({
+                  navLoading: false,
+                  driving: true,
+                  walking: false,
+                  navTime: driveTime,
+                  distance
+                });
               })
               .catch(e => { console.log(e); request.showErrorAlert(e); });
           }
@@ -253,24 +265,29 @@ class RestaurantDetail extends Component {
     }
     return (
       <View>
-        <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}>
-          <View style={{ height: 20, width: 20, marginRight: 15 }} />
-          {/* <TouchableWithoutFeedback>
-
-          </TouchableWithoutFeedback> */}
-          <View style={ratingContainerStyle} onLayout={e => this.setRatingHeight(e)}>
-            <Text style={ratingPercentStyle} onPress={() => this.changeRecommendDisplay()}>96%</Text>
-            <Text style={ratingCountStyle} onPress={() => this.changeRecommendDisplay()}>103 votes</Text>
-          </View>
-          <Ionicon
-            name={button}
-            style={{ marginLeft: 15, height: 20, width: 20 }}
-            size={20}
-            //borderRadius={0}
-            color='rgba(0, 0, 0, 0.4)'
-            backgroundColor='white'
-            onPress={() => this.changeRecommendDisplay()}
-          />
+        <View style={ratingSectionStyle}>
+          <View style={ratingSectionStyle} />
+          <TouchableWithoutFeedback onPress={() => this.changeRecommendDisplay()}>
+            <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}>
+              <View style={ratingContainerStyle} onLayout={e => this.setRatingHeight(e)}>
+                <Text style={ratingPercentStyle} onPress={() => this.changeRecommendDisplay()}>
+                  96%
+                </Text>
+                <Text style={ratingCountStyle} onPress={() => this.changeRecommendDisplay()}>
+                  103 votes
+                </Text>
+              </View>
+              <Ionicon
+                name={button}
+                style={{ marginLeft: 15, height: 20, width: 20 }}
+                size={20}
+                //borderRadius={0}
+                color='rgba(0, 0, 0, 0.4)'
+                backgroundColor='white'
+                onPress={() => this.changeRecommendDisplay()}
+              />
+            </View>
+          </TouchableWithoutFeedback>
         </View>
         {this.renderRecommend()}
       </View>
@@ -320,7 +337,12 @@ class RestaurantDetail extends Component {
     if (this.state.restaurant.price.length === 1) {
       return (
         <View style={infoObjectStyle}>
-          <FoundationIcon name='dollar' size={30} style={{ height: 30 }} color={'rgba(0,0,0,0.63)'} />
+          <FoundationIcon
+            name='dollar'
+            size={30}
+            style={{ height: 30 }}
+            color={'rgba(0,0,0,0.63)'}
+          />
           <Text style={infoIconStyle}>
             Cheap
           </Text>
@@ -330,8 +352,18 @@ class RestaurantDetail extends Component {
       return (
         <View style={infoObjectStyle}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FoundationIcon name='dollar' size={30} style={{ height: 30 }} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={30} style={{ height: 30 }} color={'rgba(0,0,0,0.63)'} />
+            <FoundationIcon
+              name='dollar'
+              size={30}
+              style={{ height: 30 }}
+              color={'rgba(0,0,0,0.63)'}
+            />
+            <FoundationIcon
+              name='dollar'
+              size={30}
+              style={{ height: 30 }}
+              color={'rgba(0,0,0,0.63)'}
+            />
           </View>
           <Text style={infoIconStyle}>
             Moderate
@@ -391,7 +423,12 @@ class RestaurantDetail extends Component {
         onLayout={e => this.setInfoHeight(e)}
       >
         <View style={infoObjectStyle}>
-            <MaterialIcon name='access-time' size={31} style={{ height: 30 }} color={'rgba(0,0,0,0.63)'} />
+            <MaterialIcon
+              name='access-time'
+              size={31}
+              style={{ height: 30 }}
+              color={'rgba(0,0,0,0.63)'}
+            />
           <Text style={infoIconStyle}>
             {this.timeUntilCloseLabel(this.state.restaurant.hours)}
           </Text>
@@ -610,6 +647,11 @@ const styles = {
     marginLeft: 5,
     marginRight: 5,
   },
+  ratingSectionStyle: {
+    justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
   ratingContainerStyle: {
     justifyContent: 'space-around',
     alignItems: 'center',
@@ -713,6 +755,7 @@ const {
   addressStyle,
   titleStyle,
   filterContainerStyle,
+  ratingSectionStyle,
   ratingContainerStyle,
   ratingPercentStyle,
   ratingCountStyle,
