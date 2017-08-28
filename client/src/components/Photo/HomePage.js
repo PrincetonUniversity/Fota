@@ -15,9 +15,9 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, TouchableOpacity, Dimensions, Platform } from 'react-native';
+import { Text, View, TouchableOpacity, Dimensions, Platform } from 'react-native';
 import { connect } from 'react-redux';
-import Spinner from 'react-native-loading-spinner-overlay';
+//import Spinner from 'react-native-loading-spinner-overlay';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 //import request from '../../helpers/axioshelper';
@@ -26,6 +26,7 @@ import HotPage from './HotPage';
 import NewPage from './NewPage';
 //import PhotoList from './PhotoList';
 import Headbar from './Headbar';
+import { Input } from '../common';
 import { setLoading } from '../../actions/index';
 import { tabWidth, tabHeight, horizontalPadding } from '../../Base';
 import icoMoonConfig from '../../selection.json';
@@ -74,8 +75,36 @@ class HomePage extends Component {
   render() {
     console.log('rendering');
     return (
-      <View style={{ backgroundColor: 'white', flex: 1 }}>
-        <Headbar />
+      <View style={pageStyle}>
+        <View style={searchContainerStyle}>
+          <Icon.Button
+            name='search'
+            color='rgba(0,0,0,0.34)'
+            backgroundColor='transparent'
+            size={19}
+            style={{ flex: 1 }}
+          >
+            <Text style={searchTextStyle}>Search</Text>
+          </Icon.Button>
+        </View>
+        {/* <View style={{ flexDirection: 'row' }}>
+          <Input
+            style={{
+              backgroundColor: 'rgba(0,0,0,0.06)',
+              //paddingHorizontal: 12,
+              height: 32,
+              borderRadius: 7,
+              marginHorizontal: 20,
+              marginTop: 11,
+              marginBottom: 1
+              //marginVertical: 5
+            }}
+            placeholder='Search'
+            placeholderAlign='center'
+            //value={this.state.query}
+            //onChangeText={query => this.updateQuery(query)}
+          />
+        </View> */}
         <HomeNavigator />
       </View>
     );
@@ -99,12 +128,12 @@ const HomeNavigator = TabNavigator({
     activeTintColor: '#ff9700',
     inactiveTintColor: 'rgba(0, 0, 0, 0.23)',
     labelStyle: {
-      fontSize: 18,
+      fontSize: 16,
       margin: 0,
       fontWeight: '900'
     },
     indicatorStyle: {
-      height: 5,
+      height: 4,
       backgroundColor: '#ff9700',
       //width: 100,
       //marginRight: 10,
@@ -130,6 +159,34 @@ const HomeNavigator = TabNavigator({
     }
   }
 });
+
+const styles = {
+  pageStyle: {
+    backgroundColor: 'white',
+    flex: 1,
+    paddingTop: (Platform.OS === 'ios') ? 15 : 0
+  },
+  searchContainerStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 35,
+    marginTop: 10,
+    marginHorizontal: 25,
+    backgroundColor: 'rgba(0,0,0,0.04)',
+    borderRadius: 15
+  },
+  searchTextStyle: {
+    fontSize: 15,
+    color: 'rgba(0,0,0,0.2)',
+    letterSpacing: 1
+  }
+};
+
+const {
+  pageStyle,
+  searchContainerStyle,
+  searchTextStyle
+} = styles;
 
 function mapStateToProps({ loading, sorting }) {
   return { loading, sorting };

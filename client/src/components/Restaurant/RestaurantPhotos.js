@@ -94,7 +94,7 @@ class RestaurantPhotos extends Component {
     }
     const photoLinks = this.state.photos.map(photo => photo.url);
     return (
-      <View style={{ flex: 1, paddingTop: 5, paddingHorizontal: 7 }}>
+      <View style={tabContainerStyle}>
         <Modal
           animationType={'fade'}
           transparent
@@ -132,6 +132,16 @@ const styles = {
     fontWeight: '900',
     paddingVertical: 5
   },
+  tabContainerStyle: {
+    flex: 1,
+    paddingTop: 5,
+    paddingHorizontal: 7,
+    borderTopWidth: 1,
+    borderColor: 'rgba(0,0,0,0.08)',
+    shadowRadius: 2,
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 2 }
+  },
   emptyTextStyle: {
     fontSize: 16,
     textAlign: 'center',
@@ -155,6 +165,7 @@ const styles = {
 
 const {
   tabLabelStyle,
+  tabContainerStyle,
   emptyTextStyle,
   photoFrameStyle,
   photoStyle
