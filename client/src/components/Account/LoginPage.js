@@ -19,6 +19,10 @@ import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 
 class LoginPage extends Component {
+  static navigationOptions = {
+    gesturesEnabled: false
+  };
+  
   render() {
     console.log(this.props);
     let screenProps = {

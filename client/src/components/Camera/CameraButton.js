@@ -8,7 +8,7 @@ const buttonImage = require('../../img/camera_button.png');
 class CameraButton extends Component {
   static navigationOptions = ({ navigation, screenProps }) => ({
     tabBarIcon: ({ focused }) => {
-      let color = '#ccc';
+      let color = 'rgba(0,0,0,0.23)';
       if (focused) color = '#ff9700';
       return (
           <Text

@@ -1,19 +1,22 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
+import icoMoonConfig from '../../selection.json';
+
+const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
 class SubmittedComments extends Component {
   static navigationOptions = {
     tabBarIcon: ({ focused }) => {
-      let color = '#ccc';
+      let color = 'rgba(0,0,0,0.21)';
       if (focused) {
         color = '#ff9700';
       }
       return (
         <Icon
-          name={'comment-processing'}
+          name={'comments'}
           color={color}
-          size={30}
+          size={20}
         />
       );
     }

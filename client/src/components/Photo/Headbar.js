@@ -21,14 +21,12 @@ const Headbar = ({ update }) => (
       //value={this.state.query}
       //onChangeText={query => this.updateQuery(query)}
     >
-      <View>
         <Image
           style={styles.labelStyle}
           source={require('../../img/magnifying_glass_unactivated.png')}
         />
-      </View>
     </Input>
-    <View style={styles.toggleStyle}><OrderToggler update={update} /></View>
+    {/* <View style={styles.toggleStyle}><OrderToggler update={update} /></View> */}
   </View>
 );
 
@@ -49,7 +47,7 @@ const styles = {
   searchContainerStyle: {
     //alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.45)',
-    marginTop: 12,
+   //marginTop: 12,
     marginHorizontal: 35,
     borderRadius: 20,
     borderWidth: 1,

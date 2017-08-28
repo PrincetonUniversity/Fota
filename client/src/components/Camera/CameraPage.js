@@ -19,7 +19,7 @@ import {
   View, Text, Dimensions, AsyncStorage, StatusBar,
   Alert, UIManager, LayoutAnimation 
 } from 'react-native';
-import Ionicon from 'react-native-vector-icons/Ionicons';
+import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Camera, { constants } from 'react-native-camera';
 // eslint-disable-next-line
@@ -28,6 +28,9 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import CameraButton from './CameraButton';
 import CameraLibrary from './CameraLibrary';
 import { Header } from '../common/';
+import icoMoonConfig from '../../selection.json';
+
+const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
 export const tabStyle = {
     height: 35,
@@ -45,13 +48,6 @@ const styles = {
     flex: 1,
     flexDirection: 'column'
   },
-  headerTextStyle: {
-    fontSize: 17,
-    fontWeight: '500',
-    color: '#444',
-    textAlign: 'center',
-    flex: 1,
-  },
   cameraStyle: {
     height: Dimensions.get('window').width,
     width: Dimensions.get('window').width,
@@ -67,7 +63,6 @@ const styles = {
 
 const {
   pageStyle,
-  headerTextStyle,
   cameraStyle,
 } = styles;
 
@@ -144,12 +139,12 @@ class CameraPage extends Component {
       <View style={pageStyle}>
         <StatusBar hidden />
         <Header text='Add a Photo' iosHideStatusBar>
-          <View style={{ position: 'absolute', left: 10 }}>
-            <Ionicon.Button
-              name='md-close'
+          <View style={{ position: 'absolute', left: 20 }}>
+            <Icon
+              name='close'
               backgroundColor='white'
               color='black'
-              size={24}
+              size={13}
               onPress={() => {
                 this.props.screenProps.goBack();
               }}

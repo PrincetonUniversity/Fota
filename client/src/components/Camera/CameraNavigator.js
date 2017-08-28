@@ -18,6 +18,10 @@ import CameraPage from './CameraPage';
 import CameraLocationPage from './CameraLocationPage';
 
 class CameraNavigator extends Component {
+  static navigationOptions = {
+    gesturesEnabled: false
+  };
+  
   render() {
     if (!this.props.loginState || this.props.loginState.isAnonymous) {
       return <View />;

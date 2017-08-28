@@ -15,13 +15,16 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, AsyncStorage, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
-import request from '../../helpers/axioshelper';
-import { photoRequest } from '../../helpers/URL';
-import PhotoList from './PhotoList';
+import { TabNavigator, TabBarTop } from 'react-navigation';
+//import request from '../../helpers/axioshelper';
+//import { photoRequest } from '../../helpers/URL';
+import HotPage from './HotPage';
+import NewPage from './NewPage';
+//import PhotoList from './PhotoList';
 import Headbar from './Headbar';
 import { setLoading } from '../../actions/index';
 import { tabWidth, tabHeight, horizontalPadding } from '../../Base';
@@ -51,69 +54,74 @@ class HomePage extends Component {
           <Icon
             name={'home'}
             color={color}
-            size={32}
+            size={28}
             style={{
               width: 38,
               textAlign: 'center',
             }}
           />
         </TouchableOpacity>
-
       );
     }
   });
 
   state = { photoList: [], loading: true, refreshing: false };
 
-  componentWillMount() {
-    this.getPhotoList();
-  }
-
-  getPhotoList() {
-    if (!this.state.refreshing) {
-      this.props.setLoading(true);
-    }
-    navigator.geolocation.getCurrentPosition(position => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      AsyncStorage.getItem('SearchRadius').then(radius => {
-        request.get(photoRequest(this.props.sorting, lat, lng, parseInt(radius, 10)))
-        .then(response => {
-          this.props.setLoading(false);
-          this.setState({ photoList: response.data, refreshing: false });
-        })
-        .catch(e => request.showErrorAlert(e));
-      });
-    });
-  }
-
   refreshListView() {
     this.setState({ refreshing: true }, () => this.getPhotoList());
   }
 
   render() {
-    if (this.props.loading) {
-      return (
-        <View>
-          <Headbar />
-          <Spinner visible color='#ff9700' />
-        </View>
-      );
-    }
+    console.log('rendering');
     return (
-      <View style={{ backgroundColor: '#FFFFFF' }}>
-        <Headbar update={this.getPhotoList.bind(this)} />
-        <PhotoList
-          list={this.state.photoList}
-          //extraData={Headbar}
-          //header={() => <Headbar update={this.getPhotoList.bind(this)} />}
-          onRefresh={() => this.refreshListView()}
-          refreshing={this.state.refreshing}
-        />
+      <View style={{ backgroundColor: 'white', flex: 1 }}>
+        {/* <Headbar /> */}
+        <HomeNavigator />
       </View>
     );
   }
 }
+
+const HomeNavigator = TabNavigator({
+  Hot: {
+    screen: HotPage
+  },
+  New: {
+    screen: NewPage
+  }
+},
+{
+  tabBarPosition: 'top',
+  tabBarComponent: TabBarTop,
+  swipeEnabled: true,
+  animationEnabled: true,
+  tabBarOptions: {
+    activeTintColor: '#ff9700',
+    inactiveTintColor: 'rgba(0, 0, 0, 0.23)',
+    labelStyle: {
+      fontSize: 18,
+      fontWeight: '900'
+    },
+    indicatorStyle: {
+      height: 5,
+      backgroundColor: '#ff9700',
+      //width: 100,
+      //marginRight: 10,
+      justifyContent: 'center',
+      //marginHorizontal: 75,
+      //width: (Dimensions.get('window').width - 100) / 2
+    },
+    style: {
+      backgroundColor: 'white',
+      //marginHorizontal: 75,
+      overflow: 'hidden',
+      //flex: 1
+      // shadowOffset: { width: 1, height: 5 },
+      // shadowOpacity: 0.07,
+      // shadowRadius: 3
+    }
+  }
+})
 
 function mapStateToProps({ loading, sorting }) {
   return { loading, sorting };

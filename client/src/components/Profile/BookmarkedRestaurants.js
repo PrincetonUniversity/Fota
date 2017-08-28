@@ -10,7 +10,7 @@ const PHOTO_BORDER_RADIUS = 7;
 class BookmarkedRestaurants extends Component {
   static navigationOptions = {
     tabBarIcon: ({ focused }) => {
-      let color = 'rgba(0, 0, 0, 0.2)';
+      let color = 'rgba(0,0,0,0.21)';
       if (focused) {
         color = '#ff9700';  
       }
@@ -25,14 +25,27 @@ class BookmarkedRestaurants extends Component {
   };
 
   renderFilters(rest) {
-    return rest.categories.map((filterName, index) =>
-      <FilterDisplay
-        key={index}
-        text={filterName.title}
-        color='rgba(0, 0, 0, 0.6)'
-        size={10}
-      />
-    );
+    if (rest.categories[0]) {
+      return (
+        <FilterDisplay
+          text={rest.categories[0].title}
+          color='rgba(0, 0, 0, 0.6)'
+          size={10}
+          numberOfLines={1}
+          ellipsizeMode='tail'
+        />
+      );
+    }
+    // return rest.categories.map((filterName, index) =>
+    //   <FilterDisplay
+    //     key={index}
+    //     text={filterName.title}
+    //     color='rgba(0, 0, 0, 0.6)'
+    //     size={10}
+    //     numberOfLines={1}
+    //     ellipsizeMode='tail'
+    //   />
+    // );
   }
 
   renderRestaurant(rest) {
@@ -47,13 +60,15 @@ class BookmarkedRestaurants extends Component {
               containerStyle={{ height: 75 }}
               photoStyle={{ flex: 1 }}
             />
-            <View style={{ marginHorizontal: 14, marginVertical: 10, flex: 1, justifyContent: 'space-between' }}>
+            <View style={{ marginHorizontal: 15, marginVertical: 10, flex: 1, justifyContent: 'space-between' }}>
               <View>
-                <Text style={styles.addressStyle}>{address}</Text>
+                <Text style={styles.addressStyle} numberOfLines={1} ellipsizeMode='tail'>{address}</Text>
                 <Text style={styles.titleStyle}>{rest.name}</Text>
               </View>
-              <Text style={styles.ratingStyle}>96%</Text>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+              <View style={styles.ratingContainerStyle}>
+                <Text style={styles.ratingTextStyle}>96%</Text>
+              </View>
+              <View style={{ flexDirection: 'row' }}>
                 {this.renderFilters(rest)}
               </View>
             </View>
@@ -71,9 +86,10 @@ class BookmarkedRestaurants extends Component {
           keyExtractor={rest => rest.id}
           renderItem={rest => this.renderRestaurant(rest.item)}
           bounces={false}
+          ListHeaderComponent={() => <View style={{ height: 15, backgroundColor: 'white' }} />}
+          ListFooterComponent={() => <View style={{ height: 15, backgroundColor: 'white' }} />}
           removeClippedSubviews={false}
           numColumns={2}
-          style={{ paddingVertical: 10 }}
         />
       </View>
     );
@@ -85,16 +101,16 @@ const styles = {
     margin: 10,
     width: itemWidth,
     elevation: 2,
-    shadowOffset: { width: 1, height: 1 },
-    shadowOpacity: 0.5,
-    shadowRadius: 3,
+    shadowOffset: { width: 1, height: 5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
     borderRadius: PHOTO_BORDER_RADIUS,
     flex: 1
   },
   addressStyle: {
     fontSize: 11,
     fontWeight: '300',
-    color: 'rgba(0, 0, 0, 0.6)'
+    color: 'rgba(0, 0, 0, 0.61)'
   },
   titleStyle: {
     fontSize: 14,
@@ -102,16 +118,18 @@ const styles = {
     color: 'rgba(0, 0, 0, 0.75)',
     marginVertical: 7
   },
-  ratingStyle: {
-    fontSize: 14,
-    fontWeight: '900',
-    color: 'rgba(0, 0, 0, 0.6)',
+  ratingContainerStyle: {
     borderColor: 'rgba(0, 0, 0, 0.25)',
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    paddingVertical: 7,
+    paddingVertical: 6,
     marginBottom: 7,
     width: 60
+  },
+  ratingTextStyle: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: 'rgba(0, 0, 0, 0.6)',
   }
 };
 

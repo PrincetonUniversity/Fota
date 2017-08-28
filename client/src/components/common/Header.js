@@ -22,14 +22,15 @@ const Header = (props) => {
       {props.text && <Text style={styles.headerTextStyle}>{props.text}</Text>}
       {props.children}
     </View>
-)};
+  );
+};
 
 const styles = {
   viewStyle: {
     backgroundColor: 'white',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: 50,
+    height: 55,
     paddingHorizontal: 10,
     position: 'relative',
     flexDirection: 'row',

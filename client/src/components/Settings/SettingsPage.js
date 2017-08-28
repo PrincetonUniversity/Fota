@@ -64,7 +64,7 @@ const styles = {
     backgroundColor: 'rgba(0, 0, 0, 0.06)',
     borderColor: 'rgba(0, 0, 0, 0.09)',
     borderBottomWidth: 1,
-    paddingVertical: 7,
+    paddingVertical: 5,
     paddingHorizontal: 20
   },
   sectionHeaderTextStyle: {

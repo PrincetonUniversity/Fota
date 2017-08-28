@@ -49,7 +49,7 @@ class RestaurantComments extends Component {
     return (
       <TouchableWithoutFeedback onPress={() => this.setState({ editing: true })}>
         <View style={styles.unselectedEditBoxStyle}>
-          <Text style={styles.addReviewTextStyle}>Add a review...</Text>
+          <Text style={styles.addRevie1q122wTextStyle}>Add a review...</Text>
         </View>
       </TouchableWithoutFeedback>
     );
@@ -68,10 +68,6 @@ class RestaurantComments extends Component {
         </View>
       );
     }
-    // let listHeight = 490;
-    // if (this.state.comments.length < 3) {
-    //   listHeight = 275;
-    // }
     return (
       <View style={{ flex: 1 }}>
         {this.renderEditBox()}

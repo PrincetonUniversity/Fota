@@ -111,14 +111,20 @@ const MainNavigator = TabNavigator({
     showIcon: true,
     style: {
       paddingHorizontal: horizontalPadding,
+      height: tabHeight,
+      borderWidth: 0,
+      shadowOpacity: 0.06,
+      shadowOffset: { width: -1, height: -5 },
+      shadowRadius: 5
     },
     tabStyle: {
-      borderWidth: 5
+      //borderWidth: 5
     }
   },
-  style: {
-    height: tabHeight
-  }
+  // style: {
+  //   height: tabHeight,
+  //   borderWidth: 100,
+  // }
 });
 
 const FotaNavigator = StackNavigator({
@@ -135,7 +141,6 @@ const FotaNavigator = StackNavigator({
 {
   mode: 'modal',
   headerMode: 'none',
-
 });
 
 function mapStateToProps({ loginState }) {

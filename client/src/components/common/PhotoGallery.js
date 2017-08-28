@@ -145,7 +145,7 @@ class PhotoGallery extends Component {
 
   render() {
     return (
-      <Pages startPage={this.props.initialIndex}>
+      <Pages startPage={this.props.initialIndex} indicatorPosition='none'>
         {this.renderPhotos()}
       </Pages>
     );
@@ -164,12 +164,14 @@ const styles = {
   photoFrameStyle: {
     height: SCREEN_HEIGHT,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    overflow: 'hidden'
   },
   photoStyle: {
-    height: 200,
-    width: 200,
-    backgroundColor: 'gray'
+    height: 300,
+    width: 300,
+    backgroundColor: 'gray',
+    borderRadius: 8
   }
 };
 

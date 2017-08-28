@@ -8,7 +8,7 @@ const photoSize = (Dimensions.get('window').width - 56) / 3;
 class UpvotedPhotos extends Component {
   static navigationOptions = {
     tabBarIcon: ({ focused }) => {
-      let color = '#ccc';
+      let color = 'rgba(0,0,0,0.21)';
       if (focused) {
         color = '#ff9700';
       }
@@ -42,11 +42,12 @@ class UpvotedPhotos extends Component {
           renderItem={photo => this.renderPhoto(photo.item)}
           bounces={false}
           removeClippedSubviews={false}
+          ListHeaderComponent={() => <View style={{ height: 15, backgroundColor: 'white' }} />}
+          ListFooterComponent={() => <View style={{ height: 15, backgroundColor: 'white' }} />}
           getItemLayout={(data, index) => (
             { length: photoSize, offset: photoSize * index, index }
           )}
           numColumns={3}
-          style={{ paddingVertical: 10 }}
         />
       </View>
     );

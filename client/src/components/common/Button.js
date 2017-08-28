@@ -35,8 +35,9 @@ const Button = (props) => {
 const styles = {
   textStyle: {
     alignSelf: 'center',
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '900',
+    letterSpacing: 1,
     padding: 10,
   },
   buttonStyle: {

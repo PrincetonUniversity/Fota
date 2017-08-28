@@ -8,13 +8,17 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, ScrollView, Animated, Linking, LayoutAnimation, TouchableWithoutFeedback } from 'react-native';
+import { 
+  View, Text, ScrollView, Animated, Linking, LayoutAnimation, 
+  TouchableWithoutFeedback, PanResponder 
+} from 'react-native';
 import moment from 'moment';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import FoundationIcon from 'react-native-vector-icons/Foundation';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import { phonecall } from 'react-native-communications';
 import Spinner from 'react-native-loading-spinner-overlay';
 import LinearGradient from 'react-native-linear-gradient';
@@ -23,12 +27,52 @@ import request from '../../helpers/axioshelper';
 import { directionsRequest, directionsURL } from '../../helpers/URL';
 import RestaurantPhotos from './RestaurantPhotos';
 import RestaurantComments from './RestaurantComments';
+import icoMoonConfig from '../../selection.json';
+
+const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
 class RestaurantDetail extends Component {
 
 
   constructor(props) {
     super(props);
+
+    // const panResponder = PanResponder.create({
+    //   onStartShouldSetPanResponder: () => true,
+    //   onPanResponderMove: (event, gesture) => {
+    //     if (gesture.dx > this.state.headerScrollDistance) {
+    //       //this.setState({ infoAtTop: true });
+    //     } else {
+    //       // if (this.state.infoAtTop) {
+    //       //   this.setState({ infoAtTop: false });
+    //       // }
+    //     }
+    //   },
+    //   onPanResponderRelease: (event, gesture) => {
+    //     if (this.state.scrollY) {
+    //       console.log(this.state.scrollY);
+    //     }
+    //   },
+    //   // onPanResponderReject: (e, gestureState) => {
+    //   //
+    //   // },
+    //   // onPanResponderGrant: (e, gestureState) => {
+    //   //   console.log('grant')
+    //   // },
+    //   // onPanResponderStart: (e, gestureState) => {
+    //   //   console.log('start')
+    //   // },
+    //   // onPanResponderEnd: (e, gestureState) => {
+    //   //   console.log('end')
+    //   // },
+    //   // onPanResponderTerminate: (event, gesture) => {
+    //   //  console.log('terminating panresponder');
+    //   // },
+    //   onPanResponderTerminationRequest: (event, gesture) => {
+    //     //console.log('terminationrequest')
+    //     //this.resetPosition();
+    //   }
+    // });
 
     this.state = {
       restaurant: null,
@@ -45,7 +89,11 @@ class RestaurantDetail extends Component {
       showRecommend: false,
       ratingHeight: 0,
       infoHeight: 0,
-      scrollY: new Animated.Value(0)
+      // infoAtTop: false,
+      // listAtTop: true,
+      scrollY: new Animated.Value(0),
+      headerScrollDistance: 0,
+      //panResponder
     };
   }
 
@@ -233,10 +281,7 @@ class RestaurantDetail extends Component {
               </Animated.View>
 
               <View style={titleContainerStyle}>
-                <Text style={titleStyle} onPress={() => {
-                    console.log(this.state.scrollY._value);
-                    console.log(headerScrollDistance);
-                  }}>
+                <Text style={titleStyle}>
                   {restaurant.name}
                 </Text>
               </View>
@@ -245,7 +290,7 @@ class RestaurantDetail extends Component {
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
-                  //bounces={false}
+                  bounces={false}
                 >
                   {this.renderFilters()}
                 </ScrollView>
@@ -259,9 +304,9 @@ class RestaurantDetail extends Component {
 
   // Restaurant rating
   renderRating() {
-    let button = 'ios-arrow-dropdown-circle';
+    let button = 'score_down';
     if (this.state.showRecommend) {
-      button = 'ios-arrow-dropup-circle';
+      button = 'score_up';
     }
     return (
       <View>
@@ -277,12 +322,12 @@ class RestaurantDetail extends Component {
                   103 votes
                 </Text>
               </View>
-              <Ionicon
+              <Icon
                 name={button}
                 style={{ marginLeft: 15, height: 20, width: 20 }}
-                size={20}
+                size={15}
                 //borderRadius={0}
-                color='rgba(0, 0, 0, 0.4)'
+                color='rgba(0, 0, 0, 0.46)'
                 backgroundColor='white'
                 onPress={() => this.changeRecommendDisplay()}
               />
@@ -305,7 +350,10 @@ class RestaurantDetail extends Component {
           </View>
         </View>
       );
-    }
+    } 
+    return (
+      <View />
+    );
   }
 
   // Navigation section of the horizontal info bar
@@ -466,10 +514,11 @@ class RestaurantDetail extends Component {
 
         {/* <View style={bottomSpacerStyle} /> */}
         <View style={bottomSpacerStyle}>
-          <MaterialIcon.Button
+          <Icon.Button
             name='directions'
             borderRadius={0}
             color='gray'
+            size={12}
             backgroundColor='white'
             onPress={() => {
               navigator.geolocation.getCurrentPosition(position => {
@@ -485,7 +534,7 @@ class RestaurantDetail extends Component {
             }}
           >
             <Text style={footerTextStyle}>DIRECTIONS</Text>
-          </MaterialIcon.Button>
+          </Icon.Button>
         </View>
         {/* <View style={bottomSpacerStyle} /> */}
       </View>
@@ -501,12 +550,13 @@ class RestaurantDetail extends Component {
         </View>
       );
     }
-    let height = 500;
+    let height = 440;
     let headerScrollDistance = this.state.ratingHeight + this.state.infoHeight;
     if (this.state.showRecommend) {
       height += 50;
       headerScrollDistance += 50;
     }
+    //this.setState({ headerScrollDistance });
     const pageY = this.state.scrollY.interpolate({
       inputRange: [0, headerScrollDistance],
       outputRange: [0, -headerScrollDistance / 3],
@@ -532,9 +582,9 @@ class RestaurantDetail extends Component {
       <View style={pageStyle}>
         {this.renderHeader(headerScrollDistance, pageY)}
 
-        <Animated.View style={{ height: pageHeight, transform: [{ translateY: pageY }] }}>
+        <Animated.View style={{ height: pageHeight, marginBottom: 50, transform: [{ translateY: pageY }] }}>
           <ScrollView
-            scrollEnabled={this.checkScroll()}
+            scrollEnabled={true/*this.checkScroll()*/}
             scrollEventThrottle={1}
             showsVerticalScrollIndicator={false}
             //overScrollMode='never'
@@ -555,7 +605,9 @@ class RestaurantDetail extends Component {
                 screenProps={{
                   restaurant: this.state.restaurant,
                   photos: this.state.photos,
-                  comments: this.state.comments
+                  comments: this.state.comments,
+                  //infoAtTop: this.state.infoAtTop,
+                  //listAtTop: (bool) => this.setState({ listAtTop: bool })
                 }}
               />
             </Animated.View>
@@ -579,7 +631,7 @@ const RestaurantNavigator = TabNavigator({
   tabBarPosition: 'top',
   tabBarComponent: TabBarTop,
   swipeEnabled: false,
-  animationEnabled: false,
+  animationEnabled: true,
   tabBarOptions: {
     activeTintColor: 'rgba(0, 0, 0, 0.77)',
     inactiveTintColor: 'rgba(0, 0, 0, 0.23)',

@@ -47,7 +47,7 @@ class ProfileHelper extends Component {
           <Icon
             name={'profile'}
             color={color}
-            size={32}
+            size={28}
             style={{
               width: 38,
               textAlign: 'center',

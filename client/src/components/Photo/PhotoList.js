@@ -51,6 +51,7 @@ class PhotoList extends Component {
         onRefresh={this.props.onRefresh}
         refreshing={this.props.refreshing}
         showVerticalScrollIndicator={false}
+        removeClippedSubviews={false}
         windowSize={10}
       />
     );

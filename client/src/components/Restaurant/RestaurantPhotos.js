@@ -93,10 +93,6 @@ class RestaurantPhotos extends Component {
       );
     }
     const photoLinks = this.state.photos.map(photo => photo.url);
-    let listHeight = 490;
-    if (this.state.photos.length < 7) {
-      listHeight = 275;
-    }
     return (
       <View style={{ flex: 1, paddingTop: 5, paddingHorizontal: 7 }}>
         <Modal

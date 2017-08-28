@@ -8,7 +8,7 @@ const imageSize = Dimensions.get('window').width / 4;
 class CameraLibrary extends Component {
   static navigationOptions = ({ navigation, screenProps }) => ({
     tabBarIcon: ({ focused }) => {
-      let color = '#ccc';
+      let color = 'rgba(0,0,0,0.23)';
       if (focused) color = '#ff9700';
       return (
           <Text
@@ -72,6 +72,7 @@ class CameraLibrary extends Component {
           { length: imageSize, offset: imageSize * index, index }
         )}
         numColumns={4}
+        style={{ backgroundColor: 'white' }}
       />
     );
   }

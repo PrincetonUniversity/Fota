@@ -75,7 +75,7 @@ const styles = {
     alignItems: 'center',
     height: 32,
     borderBottomWidth: 1,
-    borderColor: '#bbb'
+    borderColor: 'rgba(0,0,0,0.3)'
   }
 };
 

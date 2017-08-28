@@ -11,7 +11,11 @@ import { Text, View } from 'react-native';
 
 const FilterDisplay = (props) => (
   <View style={{ borderColor: props.color, ...styles.containerStyle }}>
-    <Text style={{ fontSize: props.size, color: props.color, ...styles.textStyle }}>
+    <Text 
+      numberOfLines={props.numberOfLines}
+      ellipsizeMode={props.ellipsizeMode}
+      style={{ fontSize: props.size, color: props.color, ...styles.textStyle }}
+    >
       {props.text}
     </Text>
   </View>

@@ -18,14 +18,16 @@ import {
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
 import RNFetchBlob from 'react-native-fetch-blob';
-import Ionicon from 'react-native-vector-icons/Ionicons';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import firebase from 'firebase';
 import uuid from 'uuid/v1';
 import request from '../../helpers/axioshelper';
 import { Header, Button, Input, Spinner } from '../common';
 import { deleteImage, cameraErrorAlert } from './CameraPage';
 import { nearbyRestRequest, uploadPhotoRequest } from '../../helpers/URL';
+import icoMoonConfig from '../../selection.json';
+
+const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
 const Blob = RNFetchBlob.polyfill.Blob;
 const fs = RNFetchBlob.fs;
@@ -311,19 +313,19 @@ class CameraLocationPage extends Component {
     if (this.state.submitting) {
       return <Spinner size="large" />;
     }
-    let color = '#aaa';
+    let color = 'rgba(0,0,0,0.3)';
     let action = () => {};
     if (this.state.selected) {
-      color = '#0097ff';
+      color = '#2494ff';
       action = () => this.submitPhoto();
     }
     return (
       <Button
         onPress={action}
         colors={{ text: color, fill: '#fff', border: '#fff' }}
-        text={'Upload'}
+        text={'UPLOAD'}
       >
-        <Icon name='file-upload' color={color} size={25} />
+        <Icon name='upload_camera' color={color} size={22} />
       </Button>
     );
   }
@@ -342,12 +344,12 @@ class CameraLocationPage extends Component {
         >
           <View style={pageStyle}>
             <Header text='Ready to Share?' iosHideStatusBar>
-              <View style={{ position: 'absolute', left: 10 }}>
-                <Ionicon.Button
-                  name='ios-arrow-back'
+              <View style={{ position: 'absolute', left: 25 }}>
+                <Icon
+                  name='back'
                   backgroundColor='white'
-                  color='black'
-                  size={20}
+                  color='rgba(0,0,0,0.7)'
+                  size={19}
                   onPress={() => {
                     if (this.submitting) return;
                     deleteImage(this.state.uploadPath);
@@ -363,7 +365,7 @@ class CameraLocationPage extends Component {
 
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'white', zIndex: 7, paddingVertical: 10 }}>
                 <View style={{ flexDirection: 'row' }}>
-                  <Icon name='location-on' size={25} color='#444' />
+                  <Icon name='location' size={19} color='rgba(0,0,0,0.7)' />
                   <Text style={rHeaderStyle}>Restaurant</Text>
                 </View>
                 {this.renderCancelText()}
@@ -433,7 +435,7 @@ const styles = {
   },
   photoFrameStyle: {
     borderBottomWidth: 1,
-    borderColor: '#eee',
+    borderColor: 'rgba(0,0,0,0.09)',
     paddingTop: 10,
     paddingBottom: 20,
     alignItems: 'center',
@@ -452,7 +454,7 @@ const styles = {
   },
   cancelTextStyle: {
     fontSize: 17,
-    color: '#aaa',
+    color: 'rgba(0,0,0,0.38)',
     paddingRight: 5
   },
   listContainerStyle: {
@@ -477,7 +479,7 @@ const styles = {
   buttonHolderStyle: {
     height: 70,
     borderTopWidth: 1,
-    borderColor: '#eee',
+    borderColor: 'rgba(0,0,0,0.09)',
     flexDirection: 'row',
     borderWidth: 1,
     marginTop: 30

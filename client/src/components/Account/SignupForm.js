@@ -75,7 +75,7 @@ class SignupForm extends Component {
       return (
         <Button
           onPress={this.onSignupButtonPress.bind(this)}
-          colors={{ text: '#0097ff', fill: '#fff', border: '#fff' }}
+          colors={{ text: '#2494ff', fill: '#fff', border: '#fff' }}
           text={'DONE'}
         />
       );
@@ -83,7 +83,7 @@ class SignupForm extends Component {
     return (
       <Button
         onPress={() => {}}
-        colors={{ text: '#aaa', fill: '#fff', border: '#fff' }}
+        colors={{ text: 'rgba(0,0,0,0.3)', fill: '#fff', border: '#fff' }}
         text={'DONE'}
       />
     );
