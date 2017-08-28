@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AsyncStorage } from 'react-native';
+import { View, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import request from '../../helpers/axioshelper';
 import { photoRequest } from '../../helpers/URL';
@@ -37,11 +37,13 @@ class HotPage extends Component {
   
   render() {
     return (
-      <PhotoList
-        list={this.state.photoList}
-        onRefresh={() => this.refreshListView()}
-        refreshing={this.state.refreshing}
-      />
+      <View style={{ flex: 1, borderTopWidth: 1, borderColor: 'rgba(0,0,0,0.09)' }} >
+        <PhotoList
+          list={this.state.photoList}
+          onRefresh={() => this.refreshListView()}
+          refreshing={this.state.refreshing}
+        />
+      </View>
     );
   }
 }

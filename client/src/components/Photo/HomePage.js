@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
@@ -75,7 +75,7 @@ class HomePage extends Component {
     console.log('rendering');
     return (
       <View style={{ backgroundColor: 'white', flex: 1 }}>
-        {/* <Headbar /> */}
+        <Headbar />
         <HomeNavigator />
       </View>
     );
@@ -100,6 +100,7 @@ const HomeNavigator = TabNavigator({
     inactiveTintColor: 'rgba(0, 0, 0, 0.23)',
     labelStyle: {
       fontSize: 18,
+      margin: 0,
       fontWeight: '900'
     },
     indicatorStyle: {
@@ -111,10 +112,16 @@ const HomeNavigator = TabNavigator({
       //marginHorizontal: 75,
       //width: (Dimensions.get('window').width - 100) / 2
     },
+    tabStyle: {
+      width: 120,
+      padding: 5
+    },
     style: {
       backgroundColor: 'white',
-      //marginHorizontal: 75,
-      overflow: 'hidden',
+      //alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: Dimensions.get('window').width / 2 - 120,
+      overflow: 'hidden'
       //flex: 1
       // shadowOffset: { width: 1, height: 5 },
       // shadowOpacity: 0.07,
