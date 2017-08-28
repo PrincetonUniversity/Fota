@@ -652,7 +652,8 @@ const RestaurantNavigator = TabNavigator({
     style: {
       backgroundColor: 'white',
       marginHorizontal: Dimensions.get('window').width / 2 - 120,
-      overflow: 'hidden'
+      overflow: 'hidden',
+      elevation: 0
       // borderWidth: 1
       // shadowOffset: { width: 1, height: 5 },
       // shadowOpacity: 0.07,
