@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, TouchableWithoutFeedback, TextInput } from 'react-native';
+import { View, Text, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import CommentDetail from './CommentDetail';
+import { Spinner } from '../common';
+import request from '../../helpers/axioshelper';
+import { restCommentRequest } from '../../helpers/URL';
 
 class RestaurantComments extends Component {
   static navigationOptions = ({ screenProps }) => ({
@@ -12,10 +15,10 @@ class RestaurantComments extends Component {
       }
       return (
         <View style={{ flexDirection: 'row' }}>
-          <Text style={[styles.tabLabelStyle, { color: numColor }]}>
+          <Text style={[tabLabelStyle, { color: numColor }]}>
             {screenProps.comments.length}
           </Text>
-          <Text style={[styles.tabLabelStyle, { color: tintColor }]}>
+          <Text style={[tabLabelStyle, { color: tintColor }]}>
             {labelText}
           </Text>
         </View>
@@ -26,7 +29,11 @@ class RestaurantComments extends Component {
     })
   });
 
-  state = { comments: [], editing: false, message: '' }
+  constructor(props) {
+    super(props);
+    this.state = { comments: [], editing: false, submitting: false, message: '', height: 20 };
+    this.submitting = false;
+  }
 
   componentWillMount() {
     this.setState({ comments: this.props.screenProps.comments });
@@ -38,30 +45,75 @@ class RestaurantComments extends Component {
     return null;
   }
 
-  renderEditBox() {
-    if (this.state.editing) {
-      return (
-        <View>
-          <TextInput />
-        </View>
-      );
+  openEditorBox() {
+    this.props.screenProps.scrollToEnd();    
+    if (!this.state.editing) {
+      this.setState({ editing: true });
+    }
+  }
+
+  submitComment() {
+    if (this.submitting) return;
+    this.submitting = true;
+    this.setState({ submitting: true });
+    request.post(restCommentRequest(this.props.screenProps.restaurant.id), {
+      message: this.state.message
+    }).then(() => {
+      request.get(restCommentRequest(this.props.screenProps.restaurant.id))
+      .then(response => {
+        this.submitting = false;
+        this.setState({ 
+          comments: response.data,
+          editing: false,
+          submitting: false,
+          message: '',
+          height: 20
+        });
+        this.props.screenProps.rerenderComments(response.data);
+      }).catch(e => request.showErrorAlert(e));
+    }).catch(e => {
+      this.submitting = false;
+      this.setState({ submitting: false });      
+      request.showErrorAlert(e);
+    });
+  }
+
+  renderDoneButton() {
+    if (this.state.submitting) {
+      return <View style={doneButtonStyle}><Spinner size="small" /></View>;
+    }
+    let color = 'rgba(0, 0, 0, 0.3)';
+    let action = () => this.setState({ editing: false });
+    if (this.state.message.length > 0) {
+      color = '#2494ff';
+      action = () => this.submitComment();
     }
     return (
-      <TouchableWithoutFeedback onPress={() => this.setState({ editing: true })}>
-        <View style={styles.unselectedEditBoxStyle}>
-          <Text style={styles.addRevie1q122wTextStyle}>Add a review...</Text>
+      <TouchableOpacity onPress={action}>
+        <View style={doneButtonStyle}>
+          <Text style={{ color, fontSize: 15, fontWeight: '900' }}>DONE</Text>
         </View>
-      </TouchableWithoutFeedback>
+      </TouchableOpacity>
     );
   }
 
-  render() {
+  renderEditSubmit() {
+    if (this.state.editing) {
+      return (
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View />
+          {this.renderDoneButton()}
+        </View>
+      );
+    }
+  }
+
+  renderComments() {
     if (this.state.comments.length === 0) {
       return (
         <View>
-          {this.renderEditBox()}
           <View style={{ height: 150, justifyContent: 'center' }}>
-            <Text style={styles.emptyTextStyle}>
+            <Text style={emptyTextStyle}>
               There are no comments for this restaurant yet. Be the first to write one!
             </Text>
           </View>
@@ -70,7 +122,6 @@ class RestaurantComments extends Component {
     }
     return (
       <View style={{ flex: 1 }}>
-        {this.renderEditBox()}
         <FlatList
           data={this.state.comments}
           keyExtractor={comment => comment.id}
@@ -91,6 +142,30 @@ class RestaurantComments extends Component {
       </View>
     );
   }
+
+  render() {
+    return (
+      <View style={{ flex: 1 }}>
+        <View style={editBoxStyle}>
+          <TextInput 
+            style={{ height: Math.min(60, this.state.height), ...editorStyle }}
+            value={this.state.message}
+            placeholder='Add a review...'
+            multiline
+            onFocus={this.openEditorBox.bind(this)}
+            onChange={event => this.setState({ 
+              message: event.nativeEvent.text,
+              height: event.nativeEvent.contentSize.height
+            })}
+            underlineColorAndroid={'transparent'}
+            autoCapitalize={'sentences'}
+          />
+          {this.renderEditSubmit()}
+        </View>
+        {this.renderComments()}
+      </View>
+    );
+  }
 }
 
 const styles = {
@@ -104,17 +179,30 @@ const styles = {
     textAlign: 'center',
     color: '#aaa',
   },
-  unselectedEditBoxStyle: {
+  editBoxStyle: {
     padding: 20,
     backgroundColor: 'white',
     borderColor: 'rgba(0, 0, 0, 0.06)',
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
   },
-  addReviewTextStyle: {
+  editorStyle: {
+    padding: 0,
+    color: 'rgba(0,0,0,0.75)',
     fontSize: 15,
-    color: 'rgba(0, 0, 0, 0.3)',
     fontWeight: '400'
+  },
+  doneButtonStyle: {
+    width: 50,
+    marginTop: 10
   }
 };
+
+const {
+  tabLabelStyle,
+  emptyTextStyle,
+  editBoxStyle,
+  editorStyle,
+  doneButtonStyle,
+} = styles;
 
 export default RestaurantComments;
