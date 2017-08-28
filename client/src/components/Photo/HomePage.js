@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, TouchableOpacity, Dimensions } from 'react-native';
+import { View, TouchableOpacity, Dimensions, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
@@ -93,8 +93,8 @@ const HomeNavigator = TabNavigator({
 {
   tabBarPosition: 'top',
   tabBarComponent: TabBarTop,
-  swipeEnabled: true,
-  animationEnabled: true,
+  swipeEnabled: false,
+  animationEnabled: Platform.OS === 'ios',
   tabBarOptions: {
     activeTintColor: '#ff9700',
     inactiveTintColor: 'rgba(0, 0, 0, 0.23)',
@@ -121,14 +121,15 @@ const HomeNavigator = TabNavigator({
       //alignItems: 'center',
       justifyContent: 'center',
       marginHorizontal: Dimensions.get('window').width / 2 - 120,
-      overflow: 'hidden'
+      overflow: 'hidden',
+      elevation: 0,
       //flex: 1
       // shadowOffset: { width: 1, height: 5 },
       // shadowOpacity: 0.07,
       // shadowRadius: 3
     }
   }
-})
+});
 
 function mapStateToProps({ loading, sorting }) {
   return { loading, sorting };

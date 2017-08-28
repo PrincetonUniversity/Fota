@@ -5,6 +5,7 @@ import request from '../../helpers/axioshelper';
 import { photoRequest } from '../../helpers/URL';
 import { setLoading } from '../../actions/index';
 import PhotoList from './PhotoList';
+import LoadingPhotos from './LoadingPhotos';
 
 class HotPage extends Component {
   state = { photoList: [], loading: true, refreshing: false };
@@ -36,6 +37,7 @@ class HotPage extends Component {
   }
   
   render() {
+    if (this.props.loading) return <LoadingPhotos />;
     return (
       <View style={{ flex: 1, borderTopWidth: 1, borderColor: 'rgba(0,0,0,0.09)' }} >
         <PhotoList
