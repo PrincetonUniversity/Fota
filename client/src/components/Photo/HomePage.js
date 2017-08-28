@@ -18,13 +18,16 @@ import React, { Component } from 'react';
 import { View, AsyncStorage, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
-import Icon from 'react-native-vector-icons/Foundation';
+import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import request from '../../helpers/axioshelper';
 import { photoRequest } from '../../helpers/URL';
 import PhotoList from './PhotoList';
 import Headbar from './Headbar';
 import { setLoading } from '../../actions/index';
 import { tabWidth, tabHeight, horizontalPadding } from '../../Base';
+import icoMoonConfig from '../../selection.json';
+
+const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
 class HomePage extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -48,7 +51,7 @@ class HomePage extends Component {
           <Icon
             name={'home'}
             color={color}
-            size={38}
+            size={32}
             style={{
               width: 38,
               textAlign: 'center',

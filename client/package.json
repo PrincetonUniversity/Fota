@@ -10,7 +10,7 @@
     "axios": "0.16.0",
     "firebase": "^3.7.8",
     "lodash": "4.17.4",
-    "moment": "2.18.1",
+    "moment": "^2.18.1",
     "native-base": "^2.2.0",
     "react": "16.0.0-alpha.6",
     "react-native": "0.44.0",

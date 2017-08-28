@@ -3,6 +3,7 @@ const GOOGLE_MAPS_API_URL = 'https://maps.googleapis.com/maps/api/directions/jso
 const GOOGLE_MAPS_URL = 'https://www.google.com/maps/dir';
 const PHOTO_REQ = `${URL}/photos`;
 const REST_REQ = `${URL}/restaurants`;
+const COMMENT_REQ = `${URL}/comments`;
 const USER_REQ = `${URL}/user`;
 const SEARCH_REQ = `${URL}/search`;
 const CLIENT_API_KEY = 'AIzaSyBZSHaR5yI2dgyWXQ0CjCHOrHZ5NQvsUHc'; //'AIzaSyCGhec-cpivaFlYfFQJ9T-kIZ8BlDs66P8';
@@ -16,12 +17,15 @@ export function photoVote(id, type) {
 }
 
 export function restRequest(id) {
-  console.log(`${REST_REQ}/${id}?key=${CLIENT_API_KEY}`);
   return `${REST_REQ}/${id}?key=${CLIENT_API_KEY}`;
 }
 
 export function restCommentRequest(id) {
   return `${REST_REQ}/${id}/comments/?key=${CLIENT_API_KEY}`;
+}
+
+export function commentVote(id, type) {
+  return `${COMMENT_REQ}/${id}/?key=${CLIENT_API_KEY}&type=${type}`;
 }
 
 export function profileRequest(user) {

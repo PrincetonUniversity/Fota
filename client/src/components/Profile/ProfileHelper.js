@@ -11,12 +11,15 @@ import React, { Component } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { StackNavigator } from 'react-navigation';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 //mport LoginPage from '../Account/LoginPage';
 import ProfilePage from './ProfilePage';
 import SettingsPage from '../Settings/SettingsPage';
 import SettingsRadioButton from '../Settings/SettingsRadioButton';
 import { tabWidth, tabHeight, horizontalPadding } from '../../Base';
+import icoMoonConfig from '../../selection.json';
+
+const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
 class ProfileHelper extends Component {
   static navigationOptions = ({ navigation, screenProps }) => ({
@@ -42,9 +45,9 @@ class ProfileHelper extends Component {
           }}
         >
           <Icon
-            name={'person'}
+            name={'profile'}
             color={color}
-            size={38}
+            size={32}
             style={{
               width: 38,
               textAlign: 'center',
