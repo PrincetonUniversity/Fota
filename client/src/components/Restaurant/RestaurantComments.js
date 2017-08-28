@@ -46,7 +46,7 @@ class RestaurantComments extends Component {
   }
 
   openEditorBox() {
-    this.props.screenProps.scrollToEnd();    
+    this.props.screenProps.scrollToEnd();
     if (!this.state.editing) {
       this.setState({ editing: true });
     }
@@ -62,7 +62,7 @@ class RestaurantComments extends Component {
       request.get(restCommentRequest(this.props.screenProps.restaurant.id))
       .then(response => {
         this.submitting = false;
-        this.setState({ 
+        this.setState({
           comments: response.data,
           editing: false,
           submitting: false,
@@ -73,7 +73,7 @@ class RestaurantComments extends Component {
       }).catch(e => request.showErrorAlert(e));
     }).catch(e => {
       this.submitting = false;
-      this.setState({ submitting: false });      
+      this.setState({ submitting: false });
       request.showErrorAlert(e);
     });
   }
@@ -128,7 +128,7 @@ class RestaurantComments extends Component {
           renderItem={c => {
             const comment = c.item;
             return (
-              <CommentDetail 
+              <CommentDetail
                 comment={comment}
                 vote={this.findVote(comment.user_upvote, comment.user_downvote)}
               />
@@ -145,15 +145,15 @@ class RestaurantComments extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={tabContainerStyle}>
         <View style={editBoxStyle}>
-          <TextInput 
+          <TextInput
             style={{ height: Math.min(60, this.state.height), ...editorStyle }}
             value={this.state.message}
             placeholder='Add a review...'
             multiline
             onFocus={this.openEditorBox.bind(this)}
-            onChange={event => this.setState({ 
+            onChange={event => this.setState({
               message: event.nativeEvent.text,
               height: event.nativeEvent.contentSize.height
             })}
@@ -173,6 +173,14 @@ const styles = {
     fontSize: 14,
     fontWeight: '900',
     paddingVertical: 5
+  },
+  tabContainerStyle: {
+    flex: 1,
+    borderTopWidth: 1,
+    borderColor: 'rgba(0,0,0,0.08)',
+    shadowRadius: 2,
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 2 }
   },
   emptyTextStyle: {
     fontSize: 16,
@@ -199,6 +207,7 @@ const styles = {
 
 const {
   tabLabelStyle,
+  tabContainerStyle,
   emptyTextStyle,
   editBoxStyle,
   editorStyle,

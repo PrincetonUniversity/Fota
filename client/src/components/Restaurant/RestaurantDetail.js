@@ -8,9 +8,9 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { 
-  View, Text, ScrollView, Animated, Linking, LayoutAnimation, 
-  TouchableWithoutFeedback, PanResponder 
+import {
+  View, Text, ScrollView, Animated, Linking, LayoutAnimation, Dimensions,
+  TouchableWithoutFeedback, PanResponder
 } from 'react-native';
 import moment from 'moment';
 import { TabNavigator, TabBarTop } from 'react-navigation';
@@ -350,7 +350,7 @@ class RestaurantDetail extends Component {
           </View>
         </View>
       );
-    } 
+    }
     return (
       <View />
     );
@@ -601,7 +601,7 @@ class RestaurantDetail extends Component {
               {this.renderInfo()}
             </Animated.View>
 
-            <Animated.View style={{ height: pageHeight, transform: [{ translateY: tabY }] }}>
+            <Animated.View style={{ height: pageHeight, backgroundColor: 'white', transform: [{ translateY: tabY }] }}>
               <RestaurantNavigator
                 screenProps={{
                   restaurant: this.state.restaurant,
@@ -640,6 +640,9 @@ const RestaurantNavigator = TabNavigator({
       fontSize: 13,
       fontWeight: '900'
     },
+    tabStyle: {
+      width: 120
+    },
     indicatorStyle: {
       height: 5,
       backgroundColor: '#ff9700'
@@ -648,8 +651,9 @@ const RestaurantNavigator = TabNavigator({
     },
     style: {
       backgroundColor: 'white',
-      //marginHorizontal: 75,
-      //borderWidth: 1
+      marginHorizontal: Dimensions.get('window').width / 2 - 120,
+      overflow: 'hidden'
+      // borderWidth: 1
       // shadowOffset: { width: 1, height: 5 },
       // shadowOpacity: 0.07,
       // shadowRadius: 3
@@ -662,7 +666,7 @@ const styles = {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF'
+    backgroundColor: 'white'
   },
   headerStyle: { // Header including back button, name, time until close, call button
     flexDirection: 'row',
