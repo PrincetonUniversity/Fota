@@ -41,7 +41,7 @@ const styles = {
   inputStyle: {
     padding: 1,
     borderRadius: 3,
-    color: 'rgba(0,0,0,0.11)',
+    color: 'rgba(0,0,0,0.2)',
     paddingRight: 5,
     paddingLeft: 5,
     fontSize: 14,

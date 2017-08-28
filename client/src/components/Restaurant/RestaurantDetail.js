@@ -534,7 +534,8 @@ class RestaurantDetail extends Component {
 
         <Animated.View style={{ height: pageHeight, transform: [{ translateY: pageY }] }}>
           <ScrollView
-            scrollEnabled={this.checkScroll()}
+            ref={scroll => { this.scrollView = scroll; }}
+            //scrollEnabled={this.checkScroll()}
             scrollEventThrottle={1}
             showsVerticalScrollIndicator={false}
             //overScrollMode='never'
@@ -555,7 +556,9 @@ class RestaurantDetail extends Component {
                 screenProps={{
                   restaurant: this.state.restaurant,
                   photos: this.state.photos,
-                  comments: this.state.comments
+                  comments: this.state.comments,
+                  scrollToEnd: () => this.scrollView.scrollToEnd(),
+                  rerenderComments: comments => this.setState({ comments })
                 }}
               />
             </Animated.View>
