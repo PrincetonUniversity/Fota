@@ -160,6 +160,8 @@ const ProfileNavigator = TabNavigator({
 {
   tabBarPosition: 'top',
   tabBarComponent: TabBarTop,
+  swipeEnabled: true,
+  animationEnabled: true,
   tabBarOptions: {
     showIcon: true,
     showLabel: false,

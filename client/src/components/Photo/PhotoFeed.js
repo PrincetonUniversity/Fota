@@ -23,8 +23,8 @@ class PhotoFeed extends Component {
       this.sendPhotoRequest(pcoords.lat, pcoords.lng);
     } else {
       navigator.geolocation.getCurrentPosition(position => {
-        const lat = 0;//position.coords.latitude;
-        const lng = 0;//position.coords.longitude;
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
         this.sendPhotoRequest(lat, lng);
       });
     }
