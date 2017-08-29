@@ -35,6 +35,7 @@ class PhotoList extends Component {
         <PhotoDetail
           key={photo.id}
           photo={photo}
+          distance={photo.distance}
           vote={this.findVote(photo.user_upvote, photo.user_downvote)}
           restaurantid={photo.rest_id}
         />

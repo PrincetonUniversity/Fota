@@ -12,8 +12,8 @@
 
 import React, { Component } from 'react';
 import {
-  View, Image, Text, FlatList, AsyncStorage, TouchableWithoutFeedback, 
-    Keyboard, TouchableOpacity, Alert, LayoutAnimation, Platform
+  View, Image, Text, FlatList, AsyncStorage, TouchableWithoutFeedback,
+  Keyboard, TouchableOpacity, Alert, LayoutAnimation, Platform
 } from 'react-native';
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
@@ -44,15 +44,15 @@ const dayformat = (day) => (
 class CameraLocationPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { 
-      uploadPath: null, 
-      query: '', 
-      rlist: [], 
-      totalList: [], 
-      selected: null, 
+    this.state = {
+      uploadPath: null,
+      query: '',
+      rlist: [],
+      totalList: [],
+      selected: null,
       index: -1,
       nearBottom: false,
-      hidePhoto: false, 
+      hidePhoto: false,
       submitting: false
     };
     this.submitting = false;
@@ -171,15 +171,15 @@ class CameraLocationPage extends Component {
             'Invalid Photo',
             'You may have uploaded an invalid photo. Please make sure you submit a picture of food.',
             [{
-              text: 'OK', 
+              text: 'OK',
               onPress: () => {
                 this.deletePhotoFromFirebase();
-                this.props.navigation.goBack(); 
-              } 
+                this.props.navigation.goBack();
+              }
             }]
           );
         } else {
-          request.showErrorAlert(error);              
+          request.showErrorAlert(error);
         }
       });
     })
@@ -345,18 +345,22 @@ class CameraLocationPage extends Component {
           <View style={pageStyle}>
             <Header text='Ready to Share?' iosHideStatusBar>
               <View style={{ position: 'absolute', left: 25 }}>
-                <Icon
-                  name='back'
-                  backgroundColor='white'
-                  color='rgba(0,0,0,0.7)'
-                  size={19}
+                <TouchableOpacity
+                  style={backButtonStyle}
                   onPress={() => {
                     if (this.submitting) return;
                     deleteImage(this.state.uploadPath);
                     AsyncStorage.setItem('UploadPath', '');
                     this.props.navigation.dispatch(NavigationActions.back());
                   }}
-                />
+                >
+                  <Icon
+                    name='back'
+                    backgroundColor='white'
+                    color='rgba(0,0,0,0.7)'
+                    size={19}
+                  />
+                </TouchableOpacity>
               </View>
             </Header>
 
@@ -397,7 +401,7 @@ class CameraLocationPage extends Component {
                   data={this.state.rlist}
                   keyExtractor={restaurant => restaurant.id}
                   renderItem={restaurant => this.renderRestaurant(
-                    restaurant.item, 
+                    restaurant.item,
                     restaurant.item.name === this.selectedName,
                     restaurant.index
                   )}
@@ -432,6 +436,13 @@ const styles = {
     flex: 1,
     flexDirection: 'column',
     //justifyContent: 'space-between'
+  },
+  backButtonStyle: {
+    backgroundColor: 'transparent',
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   photoFrameStyle: {
     borderBottomWidth: 1,
@@ -501,8 +512,8 @@ const styles = {
     borderColor: 'rgba(0,0,0,0.09)',
     alignItems: 'center'
   },
-  restaurantTextStyle: { 
-    fontSize: 16, 
+  restaurantTextStyle: {
+    fontSize: 16,
     fontWeight: '700',
     color: 'rgba(0,0,0,0.66)',
     flex: 1
@@ -515,6 +526,7 @@ const styles = {
 
 const {
   pageStyle,
+  backButtonStyle,
   photoFrameStyle,
   photoStyle,
   rHeaderStyle,

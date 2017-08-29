@@ -138,9 +138,9 @@ const styles = {
     paddingHorizontal: 7,
     borderTopWidth: 1,
     borderColor: 'rgba(0,0,0,0.08)',
-    shadowRadius: 2,
-    shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 2 }
+    shadowRadius: 5,
+    shadowOpacity: 0.5,
+    //shadowOffset: { width: 0, height: 2 }
   },
   emptyTextStyle: {
     fontSize: 16,

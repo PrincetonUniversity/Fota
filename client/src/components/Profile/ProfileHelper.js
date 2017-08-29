@@ -63,7 +63,7 @@ class ProfileHelper extends Component {
       return <View />;
     }
     return (
-      <ProfileNavigator 
+      <ProfileNavigator
         screenProps={{ user: this.props.loginState, testuser }}
       />
     );
@@ -99,15 +99,15 @@ const testuser = {
     {"id":"alchemist-and-barrister-princeton","name":"Alchemist & Barrister","phone":"+16099245555","display_phone":"(609) 924-5555","categories":[{"alias":"pubs","title":"Pubs"},{"alias":"tradamerican","title":"American (Traditional)"},{"alias":"sportsbars","title":"Sports Bars"}],"location":{"address1":"28 Witherspoon St","address2":"","address3":"","city":"Princeton","zip_code":"08540","country":"US","state":"NJ","display_address":["28 Witherspoon St","Princeton, NJ 08540"],"cross_streets":""},"price":"$$","hours":[{"open":[{"is_overnight":true,"start":"1130","end":"0200","day":0},{"is_overnight":true,"start":"1130","end":"0200","day":1},{"is_overnight":true,"start":"1130","end":"0200","day":2},{"is_overnight":true,"start":"1130","end":"0200","day":3},{"is_overnight":true,"start":"1130","end":"0200","day":4},{"is_overnight":true,"start":"1130","end":"0200","day":5},{"is_overnight":true,"start":"1100","end":"0200","day":6}],"hours_type":"REGULAR","is_open_now":true}],"photos":[{"url":"https://fota-app.s3.amazonaws.com/%2Fc8q8hw60H2Pi0HyuD9WePpvWMx32_alchemist-and-barrister-princeton_335D54D9-0E05-4CA1-AC98-1F9B00F43FAF.jpg.jpg"},{"url":"https://s3-media2.fl.yelpcdn.com/bphoto/T6pAtgCsSyUZ07jY2Bc88Q/o.jpg"}]}
   ],
   upvoted: [
-    {"id":"cfa41c10-726d-11e7-aa1d-957dec4cbef2","url":"https://s3-media3.fl.yelpcdn.com/bphoto/-1xIfezEraPK2HRTHWIWMA/o.jpg","vote_count":3,"rest_id":"rocky-hill-inn-eatery-and-tavern-rocky-hill","user_upvote":true,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:21.588Z"},
-    {"id":"cf6935f0-726d-11e7-aa1d-957dec4cbef2","url":"https://s3-media2.fl.yelpcdn.com/bphoto/nEbN823WqzS-3G_M2AZu8A/o.jpg","vote_count":0,"rest_id":"chennai-chimney-princeton-2","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:21.417Z"},
-    {"id":"df87cc30-726d-11e7-9d5a-3b58874f0c3d","url":"https://fota-app.s3.amazonaws.com/%2FKXE2BSBaJZer7LygXxhMQf0ucr62_masa-sushi-princeton_1495407630388.JPEG.jpg","vote_count":0,"rest_id":"masa-sushi-princeton","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:48.248Z"},
-    {"id":"cfb07820-726d-11e7-aa1d-957dec4cbef2","url":"https://s3-media2.fl.yelpcdn.com/bphoto/b0TW6XRrAB0Pgbo9PhUUng/o.jpg","vote_count":0,"rest_id":"paradise-biryani-pointe-lawrenceville-2","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:21.669Z"}
+    {"id":"cfa41c10-726d-11e7-aa1d-957dec4cbef2","url":"https://s3-media3.fl.yelpcdn.com/bphoto/-1xIfezEraPK2HRTHWIWMA/o.jpg","vote_count":3,"rest_id":"rocky-hill-inn-eatery-and-tavern-rocky-hill","user_upvote":true,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:21.588Z","distance":0.12},
+    {"id":"cf6935f0-726d-11e7-aa1d-957dec4cbef2","url":"https://s3-media2.fl.yelpcdn.com/bphoto/nEbN823WqzS-3G_M2AZu8A/o.jpg","vote_count":0,"rest_id":"chennai-chimney-princeton-2","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:21.417Z","distance":"0.12"},
+    {"id":"df87cc30-726d-11e7-9d5a-3b58874f0c3d","url":"https://fota-app.s3.amazonaws.com/%2FKXE2BSBaJZer7LygXxhMQf0ucr62_masa-sushi-princeton_1495407630388.JPEG.jpg","vote_count":0,"rest_id":"masa-sushi-princeton","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:48.248Z","distance":0.12},
+    {"id":"cfb07820-726d-11e7-aa1d-957dec4cbef2","url":"https://s3-media2.fl.yelpcdn.com/bphoto/b0TW6XRrAB0Pgbo9PhUUng/o.jpg","vote_count":0,"rest_id":"paradise-biryani-pointe-lawrenceville-2","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:21.669Z","distance":0.12}
   ],
   uploaded: [
-    {"id":"dfae3ff0-726d-11e7-9d5a-3b58874f0c3d","url":"https://s3-media2.fl.yelpcdn.com/bphoto/v9312pqoGXOk4EX2Kpzo0Q/o.jpg","vote_count":0,"rest_id":"roots-princeton","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:48.500Z"},
-    {"id":"e060ee20-726d-11e7-9d5a-3b58874f0c3d","url":"https://s3-media2.fl.yelpcdn.com/bphoto/bRhajOhfEIGNvO77xkQraQ/o.jpg","vote_count":0,"rest_id":"trattoria-procaccini-princeton","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:49.670Z"},
-    {"id":"e0751260-726d-11e7-9d5a-3b58874f0c3d","url":"https://s3-media2.fl.yelpcdn.com/bphoto/YVDKLYbXvGqDYfCiVIs6XQ/o.jpg","vote_count":0,"rest_id":"salt-creek-grille-princeton","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:50.035Z"}
+    {"id":"dfae3ff0-726d-11e7-9d5a-3b58874f0c3d","url":"https://s3-media2.fl.yelpcdn.com/bphoto/v9312pqoGXOk4EX2Kpzo0Q/o.jpg","vote_count":0,"rest_id":"roots-princeton","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:48.500Z","distance":0.12},
+    {"id":"e060ee20-726d-11e7-9d5a-3b58874f0c3d","url":"https://s3-media2.fl.yelpcdn.com/bphoto/bRhajOhfEIGNvO77xkQraQ/o.jpg","vote_count":0,"rest_id":"trattoria-procaccini-princeton","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:49.670Z","distance":0.12},
+    {"id":"e0751260-726d-11e7-9d5a-3b58874f0c3d","url":"https://s3-media2.fl.yelpcdn.com/bphoto/YVDKLYbXvGqDYfCiVIs6XQ/o.jpg","vote_count":0,"rest_id":"salt-creek-grille-princeton","user_upvote":false,"user_downvote":false,"uploaded_at":"2017-07-27T01:49:50.035Z","distance":0.12}
   ],
   comments: [
 

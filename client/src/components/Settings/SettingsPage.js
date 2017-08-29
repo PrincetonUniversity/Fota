@@ -19,13 +19,18 @@ export const SettingsButton = (props) => (
 
 export const BackButton = (props) => (
   <View style={{ position: 'absolute', left: 10 }}>
-    <Ionicon.Button
-      name='ios-arrow-back'
-      backgroundColor='white'
-      color='black'
-      size={20}
+    <TouchableOpacity
+      style={styles.backButtonStyle}
       onPress={props.onPress}
-    />
+    >
+      <Ionicon
+        name='ios-arrow-back'
+        backgroundColor='white'
+        color='black'
+        //onPress={props.onPress}
+        size={20}
+      />
+    </TouchableOpacity>
   </View>
 );
 
@@ -39,7 +44,7 @@ class SettingsPage extends Component {
 
         <ScrollView>
           <SettingsHeader text='Location' />
-          <SettingsButton 
+          <SettingsButton
             text='Search Radius'
             onPress={() => this.props.navigation.navigate('Radius')}
           />
@@ -71,6 +76,13 @@ const styles = {
     color: 'rgba(0, 0, 0, 0.35)',
     fontSize: 13,
     fontWeight: '500'
+  },
+  backButtonStyle: {
+    backgroundColor: 'transparent',
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   buttonStyle: {
     borderColor: 'rgba(0, 0, 0, 0.09)',
