@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { Text, View, ScrollView, Platform, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { Text, View, ScrollView, Platform, Keyboard } from 'react-native';
 import { ListItem, Separator } from 'native-base';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import request from '../../helpers/axioshelper';
@@ -90,11 +90,13 @@ class SearchPage extends Component {
   }
 
   renderFilterHeader() {
-    return (
-      <Separator bordered>
-        <Text>Filters</Text>
-      </Separator>
-    );
+    if (this.state.query && this.state.categories.length > 0) {
+      return (
+        <Separator bordered>
+          <Text style={styles.resultHeaderStyle}>Filters</Text>
+        </Separator>
+      );
+    }
   }
 
   renderFilter(filter) {
@@ -129,11 +131,13 @@ class SearchPage extends Component {
   }
 
   renderRestaurantHeader() {
-    return (
-      <Separator bordered>
-        <Text>Restaurants</Text>
-      </Separator>
-    );
+    if (this.state.query && this.state.restaurants.length > 0) {
+      return (
+        <Separator bordered>
+          <Text style={styles.resultHeaderStyle}>Restaurants</Text>
+        </Separator>
+      );
+    }
   }
 
   renderRestaurant(restaurant) {
@@ -208,7 +212,7 @@ class SearchPage extends Component {
             <Text style={styles.cancelStyle} onPress={this.props.onCancel}>Cancel</Text>
           </View>
         </View>
-        <ScrollView keyboardShouldPersistTaps='handled'>
+        <ScrollView keyboardShouldPersistTaps='handled' onScroll={Keyboard.dismiss}>
           {this.renderFilterHeader()}
           {this.renderFilters()}
           {this.renderRestaurantHeader()}
@@ -247,6 +251,11 @@ const styles = {
     fontSize: 15,
     fontWeight: '300',
     color: 'rgba(0,0,0,0.38)'
+  },
+  resultHeaderStyle: {
+    fontSize: 13,
+    fontWeight: '300',
+    color: 'rgba(0,0,0,0.55)'
   },
   searchResultStyle: {
     fontSize: 16,
