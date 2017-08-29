@@ -49,7 +49,7 @@ class PhotoList extends Component {
         extraData={this.props.extraData}
         keyExtractor={photo => photo.id}
         renderItem={photo => this.renderPhoto(photo.item)}
-        ListHeaderComponent={this.props.header}
+        ListHeaderComponent={() => <View style={{ backgroundColor: 'white', height: 5 }} />}
         onRefresh={this.props.onRefresh}
         refreshing={this.props.refreshing}
         showsVerticalScrollIndicator={false}

@@ -521,16 +521,11 @@ class RestaurantDetail extends Component {
             size={12}
             backgroundColor='white'
             onPress={() => {
-              navigator.geolocation.getCurrentPosition(position => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                const formattedAddress = this.state.restaurant.location.display_address.map(address =>
-                  address.replace(/\s/g, '+')
-                );
-                //formattedAddress = formattedAddress.reduce((total, line) => `${total}+${line}`);
-                Linking.openURL(directionsURL(lat, lng, formattedAddress))
-                  .catch(e => request.showErrorAlert(e));
-              });
+              const formattedAddress = this.state.restaurant.location.display_address.map(address =>
+               address.replace(/\s/g, '+')
+              );
+              Linking.openURL(directionsURL(formattedAddress))
+                .catch(e => request.showErrorAlert(e));
             }}
           >
             <Text style={footerTextStyle}>DIRECTIONS</Text>
