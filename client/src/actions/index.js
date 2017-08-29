@@ -27,11 +27,3 @@ export function setLoading(loading) {
   };
 }
 
-// Order must be either 'hot' or 'new'
-export function changeSorting(order) {
-  return {
-    type: SORTING,
-    payload: order
-  };
-}
-

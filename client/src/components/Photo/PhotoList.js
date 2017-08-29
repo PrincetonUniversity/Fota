@@ -21,8 +21,6 @@ import PhotoDetail from './PhotoDetail';
 const itemHeight = Dimensions.get('window').width - 20;
 
 class PhotoList extends Component {
-  // given an id of a picutre, returns "liked" if the user has liked it,
-  // "disliked" if user has not liked it, and null if neither.
   findVote(upvote, downvote) {
     if (upvote) return 'liked';
     if (downvote) return 'disliked';

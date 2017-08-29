@@ -213,7 +213,6 @@ const styles = {
   },
   statContainerStyle: {
     flexDirection: 'row',
-    //justifyContent: 'space-around',
     paddingTop: 10,
     paddingBottom: 5
   },
@@ -225,16 +224,12 @@ const styles = {
     fontSize: 20,
     fontWeight: '900',
     color: 'rgba(0, 0, 0, 0.75)',
-    //marginTop: 5,
-    //paddingBottom: -5,
-    // borderWidth: 1,
     includeFontPadding: false
   },
   statLabelStyle: {
     fontSize: 13,
     fontWeight: '300',
     color: 'rgba(0,0,0,0.75)',
-    // borderWidth: 1
   },
 };
 

@@ -21,44 +21,18 @@ class PhotoGallery extends Component {
     const panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (event, gesture) => {
-        // console.log(`dx: ${gesture.dx}`);
-        // console.log(`dy: ${gesture.dy}`);
         position.setValue({ x: gesture.dx, y: gesture.dy });
-        //position.setValue({ x: 0, y: gesture.dy });
-        //console.log(position)
       },
       onPanResponderRelease: (event, gesture) => {
-        // console.log(`dx: ${gesture.dx}`);
-        // console.log(`dy: ${gesture.dy}`);
         if (gesture.dy > SWIPE_THRESHOLD) {
           this.forceSwipe('down');
-          //this.props.onSwipeVertical();
         } else if (gesture.dy < -SWIPE_THRESHOLD) {
           this.forceSwipe('up');
-          //this.props.onSwipeVertical();
         } else {
           this.resetPosition();
         }
       },
-      // onPanResponderReject: (e, gestureState) => {
-      //
-      // },
-      // onPanResponderGrant: (e, gestureState) => {
-      //   console.log('grant')
-      // },
-      // onPanResponderStart: (e, gestureState) => {
-      //   console.log('start')
-      // },
-      // onPanResponderEnd: (e, gestureState) => {
-      //   console.log('end')
-      // },
-      // onPanResponderTerminate: (event, gesture) => {
-      //   console.log('terminate')
-      // },
-      onPanResponderTerminationRequest: (event, gesture) => {
-        //console.log('terminationrequest')
-        //this.resetPosition();
-      }
+      onPanResponderTerminationRequest: (event, gesture) => {}
     });
 
     this.state = {
@@ -97,7 +71,6 @@ class PhotoGallery extends Component {
 
   forceSwipe(direction) {
     const y = direction === 'down' ? SCREEN_HEIGHT : -SCREEN_HEIGHT;
-    console.log('forceswipe');
     Animated.timing(this.state.position, {
       toValue: { x: 0, y },
       duration: SWIPE_OUT_DURATION

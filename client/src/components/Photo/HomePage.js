@@ -19,17 +19,11 @@ import {
   Text, View, TouchableOpacity, Dimensions,
   Platform, Modal, AsyncStorage
 } from 'react-native';
-import { connect } from 'react-redux';
-//import Spinner from 'react-native-loading-spinner-overlay';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import { TabNavigator, TabBarTop } from 'react-navigation';
-//import request from '../../helpers/axioshelper';
-//import { photoRequest } from '../../helpers/URL';
-import HotPage from './HotPage';
-import NewPage from './NewPage';
+import PhotoFeed from './PhotoFeed';
 import PhotoList from './PhotoList';
 import SearchPage from './SearchPage';
-import { setLoading } from '../../actions/index';
 import { tabWidth, tabHeight, horizontalPadding } from '../../Base';
 import request from '../../helpers/axioshelper';
 import { filterRequest } from '../../helpers/URL';
@@ -73,7 +67,6 @@ class HomePage extends Component {
   state = { filterList: [], modalVisible: false, filter: '' };
 
   getFilterList(filter) {
-    console.log('hi albert its me');
     navigator.geolocation.getCurrentPosition(position => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
@@ -126,37 +119,18 @@ class HomePage extends Component {
             <Text style={searchTextStyle}>{placeholder}</Text>
           </Icon.Button>
         </View>
-        {/* <View style={{ flexDirection: 'row' }}>
-          <Input
-            style={{
-              backgroundColor: 'rgba(0,0,0,0.06)',
-              //paddingHorizontal: 12,
-              height: 32,
-              borderRadius: 7,
-              marginHorizontal: 20,
-              marginTop: 11,
-              marginBottom: 1
-              //marginVertical: 5
-            }}
-            placeholder='Search'
-            placeholderAlign='center'
-            //value={this.state.query}
-            //onChangeText={query => this.updateQuery(query)}
-          />
-        </View> */}
         {this.renderList()}
       </View>
     );
   }
 }
 
+const HotPage = () => <PhotoFeed order='hot' />;
+const NewPage = () => <PhotoFeed order='new' />;
+
 const HomeNavigator = TabNavigator({
-  Hot: {
-    screen: HotPage
-  },
-  New: {
-    screen: NewPage
-  }
+  Hot: { screen: HotPage },
+  New: { screen: NewPage }
 },
 {
   tabBarPosition: 'top',
@@ -174,11 +148,7 @@ const HomeNavigator = TabNavigator({
     indicatorStyle: {
       height: 4,
       backgroundColor: '#ff9700',
-      //width: 100,
-      //marginRight: 10,
       justifyContent: 'center',
-      //marginHorizontal: 75,
-      //width: (Dimensions.get('window').width - 100) / 2
     },
     tabStyle: {
       width: 120,
@@ -186,15 +156,9 @@ const HomeNavigator = TabNavigator({
     },
     style: {
       backgroundColor: 'white',
-      //alignItems: 'center',
-      justifyContent: 'center',
       marginHorizontal: Dimensions.get('window').width / 2 - 120,
       overflow: 'hidden',
       elevation: 0,
-      //flex: 1
-      // shadowOffset: { width: 1, height: 5 },
-      // shadowOpacity: 0.07,
-      // shadowRadius: 3
     }
   }
 });
@@ -234,8 +198,4 @@ const {
   searchButtonStyle
 } = styles;
 
-function mapStateToProps({ loading, sorting }) {
-  return { loading, sorting };
-}
-
-export default connect(mapStateToProps, { setLoading })(HomePage);
+export default HomePage;

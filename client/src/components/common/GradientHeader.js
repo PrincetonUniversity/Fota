@@ -26,9 +26,8 @@ const GradientHeader = ({ children, start, end, colors, style }) => (
 
 const styles = {
   viewStyle: {
-    //justifyContent: 'space-between',
     alignItems: 'center',
-    height: 85, //85
+    height: 85,
     marginTop: (Platform.OS === 'ios') ? 15 : 0,
     position: 'relative',
     flexDirection: 'column',

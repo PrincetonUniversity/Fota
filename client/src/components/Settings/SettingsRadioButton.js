@@ -14,8 +14,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Header } from '../common';
 import { SettingsButton, BackButton } from './SettingsPage';
 
-//const radii = ['1', '3', '5', '10'];
-
 class SettingsRadioButton extends Component {
   state = { selected: '' }
 

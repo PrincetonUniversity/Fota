@@ -1,6 +1,6 @@
 /******************************************************************************
  * Called by: ./PhotoList
- * Dependencies: redux, helpers/axioshelper, helpers/getasyncstorage,
+ * Dependencies: redux, helpers/axioshelper,
  * common/ImageButton, Restaurant/RestaurantModal
  *
  * Description: Visual component for each photo on the home page. Consists of
@@ -16,13 +16,11 @@
 
 import React, { Component } from 'react';
 import { View, Text, Dimensions, Alert, TouchableOpacity } from 'react-native';
-import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import request from '../../helpers/axioshelper';
 import { photoVote } from '../../helpers/URL';
 import { GradientImage } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
-import saveVote from '../../helpers/getasyncstorage';
 
 class PhotoDetail extends Component {
   constructor(props) {
@@ -68,8 +66,6 @@ class PhotoDetail extends Component {
     this.setState({ modalVisible: false });
   }
 
-  // Sends the update request to the fota server.
-  // type can either be "downvote" or "upvote"
   sendUpdateRequest(type) {
     request.patch(photoVote(this.state.id, type))
     .catch(e => request.showErrorAlert(e));
@@ -196,14 +192,19 @@ const styles = {
   },
   photoStyle: { // The picture
     flex: 1,
-    // width: 327,
-    // height: 327,
     width: null,
     height: Dimensions.get('window').width - 50,
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 9
   },
-  photoInfoStyle: {
+  voteCountTextStyle: { // Number of likes
+    fontSize: 18,
+    textAlign: 'justify',
+    fontWeight: 'bold',
+    marginRight: 10,
+    marginBottom: 10
+  },
+  /*photoInfoStyle: {
     paddingTop: 10,
     paddingBottom: 10,
     backgroundColor: '#FFFFFF',
@@ -236,34 +237,17 @@ const styles = {
     height: 13,
     width: 13
   },
-  voteCountTextStyle: { // Number of likes
-    fontSize: 18,
-    textAlign: 'justify',
-    fontWeight: 'bold',
-    marginRight: 10,
-    marginBottom: 10
-  },
   voteContainerStyle: { // Upvote/downvote container
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'stretch',
-  },
+  },*/
 };
 
 const {
   photoFrameStyle,
   photoStyle,
-  photoInfoStyle,
-  upvoteStyle,
-  downvoteStyle,
-  voteCountContainerStyle,
-  voteCountArrowStyle,
   voteCountTextStyle,
-  voteContainerStyle
 } = styles;
 
-function mapStateToProps({ loginState }) {
-  return { loginState };
-}
-
-export default connect(mapStateToProps)(PhotoDetail);
+export default PhotoDetail;

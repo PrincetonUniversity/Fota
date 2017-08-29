@@ -17,13 +17,10 @@ import {
 import Modal from 'react-native-modal';
 import request from '../../helpers/axioshelper';
 import { restRequest, restCommentRequest } from '../../helpers/URL';
-import { CardSection } from '../common';
 import RestaurantDetail from './RestaurantDetail';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-//const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SWIPE_THRESHOLD = SCREEN_WIDTH / 2;
-//const SWIPE_OUT_DURATION = 250;
 
 class RestaurantModal extends Component {
 
@@ -38,33 +35,13 @@ class RestaurantModal extends Component {
         }
       },
       onPanResponderRelease: (event, gesture) => {
-        // console.log(`dx: ${gesture.dx}`);
-        // console.log(`dy: ${gesture.dy}`);
         if (gesture.dx > SWIPE_THRESHOLD) {
           this.setState({ modalVisible: false });
         } else {
           this.resetPosition();
         }
       },
-      // onPanResponderReject: (e, gestureState) => {
-      //
-      // },
-      // onPanResponderGrant: (e, gestureState) => {
-      //   console.log('grant')
-      // },
-      // onPanResponderStart: (e, gestureState) => {
-      //   console.log('start')
-      // },
-      // onPanResponderEnd: (e, gestureState) => {
-      //   console.log('end')
-      // },
-      // onPanResponderTerminate: (event, gesture) => {
-      //  console.log('terminating panresponder');
-      // },
-      onPanResponderTerminationRequest: (event, gesture) => {
-        //console.log('terminationrequest')
-        //this.resetPosition();
-      }
+      onPanResponderTerminationRequest: (event, gesture) => {}
     });
 
     this.state = {
@@ -126,9 +103,9 @@ class RestaurantModal extends Component {
           option.onClick();
         }}
       >
-        <CardSection>
+        <View style={styles.optionsCardStyle}>
           <Text style={styles.popupTextStyle}>{option.name}</Text>
-        </CardSection>
+        </View>
       </TouchableOpacity>
 
     ));
@@ -188,17 +165,24 @@ class RestaurantModal extends Component {
 }
 
 const styles = {
-  modalStyle: { // For the faded out part
+  modalStyle: {
     flex: 1,
-    justifyContent: 'center'
-    //backgroundColor: 'rgba(0,0,0,0.5)'
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)'
   },
   popupStyle: {
-    //marginHorizontal: 20,
+    marginHorizontal: 20,
   },
   popupTextStyle: {
     fontSize: 17,
     padding: 5
+  },
+  optionsCardStyle: {
+    padding: 10,
+    backgroundColor: '#fff',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    position: 'relative'
   }
 };
 

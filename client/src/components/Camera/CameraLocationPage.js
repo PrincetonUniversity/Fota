@@ -80,7 +80,6 @@ class CameraLocationPage extends Component {
   }
 
   onViewableItemsChanged = ({ viewableItems }) => {
-    //console.log(viewableItems);
     if (!this.state.hidePhoto && viewableItems[0]) {
       if (viewableItems[0].index >= this.state.rlist.length - 7) {
         this.setState({ nearBottom: true });
@@ -385,9 +384,11 @@ class CameraLocationPage extends Component {
                       this.setState({ hidePhoto: true });
                     }}
                   >
-                    <Image
-                      style={labelStyle}
-                      source={require('../../img/magnifying_glass_unactivated.png')}
+                    <Icon
+                      name='search'
+                      size={15}
+                      color='rgba(0,0,0,0.34)'
+                      style={{ marginRight: 5 }}
                     />
                   </Input>
                 </View>
@@ -431,7 +432,6 @@ const styles = {
   pageStyle: {
     flex: 1,
     flexDirection: 'column',
-    //justifyContent: 'space-between'
   },
   photoFrameStyle: {
     borderBottomWidth: 1,
@@ -464,7 +464,6 @@ const styles = {
     borderWidth: 1,
     backgroundColor: 'white',
     zIndex: 3
-    //flex: 1
   },
   searchBarStyle: {
     backgroundColor: 'rgba(0,0,0,0.06)',
@@ -474,7 +473,6 @@ const styles = {
   labelStyle: {
     width: 15,
     height: 15,
-    marginRight: 5
   },
   buttonHolderStyle: {
     height: 70,

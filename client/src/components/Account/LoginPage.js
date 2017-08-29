@@ -24,7 +24,6 @@ class LoginPage extends Component {
   };
   
   render() {
-    console.log(this.props);
     let screenProps = {
       onSkip: this.props.onSkip,
       onLoginFinished: this.props.onLoginFinished
@@ -57,15 +56,9 @@ class LoginPage extends Component {
 }
 
 const LoginNavigator = StackNavigator({
-  Welcome: {
-    screen: LoginWelcome
-  },
-  Login: {
-    screen: LoginForm
-  },
-  Signup: {
-    screen: SignupForm
-  }
+  Welcome: { screen: LoginWelcome },
+  Login: { screen: LoginForm },
+  Signup: { screen: SignupForm }
 },
 {
   headerMode: 'none',

@@ -36,16 +36,6 @@ class BookmarkedRestaurants extends Component {
         />
       );
     }
-    // return rest.categories.map((filterName, index) =>
-    //   <FilterDisplay
-    //     key={index}
-    //     text={filterName.title}
-    //     color='rgba(0, 0, 0, 0.6)'
-    //     size={10}
-    //     numberOfLines={1}
-    //     ellipsizeMode='tail'
-    //   />
-    // );
   }
 
   renderRestaurant(rest) {
