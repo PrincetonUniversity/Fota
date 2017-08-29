@@ -106,6 +106,7 @@ class HomePage extends Component {
           animationType='fade'
           transparent
           visible={this.state.modalVisible}
+          onRequestClose={() => this.setState({ modalVisible: false, filter: '' })}
         >
           <SearchPage
             onCancel={() => this.setState({ modalVisible: false, filter: '' })}

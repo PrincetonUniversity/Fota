@@ -17,7 +17,7 @@
 import React from 'react';
 import { View, Dimensions } from 'react-native';
 
-const size = Dimensions.get('window').width - 60;
+const size = Dimensions.get('window').width - 50;
 
 const LoadingPhotos = () => (
   <View style={{ borderTopWidth: 1, borderColor: 'rgba(0,0,0,0.09)' }}>
@@ -28,8 +28,8 @@ const LoadingPhotos = () => (
 
 const styles = {
   grayPhotoStyle: {
-    marginHorizontal: 30,
-    marginVertical: 20,
+    marginHorizontal: 25,
+    marginVertical: 15,
     width: size,
     height: size,
     borderRadius: 9,

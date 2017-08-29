@@ -15,8 +15,10 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { FlatList, View, } from 'react-native';
+import { FlatList, View, Dimensions } from 'react-native';
 import PhotoDetail from './PhotoDetail';
+
+const itemHeight = Dimensions.get('window').width - 20;
 
 class PhotoList extends Component {
   // given an id of a picutre, returns "liked" if the user has liked it,
@@ -29,7 +31,7 @@ class PhotoList extends Component {
 
   renderPhoto(photo) {
     return (
-      <View style={{ marginLeft: 30, marginRight: 30, marginTop: 20, marginBottom: 20 }}>
+      <View style={{ marginLeft: 25, marginRight: 25, marginTop: 15, marginBottom: 15 }}>
         <PhotoDetail
           key={photo.id}
           photo={photo}
@@ -50,9 +52,13 @@ class PhotoList extends Component {
         ListHeaderComponent={this.props.header}
         onRefresh={this.props.onRefresh}
         refreshing={this.props.refreshing}
-        showVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
         removeClippedSubviews={false}
         windowSize={10}
+        initialNumToRender={2}
+        getItemLayout={(data, index) => (
+          { length: itemHeight, offset: itemHeight * index, index }
+        )}
       />
     );
   }
