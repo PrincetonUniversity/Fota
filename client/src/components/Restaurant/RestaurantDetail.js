@@ -9,8 +9,8 @@
 
 import React, { Component } from 'react';
 import {
-  View, Text, ScrollView, Animated, Linking, LayoutAnimation, Dimensions,
-  TouchableWithoutFeedback, PanResponder
+  View, Text, ScrollView, Animated, Linking, LayoutAnimation, Dimensions, Platform,
+  TouchableWithoutFeedback, PanResponder, TouchableOpacity
 } from 'react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -241,11 +241,6 @@ class RestaurantDetail extends Component {
 
   renderHeader(headerScrollDistance, pageY) {
     const restaurant = this.state.restaurant;
-    const backTranslateY = this.state.scrollY.interpolate({
-      inputRange: [0, headerScrollDistance],
-      outputRange: [0, headerScrollDistance / 3],
-      extrapolate: 'clamp'
-    });
     const nameTranslateY = this.state.scrollY.interpolate({
       inputRange: [0, headerScrollDistance],
       outputRange: [0, headerScrollDistance / 3 * 0.5],
@@ -269,20 +264,6 @@ class RestaurantDetail extends Component {
             colors={['transparent', 'rgba(0, 0, 0, 0.36)']}
             style={{ flex: 1 }}
           >
-            <Animated.View style={[headerStyle, { transform: [{ translateY: backTranslateY }] }]}>
-              <View style={{ marginTop: 10 }}>
-                <Ionicon.Button
-                  name='ios-arrow-back'
-                  backgroundColor='transparent'
-                  underlayColor='transparent'
-                  activeOpacity={0}
-                  color='white'
-                  size={30}
-                  onPress={() => this.props.close()}
-                />
-              </View>
-            </Animated.View>
-
             <Animated.View style={{ flex: 1, justifyContent: 'flex-end', marginRight: 35, transform: [{ translateY: nameTranslateY }] }}>
               <Animated.View style={[titleContainerStyle, { opacity }]}>
                 <Text style={addressStyle}>
@@ -481,12 +462,12 @@ class RestaurantDetail extends Component {
         onLayout={e => this.setInfoHeight(e)}
       >
         <View style={infoObjectStyle}>
-            <MaterialIcon
-              name='access-time'
-              size={31}
-              style={{ height: 30 }}
-              color={'rgba(0,0,0,0.63)'}
-            />
+          <MaterialIcon
+            name='access-time'
+            size={31}
+            style={{ height: 30 }}
+            color={'rgba(0,0,0,0.63)'}
+          />
           <Text style={infoIconStyle}>
             {this.timeUntilCloseLabel(this.state.restaurant.hours)}
           </Text>
@@ -506,15 +487,20 @@ class RestaurantDetail extends Component {
       <View style={footerStyle}>
         {/* <View style={bottomSpacerStyle} /> */}
         <View style={bottomSpacerStyle}>
-          <Ionicon.Button
-            name='ios-call'
-            borderRadius={0}
-            color='gray'
-            backgroundColor='white'
+          <TouchableOpacity
+            style={footerButtonStyle}
             onPress={() => phonecall(restaurant.phone.substring(1), false)}
           >
+            <Ionicon
+              name='ios-call'
+              borderRadius={0}
+              color='gray'
+              backgroundColor='white'
+              size={20}
+              style={{ marginRight: 5 }}
+            />
             <Text style={footerTextStyle}>CALL</Text>
-          </Ionicon.Button>
+          </TouchableOpacity>
         </View>
         {/* <View style={{ flexDirection: 'column', ...bottomSpacerStyle }}>
           <View style={bottomSpacerStyle} />
@@ -524,12 +510,8 @@ class RestaurantDetail extends Component {
 
         {/* <View style={bottomSpacerStyle} /> */}
         <View style={bottomSpacerStyle}>
-          <Icon.Button
-            name='directions'
-            borderRadius={0}
-            color='gray'
-            size={12}
-            backgroundColor='white'
+          <TouchableOpacity
+            style={footerButtonStyle}
             onPress={() => {
               const formattedAddress = this.state.restaurant.location.display_address.map(address =>
                address.replace(/\s/g, '+')
@@ -538,8 +520,16 @@ class RestaurantDetail extends Component {
                 .catch(e => request.showErrorAlert(e));
             }}
           >
+            <Icon
+              name='directions'
+              borderRadius={0}
+              color='gray'
+              size={12}
+              style={{ marginRight: 5 }}
+              backgroundColor='white'
+            />
             <Text style={footerTextStyle}>DIRECTIONS</Text>
-          </Icon.Button>
+          </TouchableOpacity>
         </View>
         {/* <View style={bottomSpacerStyle} /> */}
       </View>
@@ -585,6 +575,21 @@ class RestaurantDetail extends Component {
     });
     return (
       <View style={pageStyle}>
+        <View style={headerStyle}>
+          <TouchableOpacity
+            style={backButtonStyle}
+            onPress={() => this.props.close()}
+          >
+            <Ionicon
+              name='ios-arrow-back'
+              backgroundColor='transparent'
+              underlayColor='transparent'
+              activeOpacity={0}
+              color='white'
+              size={30}
+            />
+          </TouchableOpacity>
+        </View>
         {this.renderHeader(headerScrollDistance, pageY)}
 
         <Animated.View style={{ height: pageHeight, marginBottom: 50, transform: [{ translateY: pageY }] }}>
@@ -676,13 +681,22 @@ const styles = {
   },
   headerStyle: { // Header including back button, name, time until close, call button
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    //justifyContent: 'space-between',
     marginHorizontal: 5,
+    marginTop: Platform.OS === 'ios' ? 15 : 5,
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    zIndex: 8
     //marginBottom: 5
   },
   backButtonStyle: { // Back button
+    height: 35,
     width: 35,
-    height: 35
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+    zIndex: 10
   },
   titleContainerStyle: { // Contains a address and restaurant name
     paddingLeft: 35,
@@ -781,7 +795,6 @@ const styles = {
   infoObjectStyle: {
     flexDirection: 'column',
     alignItems: 'center',
-//    borderWidth: 1,
     flex: 1
   },
   footerStyle: {
@@ -799,6 +812,14 @@ const styles = {
     shadowOpacity: 0.05,
     shadowRadius: 3,
   },
+  footerButtonStyle: {
+    flex: 1,
+    paddingVertical: 10,
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   footerTextStyle: {
     fontWeight: '900',
     fontSize: 13,
@@ -806,7 +827,6 @@ const styles = {
   },
   bottomSpacerStyle: {
     flex: 1,
-    height: 30,
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: 'rgba(0, 0, 0, 0.2)',
@@ -817,6 +837,7 @@ const styles = {
 const {
   pageStyle,
   headerStyle,
+  backButtonStyle,
   titleContainerStyle,
   addressStyle,
   titleStyle,
@@ -832,6 +853,7 @@ const {
   infoIconStyle,
   infoObjectStyle,
   footerStyle,
+  footerButtonStyle,
   footerTextStyle,
   bottomSpacerStyle,
 } = styles;

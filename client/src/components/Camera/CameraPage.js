@@ -15,9 +15,9 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { 
-  View, Text, Dimensions, AsyncStorage, StatusBar,
-  Alert, UIManager, LayoutAnimation 
+import {
+  View, Dimensions, AsyncStorage, StatusBar, TouchableOpacity,
+  Alert, UIManager, LayoutAnimation
 } from 'react-native';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import { TabNavigator, TabBarTop } from 'react-navigation';
@@ -58,12 +58,22 @@ const styles = {
     height: Dimensions.get('window').width,
     width: Dimensions.get('window').width,
     resizeMode: 'cover'
+  },
+  buttonContainerStyle: {
+    backgroundColor: 'transparent',
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 3
   }
 };
 
 const {
   pageStyle,
   cameraStyle,
+  imageStyle,
+  buttonContainerStyle
 } = styles;
 
 export function cameraErrorAlert() {
@@ -140,15 +150,19 @@ class CameraPage extends Component {
         <StatusBar hidden />
         <Header text='Add a Photo' iosHideStatusBar>
           <View style={{ position: 'absolute', left: 20 }}>
-            <Icon
-              name='close'
-              backgroundColor='white'
-              color='black'
-              size={13}
+            <TouchableOpacity
+              style={buttonContainerStyle}
               onPress={() => {
                 this.props.screenProps.goBack();
               }}
-            />
+            >
+              <Icon
+                name='close'
+                backgroundColor='white'
+                color='black'
+                size={13}
+              />
+            </TouchableOpacity>
           </View>
         </Header>
 

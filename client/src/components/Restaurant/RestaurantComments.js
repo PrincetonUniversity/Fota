@@ -151,6 +151,7 @@ class RestaurantComments extends Component {
             style={{ height: Math.min(60, this.state.height), ...editorStyle }}
             value={this.state.message}
             placeholder='Add a review...'
+            placeholderTextColor='rgba(0,0,0,0.31)'
             multiline
             onFocus={this.openEditorBox.bind(this)}
             onChange={event => this.setState({

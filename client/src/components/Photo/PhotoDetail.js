@@ -149,7 +149,7 @@ class PhotoDetail extends Component {
                 <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end' }}>
                   <View style={distanceContainerStyle}>
                     <Text style={{ color: voteCountColor, ...distanceTextStyle }}>
-                      {`${this.props.photo.distance.toFixed(1)} mi`}
+                      {`${this.props.distance.toFixed(1)} mi`}
                     </Text>
                   </View>
 

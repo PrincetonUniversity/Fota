@@ -10,7 +10,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { Text, View, Platform } from 'react-native';
+import { Text, View, Platform, TouchableOpacity } from 'react-native';
 import firebase from 'firebase';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Ionicon from 'react-native-vector-icons/Ionicons';
@@ -24,7 +24,7 @@ import SubmittedComments from './SubmittedComments';
 class ProfilePage extends Component {
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
       bookmarked: [],
       upvoted: [],
       uploaded: [],
@@ -83,8 +83,8 @@ class ProfilePage extends Component {
             <View>
               <Text style={nameTextStyle}>{name}</Text>
               <View style={{ flexDirection: 'row', paddingBottom: 10 }} >
-                <Ionicon 
-                  name={'md-star'} 
+                <Ionicon
+                  name={'md-star'}
                   color={'#ff9700'}
                   size={17}
                   style={{ alignSelf: 'center', paddingRight: 5 }}
@@ -92,14 +92,18 @@ class ProfilePage extends Component {
                 <Text style={infoTextStyle}>Certified Foodie</Text>
               </View>
             </View>
-            <Ionicon
-              name={'md-settings'}
-              backgroundColor={'#fff'}
-              color={'rgba(0,0,0,0.15)'}
-              size={27}
+            <TouchableOpacity
               onPress={() => this.props.navigation.navigate('Settings')}
-              style={{ marginTop: 17 }}
-            />
+            >
+              <Ionicon
+                name={'md-settings'}
+                backgroundColor={'#fff'}
+                color={'rgba(0,0,0,0.15)'}
+                size={27}
+                style={{ marginTop: 17 }}
+              />
+            </TouchableOpacity>
+
           </View>
 
           <View style={statContainerStyle}>
@@ -130,7 +134,7 @@ class ProfilePage extends Component {
           </View>
         </View>
 
-        <ProfileNavigator 
+        <ProfileNavigator
           screenProps={{
             bookmarked: this.state.bookmarked,
             uploaded: this.state.uploaded,
@@ -193,7 +197,7 @@ const styles = {
   headerStyle: {
     marginTop: (Platform.OS === 'ios') ? 15 : 0,
   },
-  headerSectionStyle: { 
+  headerSectionStyle: {
     borderColor: 'rgba(0, 0, 0, 0.09)',
     borderBottomWidth: 1,
     paddingTop: 10,
