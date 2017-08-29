@@ -29,20 +29,7 @@ const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 class SearchPage extends Component {
   state = { query: '', restaurants: [], categories: [] }
 
-  componentWillMount() {
-    // request.get('https://fotafood.herokuapp.com/api/restaurant')
-    //   .then(response => this.setState({ totalList: response.data }))
-    //   .catch(e => request.showErrorAlert(e));
-  }
-  
   updateQuery(query) {
-//    if (this.state.query.length !== 0) {
-//      try {
-//        request.cancel();
-//      } catch (e) {
-//        console.log(e);
-//      }
-//    }
     if (query === '') {
       this.setState({ query: '', restaurants: [], categories: [] });
     } else {
@@ -55,7 +42,6 @@ class SearchPage extends Component {
             this.setState({
               restaurants: response.data.restaurants,
               categories: response.data.categories
-              //query
             });
           })
           .catch(e => request.showErrorAlert(e));
@@ -114,7 +100,6 @@ class SearchPage extends Component {
   }
 
   renderRestaurant(restaurant) {
-    //console.log(restaurant.name);
     return (
       <RestaurantModal key={restaurant.id} restaurantid={restaurant.id}>
         <ListItem>
@@ -143,28 +128,13 @@ class SearchPage extends Component {
     // );
   }
 
-  // renderRestaurant(restaurant) {
-  //   return (
-  //     <RestaurantModal
-  //       restaurant={restaurant}
-  //       pageStyle={{ paddingTop: (Platform.OS === 'ios') ? 15 : 0 }}
-  //     >
-  //       <View style={{ flexDirection: 'row', padding: 10 }}>
-  //         <Text style={{ fontSize: 15 }}>
-  //           {restaurant.name}
-  //         </Text>
-  //       </View>
-  //     </RestaurantModal>
-  //   );
-  // }
-
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: 'white' }}>
         <View style={styles.headerStyle}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10, marginRight: 25 }}>
+          <View style={styles.searchContainerStyle}>
             <Input
-              style={styles.containerStyle}
+              style={styles.searchBarStyle}
               placeholder='Search'
               autoFocus
               value={this.state.query}
@@ -177,9 +147,7 @@ class SearchPage extends Component {
                 underlayColor='transparent'
                 size={19}
                 style={{ marginLeft: 12 }}
-              >
-                {/* <Text style={searchTextStyle}>Search</Text> */}
-              </Icon>
+              />
             </Input>
             <Text style={styles.cancelStyle} onPress={this.props.onCancel}>Cancel</Text>
           </View>
@@ -204,13 +172,18 @@ const styles = {
     alignItems: 'flex-start',
     height: 60,
     marginTop: Platform.OS === 'ios' ? 15 : 0,
-    //paddingHorizontal: 10,
     position: 'relative',
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderColor: 'rgba(0,0,0,0.09)',
   },
-  containerStyle: {
+  searchContainerStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    marginRight: 25
+  },
+  searchBarStyle: {
     justifyContent: 'center',
     alignItems: 'center',
     height: 32,

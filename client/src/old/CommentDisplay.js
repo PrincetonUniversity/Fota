@@ -27,9 +27,7 @@ const styles = {
       backgroundColor: 'white',
       alignItems: 'center',
       padding: 8,
-      // borderTopWidth: 1,
       borderBottomWidth: 1
-      // margin: 5
     },
     textStyle: {
       color: 'black',

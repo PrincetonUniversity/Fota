@@ -28,7 +28,6 @@ class LoginWelcome extends Component {
     const provider = new firebase.auth.FacebookAuthProvider();
     firebase.auth().signInWithRedirect(provider);
     firebase.auth().getRedirectResult().then(result => {
-      console.log(result.user);
       //this.props.screenProps.onLoginFinished();
     }).catch(error => {
       Alert.alert(

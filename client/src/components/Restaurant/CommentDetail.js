@@ -13,9 +13,6 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/Entypo';
 import Ionicon from 'react-native-vector-icons/Ionicons';
-//import { Navigator } from 'react-native-deprecated-custom-components';
-//import NounDetail from './NounDetail';
-//import { CommentDisplay } from '../common';
 import request from '../../helpers/axioshelper';
 import { commentVote } from '../../helpers/URL';
 
@@ -107,7 +104,7 @@ class CommentDetail extends Component {
     if (render) {
       return (
         <TouchableOpacity
-          onPress={() => console.log('hi')}
+          onPress={() => console.log('can\'t edit yet!')}
         >
           <Text style={headingTextStyle}>Edit</Text>
         </TouchableOpacity>

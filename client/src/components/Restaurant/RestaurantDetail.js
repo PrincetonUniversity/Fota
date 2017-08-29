@@ -158,10 +158,10 @@ class RestaurantDetail extends Component {
                   distance
                 });
               })
-              .catch(e => { console.log(e); request.showErrorAlert(e); });
+              .catch(e => request.showErrorAlert(e));
           }
         })
-        .catch(e => { console.log(e); request.showErrorAlert(e); });
+        .catch(e => request.showErrorAlert(e));
     });
   }
 

@@ -40,9 +40,9 @@ function request(method, url, data, resolve, reject) {
           method,
           url,
           data,
-          cancelToken: new CancelToken(c => { cancel = c; }),
+          //cancelToken: new CancelToken(c => { cancel = c; }),
           headers: { Authorization: `Bearer ${idToken}` } })
-          .then(response => { /*console.log(response);*/ resolve(response); })
+          .then(response => resolve(response))
           .catch(e => {
             reject({ etype: 1, ...e });
           });
@@ -85,7 +85,7 @@ exports.delete = (url, data = null) => (
   })
 );
 
-exports.cancel = () => {
+/*exports.cancel = () => {
   if (cancel !== undefined) {
     console.log('canceling...');
     console.log(CancelToken);
@@ -93,7 +93,7 @@ exports.cancel = () => {
   } else {
     console.log(cancel);
   }
-};
+};*/
 
 exports.showErrorAlert = (error) => {
   if (error.etype === 0) {

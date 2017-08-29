@@ -118,14 +118,7 @@ const MainNavigator = TabNavigator({
       shadowOffset: { width: -1, height: -5 },
       shadowRadius: 5
     },
-    tabStyle: {
-      //borderWidth: 5
-    }
-  },
-  // style: {
-  //   height: tabHeight,
-  //   borderWidth: 100,
-  // }
+  }
 });
 
 const FotaNavigator = StackNavigator({

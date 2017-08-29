@@ -30,32 +30,13 @@ class RestaurantPhotos extends Component {
         </View>
       );
     },
-    // tabBar: () => ({
-    //   indicatorStyle: {
-    //     marginLeft: 50
-    //   },
-    //   labelStyle: {
-    //     fontSize: 100,
-    //     fontWeight: '900'
-    //   },
-    // })
   });
-
-  // static navigationOptions = ({ screenProps }) => ({
-  //   tabBarLabel: `${screenProps.photos.length} PHOTOS`
-  // });
 
   state = { photos: [], loading: true, selectedPhoto: null, modalVisible: false }
 
   componentWillMount() {
     this.setState({ photos: this.props.screenProps.photos, loading: false });
   }
-
-  // componentWillReceiveProps(nextProps) {
-  //   if (this.props.screenProps.photos !== nextProps.screenProps.photos) {
-  //     this.setState({ photos: nextProps.screenProps.photos, loading: false });
-  //   }
-  // }
 
   setSelectedPhoto(index) {
     this.setState({ selectedPhoto: index, modalVisible: true });
@@ -157,7 +138,7 @@ const styles = {
     shadowRadius: 5,
     shadowOffset: { height: 1 }
   },
-  photoStyle: { // Individual photos
+  photoStyle: {
     height: photoSize,
     width: photoSize,
   }

@@ -1,6 +1,6 @@
 /******************************************************************************
  * Called by: ./PhotoList
- * Dependencies: redux, helpers/axioshelper, helpers/getasyncstorage,
+ * Dependencies: redux, helpers/axioshelper,
  * common/ImageButton, Restaurant/RestaurantModal
  *
  * Description: Visual component for each photo on the home page. Consists of
@@ -16,13 +16,11 @@
 
 import React, { Component } from 'react';
 import { View, Text, Dimensions, Alert, TouchableOpacity } from 'react-native';
-import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import request from '../../helpers/axioshelper';
 import { photoVote } from '../../helpers/URL';
 import { GradientImage } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
-import saveVote from '../../helpers/getasyncstorage';
 
 class PhotoDetail extends Component {
   constructor(props) {
@@ -68,8 +66,6 @@ class PhotoDetail extends Component {
     this.setState({ modalVisible: false });
   }
 
-  // Sends the update request to the fota server.
-  // type can either be "downvote" or "upvote"
   sendUpdateRequest(type) {
     request.patch(photoVote(this.state.id, type))
     .catch(e => request.showErrorAlert(e));
@@ -81,17 +77,14 @@ class PhotoDetail extends Component {
     let userVoted = true;
     if (!this.state.userHasVoted) {
       newVoteCount += 1;
-      saveVote(1, this.state.id).done();
       this.sendUpdateRequest('up');
     } else if (this.state.userDisliked) {
         newVoteCount += 2;
-        saveVote(4, this.state.id).done();
         this.sendUpdateRequest('up');
     } else if (this.state.userLiked) {
         newVoteCount -= 1;
         userNewLike = false;
         userVoted = false;
-        saveVote(5, this.state.id).done();
         this.sendUpdateRequest('clear');
     }
     this.setState({
@@ -108,17 +101,14 @@ class PhotoDetail extends Component {
     let userVoted = true;
     if (!this.state.userHasVoted) {
       newVoteCount -= 1;
-      saveVote(2, this.state.id).done();
       this.sendUpdateRequest('down');
     } else if (this.state.userLiked) {
       newVoteCount -= 2;
-      saveVote(3, this.state.id).done();
       this.sendUpdateRequest('down');
     } else if (this.state.userDisliked) {
       newVoteCount += 1;
       userHasDisliked = false;
       userVoted = false;
-      saveVote(6, this.state.id).done();
       this.sendUpdateRequest('clear');
     }
     this.setState({
@@ -204,8 +194,6 @@ const styles = {
   },
   photoStyle: { // The picture
     flex: 1,
-    // width: 327,
-    // height: 327,
     width: null,
     height: Dimensions.get('window').width - 50,
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
@@ -265,8 +253,4 @@ const {
   voteTextStyle,
 } = styles;
 
-function mapStateToProps({ loginState }) {
-  return { loginState };
-}
-
-export default connect(mapStateToProps)(PhotoDetail);
+export default PhotoDetail;
