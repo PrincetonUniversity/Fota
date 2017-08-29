@@ -82,12 +82,11 @@ class SearchPage extends Component {
   }
 
   renderFilters() {
-    if (this.state.categories.length === 0) {
-      return <View />;
+    if (this.state.query && this.state.categories.length > 0) {
+      return this.state.categories.map(category =>
+        this.renderFilter(category.category)
+      );
     }
-    return this.state.categories.map(category =>
-      this.renderFilter(category.category)
-    );
     // return (
     //   <View>
     //     <FlatList
@@ -126,12 +125,11 @@ class SearchPage extends Component {
   }
 
   renderRestaurants() {
-    if (this.state.restaurants.length === 0) {
-      return <View />;
+    if (this.state.query && this.state.restaurants.length > 0) {
+      return this.state.restaurants.map(restaurant =>
+        this.renderRestaurant(restaurant)
+      );
     }
-    return this.state.restaurants.map(restaurant =>
-      this.renderRestaurant(restaurant)
-    );
     // return (
     //   <FlatList
     //     data={this.state.restaurants}

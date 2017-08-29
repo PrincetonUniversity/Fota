@@ -207,7 +207,7 @@ const styles = {
     // width: 327,
     // height: 327,
     width: null,
-    height: Dimensions.get('window').width - 60,
+    height: Dimensions.get('window').width - 50,
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 9
   },
