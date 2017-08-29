@@ -10,7 +10,7 @@
 
 export const LOGIN = 'randomtext';
 export const LOADING = '9(AA6969asD)';
-export const SORTING = ')!sdj0ad!SDAD::L';
+export const LOCATION = ')!sdj0ad!SDAD::L';
 
 export function logInOrOut(user) {
   return {
@@ -24,6 +24,14 @@ export function setLoading(loading) {
   return {
     type: LOADING,
     payload: loading
+  };
+}
+
+export function browseFromPrinceton(browsing) {
+  console.log(browsing);
+  return {
+    type: LOCATION,
+    payload: browsing
   };
 }
 

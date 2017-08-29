@@ -6,6 +6,7 @@ import { setLoading } from '../../actions/index';
 import { photoRequest } from '../../helpers/URL';
 import PhotoList from './PhotoList';
 import LoadingPhotos from './LoadingPhotos';
+import { pcoords } from '../../Base';
 
 class PhotoFeed extends Component {
   state = { photoList: [], refreshing: false };
@@ -18,17 +19,29 @@ class PhotoFeed extends Component {
     if (!this.state.refreshing) {
       this.props.setLoading(true);
     }
-    navigator.geolocation.getCurrentPosition(position => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      AsyncStorage.getItem('SearchRadius').then(radius => {
-        request.get(photoRequest(this.props.order, lat, lng, parseInt(radius, 10)))
-        .then(response => {
-          this.props.setLoading(false);
-          this.setState({ photoList: response.data, refreshing: false });
-        })
-        .catch(e => request.showErrorAlert(e));
+    if (this.props.browsingPrinceton) {
+      this.sendPhotoRequest(pcoords.lat, pcoords.lng);
+    } else {
+      navigator.geolocation.getCurrentPosition(position => {
+        const lat = 0;//position.coords.latitude;
+        const lng = 0;//position.coords.longitude;
+        this.sendPhotoRequest(lat, lng);
       });
+    }
+  }
+
+  sendPhotoRequest(lat, lng) {
+    AsyncStorage.getItem('SearchRadius').then(radius => {
+      request.get(photoRequest(this.props.order, lat, lng, parseInt(radius, 10)))
+      .then(response => {
+        this.props.setLoading(false);        
+        if (response.data.length === 0) {
+          if (this.props.noPhotos) this.props.noPhotos();
+        } else {
+          this.setState({ photoList: response.data, refreshing: false });          
+        }
+      })
+      .catch(e => request.showErrorAlert(e));
     });
   }
 
@@ -50,8 +63,8 @@ class PhotoFeed extends Component {
   }
 }
 
-function mapStateToProps({ loading }) {
-  return { loading };
+function mapStateToProps({ loading, browsingPrinceton }) {
+  return { loading, browsingPrinceton };
 }
 
 export default connect(mapStateToProps, { setLoading })(PhotoFeed);

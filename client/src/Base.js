@@ -25,7 +25,9 @@ import HomePage from './components/Photo/HomePage';
 import ProfileHelper from './components/Profile/ProfileHelper';
 import CameraNavigator from './components/Camera/CameraNavigator';
 import CameraHelper from './components/Camera/CameraHelper';
-import { logInOrOut } from './actions';
+import { logInOrOut, browseFromPrinceton } from './actions';
+
+export const pcoords = { lat: 40.3440, lng: -74.6514 };
 
 export const tabWidth = (Dimensions.get('window').width / 4) + 9;
 export const horizontalPadding = (Dimensions.get('window').width - 114) / 8;
@@ -38,6 +40,7 @@ class Base extends Component {
   }
 
   componentWillMount() {
+    this.props.browseFromPrinceton(false);
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         firebase.auth().currentUser.getToken(true).then((idToken) => {
@@ -141,4 +144,4 @@ function mapStateToProps({ loginState }) {
   return { loginState };
 }
 
-export default connect(mapStateToProps, { logInOrOut })(Base);
+export default connect(mapStateToProps, { logInOrOut, browseFromPrinceton })(Base);

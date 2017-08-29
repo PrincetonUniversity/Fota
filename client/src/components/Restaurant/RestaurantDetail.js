@@ -12,6 +12,7 @@ import {
   View, Text, ScrollView, Animated, Linking, LayoutAnimation, Dimensions,
   TouchableWithoutFeedback, PanResponder
 } from 'react-native';
+import { connect } from 'react-redux';
 import moment from 'moment';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import FoundationIcon from 'react-native-vector-icons/Foundation';
@@ -27,6 +28,7 @@ import request from '../../helpers/axioshelper';
 import { directionsRequest, directionsURL } from '../../helpers/URL';
 import RestaurantPhotos from './RestaurantPhotos';
 import RestaurantComments from './RestaurantComments';
+import { pcoords } from '../../Base';
 import icoMoonConfig from '../../selection.json';
 
 const Icon = createIconSetFromIcoMoon(icoMoonConfig);
@@ -126,43 +128,18 @@ class RestaurantDetail extends Component {
   }
 
   getNavigation(restaurant) {
-    navigator.geolocation.getCurrentPosition(position => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      const formattedAddress = restaurant.location.display_address.map(address =>
-        address.replace(/\s/g, '+')
-      );
-      request.get(directionsRequest(lat, lng, formattedAddress, 'walking'))
-        .then(response => {
-          const walkDirections = response.data;
-          const walkTime = walkDirections.routes[0].legs[0].duration.text;
-          const distance = walkDirections.routes[0].legs[0].distance.text;
-          if (!walkTime.includes('hour') && parseInt(walkTime) <= 15) {
-            this.setState({
-              navLoading: false,
-              driving: false,
-              walking: true,
-              navTime: walkTime,
-              distance
-            });
-          } else {
-            request.get(directionsRequest(lat, lng, formattedAddress, 'driving'))
-              .then(response2 => {
-                const driveDirections = response2.data;
-                const driveTime = driveDirections.routes[0].legs[0].duration.text;
-                this.setState({
-                  navLoading: false,
-                  driving: true,
-                  walking: false,
-                  navTime: driveTime,
-                  distance
-                });
-              })
-              .catch(e => request.showErrorAlert(e));
-          }
-        })
-        .catch(e => request.showErrorAlert(e));
-    });
+    const formattedAddress = restaurant.location.display_address.map(address =>
+      address.replace(/\s/g, '+')
+    );
+    if (this.props.browsingPrinceton) {
+      this.sendNavigationRequest(formattedAddress, pcoords.lat, pcoords.lng);
+    } else {
+      navigator.geolocation.getCurrentPosition(position => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        this.sendNavigationRequest(formattedAddress, lat, lng);
+      });
+    }
   }
 
   getHours(hours) {
@@ -173,6 +150,39 @@ class RestaurantDetail extends Component {
     const end = hoursToday.end;
     const overnight = hoursToday.is_overnight;
     return { start, end, overnight };
+  }
+
+  sendNavigationRequest(address, lat, lng) {
+    request.get(directionsRequest(lat, lng, address, 'walking'))
+    .then(response => {
+      const walkDirections = response.data;
+      const walkTime = walkDirections.routes[0].legs[0].duration.text;
+      const distance = walkDirections.routes[0].legs[0].distance.text;
+      if (!walkTime.includes('hour') && parseInt(walkTime) <= 15) {
+        this.setState({
+          navLoading: false,
+          driving: false,
+          walking: true,
+          navTime: walkTime,
+          distance
+        });
+      } else {
+        request.get(directionsRequest(lat, lng, address, 'driving'))
+        .then(response2 => {
+          const driveDirections = response2.data;
+          const driveTime = driveDirections.routes[0].legs[0].duration.text;
+          this.setState({
+            navLoading: false,
+            driving: true,
+            walking: false,
+            navTime: driveTime,
+            distance
+          });
+        })
+        .catch(e => request.showErrorAlert(e));
+      }
+    })
+    .catch(e => request.showErrorAlert(e));
   }
 
   timeUntilCloseLabel(hoursArray) {
@@ -826,4 +836,8 @@ const {
   bottomSpacerStyle,
 } = styles;
 
-export default RestaurantDetail;
+function mapStateToProps({ browsingPrinceton }) {
+  return { browsingPrinceton };
+}
+
+export default connect(mapStateToProps)(RestaurantDetail);

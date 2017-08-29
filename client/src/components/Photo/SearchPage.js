@@ -16,36 +16,40 @@
 
 import React, { Component } from 'react';
 import { Text, View, ScrollView, Platform, Keyboard } from 'react-native';
+import { connect } from 'react-redux';
 import { ListItem, Separator } from 'native-base';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import request from '../../helpers/axioshelper';
 import { searchRequest } from '../../helpers/URL';
 import { Input } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
+import { pcoords } from '../../Base';
 import icoMoonConfig from '../../selection.json';
 
 const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
 class SearchPage extends Component {
-  state = { query: '', restaurants: [], categories: [] }
+  state = { lat: pcoords.lat, lng: pcoords.lng, query: '', restaurants: [], categories: [] }
+
+  componentWillMount() {
+    if (!this.props.browsingPrinceton) {
+      navigator.geolocation.getCurrentPosition(position => {
+        this.setState({ lat: position.coords.latitude, lng: position.coords.longitude });
+      });
+    }
+  }
 
   updateQuery(query) {
-    if (query === '') {
-      this.setState({ query: '', restaurants: [], categories: [] });
-    } else {
-      this.setState({ query, restaurants: [], categories: [] });
-      navigator.geolocation.getCurrentPosition(position => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        request.get(searchRequest(lat, lng, query))
-          .then(response => {
-            this.setState({
-              restaurants: response.data.restaurants,
-              categories: response.data.categories
-            });
-          })
-          .catch(e => request.showErrorAlert(e));
-      });
+    this.setState({ query, restaurants: [], categories: [] });    
+    if (query) {
+      request.get(searchRequest(this.state.lat, this.state.lng, query))
+      .then(response => {
+        this.setState({
+          restaurants: response.data.restaurants,
+          categories: response.data.categories
+        });
+      })
+      .catch(e => request.showErrorAlert(e));
     }
   }
 
@@ -209,4 +213,8 @@ const styles = {
   }
 };
 
-export default SearchPage;
+function mapStateToProps({ browsingPrinceton }) {
+  return { browsingPrinceton };
+}
+
+export default connect(mapStateToProps)(SearchPage);

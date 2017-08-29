@@ -17,19 +17,22 @@
 import React, { Component } from 'react';
 import {
   Text, View, TouchableOpacity, Dimensions,
-  Platform, Modal, AsyncStorage
+  Platform, Modal, AsyncStorage, Image
 } from 'react-native';
+import { connect } from 'react-redux';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import PhotoFeed from './PhotoFeed';
 import PhotoList from './PhotoList';
 import SearchPage from './SearchPage';
-import { tabWidth, tabHeight, horizontalPadding } from '../../Base';
+import { browseFromPrinceton } from '../../actions';
+import { tabWidth, tabHeight, horizontalPadding, pcoords } from '../../Base';
 import request from '../../helpers/axioshelper';
 import { filterRequest } from '../../helpers/URL';
 import icoMoonConfig from '../../selection.json';
 
 const Icon = createIconSetFromIcoMoon(icoMoonConfig);
+const noPhotosImage = require('../../img/no_photos_found.png');
 
 class HomePage extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -64,19 +67,27 @@ class HomePage extends Component {
     }
   });
 
-  state = { filterList: [], modalVisible: false, filter: '' };
+  state = { noPhotos: false, filterList: [], modalVisible: false, filter: '' };
 
   getFilterList(filter) {
-    navigator.geolocation.getCurrentPosition(position => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      AsyncStorage.getItem('SearchRadius').then(radius => {
-        request.get(filterRequest(filter, lat, lng, parseInt(radius, 10)))
-        .then(response => {
-          this.setState({ filter, modalVisible: false, filterList: response.data });
-        })
-        .catch(e => request.showErrorAlert(e));
+    if (this.props.browsingPrinceton) {
+      this.sendPhotoRequest(filter, pcoords.lat, pcoords.lng);
+    } else {
+      navigator.geolocation.getCurrentPosition(position => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        this.sendPhotoRequest(filter, lat, lng);
       });
+    }
+  }
+
+  sendPhotoRequest(filter, lat, lng) {
+    AsyncStorage.getItem('SearchRadius').then(radius => {
+      request.get(filterRequest(filter, lat, lng, parseInt(radius, 10)))
+      .then(response => {
+        this.setState({ filter, modalVisible: false, filterList: response.data });
+      })
+      .catch(e => request.showErrorAlert(e));
     });
   }
 
@@ -88,11 +99,35 @@ class HomePage extends Component {
     if (this.state.filter) {
       return <PhotoList list={this.state.filterList} />;
     }
-    return <HomeNavigator />;
+    return (
+      <HomeNavigator
+        screenProps={{
+          noPhotos: () => this.setState({ noPhotos: true })
+        }}
+      />
+    );
   }
 
   render() {
     const placeholder = this.state.filter || 'Search';
+    if (this.state.noPhotos) {
+      return (
+        <View style={noPhotosPageStyle}>
+          <Text style={noPhotosTextStyle}>Sorry, we're not available in your location yet!</Text>
+          <Image style={noPhotosImageStyle} source={noPhotosImage} />
+          <TouchableOpacity
+            onPress={() => {
+              this.props.browseFromPrinceton(true);
+              this.setState({ noPhotos: false });
+            }}
+          >
+            <View>
+              <Text style={noPhotosButtonStyle}>Browse from Princeton, NJ</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      );
+    }
     return (
       <View style={pageStyle}>
         <Modal
@@ -125,7 +160,7 @@ class HomePage extends Component {
   }
 }
 
-const HotPage = () => <PhotoFeed order='hot' />;
+const HotPage = (props) => <PhotoFeed order='hot' noPhotos={props.screenProps.noPhotos} />;
 const NewPage = () => <PhotoFeed order='new' />;
 
 const HomeNavigator = TabNavigator({
@@ -169,6 +204,30 @@ const styles = {
     flex: 1,
     paddingTop: (Platform.OS === 'ios') ? 15 : 0
   },
+  noPhotosPageStyle: {
+    flex: 1,
+    backgroundColor: 'white',
+    paddingHorizontal: 75,
+    paddingVertical: 50,
+    justifyContent: 'space-around',
+    alignItems: 'center'
+  },
+  noPhotosTextStyle: {
+    color: 'rgba(0, 0, 0, 0.6)',
+    fontWeight: '700',
+    fontSize: 20,
+    textAlign: 'center'
+  },
+  noPhotosImageStyle: {
+    width: Dimensions.get('window').width - 150,
+    height: Dimensions.get('window').width - 150
+  },
+  noPhotosButtonStyle: {
+    color: '#2494ff',
+    fontWeight: '700',
+    fontSize: 20,
+    textAlign: 'center'
+  },
   searchContainerStyle: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -193,9 +252,17 @@ const styles = {
 
 const {
   pageStyle,
+  noPhotosPageStyle,
+  noPhotosTextStyle,
+  noPhotosImageStyle,
+  noPhotosButtonStyle,
   searchContainerStyle,
   searchTextStyle,
   searchButtonStyle
 } = styles;
 
-export default HomePage;
+function mapStateToProps({ browsingPrinceton }) {
+  return { browsingPrinceton };
+}
+
+export default connect(mapStateToProps, { browseFromPrinceton })(HomePage);

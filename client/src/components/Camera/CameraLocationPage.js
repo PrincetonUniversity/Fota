@@ -25,6 +25,7 @@ import request from '../../helpers/axioshelper';
 import { Header, Button, Input, Spinner } from '../common';
 import { deleteImage, cameraErrorAlert } from './CameraPage';
 import { nearbyRestRequest, uploadPhotoRequest } from '../../helpers/URL';
+import { pcoords } from '../../Base';
 import icoMoonConfig from '../../selection.json';
 
 const Icon = createIconSetFromIcoMoon(icoMoonConfig);
@@ -61,16 +62,15 @@ class CameraLocationPage extends Component {
   }
 
   componentWillMount() {
-    navigator.geolocation.getCurrentPosition(position => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      request.get(nearbyRestRequest(lat, lng))
-        .then(response => {
-          this.setState({ totalList: response.data });
-          this.updateQuery('');
-        })
-        .catch(e => request.showErrorAlert(e));
-    });
+    if (this.props.browsingPrinceton) {
+      this.sendLocationRequest(pcoords.lat, pcoords.lng);
+    } else {
+      navigator.geolocation.getCurrentPosition(position => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        this.sendLocationRequest(lat, lng);
+      });
+    }
   }
 
   componentDidMount() {
@@ -87,6 +87,15 @@ class CameraLocationPage extends Component {
         this.setState({ nearBottom: false });
       }
     }
+  }
+
+  sendLocationRequest(lat, lng) {
+    request.get(nearbyRestRequest(lat, lng))
+    .then(response => {
+      this.setState({ totalList: response.data });
+      this.updateQuery('');
+    })
+    .catch(e => request.showErrorAlert(e));
   }
 
   updateQuery(query) {
@@ -519,7 +528,6 @@ const {
   cancelTextStyle,
   listContainerStyle,
   searchBarStyle,
-  labelStyle,
   buttonHolderStyle,
   chosenIndicatorStyle,
   restaurantDisplayStyle,
@@ -527,8 +535,8 @@ const {
   restaurantSubtextStyle
 } = styles;
 
-function mapStateToProps({ loginState }) {
-  return { loginState };
+function mapStateToProps({ loginState, browsingPrinceton }) {
+  return { loginState, browsingPrinceton };
 }
 
 export default connect(mapStateToProps)(CameraLocationPage);
