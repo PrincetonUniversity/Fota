@@ -15,6 +15,7 @@ const Input = ({
   style,
   children,
   placeholder,
+  autoFocus,
   onFocus,
   placeholderAlign,
   secure,
@@ -29,8 +30,9 @@ const Input = ({
       placeholder={placeholder}
       textAlign={placeholderAlign}
       onChangeText={onChangeText}
+      autoFocus={autoFocus}
       onFocus={onFocus}
-      autoCorrect={false}
+      autoCorrect
       secureTextEntry={secure}
       underlineColorAndroid={'transparent'}
     />

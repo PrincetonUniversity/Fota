@@ -15,7 +15,10 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity, Dimensions, Platform } from 'react-native';
+import {
+  Text, View, TouchableOpacity, Dimensions,
+  Platform, Modal, AsyncStorage
+} from 'react-native';
 import { connect } from 'react-redux';
 //import Spinner from 'react-native-loading-spinner-overlay';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
@@ -24,11 +27,12 @@ import { TabNavigator, TabBarTop } from 'react-navigation';
 //import { photoRequest } from '../../helpers/URL';
 import HotPage from './HotPage';
 import NewPage from './NewPage';
-//import PhotoList from './PhotoList';
-import Headbar from './Headbar';
-import { Input } from '../common';
+import PhotoList from './PhotoList';
+import SearchPage from './SearchPage';
 import { setLoading } from '../../actions/index';
 import { tabWidth, tabHeight, horizontalPadding } from '../../Base';
+import request from '../../helpers/axioshelper';
+import { filterRequest } from '../../helpers/URL';
 import icoMoonConfig from '../../selection.json';
 
 const Icon = createIconSetFromIcoMoon(icoMoonConfig);
@@ -66,25 +70,59 @@ class HomePage extends Component {
     }
   });
 
-  state = { photoList: [], loading: true, refreshing: false };
+  state = { filterList: [], modalVisible: false, filter: '' };
+
+  getFilterList(filter) {
+    console.log('hi albert its me');
+    navigator.geolocation.getCurrentPosition(position => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      AsyncStorage.getItem('SearchRadius').then(radius => {
+        request.get(filterRequest(filter, lat, lng, parseInt(radius, 10)))
+        .then(response => {
+          this.setState({ filter, modalVisible: false, filterList: response.data });
+        })
+        .catch(e => request.showErrorAlert(e));
+      });
+    });
+  }
 
   refreshListView() {
     this.setState({ refreshing: true }, () => this.getPhotoList());
   }
 
+  renderList() {
+    if (this.state.filter) {
+      return <PhotoList list={this.state.filterList} />;
+    }
+    return <HomeNavigator />;
+  }
+
   render() {
-    console.log('rendering');
+    const placeholder = this.state.filter || 'Search';
     return (
       <View style={pageStyle}>
+        <Modal
+          animationType='fade'
+          transparent
+          visible={this.state.modalVisible}
+        >
+          <SearchPage
+            onCancel={() => this.setState({ modalVisible: false, filter: '' })}
+            selectFilter={filter => this.getFilterList(filter)}
+          />
+        </Modal>
         <View style={searchContainerStyle}>
           <Icon.Button
             name='search'
             color='rgba(0,0,0,0.34)'
             backgroundColor='transparent'
+            underlayColor='transparent'
             size={19}
-            style={{ flex: 1 }}
+            style={searchButtonStyle}
+            onPress={() => this.setState({ modalVisible: true })}
           >
-            <Text style={searchTextStyle}>Search</Text>
+            <Text style={searchTextStyle}>{placeholder}</Text>
           </Icon.Button>
         </View>
         {/* <View style={{ flexDirection: 'row' }}>
@@ -105,7 +143,7 @@ class HomePage extends Component {
             //onChangeText={query => this.updateQuery(query)}
           />
         </View> */}
-        <HomeNavigator />
+        {this.renderList()}
       </View>
     );
   }
@@ -169,11 +207,17 @@ const styles = {
   searchContainerStyle: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 35,
+    height: 32,
     marginTop: 10,
     marginHorizontal: 25,
     backgroundColor: 'rgba(0,0,0,0.04)',
-    borderRadius: 15
+    borderRadius: 10,
+  },
+  searchButtonStyle: {
+    flex: 1,
+    width: Dimensions.get('window').width - 50,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   searchTextStyle: {
     fontSize: 15,
@@ -185,7 +229,8 @@ const styles = {
 const {
   pageStyle,
   searchContainerStyle,
-  searchTextStyle
+  searchTextStyle,
+  searchButtonStyle
 } = styles;
 
 function mapStateToProps({ loading, sorting }) {

@@ -12,6 +12,10 @@ export function photoRequest(sort, lat, lng, radius) {
   return `${PHOTO_REQ}?key=${CLIENT_API_KEY}&order=${sort}&latitude=${lat}&longitude=${lng}&radius=${radius}`;
 }
 
+export function filterRequest(filter, lat, lng, radius) {
+  return `${PHOTO_REQ}/${filter}?key=${CLIENT_API_KEY}&order=hot&latitude=${lat}&longitude=${lng}&radius=${radius}`;
+}
+
 export function photoVote(id, type) {
   return `${PHOTO_REQ}/${id}?key=${CLIENT_API_KEY}&type=${type}`;
 }
