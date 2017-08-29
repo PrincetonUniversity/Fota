@@ -44,8 +44,8 @@ export function directionsRequest(curLat, curLng, dest, mode) {
   return `${GOOGLE_MAPS_API_URL}?origin=${curLat},${curLng}&destination=${dest}&mode=${mode}&key=${CLIENT_API_KEY}`;
 }
 
-export function directionsURL(curLat, curLng, dest) {
-  return `${GOOGLE_MAPS_URL}/'${curLat},${curLng}'/${dest}/`;
+export function directionsURL(dest) {
+  return `${GOOGLE_MAPS_URL}/?api=1&destination=${dest}/`;
 }
 
 export function nearbyRestRequest(lat, lng) {

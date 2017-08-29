@@ -77,17 +77,14 @@ class PhotoDetail extends Component {
     let userVoted = true;
     if (!this.state.userHasVoted) {
       newVoteCount += 1;
-      saveVote(1, this.state.id).done();
       this.sendUpdateRequest('up');
     } else if (this.state.userDisliked) {
         newVoteCount += 2;
-        saveVote(4, this.state.id).done();
         this.sendUpdateRequest('up');
     } else if (this.state.userLiked) {
         newVoteCount -= 1;
         userNewLike = false;
         userVoted = false;
-        saveVote(5, this.state.id).done();
         this.sendUpdateRequest('clear');
     }
     this.setState({
@@ -104,17 +101,14 @@ class PhotoDetail extends Component {
     let userVoted = true;
     if (!this.state.userHasVoted) {
       newVoteCount -= 1;
-      saveVote(2, this.state.id).done();
       this.sendUpdateRequest('down');
     } else if (this.state.userLiked) {
       newVoteCount -= 2;
-      saveVote(3, this.state.id).done();
       this.sendUpdateRequest('down');
     } else if (this.state.userDisliked) {
       newVoteCount += 1;
       userHasDisliked = false;
       userVoted = false;
-      saveVote(6, this.state.id).done();
       this.sendUpdateRequest('clear');
     }
     this.setState({
@@ -151,30 +145,38 @@ class PhotoDetail extends Component {
               gradientStyle={{ flex: 1 }}
               source={this.state.url}
             >
-              <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end', zIndex: 6 }}>
-                <View style={{ flex: 2 }} />
+              <View style={{ flex: 1, zIndex: 6 }}>
+                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end' }}>
+                  <View style={distanceContainerStyle}>
+                    <Text style={{ color: voteCountColor, ...distanceTextStyle }}>
+                      {`${this.props.photo.distance.toFixed(1)} mi`}
+                    </Text>
+                  </View>
 
-                <Text style={{ color: voteCountColor, ...voteCountTextStyle }}>
-                  {this.state.votecount.toString()}
-                </Text>
-                <TouchableOpacity onPress={() => this.renderDownvote()}>
-                  <Ionicon
-                    name='ios-arrow-down'
-                    size={40}
-                    color={downvoteColor}
-                    backgroundColor='transparent'
-                    style={{ marginRight: 10 }}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.renderUpvote()}>
-                  <Ionicon
-                    name='ios-arrow-up'
-                    size={40}
-                    color={upvoteColor}
-                    backgroundColor='transparent'
-                    style={{ marginRight: 20 }}
-                  />
-                </TouchableOpacity>
+                  <View style={voteContainerStyle}>
+                    <Text style={{ color: voteCountColor, ...voteTextStyle }}>
+                      {this.state.votecount.toString()}
+                    </Text>
+                    <TouchableOpacity onPress={() => this.renderDownvote()}>
+                      <Ionicon
+                        name='ios-arrow-down'
+                        size={40}
+                        color={downvoteColor}
+                        backgroundColor='transparent'
+                        style={{ marginRight: 10, marginVertical: 0 }}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.renderUpvote()}>
+                      <Ionicon
+                        name='ios-arrow-up'
+                        size={40}
+                        color={upvoteColor}
+                        backgroundColor='transparent'
+                        style={{ marginRight: 20, marginVertical: 0 }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
             </GradientImage>
           </View>
@@ -197,57 +199,58 @@ const styles = {
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 9
   },
-  voteCountTextStyle: { // Number of likes
-    fontSize: 18,
-    textAlign: 'justify',
-    fontWeight: 'bold',
-    marginRight: 10,
-    marginBottom: 10
-  },
-  /*photoInfoStyle: {
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: '#FFFFFF',
-    borderBottomLeftRadius: 7,
-    borderBottomRightRadius: 7,
-    justifyContent: 'space-between',
+  distanceContainerStyle: {
+    flex: 1,
     flexDirection: 'row',
-    position: 'relative',
-    shadowOffset: { width: 1, height: 5 },
-    shadowOpacity: 0.1,
-    shadowRadius: 15
-  },
-  upvoteStyle: { // Upvote/downvote
-    height: 35,
-    width: 35
-  },
-  downvoteStyle: { // Downvote
-    height: 35,
-    width: 35,
-    marginLeft: 20,
-    marginRight: 10
-  },
-  voteCountContainerStyle: { // Upvote arrow + number of likes container
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    marginLeft: 10
   },
-  voteCountArrowStyle: { // the arrow next to number of likes
-    height: 13,
-    width: 13
+  distanceTextStyle: { // Text at bottom of photo
+    fontSize: 15,
+    fontWeight: '900',
+    paddingLeft: 16,
+    paddingTop: 8,
+    letterSpacing: 1,
+    paddingBottom: 14,
+    color: 'rgba(255,255,255,0.95)'
   },
-  voteContainerStyle: { // Upvote/downvote container
+  voteContainerStyle: {
+    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'stretch',
-  },*/
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  voteTextStyle: { // Text at bottom of photo
+    fontSize: 16,
+    //textAlign: 'justify',
+    fontWeight: '900',
+    marginRight: 10,
+    paddingTop: 8,
+    paddingBottom: 13,
+    //marginBottom: 10
+  },
+  // photoInfoStyle: {
+  //   paddingTop: 10,
+  //   paddingBottom: 10,
+  //   backgroundColor: '#FFFFFF',
+  //   borderBottomLeftRadius: 7,
+  //   borderBottomRightRadius: 7,
+  //   justifyContent: 'space-between',
+  //   flexDirection: 'row',
+  //   position: 'relative',
+  //   shadowOffset: { width: 1, height: 5 },
+  //   shadowOpacity: 0.1,
+  //   shadowRadius: 15
+  // },
 };
 
 const {
   photoFrameStyle,
   photoStyle,
-  voteCountTextStyle,
+  distanceContainerStyle,
+  distanceTextStyle,
+  voteContainerStyle,
+  voteTextStyle,
 } = styles;
 
 export default PhotoDetail;
