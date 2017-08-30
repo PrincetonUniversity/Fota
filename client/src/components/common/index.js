@@ -6,5 +6,6 @@ export * from './GradientImage';
 export * from './Header';
 export * from './ImageButton';
 export * from './Input';
+export * from './NotFoundText';
 export * from './PhotoGallery';
 export * from './Spinner';

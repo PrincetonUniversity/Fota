@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, FlatList, Dimensions, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import RestaurantModal from '../Restaurant/RestaurantModal';
+import { NotFoundText } from '../common';
 
 const photoSize = (Dimensions.get('window').width - 56) / 3;
 
@@ -34,6 +35,9 @@ class UpvotedPhotos extends Component {
   }
 
   render() {
+    if (this.props.screenProps.bookmarked.length === 0) {
+      return <NotFoundText text='See all your upvoted photos here.' />;
+    }
     return (
       <View style={{ marginHorizontal: 7 }} >
         <FlatList

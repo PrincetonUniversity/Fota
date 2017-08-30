@@ -251,10 +251,11 @@ class RestaurantDetail extends Component {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     });
+    console.log(this.state.photos);
     return (
       <Animated.View style={{ zIndex: 2, height: 175, transform: [{ translateY: pageY }] }}>
         <Banner
-          photo={this.state.photos === undefined ? undefined : this.state.photos[0].url}
+          photo={(this.state.photos.length > 0) ? this.state.photos[0].url : undefined}
           containerStyle={{ flex: 1 }} // height: 150
           photoStyle={{ flex: 1 }}
         >
@@ -353,7 +354,7 @@ class RestaurantDetail extends Component {
       //const timeString = `${this.state.navTime} min`
       return (
         <View style={infoObjectStyle}>
-          <MaterialIcon name='directions-walk' size={30} style={{ height: 30 }} color={'rgba(0,0,0,0.63)'} />
+          <Icon name='walk' size={27} style={{ paddingTop: 3, height: 30 }} color={'rgba(0,0,0,0.63)'} />
           <Text style={infoIconStyle}>
             {this.state.navTime}
           </Text>
@@ -373,6 +374,21 @@ class RestaurantDetail extends Component {
 
   // Price section of the horizontal info bar
   renderPrice() {
+    if (this.state.restaurant.price == null) {
+      return (
+        <View style={infoObjectStyle}>
+          <FoundationIcon
+            name='dollar'
+            size={30}
+            style={{ height: 30 }}
+            color={'rgba(0,0,0,0.63)'}
+          />
+          {/* <Text style={infoIconStyle}>
+            Cheap
+          </Text> */}
+        </View>
+      ); 
+    }
     if (this.state.restaurant.price.length === 1) {
       return (
         <View style={infoObjectStyle}>

@@ -55,13 +55,9 @@ class PhotoList extends Component {
         removeClippedSubviews={false}
         windowSize={10}
         initialNumToRender={2}
-        getItemLayout={(data, index) => (
-          { length: itemHeight, offset: itemHeight * index, index }
-        )}
       />
     );
   }
 }
-
 
 export default PhotoList;

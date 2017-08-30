@@ -28,6 +28,7 @@ const Input = ({
       style={styles.inputStyle}
       value={value}
       placeholder={placeholder}
+      placeholderTextColor='rgba(0, 0, 0, 0.2)'
       textAlign={placeholderAlign}
       onChangeText={onChangeText}
       autoFocus={autoFocus}
@@ -43,7 +44,7 @@ const styles = {
   inputStyle: {
     padding: 1,
     borderRadius: 3,
-    color: 'rgba(0,0,0,0.2)',
+    color: 'rgba(0,0,0,0.4)',
     paddingRight: 5,
     paddingLeft: 5,
     fontSize: 14,

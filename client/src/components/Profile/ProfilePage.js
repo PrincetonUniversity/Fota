@@ -11,11 +11,10 @@
 
 import React, { Component } from 'react';
 import { Text, View, Platform, TouchableOpacity } from 'react-native';
-import firebase from 'firebase';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Ionicon from 'react-native-vector-icons/Ionicons';
+import request from '../../helpers/axioshelper';
 import { profileRequest } from '../../helpers/URL';
-import { tabHeight } from '../../Base';
 import BookmarkedRestaurants from './BookmarkedRestaurants';
 import UpvotedPhotos from './UpvotedPhotos';
 import UploadedPhotos from './UploadedPhotos';
@@ -36,22 +35,13 @@ class ProfilePage extends Component {
   }
 
   componentWillMount() {
-    /*
-    request.get(photoRequest(this.props.screenProps.user)).then(response => this.setState({
-      bookmarked: response.data.bookmarked,
-      upvoted: response.data.upvoted,
-      uploaded: response.data.uploaded,
-      comments: response.data.comments,
+    request.get(profileRequest()).then(response => this.setState({
+      bookmarked: response.data.bookmarks,
+      upvoted: response.data.upvoted_photos,
+      uploaded: response.data.uploaded_photos,
+      comments: response.data.written_comments,
       loading: false
     })).catch(e => request.showErrorAlert(e));
-    */
-    this.setState({
-      bookmarked: this.props.screenProps.testuser.bookmarked,
-      upvoted: this.props.screenProps.testuser.upvoted,
-      uploaded: this.props.screenProps.testuser.uploaded,
-      comments: this.props.screenProps.testuser.comments,
-      loading: false
-    });
   }
 
   /*deleteFromServer(photo) {

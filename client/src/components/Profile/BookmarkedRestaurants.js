@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { Banner, FilterDisplay } from '../common';
+import { Banner, FilterDisplay, NotFoundText } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 
 const itemWidth = Dimensions.get('window').width / 2 - 40;
@@ -39,27 +39,27 @@ class BookmarkedRestaurants extends Component {
   }
 
   renderRestaurant(rest) {
-    const street = rest.location.display_address[0].replace(/^[0-9]* /, '');
-    const address = `${street}, ${rest.location.city}`;
+    //const street = rest.location.display_address[0].replace(/^[0-9]* /, '');
+    //const address = `${street}, ${rest.location.city}`;
     return (
       <RestaurantModal restaurantid={rest.id}>
         <View style={styles.cardStyle}>
           <View style={{ borderRadius: PHOTO_BORDER_RADIUS, overflow: 'hidden', flex: 1 }}>
             <Banner
-              photo={rest.photos === undefined ? undefined : rest.photos[0].url}
+              photo={rest.bannerURL}
               containerStyle={{ height: 75 }}
               photoStyle={{ flex: 1 }}
             />
             <View style={{ marginHorizontal: 15, marginVertical: 10, flex: 1, justifyContent: 'space-between' }}>
               <View>
-                <Text style={styles.addressStyle} numberOfLines={1} ellipsizeMode='tail'>{address}</Text>
+                {/* <Text style={styles.addressStyle} numberOfLines={1} ellipsizeMode='tail'>{address}</Text> */}
                 <Text style={styles.titleStyle}>{rest.name}</Text>
               </View>
               <View style={styles.ratingContainerStyle}>
                 <Text style={styles.ratingTextStyle}>96%</Text>
               </View>
               <View style={{ flexDirection: 'row' }}>
-                {this.renderFilters(rest)}
+                {/* {this.renderFilters(rest)} */}
               </View>
             </View>
           </View>
@@ -69,6 +69,9 @@ class BookmarkedRestaurants extends Component {
   }
 
   render() {
+    if (this.props.screenProps.bookmarked.length === 0) {
+      return <NotFoundText text='See all your bookmarked restaurants here.' />;
+    }
     return (
       <View style={{ marginHorizontal: 20 }}>
         <FlatList

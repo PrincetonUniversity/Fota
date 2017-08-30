@@ -28,7 +28,6 @@ export function setLoading(loading) {
 }
 
 export function browseFromPrinceton(browsing) {
-  console.log(browsing);
   return {
     type: LOCATION,
     payload: browsing

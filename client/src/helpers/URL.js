@@ -4,7 +4,7 @@ const GOOGLE_MAPS_URL = 'https://www.google.com/maps/dir';
 const PHOTO_REQ = `${URL}/photos`;
 const REST_REQ = `${URL}/restaurants`;
 const COMMENT_REQ = `${URL}/comments`;
-const USER_REQ = `${URL}/user`;
+const USER_REQ = `${URL}/users`;
 const SEARCH_REQ = `${URL}/search`;
 const CLIENT_API_KEY = 'AIzaSyBZSHaR5yI2dgyWXQ0CjCHOrHZ5NQvsUHc'; //'AIzaSyCGhec-cpivaFlYfFQJ9T-kIZ8BlDs66P8';
 
@@ -32,8 +32,8 @@ export function commentVote(id, type) {
   return `${COMMENT_REQ}/${id}/?key=${CLIENT_API_KEY}&type=${type}`;
 }
 
-export function profileRequest(user) {
-  return `${USER_REQ}/${user}?key=${CLIENT_API_KEY}`;
+export function profileRequest() {
+  return `${USER_REQ}/?key=${CLIENT_API_KEY}`;
 }
 
 export function searchRequest(lat, lng, term) {

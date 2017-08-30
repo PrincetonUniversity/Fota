@@ -25,6 +25,7 @@ import { TabNavigator, TabBarTop } from 'react-navigation';
 import PhotoFeed from './PhotoFeed';
 import PhotoList from './PhotoList';
 import SearchPage from './SearchPage';
+import { NotFoundText } from '../common';
 import { browseFromPrinceton } from '../../actions';
 import { tabWidth, tabHeight, horizontalPadding, pcoords } from '../../Base';
 import request from '../../helpers/axioshelper';
@@ -97,7 +98,12 @@ class HomePage extends Component {
 
   renderList() {
     if (this.state.filter) {
-      return <PhotoList list={this.state.filterList} />;
+      if (this.state.filterList.length > 0) return <PhotoList list={this.state.filterList} />;
+      return (
+        <NotFoundText
+          text='No photos of that filter were found in your area. Try searching another term or increasing your search radius.'
+        />
+      );
     }
     return (
       <HomeNavigator
@@ -110,6 +116,8 @@ class HomePage extends Component {
 
   render() {
     const placeholder = this.state.filter || 'Search';
+    const headerMargin = this.state.filter ? 10 : 0;
+    const placeholderColor = this.state.filter ? 'rgba(0, 0, 0, 0.4)' : 'rgba(0, 0, 0, 0.2)';
     if (this.state.noPhotos) {
       return (
         <View style={noPhotosPageStyle}>
@@ -141,7 +149,7 @@ class HomePage extends Component {
             selectFilter={filter => this.getFilterList(filter)}
           />
         </Modal>
-        <View style={searchContainerStyle}>
+        <View style={{ marginBottom: headerMargin, ...searchContainerStyle }}>
           <Icon.Button
             name='search'
             color='rgba(0,0,0,0.34)'
@@ -151,7 +159,9 @@ class HomePage extends Component {
             style={searchButtonStyle}
             onPress={() => this.setState({ modalVisible: true })}
           >
-            <Text style={searchTextStyle}>{placeholder}</Text>
+            <Text style={{ color: placeholderColor, ...searchTextStyle }}>
+              {placeholder}
+            </Text>
           </Icon.Button>
         </View>
         {this.renderList()}
@@ -245,7 +255,6 @@ const styles = {
   },
   searchTextStyle: {
     fontSize: 15,
-    color: 'rgba(0,0,0,0.2)',
     letterSpacing: 1
   }
 };

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
   View, Text, FlatList, Image, TouchableOpacity, Modal, Dimensions
 } from 'react-native';
-import { PhotoGallery } from '../common';
+import { PhotoGallery, NotFoundText } from '../common';
 import { dealWithAndroidBeingStupid } from '../common/GradientImage';
 
 const photoSize = (Dimensions.get('window').width - 44) / 3;
@@ -32,10 +32,10 @@ class RestaurantPhotos extends Component {
     },
   });
 
-  state = { photos: [], loading: true, selectedPhoto: null, modalVisible: false }
+  state = { photos: [], selectedPhoto: null, modalVisible: false }
 
   componentWillMount() {
-    this.setState({ photos: this.props.screenProps.photos, loading: false });
+    this.setState({ photos: this.props.screenProps.photos });
   }
 
   setSelectedPhoto(index) {
@@ -64,14 +64,8 @@ class RestaurantPhotos extends Component {
   }
 
   render() {
-    if (!this.state.loading && this.state.photos.length === 0) {
-      return (
-        <View style={{ height: 150, justifyContent: 'center' }}>
-          <Text style={emptyTextStyle}>
-            Be the first to upload a photo here!
-          </Text>
-        </View>
-      );
+    if (this.state.photos.length === 0) {
+      return <NotFoundText height={150} text='Be the first to upload a photo here!' />;
     }
     const photoLinks = this.state.photos.map(photo => photo.url);
     return (

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import CommentDetail from './CommentDetail';
-import { Spinner } from '../common';
+import { Spinner, NotFoundText } from '../common';
 import request from '../../helpers/axioshelper';
 import { restCommentRequest } from '../../helpers/URL';
 
@@ -110,15 +110,7 @@ class RestaurantComments extends Component {
 
   renderComments() {
     if (this.state.comments.length === 0) {
-      return (
-        <View>
-          <View style={{ height: 150, justifyContent: 'center' }}>
-            <Text style={emptyTextStyle}>
-              There are no comments for this restaurant yet. Be the first to write one!
-            </Text>
-          </View>
-        </View>
-      );
+      return <NotFoundText height={150} text='There are no comments for this restaurant yet. Be the first to write one!' />;
     }
     return (
       <View style={{ flex: 1 }}>
@@ -183,11 +175,6 @@ const styles = {
     shadowOpacity: 0.08,
     shadowOffset: { width: 0, height: 2 }
   },
-  emptyTextStyle: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#aaa',
-  },
   editBoxStyle: {
     padding: 20,
     backgroundColor: 'white',
@@ -209,7 +196,6 @@ const styles = {
 const {
   tabLabelStyle,
   tabContainerStyle,
-  emptyTextStyle,
   editBoxStyle,
   editorStyle,
   doneButtonStyle,
