@@ -41,7 +41,11 @@ class BookmarkedRestaurants extends Component {
   renderRestaurant(rest) {
     //const street = rest.location.display_address[0].replace(/^[0-9]* /, '');
     //const address = `${street}, ${rest.location.city}`;
-    console.log(rest);
+    const voteCount = rest.recommend_yes_count + rest.recommend_no_count;
+    let rating = '--';
+    if (voteCount !== 0) {
+      rating = `${Math.round(rest.recommend_yes_count / voteCount * 100)}%`;
+    }
     return (
       <RestaurantModal restaurantid={rest.id}>
         <View style={styles.cardStyle}>
@@ -57,7 +61,7 @@ class BookmarkedRestaurants extends Component {
                 <Text style={styles.titleStyle}>{rest.name}</Text>
               </View>
               <View style={styles.ratingContainerStyle}>
-                <Text style={styles.ratingTextStyle}>96%</Text>
+                <Text style={styles.ratingTextStyle}>{rating}</Text>
               </View>
               <View style={{ flexDirection: 'row' }}>
                 {/* {this.renderFilters(rest)} */}

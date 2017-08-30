@@ -33,8 +33,12 @@ export function restBookmarkRequest(id) {
   return `${BOOKMARK_REQ}/${id}?key=${CLIENT_API_KEY}`;
 }
 
+export function restRecommendRequest(id, type) {
+  return `${REST_REQ}/${id}/recommend?key=${CLIENT_API_KEY}&type=${type}`;
+}
+
 export function commentVote(id, type) {
-  return `${COMMENT_REQ}/${id}/?key=${CLIENT_API_KEY}&type=${type}`;
+  return `${COMMENT_REQ}/${id}/vote?key=${CLIENT_API_KEY}&type=${type}`;
 }
 
 export function profileRequest() {
