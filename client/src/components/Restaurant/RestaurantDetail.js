@@ -39,42 +39,34 @@ class RestaurantDetail extends Component {
   constructor(props) {
     super(props);
 
-    // const panResponder = PanResponder.create({
-    //   onStartShouldSetPanResponder: () => true,
-    //   onPanResponderMove: (event, gesture) => {
-    //     if (gesture.dx > this.state.headerScrollDistance) {
-    //       //this.setState({ infoAtTop: true });
-    //     } else {
-    //       // if (this.state.infoAtTop) {
-    //       //   this.setState({ infoAtTop: false });
-    //       // }
-    //     }
-    //   },
-    //   onPanResponderRelease: (event, gesture) => {
-    //     if (this.state.scrollY) {
-    //       console.log(this.state.scrollY);
-    //     }
-    //   },
-    //   // onPanResponderReject: (e, gestureState) => {
-    //   //
-    //   // },
-    //   // onPanResponderGrant: (e, gestureState) => {
-    //   //   console.log('grant')
-    //   // },
-    //   // onPanResponderStart: (e, gestureState) => {
-    //   //   console.log('start')
-    //   // },
-    //   // onPanResponderEnd: (e, gestureState) => {
-    //   //   console.log('end')
-    //   // },
-    //   // onPanResponderTerminate: (event, gesture) => {
-    //   //  console.log('terminating panresponder');
-    //   // },
-    //   onPanResponderTerminationRequest: (event, gesture) => {
-    //     //console.log('terminationrequest')
-    //     //this.resetPosition();
-    //   }
-    // });
+    const panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (event, gesture) => {
+        console.log(gesture.dy);
+      },
+      onPanResponderRelease: (event, gesture) => {
+
+      },
+      // onPanResponderReject: (e, gestureState) => {
+      //
+      // },
+      // onPanResponderGrant: (e, gestureState) => {
+      //   console.log('grant')
+      // },
+      // onPanResponderStart: (e, gestureState) => {
+      //   console.log('start')
+      // },
+      // onPanResponderEnd: (e, gestureState) => {
+      //   console.log('end')
+      // },
+      // onPanResponderTerminate: (event, gesture) => {
+      //  console.log('terminating panresponder');
+      // },
+      onPanResponderTerminationRequest: (event, gesture) => {
+        //console.log('terminationrequest')
+        //this.resetPosition();
+      }
+    });
 
     this.state = {
       restaurant: null,
@@ -95,8 +87,8 @@ class RestaurantDetail extends Component {
       // infoAtTop: false,
       // listAtTop: true,
       scrollY: new Animated.Value(0),
+      panResponder,
       headerScrollDistance: 0,
-      //panResponder
     };
   }
 
@@ -238,9 +230,10 @@ class RestaurantDetail extends Component {
     }
   }
 
-  checkScroll() {
-    return (this.state.photos.length >= 7);
-  }
+  // checkScroll() {
+  //   console.log(this.state.scrollY);
+  //   return true;
+  // }
 
   renderFilters() {
     return this.state.restaurant.categories.map((filterName, index) =>
@@ -603,7 +596,7 @@ class RestaurantDetail extends Component {
         <View style={{ flex: 1, backgroundColor: 'white' }} />
       );
     }
-    let height = 445;
+    let height = 440;
     let headerScrollDistance = this.state.ratingHeight + this.state.infoHeight;
     if (this.state.showRecommend) {
       height += 50;
@@ -631,6 +624,7 @@ class RestaurantDetail extends Component {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     });
+    //this.navigator._navigation.setParams({ tabY });
     return (
       <View style={pageStyle}>
         <View style={headerStyle}>
@@ -650,7 +644,9 @@ class RestaurantDetail extends Component {
         </View>
         {this.renderHeader(headerScrollDistance, pageY)}
 
-        <Animated.View style={{ height: pageHeight, marginBottom: 50, transform: [{ translateY: pageY }] }}>
+        <Animated.View
+          style={{ height: pageHeight, marginBottom: 55, transform: [{ translateY: pageY }] }}
+        >
           <ScrollView
             ref={scroll => { this.scrollView = scroll; }}
             //scrollEnabled={this.checkScroll()}
@@ -669,15 +665,23 @@ class RestaurantDetail extends Component {
               {this.renderInfo()}
             </Animated.View>
 
-            <Animated.View style={{ height: pageHeight, backgroundColor: 'white', transform: [{ translateY: tabY }] }}>
+            <Animated.View
+              {...this.state.panResponder.panHandlers}
+              //style={{ height: pageHeight, backgroundColor: 'white', transform: [{ translateY: tabY }] }}
+            >
               <RestaurantNavigator
+                ref={nav => { this.navigator = nav; }}
                 screenProps={{
                   restaurant: this.state.restaurant,
                   photos: this.state.photos,
                   comments: this.state.comments,
+                  scrollY: this.state.scrollY,
+                  headerScrollDistance,
                   scrollToEnd: () => this.scrollView.scrollToEnd(),
+                  tabY,
                   rerenderComments: comments => this.setState({ comments })
                 }}
+                style={{ benny: 5 }}
               />
             </Animated.View>
           </ScrollView>
@@ -698,7 +702,28 @@ const RestaurantNavigator = TabNavigator({
 },
 {
   tabBarPosition: 'top',
-  tabBarComponent: TabBarTop,
+  //tabBarComponent: TabBarTop
+  tabBarComponent: (props) => {
+    // let headerScrollDistance = 158;
+    // if (this.state.showRecommend) {
+    //   headerScrollDistance += 50;
+    // }
+    console.log(props);
+    const tabY = props.screenProps.tabY;
+    // const tabY = this.state.scrollY.interpolate({
+    //   inputRange: [headerScrollDistance, 2 * headerScrollDistance],
+    //   outputRange: [0, headerScrollDistance],
+    //   extrapolateLeft: 'clamp'
+    //   //extrapolate: 'clamp',
+    // });
+    return (
+      <Animated.View
+        style={{ transform: [{ translateY: tabY }], zIndex: 8, backgroundColor: 'white' }}
+      >
+        <TabBarTop {...props} />
+      </Animated.View>
+    );
+  },
   swipeEnabled: false,
   animationEnabled: true,
   tabBarOptions: {
