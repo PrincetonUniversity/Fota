@@ -41,12 +41,13 @@ class BookmarkedRestaurants extends Component {
   renderRestaurant(rest) {
     //const street = rest.location.display_address[0].replace(/^[0-9]* /, '');
     //const address = `${street}, ${rest.location.city}`;
+    console.log(rest);
     return (
       <RestaurantModal restaurantid={rest.id}>
         <View style={styles.cardStyle}>
           <View style={{ borderRadius: PHOTO_BORDER_RADIUS, overflow: 'hidden', flex: 1 }}>
             <Banner
-              photo={rest.bannerURL}
+              photo={rest.bannerUrl}
               containerStyle={{ height: 75 }}
               photoStyle={{ flex: 1 }}
             />
