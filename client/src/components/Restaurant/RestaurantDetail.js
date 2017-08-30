@@ -21,11 +21,13 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import { phonecall } from 'react-native-communications';
-import Spinner from 'react-native-loading-spinner-overlay';
 import LinearGradient from 'react-native-linear-gradient';
 import { FilterDisplay, Banner } from '../common';
 import request from '../../helpers/axioshelper';
-import { restBookmarkRequest, directionsRequest, directionsURL } from '../../helpers/URL';
+import { 
+  restBookmarkRequest, directionsRequest, 
+  directionsURL, restRecommendRequest 
+} from '../../helpers/URL';
 import RestaurantPhotos from './RestaurantPhotos';
 import RestaurantComments from './RestaurantComments';
 import { pcoords } from '../../Base';
@@ -89,6 +91,8 @@ class RestaurantDetail extends Component {
       photos: [],
       comments: [],
       userBookmarked: false,
+      yesCount: 0,
+      noCount: 0,
       selectedPhoto: null,
       navLoading: true,
       distance: '',
@@ -104,18 +108,27 @@ class RestaurantDetail extends Component {
       // listAtTop: true,
       scrollY: new Animated.Value(0),
       headerScrollDistance: 0,
+      userLiked: false,
+      userDisliked: false,
+      userHasVoted: false
       //panResponder
-    };
+    };  
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.restaurant !== this.props.restaurant) {
+      const r = nextProps.restaurant;
       this.setState({
-        restaurant: nextProps.restaurant,
-        photos: nextProps.restaurant.photos,
+        restaurant: r,
+        photos: r.photos,
         comments: nextProps.comments,
-        userBookmarked: nextProps.restaurant.user_bookmarked,
-        loading: nextProps.loading
+        userBookmarked: r.user_bookmarked,
+        yesCount: r.recommend_yes_count,
+        noCount: r.recommend_no_count,
+        userLiked: r.user_recommended_yes,
+        userDisliked: r.user_recommended_no,
+        userHasVoted: r.user_recommended_yes || r.user_recommended_no,
+        loading: nextProps.loading,
       });
       this.getNavigation(nextProps.restaurant);
     }
@@ -246,8 +259,49 @@ class RestaurantDetail extends Component {
     }
   }
 
-  checkScroll() {
-    return (this.state.photos.length >= 7);
+  sendUpdateRequest(type) {
+    request.patch(restRecommendRequest(this.state.restaurant.id, type))
+    .catch(e => request.showErrorAlert(e));
+  }
+
+  voteYes() {
+    this.sendUpdateRequest('yes');    
+    this.setState({
+      yesCount: this.state.yesCount + 1,
+      userLiked: true,
+      userDisliked: false,
+      userHasVoted: true,
+    });
+  }
+
+  clearYes() {
+    this.sendUpdateRequest('clear');    
+    this.setState({
+      yesCount: this.state.yesCount - 1,
+      userLiked: false,
+      userDisliked: false,
+      userHasVoted: false,
+    });
+  }
+
+  voteNo() {
+    this.sendUpdateRequest('no');    
+    this.setState({
+      noCount: this.state.noCount + 1,
+      userLiked: false,
+      userDisliked: true,
+      userHasVoted: true,
+    });
+  }
+
+  clearNo() {
+    this.sendUpdateRequest('clear');    
+    this.setState({
+      noCount: this.state.noCount - 1,
+      userLiked: false,
+      userDisliked: false,
+      userHasVoted: false,
+    });
   }
 
   renderFilters() {
@@ -321,6 +375,11 @@ class RestaurantDetail extends Component {
     if (this.state.showRecommend) {
       button = 'score_up';
     }
+    const voteCount = this.state.yesCount + this.state.noCount;
+    let rating = '--';
+    if (voteCount !== 0) {
+      rating = `${Math.round(this.state.yesCount / voteCount * 100)}%`;
+    }
     return (
       <View>
         <View style={{ flexDirection: 'row' }}>
@@ -331,10 +390,10 @@ class RestaurantDetail extends Component {
                 <View style={{ height: 20, width: 20, marginRight: 15 }} />
                 <View style={ratingContainerStyle} onLayout={e => this.setRatingHeight(e)}>
                   <Text style={ratingPercentStyle} onPress={() => this.changeRecommendDisplay()}>
-                    96%
+                    {rating}
                   </Text>
                   <Text style={ratingCountStyle} onPress={() => this.changeRecommendDisplay()}>
-                    103 votes
+                    {`${voteCount} votes`}
                   </Text>
                 </View>
                 <Icon
@@ -358,19 +417,58 @@ class RestaurantDetail extends Component {
 
   renderRecommend() {
     if (this.state.showRecommend) {
+      if (!this.state.userHasVoted) {
+        return (
+          <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)', paddingHorizontal: 30 }}>
+            <View style={recommendContainerStyle}>
+              <Text style={recommendPromptStyle}>Do you recommend this restaurant?</Text>
+              <TouchableOpacity onPress={this.voteYes.bind(this)}>
+                <View style={voteBoxStyle}>
+                  <Text style={recommendVoteStyle}>YES</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.voteNo.bind(this)}>
+                <View style={voteBoxStyle}>
+                  <Text style={recommendVoteStyle}>NO</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        );
+      }
       return (
-        <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)' }}>
+        <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)', paddingRight: 30 }}>
           <View style={recommendContainerStyle}>
-            <Text style={recommendPromptStyle}>Do you recommend this restaurant?</Text>
-            <Text style={recommendVoteStyle}>YES</Text>
-            <Text style={recommendVoteStyle}>NO</Text>
+            {this.renderYesNo()}
+            <Text style={recommendPromptStyle}>Thanks for voting!</Text>
           </View>
         </View>
       );
     }
-    return (
-      <View />
-    );
+  }
+
+  renderYesNo() {
+    const yesBoxStyle = { backgroundColor: '#4e4', ...hasVotedBoxStyle };
+    const noBoxStyle = { backgroundColor: '#f66', ...hasVotedBoxStyle };
+
+    if (this.state.userLiked) {
+      return (
+        <TouchableOpacity onPress={this.clearYes.bind(this)}>
+          <View style={yesBoxStyle}>
+            <Text style={recommendVoteStyle}>YES</Text>
+          </View>
+        </TouchableOpacity>
+      );
+    }
+    if (this.state.userDisliked) {
+      return (
+        <TouchableOpacity onPress={this.clearNo.bind(this)}>
+          <View style={noBoxStyle}>
+            <Text style={recommendVoteStyle}>NO</Text>
+          </View>
+        </TouchableOpacity>
+      );
+    }
   }
 
   renderBookmark() {
@@ -777,16 +875,26 @@ const styles = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginLeft: 30,
-    marginRight: 45,
-    //paddingHorizontal: 30,
-    paddingVertical: 15,
     height: 50
-    //backgroundColor: '#eee',
+  },
+  voteBoxStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 50,
+    paddingHorizontal: 15
+  },
+  hasVotedBoxStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 70,
+    height: 50,
   },
   recommendPromptStyle: {
     fontSize: 14,
+    flex: 1,
+    textAlign: 'center',
     color: 'rgba(0, 0, 0, 0.31)',
+    marginVertical: 15
   },
   recommendVoteStyle: {
     fontSize: 12,
@@ -865,6 +973,8 @@ const {
   ratingPercentStyle,
   ratingCountStyle,
   recommendContainerStyle,
+  voteBoxStyle,
+  hasVotedBoxStyle,
   recommendPromptStyle,
   recommendVoteStyle,
   infoContainerStyle,
