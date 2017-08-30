@@ -41,7 +41,6 @@ class BookmarkedRestaurants extends Component {
   renderRestaurant(rest) {
     //const street = rest.location.display_address[0].replace(/^[0-9]* /, '');
     //const address = `${street}, ${rest.location.city}`;
-    console.log(rest);
     return (
       <RestaurantModal restaurantid={rest.id}>
         <View style={styles.cardStyle}>

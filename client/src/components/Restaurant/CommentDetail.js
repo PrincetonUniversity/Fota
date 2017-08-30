@@ -47,7 +47,6 @@ class CommentDetail extends Component {
   }
 
   sendUpdateRequest(type) {
-    console.log(type);
     request.patch(commentVote(this.state.id, type))
     .catch(e => request.showErrorAlert(e));
   }

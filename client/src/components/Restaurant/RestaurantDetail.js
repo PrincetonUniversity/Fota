@@ -32,6 +32,14 @@ import { pcoords } from '../../Base';
 import icoMoonConfig from '../../selection.json';
 
 const Icon = createIconSetFromIcoMoon(icoMoonConfig);
+const DollarSign = () => (
+  <FoundationIcon
+    name='dollar'
+    size={30}
+    style={{ height: 30, marginHorizontal: 1 }}
+    color={'rgba(0,0,0,0.63)'}
+  />
+);
 
 class RestaurantDetail extends Component {
 
@@ -186,7 +194,7 @@ class RestaurantDetail extends Component {
   }
 
   timeUntilCloseLabel(hoursArray) {
-    if (!hoursArray) return '';
+    if (!hoursArray) return '--';
     const hours = hoursArray[0];
     const trueHours = this.getHours(hours);
     if (!trueHours) return '';
@@ -251,7 +259,6 @@ class RestaurantDetail extends Component {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     });
-    console.log(this.state.photos);
     return (
       <Animated.View style={{ zIndex: 2, height: 175, transform: [{ translateY: pageY }] }}>
         <Banner
@@ -377,94 +384,49 @@ class RestaurantDetail extends Component {
     if (this.state.restaurant.price == null) {
       return (
         <View style={infoObjectStyle}>
-          <FoundationIcon
-            name='dollar'
-            size={30}
-            style={{ height: 30 }}
-            color={'rgba(0,0,0,0.63)'}
-          />
-          {/* <Text style={infoIconStyle}>
-            Cheap
-          </Text> */}
+          <DollarSign />
+          <Text style={infoIconStyle}>--</Text>
         </View>
       ); 
     }
     if (this.state.restaurant.price.length === 1) {
       return (
         <View style={infoObjectStyle}>
-          <FoundationIcon
-            name='dollar'
-            size={30}
-            style={{ height: 30 }}
-            color={'rgba(0,0,0,0.63)'}
-          />
-          <Text style={infoIconStyle}>
-            Cheap
-          </Text>
+          <DollarSign />
+          <Text style={infoIconStyle}>Cheap</Text>
         </View>
       );
     } else if (this.state.restaurant.price.length === 2) {
       return (
         <View style={infoObjectStyle}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FoundationIcon
-              name='dollar'
-              size={30}
-              style={{ height: 30 }}
-              color={'rgba(0,0,0,0.63)'}
-            />
-            <FoundationIcon
-              name='dollar'
-              size={30}
-              style={{ height: 30 }}
-              color={'rgba(0,0,0,0.63)'}
-            />
+            <DollarSign />
+            <DollarSign />
           </View>
-          <Text style={infoIconStyle}>
-            Moderate
-          </Text>
+          <Text style={infoIconStyle}>Moderate</Text>
         </View>
       );
     } else if (this.state.restaurant.price.length === 3) {
       return (
         <View style={infoObjectStyle}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
+            <DollarSign />
+            <DollarSign />
+            <DollarSign />
           </View>
-          <Text style={infoIconStyle}>
-            Expensive
-          </Text>
+          <Text style={infoIconStyle}>Expensive</Text>
         </View>
       );
     } else if (this.state.restaurant.price.length === 4) {
       return (
         <View style={infoObjectStyle}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
+            <DollarSign />
+            <DollarSign />
+            <DollarSign />
+            <DollarSign />
           </View>
-          <Text style={infoIconStyle}>
-            Very Expensive
-          </Text>
-        </View>
-      );
-    } else if (this.state.restaurant.price.length === 5) {
-      return (
-        <View style={infoObjectStyle}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
-            <FoundationIcon name='dollar' size={30} color={'rgba(0,0,0,0.63)'} />
-          </View>
-          <Text style={infoIconStyle}>
-            Take My Wallet
-          </Text>
+          <Text style={infoIconStyle}>Very Expensive</Text>
         </View>
       );
     }
@@ -760,13 +722,11 @@ const styles = {
   },
   ratingPercentStyle: {
     fontSize: 25,
-    fontFamily: 'Avenir',
     fontWeight: '900',
     color: 'rgba(0, 0, 0, 0.63)'
   },
   ratingCountStyle: {
     fontSize: 13,
-    fontFamily: 'Avenir',
     fontWeight: '300',
     color: 'rgba(0, 0, 0, 0.63)'
   },
@@ -782,12 +742,10 @@ const styles = {
     //backgroundColor: '#eee',
   },
   recommendPromptStyle: {
-    fontFamily: 'Avenir',
     fontSize: 14,
     color: 'rgba(0, 0, 0, 0.31)',
   },
   recommendVoteStyle: {
-    fontFamily: 'Avenir',
     fontSize: 12,
     fontWeight: '900',
     color: 'rgba(0, 0, 0, 0.31)',
@@ -801,7 +759,6 @@ const styles = {
     borderColor: 'rgba(0, 0, 0, 0.2)'
   },
   infoIconStyle: { // Time until close
-    fontFamily: 'Avenir',
     fontSize: 12,
     marginTop: 5,
     color: 'rgba(0, 0, 0, 0.63)',

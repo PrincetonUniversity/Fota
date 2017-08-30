@@ -68,7 +68,6 @@ class ProfilePage extends Component {
     if (!name) {
       name = this.props.screenProps.user.email;
     }
-    console.log(this.state);
     return (
       <View style={{ backgroundColor: '#fff', flex: 1 }}>
         <View style={headerStyle}>

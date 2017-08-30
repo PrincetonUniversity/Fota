@@ -32,7 +32,7 @@ class SubmittedComments extends Component {
         <View style={containerStyle}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ flex: 1 }}>
-              <Text>
+              <Text numberOfLines={1} ellipsizeMode='middle'>
                 <Text style={nameStyle} ellipsizeMode='tail' numberOfLines={1}>
                   {comment.name}
                 </Text>
@@ -74,7 +74,9 @@ class SubmittedComments extends Component {
 
 const styles = {
   containerStyle: {
-    padding: 20
+    padding: 20,
+    borderBottomWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.09)'
   },
   nameStyle: {
     fontSize: 17,
