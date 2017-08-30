@@ -35,14 +35,14 @@ class UpvotedPhotos extends Component {
   }
 
   render() {
-    if (this.props.screenProps.bookmarked.length === 0) {
+    if (this.props.screenProps.upvoted.length === 0) {
       return <NotFoundText text='See all your upvoted photos here.' />;
     }
     return (
       <View style={{ marginHorizontal: 7 }} >
         <FlatList
           data={this.props.screenProps.upvoted}
-          keyExtractor={photo => photo.id}
+          keyExtractor={photo => photo.url}
           renderItem={photo => this.renderPhoto(photo.item)}
           bounces={false}
           removeClippedSubviews={false}

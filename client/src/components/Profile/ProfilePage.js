@@ -35,13 +35,15 @@ class ProfilePage extends Component {
   }
 
   componentWillMount() {
-    request.get(profileRequest()).then(response => this.setState({
-      bookmarked: response.data.bookmarks,
-      upvoted: response.data.upvoted_photos,
-      uploaded: response.data.uploaded_photos,
-      comments: response.data.written_comments,
-      loading: false
-    })).catch(e => request.showErrorAlert(e));
+    request.get(profileRequest()).then(response => {
+      this.setState({
+        bookmarked: response.data.bookmarks,
+        upvoted: response.data.upvoted_photos,
+        uploaded: response.data.uploaded_photos,
+        comments: response.data.written_comments,
+        loading: false
+      });
+    }).catch(e => request.showErrorAlert(e));
   }
 
   /*deleteFromServer(photo) {
@@ -66,6 +68,7 @@ class ProfilePage extends Component {
     if (!name) {
       name = this.props.screenProps.user.email;
     }
+    console.log(this.state);
     return (
       <View style={{ backgroundColor: '#fff', flex: 1 }}>
         <View style={headerStyle}>

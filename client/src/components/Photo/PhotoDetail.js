@@ -119,10 +119,21 @@ class PhotoDetail extends Component {
     });
   }
 
+  renderDistance() {
+    if (this.props.distance) {
+      return (
+        <View style={distanceContainerStyle}>
+          <Text style={distanceTextStyle}>
+            {`${this.props.distance.toFixed(1)} mi`}
+          </Text>
+        </View>
+      )
+    }
+  }
+
   render() {
     const upvoteColor = this.state.userLiked === true ? 'white' : 'rgba(255, 255, 255, 0.6)';
     const downvoteColor = this.state.userDisliked === true ? 'white' : 'rgba(255, 255, 255, 0.6)';
-    const voteCountColor = 'white';
     return (
       <View>
         <RestaurantModal
@@ -147,14 +158,10 @@ class PhotoDetail extends Component {
             >
               <View style={{ flex: 1, zIndex: 6 }}>
                 <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end' }}>
-                  <View style={distanceContainerStyle}>
-                    <Text style={{ color: voteCountColor, ...distanceTextStyle }}>
-                      {`${this.props.distance.toFixed(1)} mi`}
-                    </Text>
-                  </View>
+                  {this.renderDistance()}
 
                   <View style={voteContainerStyle}>
-                    <Text style={{ color: voteCountColor, ...voteTextStyle }}>
+                    <Text style={voteTextStyle}>
                       {this.state.votecount.toString()}
                     </Text>
                     <TouchableOpacity onPress={() => this.renderDownvote()}>
@@ -212,7 +219,7 @@ const styles = {
     paddingTop: 8,
     letterSpacing: 1,
     paddingBottom: 14,
-    color: 'rgba(255,255,255,0.95)'
+    color: 'white'
   },
   voteContainerStyle: {
     flex: 1,
@@ -227,6 +234,7 @@ const styles = {
     marginRight: 10,
     paddingTop: 8,
     paddingBottom: 13,
+    color: 'white'
     //marginBottom: 10
   },
   // photoInfoStyle: {

@@ -31,16 +31,20 @@ class SubmittedComments extends Component {
       <RestaurantModal restaurantid={comment.rest_id}>
         <View style={containerStyle}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <View>
+            <View style={{ flex: 1 }}>
               <Text>
-                <Text style={nameStyle}>{comment.name}</Text>
-                <Text style={timeStyle}>{moment(comment.written_at).fromNow()}</Text>
+                <Text style={nameStyle} ellipsizeMode='tail' numberOfLines={1}>
+                  {comment.name}
+                </Text>
+                <Text style={timeStyle}>{`   ${moment(comment.written_at).fromNow()}`}</Text>
               </Text>
-              <Text style={messageStyle} ellipsizeMode='tail' numberOfLines={1}>{comment.message}</Text>
+              <Text style={messageStyle} ellipsizeMode='tail' numberOfLines={1}>
+                {comment.message}
+              </Text>
             </View>
 
             <Text style={voteCountStyle}>{comment.vote_count.toString()}</Text>
-            <Ionicon name='ios-arrow-up' color='rgba(0, 0, 0, 0.6)' size={10} />
+            <Ionicon name='ios-arrow-up' color='rgba(0, 0, 0, 0.5)' size={18} />
           </View>
         </View>
       </RestaurantModal>
@@ -80,7 +84,7 @@ const styles = {
   timeStyle: {
     fontSize: 12,
     fontWeight: '300',
-    color: 'rgba(0, 0, 0, 0.5)'
+    color: 'rgba(0, 0, 0, 0.5)',
   },
   messageStyle: {
     fontSize: 14,
@@ -90,7 +94,8 @@ const styles = {
   voteCountStyle: {
     fontSize: 20,
     fontWeight: '300',
-    color: 'rgba(0, 0, 0, 0.5)'
+    color: 'rgba(0, 0, 0, 0.5)',
+    marginHorizontal: 10
   }
 };
 
