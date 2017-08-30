@@ -276,7 +276,7 @@ class CameraLocationPage extends Component {
             </Text>
           </View>
           <Text style={[restaurantSubtextStyle, { paddingLeft: 5 }]}>
-            {restaurant.distance.toPrecision(1)} mi.
+            {restaurant.distance.toFixed(1)} mi.
           </Text>
         </View>
       </TouchableOpacity>
