@@ -25,7 +25,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import LinearGradient from 'react-native-linear-gradient';
 import { FilterDisplay, Banner } from '../common';
 import request from '../../helpers/axioshelper';
-import { directionsRequest, directionsURL } from '../../helpers/URL';
+import { restBookmarkRequest, directionsRequest, directionsURL } from '../../helpers/URL';
 import RestaurantPhotos from './RestaurantPhotos';
 import RestaurantComments from './RestaurantComments';
 import { pcoords } from '../../Base';
@@ -88,6 +88,7 @@ class RestaurantDetail extends Component {
       restaurant: null,
       photos: [],
       comments: [],
+      userBookmarked: false,
       selectedPhoto: null,
       navLoading: true,
       distance: '',
@@ -113,6 +114,7 @@ class RestaurantDetail extends Component {
         restaurant: nextProps.restaurant,
         photos: nextProps.restaurant.photos,
         comments: nextProps.comments,
+        userBookmarked: nextProps.restaurant.user_bookmarked,
         loading: nextProps.loading
       });
       this.getNavigation(nextProps.restaurant);
@@ -232,6 +234,18 @@ class RestaurantDetail extends Component {
     this.setState({ showRecommend: !this.state.showRecommend });
   }
 
+  changeUserBookmarked() {
+    if (this.state.userBookmarked) {
+      this.setState({ userBookmarked: false });
+      request.delete(restBookmarkRequest(this.state.restaurant.id))
+        .catch(e => request.showErrorAlert(e));
+    } else {
+      this.setState({ userBookmarked: true });
+      request.post(restBookmarkRequest(this.state.restaurant.id))
+        .catch(e => request.showErrorAlert(e));
+    }
+  }
+
   checkScroll() {
     return (this.state.photos.length >= 7);
   }
@@ -301,7 +315,7 @@ class RestaurantDetail extends Component {
     );
   }
 
-  // Restaurant rating
+  // Restaurant rating and bookmark
   renderRating() {
     let button = 'score_down';
     if (this.state.showRecommend) {
@@ -309,29 +323,33 @@ class RestaurantDetail extends Component {
     }
     return (
       <View>
-        <View style={ratingSectionStyle}>
-          <View style={ratingSectionStyle} />
-          <TouchableWithoutFeedback onPress={() => this.changeRecommendDisplay()}>
-            <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}>
-              <View style={ratingContainerStyle} onLayout={e => this.setRatingHeight(e)}>
-                <Text style={ratingPercentStyle} onPress={() => this.changeRecommendDisplay()}>
-                  96%
-                </Text>
-                <Text style={ratingCountStyle} onPress={() => this.changeRecommendDisplay()}>
-                  103 votes
-                </Text>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flex: 1 }} />
+          <View style={{ flex: 1 }}>
+            <TouchableWithoutFeedback onPress={() => this.changeRecommendDisplay()}>
+              <View style={ratingSectionStyle}>
+                <View style={{ height: 20, width: 20, marginRight: 15 }} />
+                <View style={ratingContainerStyle} onLayout={e => this.setRatingHeight(e)}>
+                  <Text style={ratingPercentStyle} onPress={() => this.changeRecommendDisplay()}>
+                    96%
+                  </Text>
+                  <Text style={ratingCountStyle} onPress={() => this.changeRecommendDisplay()}>
+                    103 votes
+                  </Text>
+                </View>
+                <Icon
+                  name={button}
+                  style={{ marginLeft: 15, height: 20, width: 20 }}
+                  size={15}
+                  //borderRadius={0}
+                  color='rgba(0, 0, 0, 0.46)'
+                  backgroundColor='white'
+                  onPress={() => this.changeRecommendDisplay()}
+                />
               </View>
-              <Icon
-                name={button}
-                style={{ marginLeft: 15, height: 20, width: 20 }}
-                size={15}
-                //borderRadius={0}
-                color='rgba(0, 0, 0, 0.46)'
-                backgroundColor='white'
-                onPress={() => this.changeRecommendDisplay()}
-              />
-            </View>
-          </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback>
+          </View>
+          {this.renderBookmark()}
         </View>
         {this.renderRecommend()}
       </View>
@@ -355,6 +373,29 @@ class RestaurantDetail extends Component {
     );
   }
 
+  renderBookmark() {
+    let bookmarkColor = 'rgba(0, 0, 0, 0.16)';
+    if (this.state.userBookmarked) {
+      bookmarkColor = '#ff9700';
+    }
+    return (
+      <View style={{ flex: 1, alignItems: 'flex-end' }}>
+        <View style={{ paddingRight: 40, backgroundColor: 'transparent' }}>
+          <TouchableOpacity
+            style={{ height: 45, width: 20, backgroundColor: 'transparent' }}
+            onPress={this.changeUserBookmarked.bind(this)}
+          >
+            <Icon
+              name='bookmark'
+              size={43}
+              color={bookmarkColor}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
   // Navigation section of the horizontal info bar
   renderNav() {
     if (this.state.walking) {
@@ -363,7 +404,7 @@ class RestaurantDetail extends Component {
         <View style={infoObjectStyle}>
           <Icon name='walk' size={27} style={{ paddingTop: 3, height: 30 }} color={'rgba(0,0,0,0.63)'} />
           <Text style={infoIconStyle}>
-            {this.state.navTime}
+            {this.state.navTime.replace(/s$/, '')}
           </Text>
         </View>
       );
@@ -372,7 +413,7 @@ class RestaurantDetail extends Component {
         <View style={infoObjectStyle}>
           <MaterialCommunityIcon name='car' size={30} style={{ height: 30 }} color={'rgba(0,0,0,0.63)'} />
           <Text style={infoIconStyle}>
-            {this.state.navTime}
+            {this.state.navTime.replace(/s$/, '')}
           </Text>
         </View>
       );
@@ -387,7 +428,7 @@ class RestaurantDetail extends Component {
           <DollarSign />
           <Text style={infoIconStyle}>--</Text>
         </View>
-      ); 
+      );
     }
     if (this.state.restaurant.price.length === 1) {
       return (
@@ -466,18 +507,20 @@ class RestaurantDetail extends Component {
         {/* <View style={bottomSpacerStyle} /> */}
         <View style={bottomSpacerStyle}>
           <TouchableOpacity
-            style={footerButtonStyle}
+            style={{ flex: 1 }}
             onPress={() => phonecall(restaurant.phone.substring(1), false)}
           >
-            <Ionicon
-              name='ios-call'
-              borderRadius={0}
-              color='gray'
-              backgroundColor='white'
-              size={20}
-              style={{ marginRight: 5 }}
-            />
-            <Text style={footerTextStyle}>CALL</Text>
+            <View style={footerButtonStyle}>
+              <Ionicon
+                name='ios-call'
+                borderRadius={0}
+                color='gray'
+                backgroundColor='white'
+                size={20}
+                style={{ marginRight: 5 }}
+              />
+              <Text style={footerTextStyle}>CALL</Text>
+            </View>
           </TouchableOpacity>
         </View>
         {/* <View style={{ flexDirection: 'column', ...bottomSpacerStyle }}>
@@ -489,7 +532,7 @@ class RestaurantDetail extends Component {
         {/* <View style={bottomSpacerStyle} /> */}
         <View style={bottomSpacerStyle}>
           <TouchableOpacity
-            style={footerButtonStyle}
+            style={{ flex: 1 }}
             onPress={() => {
               const formattedAddress = this.state.restaurant.location.display_address.map(address =>
                address.replace(/\s/g, '+')
@@ -498,15 +541,17 @@ class RestaurantDetail extends Component {
                 .catch(e => request.showErrorAlert(e));
             }}
           >
-            <Icon
-              name='directions'
-              borderRadius={0}
-              color='gray'
-              size={12}
-              style={{ marginRight: 5 }}
-              backgroundColor='white'
-            />
-            <Text style={footerTextStyle}>DIRECTIONS</Text>
+            <View style={footerButtonStyle}>
+              <Icon
+                name='directions'
+                borderRadius={0}
+                color='gray'
+                size={12}
+                style={{ marginRight: 5 }}
+                backgroundColor='white'
+              />
+              <Text style={footerTextStyle}>DIRECTIONS</Text>
+            </View>
           </TouchableOpacity>
         </View>
         {/* <View style={bottomSpacerStyle} /> */}
@@ -518,12 +563,10 @@ class RestaurantDetail extends Component {
   render() {
     if (this.state.loading || this.state.navLoading) {
       return (
-        <View style={{ flex: 1, backgroundColor: 'white' }}>
-          <Spinner visible overlayColor='transparent' color='#ff9700' />
-        </View>
+        <View style={{ flex: 1, backgroundColor: 'white' }} />
       );
     }
-    let height = 440;
+    let height = 445;
     let headerScrollDistance = this.state.ratingHeight + this.state.infoHeight;
     if (this.state.showRecommend) {
       height += 50;
@@ -787,8 +830,8 @@ const styles = {
   },
   footerButtonStyle: {
     flex: 1,
-    paddingVertical: 10,
-    backgroundColor: 'transparent',
+    // paddingVertical: 10,
+    //width: null,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center'
@@ -800,6 +843,8 @@ const styles = {
   },
   bottomSpacerStyle: {
     flex: 1,
+    flexDirection: 'row',
+    marginVertical: 10,
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: 'rgba(0, 0, 0, 0.2)',

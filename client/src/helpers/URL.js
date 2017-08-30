@@ -6,6 +6,7 @@ const REST_REQ = `${URL}/restaurants`;
 const COMMENT_REQ = `${URL}/comments`;
 const USER_REQ = `${URL}/users`;
 const SEARCH_REQ = `${URL}/search`;
+const BOOKMARK_REQ = `${USER_REQ}/bookmarks`;
 const CLIENT_API_KEY = 'AIzaSyBZSHaR5yI2dgyWXQ0CjCHOrHZ5NQvsUHc'; //'AIzaSyCGhec-cpivaFlYfFQJ9T-kIZ8BlDs66P8';
 
 export function photoRequest(sort, lat, lng, radius) {
@@ -26,6 +27,10 @@ export function restRequest(id) {
 
 export function restCommentRequest(id) {
   return `${REST_REQ}/${id}/comments/?key=${CLIENT_API_KEY}`;
+}
+
+export function restBookmarkRequest(id) {
+  return `${BOOKMARK_REQ}/${id}?key=${CLIENT_API_KEY}`;
 }
 
 export function commentVote(id, type) {
