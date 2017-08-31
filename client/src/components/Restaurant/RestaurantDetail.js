@@ -24,9 +24,9 @@ import { phonecall } from 'react-native-communications';
 import LinearGradient from 'react-native-linear-gradient';
 import { FilterDisplay, Banner } from '../common';
 import request from '../../helpers/axioshelper';
-import { 
-  restBookmarkRequest, directionsRequest, 
-  directionsURL, restRecommendRequest 
+import {
+  restBookmarkRequest, directionsRequest,
+  directionsURL, restRecommendRequest
 } from '../../helpers/URL';
 import RestaurantPhotos from './RestaurantPhotos';
 import RestaurantComments from './RestaurantComments';
@@ -105,7 +105,7 @@ class RestaurantDetail extends Component {
       userDisliked: false,
       userHasVoted: false
       //panResponder
-    };  
+    };
   }
 
   componentWillReceiveProps(nextProps) {
@@ -258,7 +258,7 @@ class RestaurantDetail extends Component {
   }
 
   voteYes() {
-    this.sendUpdateRequest('yes');    
+    this.sendUpdateRequest('yes');
     this.setState({
       yesCount: this.state.yesCount + 1,
       userLiked: true,
@@ -268,7 +268,7 @@ class RestaurantDetail extends Component {
   }
 
   clearYes() {
-    this.sendUpdateRequest('clear');    
+    this.sendUpdateRequest('clear');
     this.setState({
       yesCount: this.state.yesCount - 1,
       userLiked: false,
@@ -278,7 +278,7 @@ class RestaurantDetail extends Component {
   }
 
   voteNo() {
-    this.sendUpdateRequest('no');    
+    this.sendUpdateRequest('no');
     this.setState({
       noCount: this.state.noCount + 1,
       userLiked: false,
@@ -288,7 +288,7 @@ class RestaurantDetail extends Component {
   }
 
   clearNo() {
-    this.sendUpdateRequest('clear');    
+    this.sendUpdateRequest('clear');
     this.setState({
       noCount: this.state.noCount - 1,
       userLiked: false,
@@ -663,7 +663,6 @@ class RestaurantDetail extends Component {
       height += 50;
       headerScrollDistance += 50;
     }
-    //this.setState({ headerScrollDistance });
     const pageY = this.state.scrollY.interpolate({
       inputRange: [0, headerScrollDistance],
       outputRange: [0, -headerScrollDistance / 3],
@@ -711,13 +710,13 @@ class RestaurantDetail extends Component {
           <ScrollView
             ref={scroll => { this.scrollView = scroll; }}
             //scrollEnabled={this.checkScroll()}
-            scrollEventThrottle={1}
+            scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
             //overScrollMode='never'
             bounces={false}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
-              //{ useNativeDriver: true },
+              //{ useNativeDriver: true }
             )}
           >
             <Animated.View style={{ opacity }}>
@@ -727,8 +726,8 @@ class RestaurantDetail extends Component {
             </Animated.View>
 
             <Animated.View
-              {...this.state.panResponder.panHandlers}
-              //style={{ height: pageHeight, backgroundColor: 'white', transform: [{ translateY: tabY }] }}
+              //{...this.state.panResponder.panHandlers}
+              style={{ height: pageHeight, backgroundColor: 'white', transform: [{ translateY: tabY }] }}
             >
               <RestaurantNavigator
                 ref={nav => { this.navigator = nav; }}
@@ -737,12 +736,12 @@ class RestaurantDetail extends Component {
                   photos: this.state.photos,
                   comments: this.state.comments,
                   scrollY: this.state.scrollY,
+                  opacity,
                   headerScrollDistance,
                   scrollToEnd: () => this.scrollView.scrollToEnd(),
                   tabY,
                   rerenderComments: comments => this.setState({ comments })
                 }}
-                style={{ benny: 5 }}
               />
             </Animated.View>
           </ScrollView>
@@ -769,7 +768,16 @@ const RestaurantNavigator = TabNavigator({
     // if (this.state.showRecommend) {
     //   headerScrollDistance += 50;
     // }
+    let tabScrollY = new Animated.Value(0);
+    props.screenProps.scrollY.addListener(e => { tabScrollY.setValue(e.value); });
     console.log(props);
+    const scrollDist = props.screenProps.headerScrollDistance;
+    const tabTransformY = tabScrollY.interpolate({
+      inputRange: [scrollDist, 2 * scrollDist],
+      outputRange: [0, scrollDist],
+      extrapolateLeft: 'clamp'
+      //extrapolate: 'clamp',
+    });
     const tabY = props.screenProps.tabY;
     // const tabY = this.state.scrollY.interpolate({
     //   inputRange: [headerScrollDistance, 2 * headerScrollDistance],
@@ -778,11 +786,7 @@ const RestaurantNavigator = TabNavigator({
     //   //extrapolate: 'clamp',
     // });
     return (
-      <Animated.View
-        style={{ transform: [{ translateY: tabY }], zIndex: 8, backgroundColor: 'white' }}
-      >
         <TabBarTop {...props} />
-      </Animated.View>
     );
   },
   swipeEnabled: false,

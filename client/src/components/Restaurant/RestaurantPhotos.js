@@ -105,8 +105,8 @@ class RestaurantPhotos extends Component {
   }
 
   checkScroll() {
-    //console.log(this.state.scrollY);
-    console.log(this.props.screenProps.headerScrollDistance);
+    // sconsole.log(this.state.offsetY);
+    //console.log(this.props.screenProps.headerScrollDistance);
     if (this.state.offsetY < this.props.screenProps.headerScrollDistance) {
       return false;
     }
