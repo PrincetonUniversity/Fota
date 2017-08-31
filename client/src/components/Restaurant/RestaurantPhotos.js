@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
-  View, Text, FlatList, Image, TouchableOpacity, Modal, Dimensions, Animated,
-  PanResponder
+  View, Text, FlatList, Image, TouchableHighlight,
+  TouchableOpacity, Modal, Dimensions
 } from 'react-native';
 import { PhotoGallery, NotFoundText } from '../common';
 import { dealWithAndroidBeingStupid } from '../common/GradientImage';
@@ -36,54 +36,54 @@ class RestaurantPhotos extends Component {
   constructor(props) {
     super(props);
 
-    const scrollY = new Animated.Value(0);
-    const panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (event, gesture) => {
-        console.log(gesture.dy);
-        scrollY.setValue(gesture.dy);
-      },
-      onPanResponderRelease: (event, gesture) => {
-        console.log('release');
-      },
-      onPanResponderReject: (e, gestureState) => {
-        console.log('reject');
-      },
-      onPanResponderGrant: (e, gestureState) => {
-        console.log('grant');
-      },
-      onPanResponderStart: (e, gestureState) => {
-        console.log('start');
-      },
-      onPanResponderEnd: (e, gestureState) => {
-        console.log('end');
-      },
-      onPanResponderTerminate: (event, gesture) => {
-       console.log('terminating panresponder');
-      },
-      onPanResponderTerminationRequest: (event, gesture) => {
-        console.log('terminationrequest');
-        //this.resetPosition();
-      }
-    });
+    // const scrollY = new Animated.Value(0);
+    // const panResponder = PanResponder.create({
+    //   onStartShouldSetPanResponder: () => true,
+    //   onPanResponderMove: (event, gesture) => {
+    //     console.log(gesture.dy);
+    //     scrollY.setValue(gesture.dy);
+    //   },
+    //   onPanResponderRelease: (event, gesture) => {
+    //     console.log('release');
+    //   },
+    //   onPanResponderReject: (e, gestureState) => {
+    //     console.log('reject');
+    //   },
+    //   onPanResponderGrant: (e, gestureState) => {
+    //     console.log('grant');
+    //   },
+    //   onPanResponderStart: (e, gestureState) => {
+    //     console.log('start');
+    //   },
+    //   onPanResponderEnd: (e, gestureState) => {
+    //     console.log('end');
+    //   },
+    //   onPanResponderTerminate: (event, gesture) => {
+    //    console.log('terminating panresponder');
+    //   },
+    //   onPanResponderTerminationRequest: (event, gesture) => {
+    //     console.log('terminationrequest');
+    //     //this.resetPosition();
+    //   }
+    // });
 
     this.state = {
       photos: [],
       selectedPhoto: null,
       modalVisible: false,
-      offsetY: 0,
-      panResponder,
-      scrollY
+      //offsetY: 0,
+      //panResponder,
+      //scrollY
     };
   }
 
   componentWillMount() {
     this.setState({ photos: this.props.screenProps.photos });
-    this.props.screenProps.scrollY.addListener((e) => {
-      this.setState({
-        offsetY: e.value
-      });
-    });
+    // this.props.screenProps.scrollY.addListener((e) => {
+    //   this.setState({
+    //     offsetY: e.value
+    //   });
+    // });
   }
 
   componentDidMount() {
@@ -104,14 +104,14 @@ class RestaurantPhotos extends Component {
     this.setState({ selectedPhoto: null, modalVisible: false });
   }
 
-  checkScroll() {
-    //console.log(this.state.scrollY);
-    console.log(this.props.screenProps.headerScrollDistance);
-    if (this.state.offsetY < this.props.screenProps.headerScrollDistance) {
-      return false;
-    }
-    return true;
-  }
+  // checkScroll() {
+  //   //console.log(this.state.scrollY);
+  //   console.log(this.props.screenProps.headerScrollDistance);
+  //   if (this.state.offsetY < this.props.screenProps.headerScrollDistance) {
+  //     return false;
+  //   }
+  //   return true;
+  // }
 
   renderPhoto(photo, index) {
     return (
@@ -151,19 +151,19 @@ class RestaurantPhotos extends Component {
           </View>
         </Modal>
 
-        <View style={{ flex: 1 }}>
+        <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
           <FlatList
             data={this.state.photos}
             keyExtractor={(photo, index) => index}
             renderItem={(photo) => this.renderPhoto(photo.item, photo.index)}
             //onScroll={(e) => console.log(e.nativeEvent.contentOffset.y)}
             showVerticalScrollIndicator={false}
-            scrollEnabled={this.checkScroll()}
+            scrollEnabled={this.props.screenProps.scrollEnabled}
             bounces={false}
             numColumns={3}
             removeClippedSubviews={false}
           />
-        </View>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -209,7 +209,6 @@ const styles = {
 const {
   tabLabelStyle,
   tabContainerStyle,
-  emptyTextStyle,
   photoFrameStyle,
   photoStyle
 } = styles;

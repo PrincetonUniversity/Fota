@@ -10,7 +10,7 @@
 import React, { Component } from 'react';
 import {
   View, Text, ScrollView, Animated, Linking, LayoutAnimation, Dimensions, Platform,
-  TouchableWithoutFeedback, PanResponder, TouchableOpacity
+  TouchableWithoutFeedback, TouchableOpacity
 } from 'react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -49,14 +49,14 @@ class RestaurantDetail extends Component {
   constructor(props) {
     super(props);
 
-    const panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (event, gesture) => {
-        console.log(gesture.dy);
-      },
-      onPanResponderRelease: (event, gesture) => {
+    // const panResponder = PanResponder.create({
+    //   onStartShouldSetPanResponder: () => true,
+    //   onPanResponderMove: (event, gesture) => {
+    //     console.log(gesture.dy);
+    //   },
+    //   onPanResponderRelease: (event, gesture) => {
 
-      },
+    //   },
       // onPanResponderReject: (e, gestureState) => {
       //
       // },
@@ -72,11 +72,11 @@ class RestaurantDetail extends Component {
       // onPanResponderTerminate: (event, gesture) => {
       //  console.log('terminating panresponder');
       // },
-      onPanResponderTerminationRequest: (event, gesture) => {
+      // onPanResponderTerminationRequest: (event, gesture) => {
         //console.log('terminationrequest')
         //this.resetPosition();
-      }
-    });
+    //   }
+    // });
 
     this.state = {
       restaurant: null,
@@ -99,11 +99,12 @@ class RestaurantDetail extends Component {
       // infoAtTop: false,
       // listAtTop: true,
       scrollY: new Animated.Value(0),
-      panResponder,
+      // panResponder,
       headerScrollDistance: 0,
       userLiked: false,
       userDisliked: false,
-      userHasVoted: false
+      userHasVoted: false,
+      scrollEnabled: true
       //panResponder
     };  
   }
@@ -320,6 +321,7 @@ class RestaurantDetail extends Component {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     });
+    const color = this.state.scrollEnabled ? 'blue' : 'red';
     return (
       <Animated.View style={{ zIndex: 2, height: 175, transform: [{ translateY: pageY }] }}>
         <Banner
@@ -341,7 +343,7 @@ class RestaurantDetail extends Component {
               </Animated.View>
 
               <View style={titleContainerStyle}>
-                <Text style={titleStyle}>
+                <Text style={{ color, ...titleStyle }} onPress={() => this.setState({ scrollEnabled: !this.state.scrollEnabled })}>
                   {restaurant.name}
                 </Text>
               </View>
@@ -710,7 +712,7 @@ class RestaurantDetail extends Component {
         >
           <ScrollView
             ref={scroll => { this.scrollView = scroll; }}
-            //scrollEnabled={this.checkScroll()}
+            scrollEnabled={this.state.scrollEnabled}
             scrollEventThrottle={1}
             showsVerticalScrollIndicator={false}
             //overScrollMode='never'
@@ -720,31 +722,30 @@ class RestaurantDetail extends Component {
               //{ useNativeDriver: true },
             )}
           >
-            <Animated.View style={{ opacity }}>
-              {this.renderRating()}
+            <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
+              <Animated.View style={{ opacity }}>
+                {this.renderRating()}
 
-              {this.renderInfo()}
-            </Animated.View>
+                {this.renderInfo()}
+              </Animated.View>
 
-            <Animated.View
-              {...this.state.panResponder.panHandlers}
-              //style={{ height: pageHeight, backgroundColor: 'white', transform: [{ translateY: tabY }] }}
-            >
-              <RestaurantNavigator
-                ref={nav => { this.navigator = nav; }}
-                screenProps={{
-                  restaurant: this.state.restaurant,
-                  photos: this.state.photos,
-                  comments: this.state.comments,
-                  scrollY: this.state.scrollY,
-                  headerScrollDistance,
-                  scrollToEnd: () => this.scrollView.scrollToEnd(),
-                  tabY,
-                  rerenderComments: comments => this.setState({ comments })
-                }}
-                style={{ benny: 5 }}
-              />
-            </Animated.View>
+              <Animated.View style={{ height: pageHeight }}>
+                <RestaurantNavigator
+                  ref={nav => { this.navigator = nav; }}
+                  screenProps={{
+                    restaurant: this.state.restaurant,
+                    photos: this.state.photos,
+                    comments: this.state.comments,
+                    //scrollY: this.state.scrollY,
+                    scrollEnabled: !this.state.scrollEnabled,
+                    //headerScrollDistance,
+                    scrollToEnd: () => this.scrollView.scrollToEnd(),
+                    //tabY,
+                    rerenderComments: comments => this.setState({ comments })
+                  }}
+                />
+              </Animated.View>
+            </TouchableOpacity>
           </ScrollView>
         </Animated.View>
         {this.renderFooter(pageY)}
@@ -763,28 +764,18 @@ const RestaurantNavigator = TabNavigator({
 },
 {
   tabBarPosition: 'top',
-  //tabBarComponent: TabBarTop
-  tabBarComponent: (props) => {
-    // let headerScrollDistance = 158;
-    // if (this.state.showRecommend) {
-    //   headerScrollDistance += 50;
-    // }
-    console.log(props);
-    const tabY = props.screenProps.tabY;
-    // const tabY = this.state.scrollY.interpolate({
-    //   inputRange: [headerScrollDistance, 2 * headerScrollDistance],
-    //   outputRange: [0, headerScrollDistance],
-    //   extrapolateLeft: 'clamp'
-    //   //extrapolate: 'clamp',
-    // });
-    return (
-      <Animated.View
-        style={{ transform: [{ translateY: tabY }], zIndex: 8, backgroundColor: 'white' }}
-      >
-        <TabBarTop {...props} />
-      </Animated.View>
-    );
-  },
+  tabBarComponent: TabBarTop,
+  // tabBarComponent: (props) => {
+  //   console.log(props);
+  //   const tabY = props.screenProps.tabY;
+  //   return (
+  //     <Animated.View
+  //       style={{ transform: [{ translateY: tabY }], zIndex: 8, backgroundColor: 'white' }}
+  //     >
+  //       <TabBarTop {...props} />
+  //     </Animated.View>
+  //   );
+  // },
   swipeEnabled: false,
   animationEnabled: true,
   tabBarOptions: {
@@ -857,7 +848,7 @@ const styles = {
     backgroundColor: 'transparent'
   },
   titleStyle: { // Restaurant name
-    color: 'white',
+    //color: 'white',
     //fontFamily: 'Avenir-Black',
     fontSize: 23,
     fontWeight: '900',

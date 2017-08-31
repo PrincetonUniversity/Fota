@@ -108,9 +108,37 @@ class RestaurantComments extends Component {
     }
   }
 
-  renderComments() {
+  renderEditBox() {
+    return (
+      <View style={editBoxStyle}>
+        <TextInput
+          style={{ height: Math.min(60, this.state.height), ...editorStyle }}
+          value={this.state.message}
+          placeholder='Add a review...'
+          placeholderTextColor='rgba(0,0,0,0.31)'
+          multiline
+          onFocus={this.openEditorBox.bind(this)}
+          onChange={event => this.setState({
+            message: event.nativeEvent.text,
+            height: event.nativeEvent.contentSize.height
+          })}
+          underlineColorAndroid={'transparent'}
+          autoCapitalize={'sentences'}
+        />
+        {this.renderEditSubmit()}
+      </View>
+    );
+  }
+
+  render() {
+    console.log(this.state);
     if (this.state.comments.length === 0) {
-      return <NotFoundText height={150} text='There are no comments for this restaurant yet. Be the first to write one!' />;
+      return (
+        <View>
+          {this.renderEditBox()}
+          <NotFoundText height={150} text='There are no comments for this restaurant yet. Be the first to write one!' />
+        </View>
+      );
     }
     return (
       <View style={{ flex: 1 }}>
@@ -126,6 +154,8 @@ class RestaurantComments extends Component {
               />
             );
           }}
+          //ListHeaderComponent={() => this.renderEditBox()}
+          scrollEnabled={this.props.screenProps.scrollEnabled}
           showsVerticalScrollIndicator
           overScrollMode='never'
           bounces={false}
@@ -133,31 +163,14 @@ class RestaurantComments extends Component {
         />
       </View>
     );
-  }
-
-  render() {
-    return (
-      <View style={tabContainerStyle}>
-        <View style={editBoxStyle}>
-          <TextInput
-            style={{ height: Math.min(60, this.state.height), ...editorStyle }}
-            value={this.state.message}
-            placeholder='Add a review...'
-            placeholderTextColor='rgba(0,0,0,0.31)'
-            multiline
-            onFocus={this.openEditorBox.bind(this)}
-            onChange={event => this.setState({
-              message: event.nativeEvent.text,
-              height: event.nativeEvent.contentSize.height
-            })}
-            underlineColorAndroid={'transparent'}
-            autoCapitalize={'sentences'}
-          />
-          {this.renderEditSubmit()}
-        </View>
-        {this.renderComments()}
-      </View>
-    );
+    // return (
+    //   <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
+    //     <View style={tabContainerStyle}>
+          
+    //       {this.renderComments()}
+    //     </View>
+    //   </TouchableOpacity>
+    // );
   }
 }
 

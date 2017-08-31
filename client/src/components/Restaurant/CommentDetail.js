@@ -118,45 +118,47 @@ class CommentDetail extends Component {
     const downvoteColor = this.state.userDisliked ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)';
 
     return (
-      <View style={containerStyle}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-          {comment.my_comment && <Text style={youTextStyle}>(You) </Text>}
-          <Text style={headingTextStyle}>{comment.author}</Text>
-          <Icon name='dot-single' size={13} color='rgba(0, 0, 0, 0.3)' style={{ marginHorizontal: 5 }} />
-          <Text style={headingTextStyle}>Undecided</Text>
-          <Icon name='dot-single' size={13} color='rgba(0, 0, 0, 0.3)' style={{ marginHorizontal: 5 }} />
-          <Text style={headingTextStyle}>{moment(comment.uploaded_at).fromNow()}</Text>
-        </View>
+      <TouchableOpacity activeOpacity={1}>
+        <View style={containerStyle}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+            {comment.my_comment && <Text style={youTextStyle}>(You) </Text>}
+            <Text style={headingTextStyle}>{comment.author}</Text>
+            <Icon name='dot-single' size={13} color='rgba(0, 0, 0, 0.3)' style={{ marginHorizontal: 5 }} />
+            <Text style={headingTextStyle}>Undecided</Text>
+            <Icon name='dot-single' size={13} color='rgba(0, 0, 0, 0.3)' style={{ marginHorizontal: 5 }} />
+            <Text style={headingTextStyle}>{moment(comment.uploaded_at).fromNow()}</Text>
+          </View>
 
-        <Text style={messageStyle}>{comment.message}</Text>
+          <Text style={messageStyle}>{comment.message}</Text>
 
-        <View style={bottomBarStyle}>
-          {this.renderEditButton(comment.my_comment)}
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={bottomBarStyle}>
+            {this.renderEditButton(comment.my_comment)}
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-            <Text style={voteCountStyle}>
-              {this.state.votecount.toString()}
-            </Text>
-            <TouchableOpacity onPress={() => this.renderDownvote()}>
-              <Ionicon
-                name='ios-arrow-down'
-                size={24}
-                color={downvoteColor}
-                backgroundColor='transparent'
-                style={{ marginHorizontal: 10 }}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.renderUpvote()}>
-              <Ionicon
-                name='ios-arrow-up'
-                size={24}
-                color={upvoteColor}
-                backgroundColor='transparent'
-              />
-            </TouchableOpacity>
+              <Text style={voteCountStyle}>
+                {this.state.votecount.toString()}
+              </Text>
+              <TouchableOpacity onPress={() => this.renderDownvote()}>
+                <Ionicon
+                  name='ios-arrow-down'
+                  size={24}
+                  color={downvoteColor}
+                  backgroundColor='transparent'
+                  style={{ marginHorizontal: 10 }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => this.renderUpvote()}>
+                <Ionicon
+                  name='ios-arrow-up'
+                  size={24}
+                  color={upvoteColor}
+                  backgroundColor='transparent'
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 }
