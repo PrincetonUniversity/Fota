@@ -104,6 +104,7 @@ class RestaurantPhotos extends Component {
     this.setState({ selectedPhoto: null, modalVisible: false });
   }
 
+<<<<<<< HEAD
   // checkScroll() {
   //   //console.log(this.state.scrollY);
   //   console.log(this.props.screenProps.headerScrollDistance);
@@ -112,6 +113,16 @@ class RestaurantPhotos extends Component {
   //   }
   //   return true;
   // }
+=======
+  checkScroll() {
+    // sconsole.log(this.state.offsetY);
+    //console.log(this.props.screenProps.headerScrollDistance);
+    if (this.state.offsetY < this.props.screenProps.headerScrollDistance) {
+      return false;
+    }
+    return true;
+  }
+>>>>>>> 1ccd9a7fc85465889c177433877c89ed4b1d7ff7
 
   renderPhoto(photo, index) {
     return (

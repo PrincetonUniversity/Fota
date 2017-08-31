@@ -33,4 +33,3 @@ export function browseFromPrinceton(browsing) {
     payload: browsing
   };
 }
-

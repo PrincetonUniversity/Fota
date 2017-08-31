@@ -24,9 +24,9 @@ import { phonecall } from 'react-native-communications';
 import LinearGradient from 'react-native-linear-gradient';
 import { FilterDisplay, Banner } from '../common';
 import request from '../../helpers/axioshelper';
-import { 
-  restBookmarkRequest, directionsRequest, 
-  directionsURL, restRecommendRequest 
+import {
+  restBookmarkRequest, directionsRequest,
+  directionsURL, restRecommendRequest
 } from '../../helpers/URL';
 import RestaurantPhotos from './RestaurantPhotos';
 import RestaurantComments from './RestaurantComments';
@@ -106,7 +106,7 @@ class RestaurantDetail extends Component {
       userHasVoted: false,
       scrollEnabled: true
       //panResponder
-    };  
+    };
   }
 
   componentWillReceiveProps(nextProps) {
@@ -259,7 +259,7 @@ class RestaurantDetail extends Component {
   }
 
   voteYes() {
-    this.sendUpdateRequest('yes');    
+    this.sendUpdateRequest('yes');
     this.setState({
       yesCount: this.state.yesCount + 1,
       userLiked: true,
@@ -269,7 +269,7 @@ class RestaurantDetail extends Component {
   }
 
   clearYes() {
-    this.sendUpdateRequest('clear');    
+    this.sendUpdateRequest('clear');
     this.setState({
       yesCount: this.state.yesCount - 1,
       userLiked: false,
@@ -279,7 +279,7 @@ class RestaurantDetail extends Component {
   }
 
   voteNo() {
-    this.sendUpdateRequest('no');    
+    this.sendUpdateRequest('no');
     this.setState({
       noCount: this.state.noCount + 1,
       userLiked: false,
@@ -289,7 +289,7 @@ class RestaurantDetail extends Component {
   }
 
   clearNo() {
-    this.sendUpdateRequest('clear');    
+    this.sendUpdateRequest('clear');
     this.setState({
       noCount: this.state.noCount - 1,
       userLiked: false,
@@ -665,7 +665,6 @@ class RestaurantDetail extends Component {
       height += 50;
       headerScrollDistance += 50;
     }
-    //this.setState({ headerScrollDistance });
     const pageY = this.state.scrollY.interpolate({
       inputRange: [0, headerScrollDistance],
       outputRange: [0, -headerScrollDistance / 3],
@@ -719,7 +718,7 @@ class RestaurantDetail extends Component {
             bounces={false}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
-              //{ useNativeDriver: true },
+              //{ useNativeDriver: true }
             )}
           >
             <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
