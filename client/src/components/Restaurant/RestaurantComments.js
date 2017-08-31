@@ -145,7 +145,7 @@ class RestaurantComments extends Component {
         <FlatList
           data={this.state.comments}
           keyExtractor={comment => comment.id}
-          scrollEnabled={true}
+          scrollEnabled={this.props.screenProps.scrollEnabled}
           renderItem={c => {
             const comment = c.item;
             return (
