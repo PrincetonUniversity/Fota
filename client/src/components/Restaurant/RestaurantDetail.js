@@ -10,7 +10,7 @@
 import React, { Component } from 'react';
 import {
   View, Text, ScrollView, Animated, Linking, LayoutAnimation, Dimensions, Platform,
-  TouchableWithoutFeedback, TouchableOpacity
+  TouchableWithoutFeedback, TouchableOpacity, UIManager
 } from 'react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -96,8 +96,6 @@ class RestaurantDetail extends Component {
       showRecommend: false,
       ratingHeight: 0,
       infoHeight: 0,
-      // infoAtTop: false,
-      // listAtTop: true,
       scrollY: new Animated.Value(0),
       // panResponder,
       headerScrollDistance: 0,
@@ -107,6 +105,10 @@ class RestaurantDetail extends Component {
       scrollEnabled: true
       //panResponder
     };
+  }
+
+  componentWillMount() {
+    UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -309,6 +311,19 @@ class RestaurantDetail extends Component {
     );
   }
 
+  checkScroll(headerScrollDistance) {
+    console.log(this.state.scrollY);
+    console.log(headerScrollDistance);
+    if (headerScrollDistance === 0 || this.state.scrollY._value < headerScrollDistance) {
+      //this.setState({ scrollEnabled: true })
+      console.log(this.state.scrollY._value);
+      return true;
+    }
+    console.log(this.state.scrollY._value);
+    this.setState({ scrollEnabled: false });
+    return false;
+  }
+
   renderHeader(headerScrollDistance, pageY) {
     const restaurant = this.state.restaurant;
     const nameTranslateY = this.state.scrollY.interpolate({
@@ -343,7 +358,7 @@ class RestaurantDetail extends Component {
               </Animated.View>
 
               <View style={titleContainerStyle}>
-                <Text style={{ color, ...titleStyle }} onPress={() => this.setState({ scrollEnabled: !this.state.scrollEnabled })}>
+                <Text style={{ color, ...titleStyle }} onPress={() => console.log(this.state.scrollY._value)}>
                   {restaurant.name}
                 </Text>
               </View>
@@ -384,10 +399,10 @@ class RestaurantDetail extends Component {
               <View style={ratingSectionStyle}>
                 <View style={{ height: 20, width: 20, marginRight: 15 }} />
                 <View style={ratingContainerStyle} onLayout={e => this.setRatingHeight(e)}>
-                  <Text style={ratingPercentStyle} onPress={() => this.changeRecommendDisplay()}>
+                  <Text style={ratingPercentStyle}>
                     {rating}
                   </Text>
-                  <Text style={ratingCountStyle} onPress={() => this.changeRecommendDisplay()}>
+                  <Text style={ratingCountStyle}>
                     {`${voteCount} votes`}
                   </Text>
                 </View>
@@ -395,10 +410,8 @@ class RestaurantDetail extends Component {
                   name={button}
                   style={{ marginLeft: 15, height: 20, width: 20 }}
                   size={15}
-                  //borderRadius={0}
                   color='rgba(0, 0, 0, 0.46)'
                   backgroundColor='white'
-                  onPress={() => this.changeRecommendDisplay()}
                 />
               </View>
             </TouchableWithoutFeedback>
@@ -597,7 +610,6 @@ class RestaurantDetail extends Component {
     return (
       //<Animated.View style={[footerStyle, { transform: [{ translateY: pageY }] }]}>
       <View style={footerStyle}>
-        {/* <View style={bottomSpacerStyle} /> */}
         <View style={bottomSpacerStyle}>
           <TouchableOpacity
             style={{ flex: 1 }}
@@ -616,13 +628,7 @@ class RestaurantDetail extends Component {
             </View>
           </TouchableOpacity>
         </View>
-        {/* <View style={{ flexDirection: 'column', ...bottomSpacerStyle }}>
-          <View style={bottomSpacerStyle} />
-          <View style={bottomLineStyle} />
-          <View style={bottomSpacerStyle} />
-        </View> */}
 
-        {/* <View style={bottomSpacerStyle} /> */}
         <View style={bottomSpacerStyle}>
           <TouchableOpacity
             style={{ flex: 1 }}
@@ -647,7 +653,6 @@ class RestaurantDetail extends Component {
             </View>
           </TouchableOpacity>
         </View>
-        {/* <View style={bottomSpacerStyle} /> */}
       </View>
       //</Animated.View>
     );
@@ -687,6 +692,7 @@ class RestaurantDetail extends Component {
       extrapolate: 'clamp',
     });
     //this.navigator._navigation.setParams({ tabY });
+    console.log(this.state.scrollY);
     return (
       <View style={pageStyle}>
         <View style={headerStyle}>
@@ -717,12 +723,17 @@ class RestaurantDetail extends Component {
             keyboardShouldPersistTaps='handled'
             //overScrollMode='never'
             bounces={false}
-            onScroll={Animated.event(
-              [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
-              //{ useNativeDriver: true }
-            )}
+            onScroll={(e) => {
+              const y = e.nativeEvent.contentOffset.y;
+              this.state.scrollY.setValue(y);
+              if (y >= headerScrollDistance) {
+                this.setState({ scrollEnabled: false });
+              } else if (!this.state.scrollEnabled) {
+                this.setState({ scrollEnabled: true });
+              }
+            }}
           >
-            <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
+            {/* <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}> */}
               <Animated.View style={{ opacity }}>
                 {this.renderRating()}
 
@@ -736,7 +747,10 @@ class RestaurantDetail extends Component {
                     restaurant: this.state.restaurant,
                     photos: this.state.photos,
                     comments: this.state.comments,
-                    //scrollY: this.state.scrollY,
+                    startScrollUp: (dy) => {
+                      this.scrollView.scrollTo({ animation: true, y: Math.max(headerScrollDistance - dy, 0) })
+                    },
+                    enableScroll: () => this.setState({ scrollEnabled: true }),
                     scrollEnabled: !this.state.scrollEnabled,
                     //headerScrollDistance,
                     scrollToEnd: () => this.scrollView.scrollToEnd(),
@@ -745,7 +759,7 @@ class RestaurantDetail extends Component {
                   }}
                 />
               </Animated.View>
-            </TouchableOpacity>
+            {/* </TouchableOpacity> */}
           </ScrollView>
         </Animated.View>
         {this.renderFooter(pageY)}

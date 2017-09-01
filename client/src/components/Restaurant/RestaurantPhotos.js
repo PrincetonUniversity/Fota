@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  View, Text, FlatList, Image, TouchableHighlight,
+  View, Text, FlatList, Image, PanResponder, Animated,
   TouchableOpacity, Modal, Dimensions
 } from 'react-native';
 import { PhotoGallery, NotFoundText } from '../common';
@@ -36,43 +36,47 @@ class RestaurantPhotos extends Component {
   constructor(props) {
     super(props);
 
-    // const scrollY = new Animated.Value(0);
-    // const panResponder = PanResponder.create({
-    //   onStartShouldSetPanResponder: () => true,
-    //   onPanResponderMove: (event, gesture) => {
-    //     console.log(gesture.dy);
-    //     scrollY.setValue(gesture.dy);
-    //   },
-    //   onPanResponderRelease: (event, gesture) => {
-    //     console.log('release');
-    //   },
-    //   onPanResponderReject: (e, gestureState) => {
-    //     console.log('reject');
-    //   },
-    //   onPanResponderGrant: (e, gestureState) => {
-    //     console.log('grant');
-    //   },
-    //   onPanResponderStart: (e, gestureState) => {
-    //     console.log('start');
-    //   },
-    //   onPanResponderEnd: (e, gestureState) => {
-    //     console.log('end');
-    //   },
-    //   onPanResponderTerminate: (event, gesture) => {
-    //    console.log('terminating panresponder');
-    //   },
-    //   onPanResponderTerminationRequest: (event, gesture) => {
-    //     console.log('terminationrequest');
-    //     //this.resetPosition();
-    //   }
-    // });
+    //const scrollY = new Animated.Value(0);
+    const panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (event, gesture) => {
+        console.log(`Move OffsetY: ${this.state.offsetY._value}`);
+        // if (this.state.offsetY._value < 5 && gesture.dy > 0) {
+        //   console.log(`GestureY: ${gesture.dy}`);
+        //   this.props.screenProps.startScrollUp(gesture.dy);
+        // }
+      },
+      onPanResponderRelease: (event, gesture) => {
+        console.log(`release OffsetY: ${this.state.offsetY._value}`);
+      },
+      onPanResponderReject: (e, gestureState) => {
+        console.log(`reject OffsetY: ${this.state.offsetY._value}`);
+      },
+      onPanResponderGrant: (e, gestureState) => {
+        console.log(`grant OffsetY: ${this.state.offsetY._value}`);
+      },
+      onPanResponderStart: (e, gestureState) => {
+        console.log(`start OffsetY: ${this.state.offsetY._value}`);
+      },
+      onPanResponderEnd: (e, gestureState) => {
+        console.log(`end OffsetY: ${this.state.offsetY._value}`);
+      },
+      onPanResponderTerminate: (event, gesture) => {
+       console.log(`terminating OffsetY: ${this.state.offsetY._value}`);
+      },
+      onPanResponderTerminationRequest: (event, gesture) => {
+        console.log(`terminationrequest OffsetY: ${this.state.offsetY._value}`);
+        //this.resetPosition();
+      }
+    });
 
     this.state = {
       photos: [],
       selectedPhoto: null,
       modalVisible: false,
-      //offsetY: 0,
-      //panResponder,
+      offsetY: new Animated.Value(0),
+      atTop: true,
+      panResponder,
       //scrollY
     };
   }
@@ -153,17 +157,36 @@ class RestaurantPhotos extends Component {
         </Modal>
 
         <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
-          <FlatList
-            data={this.state.photos}
-            keyExtractor={(photo, index) => index}
-            renderItem={(photo) => this.renderPhoto(photo.item, photo.index)}
-            //onScroll={(e) => console.log(e.nativeEvent.contentOffset.y)}
-            showVerticalScrollIndicator={false}
-            scrollEnabled={this.props.screenProps.scrollEnabled}
-            bounces={false}
-            numColumns={3}
-            removeClippedSubviews={false}
-          />
+          <View
+            //{...this.state.panResponder.panHandlers}
+            style={{ flex: 1 }}
+          >
+            <FlatList
+              ref={(flatlist) => { this.flatlist = flatlist; }}
+              data={this.state.photos}
+              keyExtractor={(photo, index) => index}
+              // {...this.state.panResponder.panHandlers}
+              renderItem={(photo) => this.renderPhoto(photo.item, photo.index)}
+              onScroll={(e) => {
+                const newY = e.nativeEvent.contentOffset.y;
+                // //console.log(e.nativeEvent);
+                // const pastY = this.state.offsetY._value;
+                // console.log(`NewY: ${newY}`);
+                // console.log(`PastY: ${pastY}`);
+                // if (newY <= pastY && newY < 5) {
+                //   this.props.screenProps.enableScroll();
+                //   this.flatlist.scrollToIndex({ animated: true, index: 0 });
+                // }
+                this.state.offsetY.setValue(newY);
+              }}
+              showsVerticalScrollIndicator={false}
+              scrollEnabled={this.props.screenProps.scrollEnabled}
+              bounces={false}
+              numColumns={3}
+              removeClippedSubviews={false}
+              {...this.state.panResponder.panHandlers}
+            />
+          </View>
         </TouchableOpacity>
       </View>
     );

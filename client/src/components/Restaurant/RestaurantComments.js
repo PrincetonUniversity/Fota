@@ -166,7 +166,7 @@ class RestaurantComments extends Component {
     // return (
     //   <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
     //     <View style={tabContainerStyle}>
-          
+
     //       {this.renderComments()}
     //     </View>
     //   </TouchableOpacity>

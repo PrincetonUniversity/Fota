@@ -40,8 +40,8 @@ class PhotoGallery extends Component {
   }
 
   // componentWillMount() {
-  //   UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true); // For Android
-  //   LayoutAnimation.spring();
+    // UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true); // For Android
+    // LayoutAnimation.spring();
   // }
 
   // componentWillReceiveProps(nextProps) {
@@ -106,7 +106,7 @@ class PhotoGallery extends Component {
           activeOpacity={1}
           onPress={this.props.closeModal}
           style={{ flex: 1 }}
-        >              
+        >
           <View style={styles.photoFrameStyle}>
             <Image
               source={{ uri: photo }}
