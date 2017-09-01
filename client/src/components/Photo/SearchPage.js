@@ -63,10 +63,10 @@ class SearchPage extends Component {
     }
   }
 
-  renderFilter(filter) {
+  renderFilter(filterId, filterDisplay) {
     return (
-        <ListItem key={filter} onPress={() => this.props.selectFilter(filter)}>
-          <Text style={styles.searchResultStyle}>{filter}</Text>
+        <ListItem key={filterId} onPress={() => this.props.selectFilter(filterId)}>
+          <Text style={styles.searchResultStyle}>{filterDisplay}</Text>
         </ListItem>
     );
   }
@@ -74,7 +74,7 @@ class SearchPage extends Component {
   renderFilters() {
     if (this.state.query && this.state.categories.length > 0) {
       return this.state.categories.map(category =>
-        this.renderFilter(category.category)
+        this.renderFilter(category.id, category.category)
       );
     }
     // return (
