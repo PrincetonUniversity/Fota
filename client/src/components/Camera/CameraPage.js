@@ -16,7 +16,7 @@
 
 import React, { Component } from 'react';
 import {
-  View, Dimensions, AsyncStorage, StatusBar, TouchableOpacity,
+  View, Dimensions, StatusBar, TouchableOpacity,
   Alert, UIManager, LayoutAnimation
 } from 'react-native';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
@@ -24,7 +24,6 @@ import { TabNavigator, TabBarTop } from 'react-navigation';
 import Camera, { constants } from 'react-native-camera';
 // eslint-disable-next-line
 import ImageResizer from 'react-native-image-resizer';
-import RNFetchBlob from 'react-native-fetch-blob';
 import CameraButton from './CameraButton';
 import CameraLibrary from './CameraLibrary';
 import { Header } from '../common/';
@@ -78,20 +77,12 @@ export function cameraErrorAlert() {
   );
 }
 
-export function deleteImage(path) {
-  const filepath = path.replace(/^(file:)/, '');
-  RNFetchBlob.fs.exists(filepath)
-    .then((result) => {
-      if (result) {
-        return RNFetchBlob.fs.unlink(filepath)
-          .catch(() => cameraErrorAlert());
-      }
-    })
-    .catch(() => cameraErrorAlert());
-}
-
 class CameraPage extends Component {
-  state = { showCamera: true };
+  constructor(props) {
+    super(props);
+    this.state = { showCamera: true }; 
+    this.pictureTaken = false;
+  }
 
   componentWillMount() {
     if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -104,22 +95,23 @@ class CameraPage extends Component {
   }
 
   takePicture() {
+    if (this.pictureTaken) return;
+    this.pictureTaken = true;
     this.camera.capture().then(data => {
       this.resizeImage(data.path, true);
     }).catch(() => cameraErrorAlert());
   }
 
   choosePhoto(uri) {
+    if (this.pictureTaken) return;
+    this.pictureTaken = true;
     this.resizeImage(uri, false);
   }
 
   resizeImage(uri, del) {
     ImageResizer.createResizedImage(uri, 800, 1600, 'JPEG', 100).then(reuri => {
-      if (del) {
-        deleteImage(uri);
-      }
-      AsyncStorage.setItem('UploadPath', reuri);
-      this.props.navigation.navigate('Location');
+      this.props.navigation.navigate('Location', { full: uri, path: reuri, del }); 
+      setTimeout(() => { this.pictureTaken = false; }, 200);
     }).catch(() => cameraErrorAlert());
   }
 

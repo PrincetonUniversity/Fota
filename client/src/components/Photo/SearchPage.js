@@ -15,13 +15,13 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { Text, View, ScrollView, Platform, Keyboard } from 'react-native';
+import { Text, View, ScrollView, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { ListItem, Separator } from 'native-base';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import request from '../../helpers/axioshelper';
 import { searchRequest } from '../../helpers/URL';
-import { Input } from '../common';
+import { Input, NotFoundText } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 import { pcoords } from '../../Base';
 import icoMoonConfig from '../../selection.json';
@@ -29,7 +29,12 @@ import icoMoonConfig from '../../selection.json';
 const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
 class SearchPage extends Component {
-  state = { lat: pcoords.lat, lng: pcoords.lng, query: '', restaurants: [], categories: [] }
+  constructor(props) {
+    super(props);
+    this.state = { lat: pcoords.lat, lng: pcoords.lng, query: '', restaurants: [], categories: [], searching: true };
+    this.timer = null;
+  }
+  
 
   componentWillMount() {
     if (!this.props.browsingPrinceton) {
@@ -40,26 +45,37 @@ class SearchPage extends Component {
   }
 
   updateQuery(query) {
-    this.setState({ query, restaurants: [], categories: [] });    
+    this.setState({ query, restaurants: [], categories: [], searching: true });    
     if (query) {
-      request.get(searchRequest(this.state.lat, this.state.lng, query))
-      .then(response => {
-        this.setState({
-          restaurants: response.data.restaurants,
-          categories: response.data.categories
-        });
-      })
-      .catch(e => request.showErrorAlert(e));
+      const search = () => {
+        this.timer = null;
+        request.get(searchRequest(this.state.lat, this.state.lng, query))
+        .then(response => {
+          this.setState({
+            searching: false,
+            restaurants: response.data.restaurants,
+            categories: response.data.categories
+          });
+        })
+        .catch(e => request.showErrorAlert(e));
+      };
+      if (this.timer) clearTimeout(this.timer);
+      this.timer = setTimeout(search, 500);
     }
   }
 
   renderFilterHeader() {
-    if (this.state.query && this.state.categories.length > 0) {
-      return (
-        <Separator bordered>
-          <Text style={styles.resultHeaderStyle}>Filters</Text>
-        </Separator>
-      );
+    if (!this.state.searching) {
+      if (this.state.categories.length > 0) {
+        return (
+          <Separator bordered>
+            <Text style={styles.resultHeaderStyle}>Filters</Text>
+          </Separator>
+        );
+      }
+      if (this.state.restaurants.length === 0) {
+        return <NotFoundText height={150} text='No results found.' />;
+      }
     }
   }
 
@@ -72,7 +88,7 @@ class SearchPage extends Component {
   }
 
   renderFilters() {
-    if (this.state.query && this.state.categories.length > 0) {
+    if (!this.state.searching && this.state.categories.length > 0) {
       return this.state.categories.map(category =>
         this.renderFilter(category.id, category.category)
       );
@@ -94,7 +110,7 @@ class SearchPage extends Component {
   }
 
   renderRestaurantHeader() {
-    if (this.state.query && this.state.restaurants.length > 0) {
+    if (!this.state.searching && this.state.restaurants.length > 0) {
       return (
         <Separator bordered>
           <Text style={styles.resultHeaderStyle}>Restaurants</Text>
@@ -114,7 +130,7 @@ class SearchPage extends Component {
   }
 
   renderRestaurants() {
-    if (this.state.query && this.state.restaurants.length > 0) {
+    if (!this.state.searching && this.state.restaurants.length > 0) {
       return this.state.restaurants.map(restaurant =>
         this.renderRestaurant(restaurant)
       );

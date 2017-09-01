@@ -107,6 +107,8 @@ class RestaurantDetail extends Component {
       listHeight: 0,
       focusedTab: 0
     };
+    this.timer = null;
+    this.oldValue = null;
   }
 
   componentWillMount() {
@@ -248,14 +250,31 @@ class RestaurantDetail extends Component {
   }
 
   changeUserBookmarked() {
+    if (this.oldValue == null) this.oldValue = this.state.userBookmarked;
     if (this.state.userBookmarked) {
       this.setState({ userBookmarked: false });
-      request.delete(restBookmarkRequest(this.state.restaurant.id))
+      const del = () => {
+        const temp = this.oldValue;
+        this.timer = null;
+        this.oldValue = null;
+        if (temp === false) return;
+        request.delete(restBookmarkRequest(this.state.restaurant.id))
         .catch(e => request.showErrorAlert(e));
+      };
+      if (this.timer) clearTimeout(this.timer);
+      this.timer = setTimeout(del, 1000);
     } else {
       this.setState({ userBookmarked: true });
-      request.post(restBookmarkRequest(this.state.restaurant.id))
+      const post = () => {
+        const temp = this.oldValue;
+        this.timer = null;
+        this.oldValue = null;
+        if (temp === true) return;
+        request.post(restBookmarkRequest(this.state.restaurant.id))
         .catch(e => request.showErrorAlert(e));
+      };
+      if (this.timer) clearTimeout(this.timer);
+      this.timer = setTimeout(post, 1000);
     }
   }
 
@@ -664,7 +683,6 @@ class RestaurantDetail extends Component {
   }
 
   renderTabBar(tabY) {
-    console.log(this.navigator);
     let photoNumColor = '#ff9700';
     let commentNumColor = 'rgba(0, 0, 0, 0.23)';
     let photoTextColor = 'rgba(0, 0, 0, 0.77)';

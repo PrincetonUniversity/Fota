@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import { NavigationActions } from 'react-navigation';
@@ -23,6 +23,8 @@ import firebase from 'firebase';
 import LoginInput from './LoginInput';
 import { loginStyles } from './LoginPage';
 import { Spinner, Button } from '../common';
+import request from '../../helpers/axioshelper';
+import { changeNameRequest } from '../../helpers/URL';
 
 class SignupForm extends Component {
   state = { first: '', last: '', email: '', pass: '', error: '', loading: false };
@@ -45,9 +47,15 @@ class SignupForm extends Component {
   }
 
   onCreateUserSuccess(user) {
-    user.updateProfile({
-      displayName: `${this.state.first} ${this.state.last}`
-    });
+    const displayName = `${this.state.first} ${this.state.last}`;
+    user.updateProfile({ displayName });
+    // user.getToken(false).then(idToken => {
+    //   AsyncStorage.setItem('JWT', idToken).then(() => {
+    //     console.log(idToken);
+    //     request.patch(changeNameRequest(displayName))
+    //     .catch(e => request.showErrorAlert(e));
+    //   });
+    // });
     this.setState({ first: '', last: '', email: '', pass: '', loading: false });
     if (this.props.screenProps.onLoginFinished) {
       this.props.screenProps.onLoginFinished();

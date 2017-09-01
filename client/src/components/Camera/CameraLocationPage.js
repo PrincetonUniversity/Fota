@@ -12,19 +12,18 @@
 
 import React, { Component } from 'react';
 import {
-  View, Image, Text, FlatList, AsyncStorage, TouchableWithoutFeedback,
+  View, Image, Text, FlatList, TouchableWithoutFeedback,
   Keyboard, TouchableOpacity, Alert, LayoutAnimation, Platform
 } from 'react-native';
 import { connect } from 'react-redux';
-import { NavigationActions } from 'react-navigation';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import firebase from 'firebase';
 import uuid from 'uuid/v1';
 import request from '../../helpers/axioshelper';
 import { Header, Button, Input, Spinner } from '../common';
-import { deleteImage, cameraErrorAlert } from './CameraPage';
-import { nearbyRestRequest, uploadPhotoRequest } from '../../helpers/URL';
+import { cameraErrorAlert } from './CameraPage';
+import { nearbyRestRequest, checkPhotoRequest, uploadPhotoRequest } from '../../helpers/URL';
 import { pcoords } from '../../Base';
 import icoMoonConfig from '../../selection.json';
 
@@ -35,12 +34,24 @@ const fs = RNFetchBlob.fs;
 window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
 window.Blob = Blob;
 
-const restaurantDisplayHeight = 60;
+const rDisplayHeight = 60;
 
 // why doesn't javascript have printf() or format()?
 const dayformat = (day) => (
   (day < 10 && day >= 0) ? `0${day}` : `${day}`
 );
+
+const deleteImage = (path) => {
+  const filepath = path.replace(/^(file:)/, '');
+  RNFetchBlob.fs.exists(filepath)
+    .then((result) => {
+      if (result) {
+        return RNFetchBlob.fs.unlink(filepath)
+          .catch(() => cameraErrorAlert());
+      }
+    })
+    .catch(() => cameraErrorAlert());
+};
 
 class CameraLocationPage extends Component {
   constructor(props) {
@@ -54,7 +65,10 @@ class CameraLocationPage extends Component {
       index: -1,
       nearBottom: false,
       hidePhoto: false,
-      submitting: false
+      submitting: false,
+      firebaseURL: null,
+      labels: [],
+      error: null,
     };
     this.submitting = false;
     this.selectedName = null;
@@ -74,9 +88,33 @@ class CameraLocationPage extends Component {
   }
 
   componentDidMount() {
-    AsyncStorage.getItem('UploadPath').then((path) => {
-      this.setState({ uploadPath: path });
-    }).done();
+    const path = this.props.navigation.state.params.path;
+    this.setState({ uploadPath: path });
+    this.uploadPhotoToFirebase(path)
+    .then(url => {
+      request.post(checkPhotoRequest(), { url })
+      .then(response => {
+        if (this.state.submitting) {
+          this.submitPhoto(url, response.data.matchingCategories);
+        } else {
+          this.setState({ firebaseURL: url, labels: response.data.matchingCategories });
+        }
+      })
+      .catch(e => {
+        if (this.state.submitting) {
+          if (e.etype === 1 && e.response.status === 400) {
+            this.showNotFoodAlert(e.response.data.error);
+          } else {
+            request.showErrorAlert(e);
+          }
+        } else if (e.etype === 1 && e.response.status === 400) {
+          this.setState({ firebaseURL: url, error: e.response.data.error });
+        } else {
+          this.setState({ firebaseURL: url, error: 'OTHER' });
+        }
+      });
+    })
+    .catch(() => cameraErrorAlert());
   }
 
   onViewableItemsChanged = ({ viewableItems }) => {
@@ -87,6 +125,13 @@ class CameraLocationPage extends Component {
         this.setState({ nearBottom: false });
       }
     }
+  }
+
+  cleanup() {
+    if (this.props.navigation.state.params.del) {
+      deleteImage(this.props.navigation.state.params.full);
+    }
+    deleteImage(this.state.uploadPath);
   }
 
   sendLocationRequest(lat, lng) {
@@ -130,7 +175,7 @@ class CameraLocationPage extends Component {
   uploadPhotoToFirebase(path, mime = 'image/jpg') {
     const filepath = path.replace(/^(file:)/, '');
     const d = new Date();
-    const today = `${d.getFullYear()}${dayformat(d.getMonth())}${dayformat(d.getDate())}`;
+    const today = `${d.getFullYear()}${dayformat(d.getMonth() + 1)}${dayformat(d.getDate())}`;
     const imageName = `${this.props.loginState.uid}-${uuid()}.jpg`;
     this.firebaseRef = `fota_photos/${today}/${imageName}`;
     return new Promise((resolve, reject) => {
@@ -163,35 +208,43 @@ class CameraLocationPage extends Component {
     deleteRef.delete();
   }
 
-  submitPhoto() {
-    if (this.submitting) {
-      return;
-    }
+  pressUploadButton() {
+    if (this.submitting) return;
     this.submitting = true;
     this.setState({ hidePhoto: false, submitting: true });
-    this.uploadPhotoToFirebase(this.state.uploadPath)
-    .then(url => {
-      request.post(uploadPhotoRequest(), { url, restaurantId: this.state.selected.id })
-      .then(() => this.props.screenProps.goBack())
-      .catch(error => {
-        if (error.etype === 1 && error.response.status === 400) {
-          Alert.alert(
-            'Invalid Photo',
-            'You may have uploaded an invalid photo. Please make sure you submit a picture of food.',
-            [{
-              text: 'OK',
-              onPress: () => {
-                this.deletePhotoFromFirebase();
-                this.props.navigation.goBack();
-              }
-            }]
-          );
-        } else {
-          request.showErrorAlert(error);
+    if (this.state.firebaseURL) {
+      if (this.state.error) {
+        this.showNotFoodAlert(this.state.error);
+      } else {
+        this.submitPhoto(this.state.firebaseURL, this.state.labels);
+      }
+    }
+  }
+
+  submitPhoto(url, labels) {
+    request.post(uploadPhotoRequest(), {
+      url,
+      restaurantId: this.state.selected.id,
+      matchingCategories: labels
+    }).then(() => {
+      this.cleanup();
+      this.props.screenProps.goBack();
+    }).catch(error => request.showErrorAlert(error));
+  }
+
+  showNotFoodAlert(error) {
+    Alert.alert(
+      'Invalid Photo',
+      'You may have uploaded an invalid photo. Please make sure you submit a picture of food.',
+      [{
+        text: 'OK',
+        onPress: () => {
+          this.cleanup();      
+          this.deletePhotoFromFirebase();
+          this.props.navigation.goBack();
         }
-      });
-    })
-    .catch(() => cameraErrorAlert());
+      }]
+    );
   }
 
   handleOpeningBoxOnIOS() {
@@ -241,7 +294,7 @@ class CameraLocationPage extends Component {
     } else {
       this.flatListRef.scrollToIndex({ animated: true, index });
     }
-  }
+  }o
 
   renderRestaurant(restaurant, chosen, index) {
     return (
@@ -325,7 +378,7 @@ class CameraLocationPage extends Component {
     let action = () => {};
     if (this.state.selected) {
       color = '#2494ff';
-      action = () => this.submitPhoto();
+      action = () => this.pressUploadButton();
     }
     return (
       <Button
@@ -340,9 +393,9 @@ class CameraLocationPage extends Component {
 
   render() {
     if (this.state.uploadPath) {
-      let listHeight = restaurantDisplayHeight * 4;
+      let listHeight = rDisplayHeight * 4;
       if (this.state.hidePhoto) {
-        listHeight = restaurantDisplayHeight * 7;
+        listHeight = rDisplayHeight * 7;
       }
       return (
         <TouchableWithoutFeedback
@@ -357,9 +410,8 @@ class CameraLocationPage extends Component {
                   style={backButtonStyle}
                   onPress={() => {
                     if (this.submitting) return;
-                    deleteImage(this.state.uploadPath);
-                    AsyncStorage.setItem('UploadPath', '');
-                    this.props.navigation.dispatch(NavigationActions.back());
+                    this.cleanup();
+                    this.props.navigation.goBack();
                   }}
                 >
                   <Icon
@@ -372,13 +424,13 @@ class CameraLocationPage extends Component {
               </View>
             </Header>
 
-            <View style={{ paddingHorizontal: 50, marginVertical: 10, flex: 1, backgroundColor: 'white', justifyContent: 'flex-start' }}>
+            <View style={bodyStyle}>
               {this.renderPhoto()}
 
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'white', zIndex: 7, paddingVertical: 10 }}>
+              <View style={selectorTitleStyle}>
                 <View style={{ flexDirection: 'row' }}>
                   <Icon name='location' size={19} color='rgba(0,0,0,0.7)' />
-                  <Text style={rHeaderStyle}>Restaurant</Text>
+                  <Text style={selectorTitleTextStyle}>Restaurant</Text>
                 </View>
                 {this.renderCancelText()}
               </View>
@@ -416,7 +468,7 @@ class CameraLocationPage extends Component {
                     restaurant.index
                   )}
                   getItemLayout={(data, index) => (
-                    { length: restaurantDisplayHeight, offset: restaurantDisplayHeight * index, index }
+                    { length: rDisplayHeight, offset: rDisplayHeight * index, index }
                   )}
                   onViewableItemsChanged={this.onViewableItemsChanged}
                   overScrollMode='never'
@@ -466,7 +518,21 @@ const styles = {
     height: 150,
     borderRadius: 15
   },
-  rHeaderStyle: {
+  bodyStyle: {
+    paddingHorizontal: 50,
+    marginVertical: 10,
+    flex: 1,
+    backgroundColor: 'white',
+    justifyContent: 'flex-start'
+  },
+  selectorTitleStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: 'white',
+    zIndex: 7,
+    paddingVertical: 10
+  },
+  selectorTitleTextStyle: {
     fontSize: 16,
     fontWeight: '500',
     marginHorizontal: 5,
@@ -536,7 +602,9 @@ const {
   backButtonStyle,
   photoFrameStyle,
   photoStyle,
-  rHeaderStyle,
+  bodyStyle,
+  selectorTitleStyle,
+  selectorTitleTextStyle,
   cancelTextStyle,
   listContainerStyle,
   searchBarStyle,

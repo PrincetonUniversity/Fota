@@ -43,7 +43,7 @@ class Base extends Component {
     this.props.browseFromPrinceton(false);
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        firebase.auth().currentUser.getToken(true).then((idToken) => {
+        firebase.auth().currentUser.getToken(false).then((idToken) => {
           AsyncStorage.setItem('JWT', idToken);
           this.props.logInOrOut(user);
           this.setState({ loginFinished: true });
@@ -52,6 +52,7 @@ class Base extends Component {
           console.log(e);
         });
       } else {
+        AsyncStorage.setItem('JWT', null);        
         this.props.logInOrOut(user);
         this.setState({ loginFinished: true });
       }

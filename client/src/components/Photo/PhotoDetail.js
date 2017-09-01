@@ -56,6 +56,8 @@ class PhotoDetail extends Component {
           modalVisible: false
         };
     }
+    this.timer = null;
+    this.oldValue = null;
   }
 
   setModalVisible(visible) {
@@ -67,8 +69,16 @@ class PhotoDetail extends Component {
   }
 
   sendUpdateRequest(type) {
-    request.patch(photoVote(this.state.id, type))
-    .catch(e => request.showErrorAlert(e));
+    const patch = () => {
+      const temp = this.oldValue;
+      this.timer = null;
+      this.oldValue = null; 
+      if (temp === type) return;
+      request.patch(photoVote(this.state.id, type))
+      .catch(e => request.showErrorAlert(e));
+    };
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = setTimeout(patch, 1000);
   }
 
   renderUpvote() {
@@ -77,14 +87,17 @@ class PhotoDetail extends Component {
     let userVoted = true;
     if (!this.state.userHasVoted) {
       newVoteCount += 1;
+      if (this.oldValue == null) this.oldValue = 'clear';
       this.sendUpdateRequest('up');
     } else if (this.state.userDisliked) {
         newVoteCount += 2;
+        if (this.oldValue == null) this.oldValue = 'down';
         this.sendUpdateRequest('up');
     } else if (this.state.userLiked) {
         newVoteCount -= 1;
         userNewLike = false;
         userVoted = false;
+        if (this.oldValue == null) this.oldValue = 'up';
         this.sendUpdateRequest('clear');
     }
     this.setState({
@@ -101,14 +114,17 @@ class PhotoDetail extends Component {
     let userVoted = true;
     if (!this.state.userHasVoted) {
       newVoteCount -= 1;
+      if (this.oldValue == null) this.oldValue = 'clear';
       this.sendUpdateRequest('down');
     } else if (this.state.userLiked) {
       newVoteCount -= 2;
+      if (this.oldValue == null) this.oldValue = 'up';
       this.sendUpdateRequest('down');
     } else if (this.state.userDisliked) {
       newVoteCount += 1;
       userHasDisliked = false;
       userVoted = false;
+      if (this.oldValue == null) this.oldValue = 'down';
       this.sendUpdateRequest('clear');
     }
     this.setState({

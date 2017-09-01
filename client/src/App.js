@@ -27,13 +27,15 @@ setCustomText(customTextProps);
 setCustomTextInput(customTextProps);
 
 class App extends Component {
+  constructor() {
+    super();
+    console.ignoredYellowBox = ['Setting a timer'];
+  }
+
   render() {
     const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
-    AsyncStorage.getItem('SearchRadius')
-    .then(radius => {
-      if (radius == null) {
-        AsyncStorage.setItem('SearchRadius', '1');
-      }
+    AsyncStorage.getItem('SearchRadius').then(radius => {
+      if (radius == null) AsyncStorage.setItem('SearchRadius', '1');
     });
 
     return (

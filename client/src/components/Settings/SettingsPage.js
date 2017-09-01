@@ -42,7 +42,7 @@ class SettingsPage extends Component {
           <BackButton onPress={() => this.props.navigation.goBack()} />
         </Header>
 
-        <ScrollView>
+        <ScrollView bounces={false}>
           <SettingsHeader text='Location' />
           <SettingsButton
             text='Search Radius'

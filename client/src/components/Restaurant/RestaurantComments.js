@@ -50,7 +50,7 @@ class RestaurantComments extends Component {
   }
 
   openEditorBox() {
-    this.props.screenProps.scrollToEnd();
+    //this.props.screenProps.scrollToEnd();
     if (!this.state.editing) {
       this.setState({ editing: true });
     }

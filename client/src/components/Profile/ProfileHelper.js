@@ -64,7 +64,7 @@ class ProfileHelper extends Component {
     }
     return (
       <ProfileNavigator
-        screenProps={{ user: this.props.loginState, testuser }}
+        screenProps={{ user: this.props.loginState }}
       />
     );
   }
