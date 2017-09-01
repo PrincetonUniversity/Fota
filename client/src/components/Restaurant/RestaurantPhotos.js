@@ -13,62 +13,66 @@ class RestaurantPhotos extends Component {
     photos: []
   }
 
-  static navigationOptions = ({ screenProps }) => ({
-    tabBarLabel: ({ focused, tintColor }) => {
-      const numColor = focused ? '#ff9700' : 'rgba(0, 0, 0, 0.23)';
-      let labelText = ' PHOTOS';
-      if (screenProps.photos.length === 1) {
-        labelText = ' PHOTO';
-      }
-      return (
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={[tabLabelStyle, { color: numColor }]}>
-            {screenProps.photos.length}
-          </Text>
-          <Text style={[tabLabelStyle, { color: tintColor }]}>
-            {labelText}
-          </Text>
-        </View>
-      );
-    },
-  });
+  static navigationOptions = {
+    tabBarVisible: false
+  }
+
+  // static navigationOptions = ({ screenProps }) => ({
+  //   tabBarLabel: ({ focused, tintColor }) => {
+  //     const numColor = focused ? '#ff9700' : 'rgba(0, 0, 0, 0.23)';
+  //     let labelText = ' PHOTOS';
+  //     if (screenProps.photos.length === 1) {
+  //       labelText = ' PHOTO';
+  //     }
+  //     return (
+  //       <View style={{ flexDirection: 'row' }}>
+  //         <Text style={[tabLabelStyle, { color: numColor }]}>
+  //           {screenProps.photos.length}
+  //         </Text>
+  //         <Text style={[tabLabelStyle, { color: tintColor }]}>
+  //           {labelText}
+  //         </Text>
+  //       </View>
+  //     );
+  //   },
+  // });
 
   constructor(props) {
     super(props);
 
     //const scrollY = new Animated.Value(0);
-    const panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (event, gesture) => {
-        console.log(`Move OffsetY: ${this.state.offsetY._value}`);
-        // if (this.state.offsetY._value < 5 && gesture.dy > 0) {
-        //   console.log(`GestureY: ${gesture.dy}`);
-        //   this.props.screenProps.startScrollUp(gesture.dy);
-        // }
-      },
-      onPanResponderRelease: (event, gesture) => {
-        console.log(`release OffsetY: ${this.state.offsetY._value}`);
-      },
-      onPanResponderReject: (e, gestureState) => {
-        console.log(`reject OffsetY: ${this.state.offsetY._value}`);
-      },
-      onPanResponderGrant: (e, gestureState) => {
-        console.log(`grant OffsetY: ${this.state.offsetY._value}`);
-      },
-      onPanResponderStart: (e, gestureState) => {
-        console.log(`start OffsetY: ${this.state.offsetY._value}`);
-      },
-      onPanResponderEnd: (e, gestureState) => {
-        console.log(`end OffsetY: ${this.state.offsetY._value}`);
-      },
-      onPanResponderTerminate: (event, gesture) => {
-       console.log(`terminating OffsetY: ${this.state.offsetY._value}`);
-      },
-      onPanResponderTerminationRequest: (event, gesture) => {
-        console.log(`terminationrequest OffsetY: ${this.state.offsetY._value}`);
-        //this.resetPosition();
-      }
-    });
+    // const panResponder = PanResponder.create({
+    //   onStartShouldSetPanResponder: () => true,
+    //   onPanResponderMove: (event, gesture) => {
+    //     console.log(`Move OffsetY: ${this.state.offsetY._value}`);
+    //     // if (this.state.offsetY._value < 5 && gesture.dy > 0) {
+    //     //   console.log(`GestureY: ${gesture.dy}`);
+    //     //   this.props.screenProps.startScrollUp(gesture.dy);
+    //     // }
+    //   },
+    //   onPanResponderRelease: (event, gesture) => {
+    //     console.log(`release OffsetY: ${this.state.offsetY._value}`);
+    //   },
+    //   onPanResponderReject: (e, gestureState) => {
+    //     console.log(`reject OffsetY: ${this.state.offsetY._value}`);
+    //   },
+    //   onPanResponderGrant: (e, gestureState) => {
+    //     console.log(`grant OffsetY: ${this.state.offsetY._value}`);
+    //   },
+    //   onPanResponderStart: (e, gestureState) => {
+    //     console.log(`start OffsetY: ${this.state.offsetY._value}`);
+    //   },
+    //   onPanResponderEnd: (e, gestureState) => {
+    //     console.log(`end OffsetY: ${this.state.offsetY._value}`);
+    //   },
+    //   onPanResponderTerminate: (event, gesture) => {
+    //    console.log(`terminating OffsetY: ${this.state.offsetY._value}`);
+    //   },
+    //   onPanResponderTerminationRequest: (event, gesture) => {
+    //     console.log(`terminationrequest OffsetY: ${this.state.offsetY._value}`);
+    //     //this.resetPosition();
+    //   }
+  // });
 
     this.state = {
       photos: [],
@@ -76,7 +80,7 @@ class RestaurantPhotos extends Component {
       modalVisible: false,
       offsetY: new Animated.Value(0),
       atTop: true,
-      panResponder,
+      //panResponder,
       //scrollY
     };
   }
@@ -184,7 +188,7 @@ class RestaurantPhotos extends Component {
               bounces={false}
               numColumns={3}
               removeClippedSubviews={false}
-              {...this.state.panResponder.panHandlers}
+              //{...this.state.panResponder.panHandlers}
             />
           </View>
         </TouchableOpacity>

@@ -43,6 +43,8 @@ const DollarSign = () => (
   />
 );
 
+const PHOTO_HEIGHT = (Dimensions.get('window').width - 14) / 3;
+
 class RestaurantDetail extends Component {
 
 
@@ -102,8 +104,7 @@ class RestaurantDetail extends Component {
       userLiked: false,
       userDisliked: false,
       userHasVoted: false,
-      scrollEnabled: true
-      //panResponder
+      scrollEnabled: true,
     };
   }
 
@@ -126,6 +127,7 @@ class RestaurantDetail extends Component {
         userHasVoted: r.user_recommended_yes || r.user_recommended_no,
         loading: nextProps.loading,
       });
+      this.photosHeight = Math.ceil(r.photos.length / 3) * PHOTO_HEIGHT + 5;
       this.getNavigation(nextProps.restaurant);
     }
   }
@@ -311,18 +313,18 @@ class RestaurantDetail extends Component {
     );
   }
 
-  checkScroll(headerScrollDistance) {
-    console.log(this.state.scrollY);
-    console.log(headerScrollDistance);
-    if (headerScrollDistance === 0 || this.state.scrollY._value < headerScrollDistance) {
-      //this.setState({ scrollEnabled: true })
-      console.log(this.state.scrollY._value);
-      return true;
-    }
-    console.log(this.state.scrollY._value);
-    this.setState({ scrollEnabled: false });
-    return false;
-  }
+  // checkScroll(headerScrollDistance) {
+  //   console.log(this.state.scrollY);
+  //   console.log(headerScrollDistance);
+  //   if (headerScrollDistance === 0 || this.state.scrollY._value < headerScrollDistance) {
+  //     //this.setState({ scrollEnabled: true })
+  //     console.log(this.state.scrollY._value);
+  //     return true;
+  //   }
+  //   console.log(this.state.scrollY._value);
+  //   this.setState({ scrollEnabled: false });
+  //   return false;
+  // }
 
   renderHeader(headerScrollDistance, pageY) {
     const restaurant = this.state.restaurant;
@@ -427,7 +429,7 @@ class RestaurantDetail extends Component {
     if (this.state.showRecommend) {
       if (!this.state.userHasVoted) {
         return (
-          <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)', paddingHorizontal: 30 }}>
+          <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)', paddingHorizontal: 30, zIndex: 1 }}>
             <View style={recommendContainerStyle}>
               <Text style={recommendPromptStyle}>Do you recommend this restaurant?</Text>
               <TouchableOpacity onPress={this.voteYes.bind(this)}>
@@ -445,7 +447,7 @@ class RestaurantDetail extends Component {
         );
       }
       return (
-        <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)', paddingRight: 30 }}>
+        <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)', paddingRight: 30, zIndex: 1 }}>
           <View style={recommendContainerStyle}>
             {this.renderYesNo()}
             <Text style={recommendPromptStyle}>Thanks for voting!</Text>
@@ -582,25 +584,27 @@ class RestaurantDetail extends Component {
   // Horizontal info bar containing restaurant hours, distance away, and price
   renderInfo() {
     return (
-      <View
-        style={{ borderTopWidth: this.state.showRecommend ? 0 : 1, ...infoContainerStyle }}
-        onLayout={e => this.setInfoHeight(e)}
-      >
-        <View style={infoObjectStyle}>
-          <MaterialIcon
-            name='access-time'
-            size={31}
-            style={{ height: 30 }}
-            color={'rgba(0,0,0,0.63)'}
-          />
-          <Text style={infoIconStyle}>
-            {this.timeUntilCloseLabel(this.state.restaurant.hours)}
-          </Text>
+      <View style={{ backgroundColor: 'white', zIndex: 2 }}>
+        <View
+          style={{ borderTopWidth: this.state.showRecommend ? 0 : 1, ...infoContainerStyle }}
+          onLayout={e => this.setInfoHeight(e)}
+        >
+          <View style={infoObjectStyle}>
+            <MaterialIcon
+              name='access-time'
+              size={31}
+              style={{ height: 30 }}
+              color={'rgba(0,0,0,0.63)'}
+            />
+            <Text style={infoIconStyle}>
+              {this.timeUntilCloseLabel(this.state.restaurant.hours)}
+            </Text>
+          </View>
+
+          {this.renderNav()}
+
+          {this.renderPrice()}
         </View>
-
-        {this.renderNav()}
-
-        {this.renderPrice()}
       </View>
     );
   }
@@ -658,6 +662,46 @@ class RestaurantDetail extends Component {
     );
   }
 
+  renderTabBar(focusedTab, tabY) {
+    let photoNumColor = '#ff9700';
+    let commentNumColor = 'rgba(0, 0, 0, 0.23)';
+    let photoTextColor = 'rgba(0, 0, 0, 0.77)';
+    let commentTextColor = 'rgba(0, 0, 0, 0.23)';
+    if (focusedTab === 'Comments') {
+      commentNumColor = '#ff9700';
+      photoNumColor = 'rgba(0, 0, 0, 0.23)';
+      commentTextColor = 'rgba(0, 0, 0, 0.77)';
+      photoTextColor = 'rgba(0, 0, 0, 0.23)';
+    }
+    const photoLabel = (this.state.photos.length === 1) ? ' PHOTO' : ' PHOTOS';
+    const commentLabel = (this.state.comments.length === 1) ? ' REVIEW' : ' REVIEWS';
+    return (
+      <Animated.View style={[tabBarStyle, { transform: [{ translateY: tabY }] }]}>
+        <TouchableOpacity>
+          <View style={tabStyle}>
+            <Text style={{ textAlign: 'center' }}>
+              <Text style={{ color: photoNumColor, ...tabLabelStyle }}>
+                {this.state.photos.length}
+              </Text>
+              <Text style={{ color: photoTextColor, ...tabLabelStyle }}>{photoLabel}</Text>
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity>
+          <View style={tabStyle}>
+            <Text style={{ textAlign: 'center' }}>
+              <Text style={{ color: commentNumColor, ...tabLabelStyle }}>
+                {this.state.comments.length}
+              </Text>
+              <Text style={{ color: commentTextColor, ...tabLabelStyle }}>{commentLabel}</Text>
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  }
+
   render() {
     if (this.state.loading || this.state.navLoading) {
       return (
@@ -666,9 +710,11 @@ class RestaurantDetail extends Component {
     }
     let height = 440;
     let headerScrollDistance = this.state.ratingHeight + this.state.infoHeight;
+    let newHeight = height + headerScrollDistance / 3;
     if (this.state.showRecommend) {
       height += 50;
       headerScrollDistance += 50;
+      newHeight += 50;
     }
     const pageY = this.state.scrollY.interpolate({
       inputRange: [0, headerScrollDistance],
@@ -680,11 +726,16 @@ class RestaurantDetail extends Component {
       outputRange: [height, height + headerScrollDistance / 3],
       extrapolate: 'clamp',
     });
+    // const amountToScalePage = (height + headerScrollDistance / 3) / height;
+    // const pageScaleY = this.state.scrollY.interpolate({
+    //   inputRange: [0, headerScrollDistance],
+    //   outputRange: [1, amountToScalePage]
+    // });
     const tabY = this.state.scrollY.interpolate({
       inputRange: [headerScrollDistance, 2 * headerScrollDistance],
       outputRange: [0, headerScrollDistance],
-      extrapolateLeft: 'clamp'
-      //extrapolate: 'clamp',
+      //extrapolateLeft: 'clamp'
+      extrapolateLeft: 'clamp',
     });
     const opacity = this.state.scrollY.interpolate({
       inputRange: [0, headerScrollDistance],
@@ -692,6 +743,7 @@ class RestaurantDetail extends Component {
       extrapolate: 'clamp',
     });
     //this.navigator._navigation.setParams({ tabY });
+    const focusedTab = this.navigator ? this.navigator.state.routeName : null;
     console.log(this.state.scrollY);
     return (
       <View style={pageStyle}>
@@ -713,25 +765,20 @@ class RestaurantDetail extends Component {
         {this.renderHeader(headerScrollDistance, pageY)}
 
         <Animated.View
-          style={{ height: pageHeight, marginBottom: 55, transform: [{ translateY: pageY }] }}
+          style={{ height: newHeight, marginBottom: 55, transform: [{ translateY: pageY }] }}
         >
-          <ScrollView
+          <Animated.ScrollView
             ref={scroll => { this.scrollView = scroll; }}
             scrollEnabled={this.state.scrollEnabled}
-            scrollEventThrottle={16}
+            scrollEventThrottle={1}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps='handled'
             //overScrollMode='never'
             bounces={false}
-            onScroll={(e) => {
-              const y = e.nativeEvent.contentOffset.y;
-              this.state.scrollY.setValue(y);
-              if (y >= headerScrollDistance) {
-                this.setState({ scrollEnabled: false });
-              } else if (!this.state.scrollEnabled) {
-                this.setState({ scrollEnabled: true });
-              }
-            }}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
+              { useNativeDriver: true }
+            )}
           >
             {/* <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}> */}
               <Animated.View style={{ opacity }}>
@@ -740,19 +787,18 @@ class RestaurantDetail extends Component {
                 {this.renderInfo()}
               </Animated.View>
 
-              <Animated.View style={{ height: pageHeight }}>
+              {this.renderTabBar(focusedTab, tabY)}
+
+              <Animated.View style={{ height: Math.max(this.photosHeight, newHeight - 45) }}>
                 <RestaurantNavigator
                   ref={nav => { this.navigator = nav; }}
                   screenProps={{
                     restaurant: this.state.restaurant,
                     photos: this.state.photos,
                     comments: this.state.comments,
-                    startScrollUp: (dy) => {
-                      this.scrollView.scrollTo({ animation: true, y: Math.max(headerScrollDistance - dy, 0) })
-                    },
-                    enableScroll: () => this.setState({ scrollEnabled: true }),
                     scrollEnabled: !this.state.scrollEnabled,
-                    //headerScrollDistance,
+                    scrollY: this.state.scrollY,
+                    headerScrollDistance,
                     scrollToEnd: () => this.scrollView.scrollToEnd(),
                     //tabY,
                     rerenderComments: comments => this.setState({ comments })
@@ -760,7 +806,7 @@ class RestaurantDetail extends Component {
                 />
               </Animated.View>
             {/* </TouchableOpacity> */}
-          </ScrollView>
+          </Animated.ScrollView>
         </Animated.View>
         {this.renderFooter(pageY)}
       </View>
@@ -777,48 +823,8 @@ const RestaurantNavigator = TabNavigator({
   }
 },
 {
-  tabBarPosition: 'top',
-  tabBarComponent: TabBarTop,
-  // tabBarComponent: (props) => {
-  //   console.log(props);
-  //   const tabY = props.screenProps.tabY;
-  //   return (
-  //     <Animated.View
-  //       style={{ transform: [{ translateY: tabY }], zIndex: 8, backgroundColor: 'white' }}
-  //     >
-  //       <TabBarTop {...props} />
-  //     </Animated.View>
-  //   );
-  // },
   swipeEnabled: false,
   animationEnabled: true,
-  tabBarOptions: {
-    activeTintColor: 'rgba(0, 0, 0, 0.77)',
-    inactiveTintColor: 'rgba(0, 0, 0, 0.23)',
-    labelStyle: {
-      fontSize: 13,
-      fontWeight: '900'
-    },
-    tabStyle: {
-      width: 120
-    },
-    indicatorStyle: {
-      height: 5,
-      backgroundColor: '#ff9700'
-      //flex:
-      //width: (Dimensions.get('window').width - 100) / 2
-    },
-    style: {
-      backgroundColor: 'white',
-      marginHorizontal: Dimensions.get('window').width / 2 - 120,
-      overflow: 'hidden',
-      elevation: 0
-      // borderWidth: 1
-      // shadowOffset: { width: 1, height: 5 },
-      // shadowOpacity: 0.07,
-      // shadowRadius: 3
-    }
-  }
 });
 
 const styles = {
@@ -933,7 +939,6 @@ const styles = {
   },
   infoContainerStyle: {
     flexDirection: 'row',
-  //  paddingHorizontal: 10,
     paddingVertical: 10,
     marginHorizontal: 30,
     borderBottomWidth: 1,
@@ -950,6 +955,30 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     flex: 1
+  },
+  tabBarStyle: {
+    backgroundColor: 'white',
+    paddingHorizontal: Dimensions.get('window').width / 2 - 120,
+    overflow: 'hidden',
+    height: 45,
+    elevation: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    zIndex: 8
+    // borderWidth: 1
+    // shadowOffset: { width: 1, height: 5 },
+    // shadowOpacity: 0.07,
+    // shadowRadius: 3
+  },
+  tabStyle: {
+    width: 120,
+    flex: 1,
+    justifyContent: 'center'
+  },
+  tabLabelStyle: {
+    fontSize: 14,
+    fontWeight: '900',
+    paddingVertical: 5
   },
   footerStyle: {
     position: 'absolute',
@@ -1010,6 +1039,9 @@ const {
   infoContainerStyle,
   infoIconStyle,
   infoObjectStyle,
+  tabBarStyle,
+  tabStyle,
+  tabLabelStyle,
   footerStyle,
   footerButtonStyle,
   footerTextStyle,
