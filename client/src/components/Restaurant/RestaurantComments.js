@@ -36,6 +36,9 @@ class RestaurantComments extends Component {
   constructor(props) {
     super(props);
     this.state = { comments: [], editing: false, submitting: false, message: '', height: 20 };
+    this.totalCommentHeight = 0;
+    this.numCommentsAdded = 0;
+    this.hasSentHeight = false;
     this.submitting = false;
   }
 
@@ -43,14 +46,22 @@ class RestaurantComments extends Component {
     this.setState({ comments: this.props.screenProps.comments });
   }
 
-  findVote(upvote, downvote) {
-    if (upvote) return 'liked';
-    if (downvote) return 'disliked';
-    return null;
+  componentDidUpdate() {
+    if (!this.hasSentHeight && this.numCommentsAdded === this.state.comments.length && this.props.screenProps.focused === 1) {
+      this.hasSentHeight = true;
+      console.log(this.totalCommentHeight);
+      this.props.screenProps.setCommentsHeight(40 + Math.min(60, this.state.height) + this.totalCommentHeight);
+    }
   }
 
+  // setListHeight(event) {
+  //   //const listHeight = event.nativeEvent.layout.height;
+  //   console.log(this.totalCommentHeight);
+  //   this.props.screenProps.setCommentHeight(this.totalCommentHeight);
+  // }
+
   openEditorBox() {
-    //this.props.screenProps.scrollToEnd();
+    this.props.screenProps.scrollToEdit();
     if (!this.state.editing) {
       this.setState({ editing: true });
     }
@@ -80,6 +91,12 @@ class RestaurantComments extends Component {
       this.setState({ submitting: false });
       request.showErrorAlert(e);
     });
+  }
+
+  findVote(upvote, downvote) {
+    if (upvote) return 'liked';
+    if (downvote) return 'disliked';
+    return null;
   }
 
   renderDoneButton() {
@@ -122,10 +139,14 @@ class RestaurantComments extends Component {
           placeholderTextColor='rgba(0,0,0,0.31)'
           multiline
           onFocus={this.openEditorBox.bind(this)}
-          onChange={event => this.setState({
-            message: event.nativeEvent.text,
-            height: event.nativeEvent.contentSize.height
-          })}
+          onChange={event => {
+            const height = event.nativeEvent.contentSize.height;
+            this.props.setEditHeight(Math.min(60, height));
+            this.setState({
+              message: event.nativeEvent.text,
+              height
+            });
+          }}
           underlineColorAndroid={'transparent'}
           autoCapitalize={'sentences'}
         />
@@ -138,6 +159,7 @@ class RestaurantComments extends Component {
     return (
       <CommentDetail
         comment={comment}
+        addHeight={height => { this.totalCommentHeight += height; this.numCommentsAdded += 1; }}
         vote={this.findVote(comment.user_upvote, comment.user_downvote)}
       />
     );
@@ -159,6 +181,7 @@ class RestaurantComments extends Component {
           keyExtractor={comment => comment.id}
           renderItem={c => this.renderComment(c.item)}
           ListHeaderComponent={() => this.renderEditBox()}
+          ListFooterComponent={() => <View />}
           scrollEnabled={false}
           showsVerticalScrollIndicator
           overScrollMode='never'
@@ -189,6 +212,7 @@ const styles = {
     padding: 0,
     color: 'rgba(0,0,0,0.75)',
     fontSize: 15,
+    lineHeight: 20,
     fontWeight: '400'
   },
   doneButtonStyle: {

@@ -4,7 +4,8 @@
     "global-require": "off",
     "arrow-body-style": ["warn", "as-needed"],
     "no-mixed-operators": "off",
-    "radix": "off"
+    "radix": "off",
+    "no-underscore-dangle": "off"
   },
   "globals": {
     "navigator": true

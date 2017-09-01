@@ -10,7 +10,7 @@
 import React, { Component } from 'react';
 import {
   View, Text, ScrollView, Animated, Linking, LayoutAnimation, Dimensions, Platform,
-  TouchableWithoutFeedback, TouchableOpacity, UIManager
+  TouchableWithoutFeedback, TouchableOpacity, UIManager, StatusBar
 } from 'react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -105,6 +105,8 @@ class RestaurantDetail extends Component {
       userDisliked: false,
       userHasVoted: false,
       listHeight: 0,
+      editHeight: 0,
+      commentHeight: 0,
       focusedTab: 0
     };
     this.timer = null;
@@ -118,7 +120,10 @@ class RestaurantDetail extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.restaurant !== this.props.restaurant) {
       const r = nextProps.restaurant;
-      this.photosHeight = Math.ceil(r.photos.length / 3) * PHOTO_HEIGHT + 5;      
+      this.photosHeight = Math.ceil(r.photos.length / 3) * PHOTO_HEIGHT + 5;
+      this.commentsHeight = 0;
+      this.currentPhotoScrollPosition = 0;
+      this.currentCommentScrollPosition = 0;
       this.setState({
         restaurant: r,
         photos: r.photos,
@@ -372,7 +377,9 @@ class RestaurantDetail extends Component {
             colors={['transparent', 'rgba(0, 0, 0, 0.36)']}
             style={{ flex: 1 }}
           >
-            <Animated.View style={{ flex: 1, justifyContent: 'flex-end', marginRight: 35, transform: [{ translateY: nameTranslateY }] }}>
+            <Animated.View
+              style={[headerContainerStyle, { transform: [{ translateY: nameTranslateY }] }]}
+            >
               <Animated.View style={[titleContainerStyle, { opacity }]}>
                 <Text style={addressStyle}>
                   {`${restaurant.location.display_address[0]} | ${this.state.distance}`}
@@ -449,7 +456,9 @@ class RestaurantDetail extends Component {
     if (this.state.showRecommend) {
       if (!this.state.userHasVoted) {
         return (
-          <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)', paddingHorizontal: 30, zIndex: 1 }}>
+          <View
+            style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)', paddingHorizontal: 30, zIndex: 1 }}
+          >
             <View style={recommendContainerStyle}>
               <Text style={recommendPromptStyle}>Do you recommend this restaurant?</Text>
               <TouchableOpacity onPress={this.voteYes.bind(this)}>
@@ -470,7 +479,7 @@ class RestaurantDetail extends Component {
         <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)', paddingRight: 30, zIndex: 1 }}>
           <View style={recommendContainerStyle}>
             {this.renderYesNo()}
-            <Text style={recommendPromptStyle}>Thanks for voting!</Text>
+            <Text style={[recommendPromptStyle, { marginLeft: 15 }]}>Thanks for voting!</Text>
           </View>
         </View>
       );
@@ -478,8 +487,8 @@ class RestaurantDetail extends Component {
   }
 
   renderYesNo() {
-    const yesBoxStyle = { backgroundColor: '#4e4', ...hasVotedBoxStyle };
-    const noBoxStyle = { backgroundColor: '#f66', ...hasVotedBoxStyle };
+    const yesBoxStyle = { backgroundColor: 'rgba(79, 217, 41, 0.76)', ...hasVotedBoxStyle };
+    const noBoxStyle = { backgroundColor: 'rgba(255, 112, 112, 1)', ...hasVotedBoxStyle };
 
     if (this.state.userLiked) {
       return (
@@ -527,10 +536,14 @@ class RestaurantDetail extends Component {
   // Navigation section of the horizontal info bar
   renderNav() {
     if (this.state.walking) {
-      //const timeString = `${this.state.navTime} min`
       return (
         <View style={infoObjectStyle}>
-          <Icon name='walk' size={27} style={{ paddingTop: 3, height: 30 }} color={'rgba(0,0,0,0.63)'} />
+          <Icon
+            name='walk'
+            size={27}
+            style={{ paddingTop: 3, height: 30 }}
+            color={'rgba(0,0,0,0.63)'}
+          />
           <Text style={infoIconStyle}>
             {this.state.navTime.replace(/s$/, '')}
           </Text>
@@ -539,7 +552,12 @@ class RestaurantDetail extends Component {
     } else if (this.state.driving) {
       return (
         <View style={infoObjectStyle}>
-          <MaterialCommunityIcon name='car' size={30} style={{ height: 30 }} color={'rgba(0,0,0,0.63)'} />
+          <MaterialCommunityIcon
+            name='car'
+            size={30}
+            style={{ height: 30 }}
+            color={'rgba(0,0,0,0.63)'}
+          />
           <Text style={infoIconStyle}>
             {this.state.navTime.replace(/s$/, '')}
           </Text>
@@ -632,7 +650,6 @@ class RestaurantDetail extends Component {
   renderFooter() {
     const restaurant = this.state.restaurant;
     return (
-      //<Animated.View style={[footerStyle, { transform: [{ translateY: pageY }] }]}>
       <View style={footerStyle}>
         <View style={bottomSpacerStyle}>
           <TouchableOpacity
@@ -678,11 +695,10 @@ class RestaurantDetail extends Component {
           </TouchableOpacity>
         </View>
       </View>
-      //</Animated.View>
     );
   }
 
-  renderTabBar(tabY) {
+  renderTabBar(tabY, headerScrollDistance) {
     let photoNumColor = '#ff9700';
     let commentNumColor = 'rgba(0, 0, 0, 0.23)';
     let photoTextColor = 'rgba(0, 0, 0, 0.77)';
@@ -695,51 +711,121 @@ class RestaurantDetail extends Component {
     }
     const photoLabel = (this.state.photos.length === 1) ? ' PHOTO' : ' PHOTOS';
     const commentLabel = (this.state.comments.length === 1) ? ' REVIEW' : ' REVIEWS';
+    const currentScrollY = new Animated.Value(0);
+    this.state.scrollY.addListener(e => currentScrollY.setValue(e.value));
+    console.log(`CurrentScrollY: ${currentScrollY._value}`);
+    //console.log(this.state.listHeight);
     return (
-      <Animated.View style={[tabBarStyle, { transform: [{ translateY: tabY }] }]}>
-        <TouchableOpacity 
-          onPress={() => {
-            if (this.state.focusedTab !== 0) {
-              this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Photos' });
-              this.setState({ focusedTab: 0, listHeight: this.photosHeight });
-            }
-          }}
-        >
-          <View style={tabStyle}>
-            <Text style={{ textAlign: 'center' }}>
-              <Text style={{ color: photoNumColor, ...tabLabelStyle }}>
-                {this.state.photos.length}
+      <Animated.View style={[tabBarContainerStyle, { transform: [{ translateY: tabY }] }]}>
+        <View style={tabBarStyle}>
+          <TouchableOpacity
+            onPress={() => {
+              if (this.state.focusedTab !== 0) {
+                this.currentCommentScrollPosition = currentScrollY._value;
+                if (currentScrollY._value > headerScrollDistance && this.currentPhotoScrollPosition < headerScrollDistance) {
+                  this.scrollView._component.scrollTo({
+                    x: 0,
+                    y: headerScrollDistance,
+                    animated: false
+                  });
+                } else if (currentScrollY._value < headerScrollDistance) {
+                  this.scrollView._component.scrollTo({
+                    x: 0,
+                    y: currentScrollY._value,
+                    animated: false
+                  });
+                } else {
+                  this.scrollView._component.scrollTo({
+                    x: 0,
+                    y: this.currentPhotoScrollPosition,
+                    animated: false
+                  });
+                }
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Photos' });
+                this.setState({ focusedTab: 0, listHeight: this.photosHeight });
+              }
+            }}
+          >
+            <View style={tabStyle}>
+              <Text style={{ textAlign: 'center' }}>
+                <Text style={{ color: photoNumColor, ...tabLabelStyle }}>
+                  {this.state.photos.length}
+                </Text>
+                <Text style={{ color: photoTextColor, ...tabLabelStyle }}>{photoLabel}</Text>
               </Text>
-              <Text style={{ color: photoTextColor, ...tabLabelStyle }}>{photoLabel}</Text>
-            </Text>
-          </View>
-        </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
 
-        <TouchableOpacity 
-          onPress={() => {
-            if (this.state.focusedTab !== 1) {
-              this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Comments' });
-              this.setState({ focusedTab: 1, listHeight: 2000 });
-            }
-          }}
-        >
-          <View style={tabStyle}>
-            <Text style={{ textAlign: 'center' }}>
-              <Text style={{ color: commentNumColor, ...tabLabelStyle }}>
-                {this.state.comments.length}
+          <TouchableOpacity
+            onPress={() => {
+              if (this.state.focusedTab !== 1) {
+                //console.log(`CurrentScrollY: ${currentScrollY._value}`);
+                this.currentPhotoScrollPosition = currentScrollY._value;
+                //console.log(`ScrollY: ${this.state.scrollY._value}`);
+                //console.log(`CommentPos: ${this.currentCommentScrollPosition}`);
+                if (currentScrollY._value > headerScrollDistance && this.currentCommentScrollPosition < headerScrollDistance) {
+                  this.scrollView._component.scrollTo({
+                    x: 0,
+                    y: headerScrollDistance,
+                    animated: false
+                  });
+                } else if (currentScrollY._value < headerScrollDistance) {
+                  this.scrollView._component.scrollTo({
+                    x: 0,
+                    y: currentScrollY._value,
+                    animated: false
+                  });
+                } else {
+                  this.scrollView._component.scrollTo({
+                    x: 0,
+                    y: this.currentCommentScrollPosition,
+                    animated: false
+                  });
+                }
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Comments' });
+                this.setState({ focusedTab: 1, listHeight: this.commentsHeight });
+              }
+            }}
+          >
+            <View style={tabStyle}>
+              <Text style={{ textAlign: 'center' }}>
+                <Text style={{ color: commentNumColor, ...tabLabelStyle }}>
+                  {this.state.comments.length}
+                </Text>
+                <Text style={{ color: commentTextColor, ...tabLabelStyle }}>{commentLabel}</Text>
               </Text>
-              <Text style={{ color: commentTextColor, ...tabLabelStyle }}>{commentLabel}</Text>
-            </Text>
-          </View>
-        </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </View>
+        {this.renderIndicator()}
       </Animated.View>
+    );
+  }
+
+  renderIndicator() {
+    const SCREEN_WIDTH = Dimensions.get('window').width;
+    if (this.state.focusedTab === 0) {
+      return (
+        <View style={indicatorContainerStyle}>
+          <View style={[indicatorStyle, { marginLeft: SCREEN_WIDTH / 2 - 120 }]} />
+        </View>
+      );
+    }
+    return (
+      <View style={indicatorContainerStyle}>
+        <View style={[indicatorStyle, { marginLeft: SCREEN_WIDTH / 2 }]} />
+      </View>
     );
   }
 
   render() {
     if (this.state.loading || this.state.navLoading) {
       return (
-        <View style={{ flex: 1, backgroundColor: 'white' }} />
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+          <StatusBar animated barStyle='light-content' />
+        </View>
       );
     }
     let height = 440;
@@ -768,7 +854,6 @@ class RestaurantDetail extends Component {
     const tabY = this.state.scrollY.interpolate({
       inputRange: [headerScrollDistance, 2 * headerScrollDistance],
       outputRange: [0, headerScrollDistance],
-      //extrapolateLeft: 'clamp'
       extrapolateLeft: 'clamp',
     });
     const opacity = this.state.scrollY.interpolate({
@@ -778,7 +863,8 @@ class RestaurantDetail extends Component {
     });
     return (
       <View style={pageStyle}>
-        <View style={headerStyle}>
+        <StatusBar barStyle='light-content' />
+        <View style={backContainerStyle}>
           <TouchableOpacity
             style={backButtonStyle}
             onPress={() => this.props.close()}
@@ -817,7 +903,7 @@ class RestaurantDetail extends Component {
                 {this.renderInfo()}
               </Animated.View>
 
-              {this.renderTabBar(tabY)}
+              {this.renderTabBar(tabY, headerScrollDistance)}
 
               <Animated.View style={{ height: Math.max(this.state.listHeight, newHeight - 45) }}>
                 <RestaurantNavigator
@@ -828,8 +914,18 @@ class RestaurantDetail extends Component {
                     comments: this.state.comments,
                     scrollY: this.state.scrollY,
                     headerScrollDistance,
-                    scrollToEnd: () => this.scrollView.scrollToEnd(),
-                    //tabY,
+                    focused: this.state.focusedTab,
+                    setCommentsHeight: cHeight => {
+                      this.commentsHeight = cHeight;
+                      this.setState({ listHeight: cHeight });
+                    },
+                    scrollToEdit: () => {
+                      this.scrollView._component.scrollTo({
+                        x: 0,
+                        y: headerScrollDistance,
+                        animated: true
+                      });
+                    },
                     rerenderComments: comments => this.setState({ comments })
                   }}
                 />
@@ -853,7 +949,7 @@ const RestaurantNavigator = TabNavigator({
 },
 {
   swipeEnabled: false,
-  animationEnabled: true,
+  animationEnabled: false,
 });
 
 const styles = {
@@ -863,7 +959,7 @@ const styles = {
     justifyContent: 'space-between',
     backgroundColor: 'white'
   },
-  headerStyle: { // Header including back button, name, time until close, call button
+  backContainerStyle: { // Header including back button, name, time until close, call button
     flexDirection: 'row',
     //justifyContent: 'space-between',
     marginHorizontal: 5,
@@ -873,6 +969,11 @@ const styles = {
     top: 0,
     zIndex: 8
     //marginBottom: 5
+  },
+  headerContainerStyle: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginRight: 35,
   },
   backButtonStyle: { // Back button
     height: 35,
@@ -957,9 +1058,9 @@ const styles = {
   recommendPromptStyle: {
     fontSize: 14,
     flex: 1,
-    textAlign: 'center',
+    //textAlign: 'center',
     color: 'rgba(0, 0, 0, 0.31)',
-    marginVertical: 15
+    marginLeft: 15
   },
   recommendVoteStyle: {
     fontSize: 12,
@@ -985,15 +1086,21 @@ const styles = {
     alignItems: 'center',
     flex: 1
   },
+  tabBarContainerStyle: {
+    height: 45,
+    zIndex: 8,
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 2 }
+  },
   tabBarStyle: {
     backgroundColor: 'white',
     paddingHorizontal: Dimensions.get('window').width / 2 - 120,
     overflow: 'hidden',
-    height: 45,
+    height: 40,
     elevation: 0,
     flexDirection: 'row',
     alignItems: 'center',
-    zIndex: 8
     // borderWidth: 1
     // shadowOffset: { width: 1, height: 5 },
     // shadowOpacity: 0.07,
@@ -1002,12 +1109,24 @@ const styles = {
   tabStyle: {
     width: 120,
     flex: 1,
+    marginTop: 5,
     justifyContent: 'center'
   },
   tabLabelStyle: {
     fontSize: 14,
     fontWeight: '900',
     paddingVertical: 5
+  },
+  indicatorContainerStyle: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderColor: 'rgba(0,0,0,0.08)'
+  },
+  indicatorStyle: {
+    height: 5,
+    width: 120,
+    backgroundColor: '#ff9700'
   },
   footerStyle: {
     position: 'absolute',
@@ -1020,9 +1139,9 @@ const styles = {
     backgroundColor: 'white',
     borderColor: 'gray',
     elevation: 2,
-    shadowOffset: { width: -1, height: -5 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.17,
+    shadowRadius: 5,
   },
   footerButtonStyle: {
     flex: 1,
@@ -1050,7 +1169,8 @@ const styles = {
 
 const {
   pageStyle,
-  headerStyle,
+  backContainerStyle,
+  headerContainerStyle,
   backButtonStyle,
   titleContainerStyle,
   addressStyle,
@@ -1068,9 +1188,12 @@ const {
   infoContainerStyle,
   infoIconStyle,
   infoObjectStyle,
+  tabBarContainerStyle,
   tabBarStyle,
   tabStyle,
   tabLabelStyle,
+  indicatorContainerStyle,
+  indicatorStyle,
   footerStyle,
   footerButtonStyle,
   footerTextStyle,

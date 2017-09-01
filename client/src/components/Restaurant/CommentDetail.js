@@ -135,7 +135,7 @@ class CommentDetail extends Component {
 
     return (
       <TouchableOpacity activeOpacity={1}>
-        <View style={containerStyle}>
+        <View style={containerStyle} onLayout={e => this.props.addHeight(e.nativeEvent.layout.height)}>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
             {comment.my_comment && <Text style={youTextStyle}>(You) </Text>}
             <Text style={headingTextStyle}>{comment.author}</Text>
@@ -182,7 +182,7 @@ class CommentDetail extends Component {
 const styles = {
   containerStyle: {
     flex: 1,
-    padding: 20, 
+    padding: 20,
     flexDirection: 'column',
     backgroundColor: 'white',
     borderColor: 'rgba(0, 0, 0, 0.06)',
@@ -203,7 +203,7 @@ const styles = {
     color: 'rgba(0, 0, 0, 0.8)',
     fontWeight: '300',
   },
-  bottomBarStyle: { 
+  bottomBarStyle: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

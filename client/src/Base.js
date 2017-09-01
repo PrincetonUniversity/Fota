@@ -117,9 +117,9 @@ const MainNavigator = TabNavigator({
     style: {
       paddingHorizontal: horizontalPadding,
       height: tabHeight,
-      borderWidth: 0,
+      borderTopWidth: 0,
       shadowOpacity: 0.06,
-      shadowOffset: { width: -1, height: -5 },
+      shadowOffset: { width: 0, height: -5 },
       shadowRadius: 5
     },
   }
