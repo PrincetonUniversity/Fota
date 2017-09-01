@@ -44,6 +44,7 @@ function request(method, url, data, resolve, reject) {
           headers: { Authorization: `Bearer ${idToken}` } })
           .then(response => resolve(response))
           .catch(e => {
+            console.log(url);
             reject({ etype: 1, ...e });
           });
       });
@@ -96,6 +97,7 @@ exports.delete = (url, data = null) => (
 };*/
 
 exports.showErrorAlert = (error) => {
+  console.log(error);
   if (error.etype === 0) {
     Alert.alert(
       'No Connection',

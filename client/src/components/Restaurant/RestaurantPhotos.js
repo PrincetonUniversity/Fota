@@ -144,6 +144,7 @@ class RestaurantPhotos extends Component {
         >
           <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
             <PhotoGallery
+              closeModal={() => this.setState({ modalVisible: false })}
               photos={photoLinks}
               initialIndex={this.state.selectedPhoto}
               onSwipeVertical={this.resetSelectedPhoto.bind(this)}

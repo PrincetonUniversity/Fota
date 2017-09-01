@@ -54,11 +54,6 @@ const styles = {
     alignSelf: 'center',
     backgroundColor: 'white'
   },
-  imageStyle: {
-    height: Dimensions.get('window').width,
-    width: Dimensions.get('window').width,
-    resizeMode: 'cover'
-  },
   buttonContainerStyle: {
     backgroundColor: 'transparent',
     width: 30,
@@ -72,7 +67,6 @@ const styles = {
 const {
   pageStyle,
   cameraStyle,
-  imageStyle,
   buttonContainerStyle
 } = styles;
 

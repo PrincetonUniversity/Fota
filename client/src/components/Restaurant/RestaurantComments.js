@@ -131,7 +131,6 @@ class RestaurantComments extends Component {
   }
 
   render() {
-    console.log(this.state);
     if (this.state.comments.length === 0) {
       return (
         <View>
@@ -155,7 +154,7 @@ class RestaurantComments extends Component {
               />
             );
           }}
-          //ListHeaderComponent={() => this.renderEditBox()}
+          ListHeaderComponent={() => this.renderEditBox()}
           scrollEnabled={this.props.screenProps.scrollEnabled}
           showsVerticalScrollIndicator
           overScrollMode='never'

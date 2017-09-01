@@ -321,7 +321,7 @@ class RestaurantDetail extends Component {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     });
-    const color = this.state.scrollEnabled ? 'blue' : 'red';
+    const color = this.state.scrollEnabled ? '#0f0' : '#f00';
     return (
       <Animated.View style={{ zIndex: 2, height: 175, transform: [{ translateY: pageY }] }}>
         <Banner
@@ -712,8 +712,9 @@ class RestaurantDetail extends Component {
           <ScrollView
             ref={scroll => { this.scrollView = scroll; }}
             scrollEnabled={this.state.scrollEnabled}
-            scrollEventThrottle={1}
+            scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps='handled'
             //overScrollMode='never'
             bounces={false}
             onScroll={Animated.event(
@@ -896,7 +897,7 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
-    paddingHorizontal: 15
+    paddingHorizontal: 7
   },
   hasVotedBoxStyle: {
     justifyContent: 'center',

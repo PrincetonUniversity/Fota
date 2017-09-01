@@ -24,7 +24,7 @@ class CameraNavigator extends Component {
   
   render() {
     if (!this.props.loginState || this.props.loginState.isAnonymous) {
-      return <View />;
+      return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
     }
     const screenProps = { goBack: () => this.props.navigation.goBack() };
     if (this.props.navigation.state.params && this.props.navigation.state.params.goBack) {
