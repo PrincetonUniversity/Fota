@@ -71,7 +71,7 @@ class HomePage extends Component {
   state = { noPhotos: false, filterList: [], modalVisible: false, filter: '' };
 
   getFilterList(filter) {
-    console.log('making a request for the term: ' + filter);
+    // console.log('making a request for the term: ' + filter);
     if (this.props.browsingPrinceton) {
       this.sendPhotoRequest(filter, pcoords.lat, pcoords.lng);
     } else {

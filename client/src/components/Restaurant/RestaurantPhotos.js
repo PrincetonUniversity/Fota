@@ -184,12 +184,7 @@ const styles = {
   tabContainerStyle: {
     flex: 1,
     paddingTop: 5,
-    paddingHorizontal: 7,
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.08)',
-    shadowRadius: 5,
-    shadowOpacity: 0.5,
-    //shadowOffset: { width: 0, height: 2 }
+    paddingHorizontal: 7
   },
   emptyTextStyle: {
     fontSize: 16,
