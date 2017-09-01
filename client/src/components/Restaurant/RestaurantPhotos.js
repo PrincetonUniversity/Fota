@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
-import {
-  View, Text, FlatList, Image, PanResponder, Animated,
-  TouchableOpacity, Modal, Dimensions
-} from 'react-native';
+import { View, FlatList, Image, TouchableOpacity, Modal, Dimensions } from 'react-native';
 import { PhotoGallery, NotFoundText } from '../common';
 import { dealWithAndroidBeingStupid } from '../common/GradientImage';
 
@@ -78,8 +75,8 @@ class RestaurantPhotos extends Component {
       photos: [],
       selectedPhoto: null,
       modalVisible: false,
-      offsetY: new Animated.Value(0),
-      atTop: true,
+      //offsetY: new Animated.Value(0),
+      //atTop: true,
       //panResponder,
       //scrollY
     };
@@ -166,29 +163,15 @@ class RestaurantPhotos extends Component {
             style={{ flex: 1 }}
           >
             <FlatList
-              ref={(flatlist) => { this.flatlist = flatlist; }}
               data={this.state.photos}
               keyExtractor={(photo, index) => index}
               // {...this.state.panResponder.panHandlers}
               renderItem={(photo) => this.renderPhoto(photo.item, photo.index)}
-              onScroll={(e) => {
-                const newY = e.nativeEvent.contentOffset.y;
-                // //console.log(e.nativeEvent);
-                // const pastY = this.state.offsetY._value;
-                // console.log(`NewY: ${newY}`);
-                // console.log(`PastY: ${pastY}`);
-                // if (newY <= pastY && newY < 5) {
-                //   this.props.screenProps.enableScroll();
-                //   this.flatlist.scrollToIndex({ animated: true, index: 0 });
-                // }
-                this.state.offsetY.setValue(newY);
-              }}
               showsVerticalScrollIndicator={false}
-              scrollEnabled={this.props.screenProps.scrollEnabled}
+              scrollEnabled={false}
               bounces={false}
               numColumns={3}
               removeClippedSubviews={false}
-              //{...this.state.panResponder.panHandlers}
             />
           </View>
         </TouchableOpacity>
@@ -198,11 +181,6 @@ class RestaurantPhotos extends Component {
 }
 
 const styles = {
-  tabLabelStyle: {
-    fontSize: 14,
-    fontWeight: '900',
-    paddingVertical: 5
-  },
   tabContainerStyle: {
     flex: 1,
     paddingTop: 5,
@@ -235,7 +213,6 @@ const styles = {
 };
 
 const {
-  tabLabelStyle,
   tabContainerStyle,
   photoFrameStyle,
   photoStyle

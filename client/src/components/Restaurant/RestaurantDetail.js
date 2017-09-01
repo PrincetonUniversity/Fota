@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { TabNavigator, TabBarTop } from 'react-navigation';
+import { TabNavigator } from 'react-navigation';
 import FoundationIcon from 'react-native-vector-icons/Foundation';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -104,7 +104,8 @@ class RestaurantDetail extends Component {
       userLiked: false,
       userDisliked: false,
       userHasVoted: false,
-      scrollEnabled: true,
+      listHeight: 0,
+      focusedTab: 0
     };
   }
 
@@ -115,6 +116,7 @@ class RestaurantDetail extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.restaurant !== this.props.restaurant) {
       const r = nextProps.restaurant;
+      this.photosHeight = Math.ceil(r.photos.length / 3) * PHOTO_HEIGHT + 5;      
       this.setState({
         restaurant: r,
         photos: r.photos,
@@ -126,8 +128,8 @@ class RestaurantDetail extends Component {
         userDisliked: r.user_recommended_no,
         userHasVoted: r.user_recommended_yes || r.user_recommended_no,
         loading: nextProps.loading,
+        listHeight: this.photosHeight
       });
-      this.photosHeight = Math.ceil(r.photos.length / 3) * PHOTO_HEIGHT + 5;
       this.getNavigation(nextProps.restaurant);
     }
   }
@@ -338,7 +340,6 @@ class RestaurantDetail extends Component {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     });
-    const color = this.state.scrollEnabled ? '#0f0' : '#f00';
     return (
       <Animated.View style={{ zIndex: 2, height: 175, transform: [{ translateY: pageY }] }}>
         <Banner
@@ -360,7 +361,7 @@ class RestaurantDetail extends Component {
               </Animated.View>
 
               <View style={titleContainerStyle}>
-                <Text style={{ color, ...titleStyle }} onPress={() => console.log(this.state.scrollY._value)}>
+                <Text style={titleStyle}>
                   {restaurant.name}
                 </Text>
               </View>
@@ -662,12 +663,13 @@ class RestaurantDetail extends Component {
     );
   }
 
-  renderTabBar(focusedTab, tabY) {
+  renderTabBar(tabY) {
+    console.log(this.navigator);
     let photoNumColor = '#ff9700';
     let commentNumColor = 'rgba(0, 0, 0, 0.23)';
     let photoTextColor = 'rgba(0, 0, 0, 0.77)';
     let commentTextColor = 'rgba(0, 0, 0, 0.23)';
-    if (focusedTab === 'Comments') {
+    if (this.state.focusedTab === 1) {
       commentNumColor = '#ff9700';
       photoNumColor = 'rgba(0, 0, 0, 0.23)';
       commentTextColor = 'rgba(0, 0, 0, 0.77)';
@@ -677,7 +679,14 @@ class RestaurantDetail extends Component {
     const commentLabel = (this.state.comments.length === 1) ? ' REVIEW' : ' REVIEWS';
     return (
       <Animated.View style={[tabBarStyle, { transform: [{ translateY: tabY }] }]}>
-        <TouchableOpacity>
+        <TouchableOpacity 
+          onPress={() => {
+            if (this.state.focusedTab !== 0) {
+              this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Photos' });
+              this.setState({ focusedTab: 0, listHeight: this.photosHeight });
+            }
+          }}
+        >
           <View style={tabStyle}>
             <Text style={{ textAlign: 'center' }}>
               <Text style={{ color: photoNumColor, ...tabLabelStyle }}>
@@ -688,7 +697,14 @@ class RestaurantDetail extends Component {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity 
+          onPress={() => {
+            if (this.state.focusedTab !== 1) {
+              this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Comments' });
+              this.setState({ focusedTab: 1, listHeight: 2000 });
+            }
+          }}
+        >
           <View style={tabStyle}>
             <Text style={{ textAlign: 'center' }}>
               <Text style={{ color: commentNumColor, ...tabLabelStyle }}>
@@ -710,22 +726,22 @@ class RestaurantDetail extends Component {
     }
     let height = 440;
     let headerScrollDistance = this.state.ratingHeight + this.state.infoHeight;
-    let newHeight = height + headerScrollDistance / 3;
+    const newHeight = height + headerScrollDistance / 3;
     if (this.state.showRecommend) {
       height += 50;
       headerScrollDistance += 50;
-      newHeight += 50;
+      //newHeight += 50;
     }
     const pageY = this.state.scrollY.interpolate({
       inputRange: [0, headerScrollDistance],
       outputRange: [0, -headerScrollDistance / 3],
       extrapolate: 'clamp',
     });
-    const pageHeight = this.state.scrollY.interpolate({
-      inputRange: [0, headerScrollDistance],
-      outputRange: [height, height + headerScrollDistance / 3],
-      extrapolate: 'clamp',
-    });
+    // const pageHeight = this.state.scrollY.interpolate({
+    //   inputRange: [0, headerScrollDistance],
+    //   outputRange: [height, height + headerScrollDistance / 3],
+    //   extrapolate: 'clamp',
+    // });
     // const amountToScalePage = (height + headerScrollDistance / 3) / height;
     // const pageScaleY = this.state.scrollY.interpolate({
     //   inputRange: [0, headerScrollDistance],
@@ -742,9 +758,6 @@ class RestaurantDetail extends Component {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     });
-    //this.navigator._navigation.setParams({ tabY });
-    const focusedTab = this.navigator ? this.navigator.state.routeName : null;
-    console.log(this.state.scrollY);
     return (
       <View style={pageStyle}>
         <View style={headerStyle}>
@@ -769,7 +782,6 @@ class RestaurantDetail extends Component {
         >
           <Animated.ScrollView
             ref={scroll => { this.scrollView = scroll; }}
-            scrollEnabled={this.state.scrollEnabled}
             scrollEventThrottle={1}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps='handled'
@@ -787,16 +799,15 @@ class RestaurantDetail extends Component {
                 {this.renderInfo()}
               </Animated.View>
 
-              {this.renderTabBar(focusedTab, tabY)}
+              {this.renderTabBar(tabY)}
 
-              <Animated.View style={{ height: Math.max(this.photosHeight, newHeight - 45) }}>
+              <Animated.View style={{ height: Math.max(this.state.listHeight, newHeight - 45) }}>
                 <RestaurantNavigator
                   ref={nav => { this.navigator = nav; }}
                   screenProps={{
                     restaurant: this.state.restaurant,
                     photos: this.state.photos,
                     comments: this.state.comments,
-                    scrollEnabled: !this.state.scrollEnabled,
                     scrollY: this.state.scrollY,
                     headerScrollDistance,
                     scrollToEnd: () => this.scrollView.scrollToEnd(),
@@ -868,7 +879,7 @@ const styles = {
     backgroundColor: 'transparent'
   },
   titleStyle: { // Restaurant name
-    //color: 'white',
+    color: 'white',
     //fontFamily: 'Avenir-Black',
     fontSize: 23,
     fontWeight: '900',

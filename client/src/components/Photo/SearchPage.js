@@ -156,7 +156,7 @@ class SearchPage extends Component {
             <Text style={styles.cancelStyle} onPress={this.props.onCancel}>Cancel</Text>
           </View>
         </View>
-        <ScrollView keyboardShouldPersistTaps='handled' onScroll={Keyboard.dismiss}>
+        <ScrollView keyboardShouldPersistTaps='handled' keyboardDismissMode='on-drag'>
           {this.renderFilterHeader()}
           {this.renderFilters()}
           {this.renderRestaurantHeader()}

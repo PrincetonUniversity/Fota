@@ -6,28 +6,32 @@ import request from '../../helpers/axioshelper';
 import { restCommentRequest } from '../../helpers/URL';
 
 class RestaurantComments extends Component {
-  static navigationOptions = ({ screenProps }) => ({
-    tabBarLabel: ({ focused, tintColor }) => {
-      const numColor = focused ? '#ff9700' : 'rgba(0, 0, 0, 0.25)';
-      let labelText = ' REVIEWS';
-      if (screenProps.comments.length === 1) {
-        labelText = ' REVIEW';
-      }
-      return (
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={[tabLabelStyle, { color: numColor }]}>
-            {screenProps.comments.length}
-          </Text>
-          <Text style={[tabLabelStyle, { color: tintColor }]}>
-            {labelText}
-          </Text>
-        </View>
-      );
-    },
-    indicatorStyle: () => ({
-      marginRight: 50
-    })
-  });
+  static navigationOptions = {
+    tabBarVisible: false
+  }
+
+  // static navigationOptions = ({ screenProps }) => ({
+  //   tabBarLabel: ({ focused, tintColor }) => {
+  //     const numColor = focused ? '#ff9700' : 'rgba(0, 0, 0, 0.25)';
+  //     let labelText = ' REVIEWS';
+  //     if (screenProps.comments.length === 1) {
+  //       labelText = ' REVIEW';
+  //     }
+  //     return (
+  //       <View style={{ flexDirection: 'row' }}>
+  //         <Text style={[tabLabelStyle, { color: numColor }]}>
+  //           {screenProps.comments.length}
+  //         </Text>
+  //         <Text style={[tabLabelStyle, { color: tintColor }]}>
+  //           {labelText}
+  //         </Text>
+  //       </View>
+  //     );
+  //   },
+  //   indicatorStyle: () => ({
+  //     marginRight: 50
+  //   })
+  // });
 
   constructor(props) {
     super(props);
@@ -130,6 +134,15 @@ class RestaurantComments extends Component {
     );
   }
 
+  renderComment(comment) {
+    return (
+      <CommentDetail
+        comment={comment}
+        vote={this.findVote(comment.user_upvote, comment.user_downvote)}
+      />
+    );
+  }
+
   render() {
     if (this.state.comments.length === 0) {
       return (
@@ -144,18 +157,9 @@ class RestaurantComments extends Component {
         <FlatList
           data={this.state.comments}
           keyExtractor={comment => comment.id}
-          scrollEnabled={this.props.screenProps.scrollEnabled}
-          renderItem={c => {
-            const comment = c.item;
-            return (
-              <CommentDetail
-                comment={comment}
-                vote={this.findVote(comment.user_upvote, comment.user_downvote)}
-              />
-            );
-          }}
+          renderItem={c => this.renderComment(c.item)}
           ListHeaderComponent={() => this.renderEditBox()}
-          scrollEnabled={this.props.screenProps.scrollEnabled}
+          scrollEnabled={false}
           showsVerticalScrollIndicator
           overScrollMode='never'
           bounces={false}
@@ -175,19 +179,6 @@ class RestaurantComments extends Component {
 }
 
 const styles = {
-  tabLabelStyle: {
-    fontSize: 14,
-    fontWeight: '900',
-    paddingVertical: 5
-  },
-  tabContainerStyle: {
-    flex: 1,
-    borderTopWidth: 1,
-    borderColor: 'rgba(0,0,0,0.08)',
-    shadowRadius: 2,
-    shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 2 }
-  },
   editBoxStyle: {
     padding: 20,
     backgroundColor: 'white',
@@ -207,8 +198,6 @@ const styles = {
 };
 
 const {
-  tabLabelStyle,
-  tabContainerStyle,
   editBoxStyle,
   editorStyle,
   doneButtonStyle,
