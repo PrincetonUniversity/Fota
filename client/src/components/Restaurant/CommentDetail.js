@@ -9,7 +9,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, LayoutAnimation, UIManager } from 'react-native';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/Entypo';
 import Ionicon from 'react-native-vector-icons/Ionicons';
@@ -46,13 +46,19 @@ class CommentDetail extends Component {
     }
     this.timer = null;
     this.oldValue = null;
+    this.oldHeight = 0;
+    this.heightHasBeenAdded = false;
+  }
+
+  componentWillMount() {
+    UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 
   sendUpdateRequest(type) {
     const patch = () => {
       const temp = this.oldValue;
       this.timer = null;
-      this.oldValue = null; 
+      this.oldValue = null;
       if (temp === type) return;
       request.patch(commentVote(this.state.id, type))
       .catch(e => request.showErrorAlert(e));
@@ -112,7 +118,38 @@ class CommentDetail extends Component {
       userLiked: false,
       userDisliked: userHasDisliked,
       userHasVoted: userVoted,
+      expanded: false
     });
+  }
+
+  renderMessage(comment) {
+    if (!this.state.expanded) {
+      return (
+        <Text
+          style={messageStyle}
+          numberOfLines={4}
+          suppressHighlighting
+          onPress={() => {
+            //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+            this.setState({ expanded: true });
+          }}
+        >
+          {comment.message}
+        </Text>
+      );
+    }
+    return (
+      <Text
+        style={messageStyle}
+        suppressHighlighting
+        onPress={() => {
+          //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          this.setState({ expanded: false });
+        }}
+      >
+        {comment.message}
+      </Text>
+    );
   }
 
   renderEditButton(render) {
@@ -135,7 +172,24 @@ class CommentDetail extends Component {
 
     return (
       <TouchableOpacity activeOpacity={1}>
-        <View style={containerStyle} onLayout={e => this.props.addHeight(e.nativeEvent.layout.height)}>
+        <View
+          style={containerStyle}
+          onLayout={e => {
+            console.log(e.nativeEvent.layout.height);
+            const currentHeight = e.nativeEvent.layout.height;
+            if (!this.heightHasBeenAdded) {
+              this.heightHasBeenAdded = true;
+              this.oldHeight = currentHeight;
+              this.props.addHeight(currentHeight);
+            } else {
+              if (this.oldHeight !== currentHeight) {
+                const diffHeight = currentHeight - this.oldHeight;
+                this.oldHeight = currentHeight;
+                this.props.changeHeight(diffHeight);
+              }
+            }
+          }}
+        >
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
             {comment.my_comment && <Text style={youTextStyle}>(You) </Text>}
             <Text style={headingTextStyle}>{comment.author}</Text>
@@ -145,7 +199,7 @@ class CommentDetail extends Component {
             <Text style={headingTextStyle}>{moment(comment.uploaded_at).fromNow()}</Text>
           </View>
 
-          <Text style={messageStyle}>{comment.message}</Text>
+          {this.renderMessage(comment)}
 
           <View style={bottomBarStyle}>
             {this.renderEditButton(comment.my_comment)}
@@ -182,11 +236,13 @@ class CommentDetail extends Component {
 const styles = {
   containerStyle: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 20,
     flexDirection: 'column',
     backgroundColor: 'white',
     borderColor: 'rgba(0, 0, 0, 0.06)',
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
+    zIndex: 5
   },
   youTextStyle: {
     fontSize: 14,
@@ -201,13 +257,16 @@ const styles = {
   messageStyle: {
     fontSize: 15,
     color: 'rgba(0, 0, 0, 0.8)',
-    fontWeight: '300',
+    fontWeight: '300'
   },
   bottomBarStyle: {
     flexDirection: 'row',
+    paddingBottom: 20,
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 5
+    backgroundColor: 'white',
+    marginTop: 5,
+    zIndex: 5
   },
   voteCountStyle: {
     fontSize: 16,

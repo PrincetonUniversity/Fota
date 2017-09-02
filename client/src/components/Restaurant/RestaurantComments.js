@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { 
-  View, Text, FlatList, TextInput,
-  ScrollView, TouchableOpacity, Platform
+import {
+  View, Text, FlatList, TextInput, ScrollView, TouchableOpacity,
+  Platform, LayoutAnimation, UIManager
 } from 'react-native';
 import CommentDetail from './CommentDetail';
 import { Spinner, NotFoundText } from '../common';
@@ -47,13 +47,20 @@ class RestaurantComments extends Component {
 
   componentWillMount() {
     this.setState({ comments: this.props.screenProps.comments });
+    UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 
   componentDidUpdate() {
+    let newHeight = 40 + this.state.height + this.totalCommentHeight;
+    if (this.state.editing) {
+      newHeight += 30;
+    }
+    if (this.props.screenProps.listHeight !== newHeight && this.hasSentHeight) {
+      this.hasSentHeight = false;
+    }
     if (!this.hasSentHeight && this.numCommentsAdded === this.state.comments.length && this.props.screenProps.focused === 1) {
       this.hasSentHeight = true;
-      //console.log(this.totalCommentHeight);
-      this.props.screenProps.setCommentsHeight(40 + Math.min(78, this.state.height) + this.totalCommentHeight);
+      this.props.screenProps.setCommentsHeight(newHeight);
     }
   }
 
@@ -66,6 +73,7 @@ class RestaurantComments extends Component {
   openEditorBox() {
     this.props.screenProps.scrollToEdit();
     if (!this.state.editing) {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       this.setState({ editing: true });
     }
   }
@@ -149,13 +157,21 @@ class RestaurantComments extends Component {
             placeholderTextColor='rgba(0,0,0,0.31)'
             multiline
             onFocus={this.openEditorBox.bind(this)}
-            onChange={event => {
+            onBlur={() => {
+              if (this.state.message.length === 0) {
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                this.setState({ editing: false });
+              }
+            }}
+            onContentSizeChange={event => {
               const height = event.nativeEvent.contentSize.height;
-              console.log(height);
+              //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
               this.setState({
-                message: event.nativeEvent.text,
                 height: Math.min(78, height)
               });
+            }}
+            onChangeText={message => {
+              this.setState({ message });
             }}
             underlineColorAndroid={'transparent'}
             autoCapitalize={'sentences'}
@@ -171,6 +187,14 @@ class RestaurantComments extends Component {
       <CommentDetail
         comment={comment}
         addHeight={height => { this.totalCommentHeight += height; this.numCommentsAdded += 1; }}
+        changeHeight={height => {
+          this.totalCommentHeight += height;
+          let newHeight = 40 + this.state.height + this.totalCommentHeight;
+          if (this.state.editing) {
+            newHeight += 30;
+          }
+          this.props.screenProps.setCommentsHeight(newHeight);
+        }}
         vote={this.findVote(comment.user_upvote, comment.user_downvote)}
       />
     );
@@ -229,6 +253,7 @@ const styles = {
   },
   doneButtonStyle: {
     width: 50,
+    height: 20,
     marginTop: 10
   }
 };
