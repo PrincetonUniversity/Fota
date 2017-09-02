@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import { 
+  View, Text, FlatList, TextInput,
+  ScrollView, TouchableOpacity, Platform
+} from 'react-native';
 import CommentDetail from './CommentDetail';
 import { Spinner, NotFoundText } from '../common';
 import request from '../../helpers/axioshelper';
@@ -221,7 +224,7 @@ const styles = {
     padding: 0,
     color: 'rgba(0,0,0,0.75)',
     fontSize: 15,
-    lineHeight: 26,
+    lineHeight: Platform.OS === 'android' ? 20 : 26,
     fontWeight: '400'
   },
   doneButtonStyle: {

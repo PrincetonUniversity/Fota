@@ -1006,7 +1006,6 @@ class RestaurantDetail extends Component {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     });
-    console.log('rerendering');
     return (
       <View style={pageStyle}>
         <StatusBar barStyle='light-content' />
