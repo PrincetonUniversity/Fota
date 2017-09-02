@@ -9,7 +9,7 @@
 
 import React, { Component } from 'react';
 import {
-  View, Text, ScrollView, Animated, Linking, LayoutAnimation, Dimensions, Platform,
+  View, Text, Animated, Linking, LayoutAnimation, Dimensions, Platform,
   TouchableWithoutFeedback, TouchableOpacity, UIManager, StatusBar
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -47,8 +47,6 @@ const DollarSign = () => (
 const PHOTO_HEIGHT = (Dimensions.get('window').width - 14) / 3;
 
 class RestaurantDetail extends Component {
-
-
   constructor(props) {
     super(props);
 
@@ -114,7 +112,6 @@ class RestaurantDetail extends Component {
     };
     this.timer = null;
     this.oldValue = null;
-
   }
 
   componentWillMount() {
@@ -145,10 +142,6 @@ class RestaurantDetail extends Component {
       this.getNavigation(nextProps.restaurant);
     }
   }
-
-  // componentWillUpdate() {
-  //   LayoutAnimation.easeInEaseOut();
-  // }
 
   setRatingHeight(event) {
     this.setState({
@@ -802,8 +795,6 @@ class RestaurantDetail extends Component {
     const commentLabel = (this.state.comments.length === 1) ? ' REVIEW' : ' REVIEWS';
     const currentScrollY = new Animated.Value(0);
     this.state.scrollY.addListener(e => currentScrollY.setValue(e.value));
-    //console.log(`onrender csy: ${currentScrollY._value}`);
-    //console.log(this.state.listHeight);
     return (
       <Animated.View style={[tabBarContainerStyle, { transform: [{ translateY: tabY }] }]}>
         <View style={tabBarStyle}>
@@ -979,23 +970,12 @@ class RestaurantDetail extends Component {
     if (this.state.showRecommend) {
       height += 50;
       headerScrollDistance += 50;
-      //newHeight += 50;
     }
     const pageY = this.state.scrollY.interpolate({
       inputRange: [0, headerScrollDistance],
       outputRange: [0, -headerScrollDistance / 3],
       extrapolate: 'clamp',
     });
-    // const pageHeight = this.state.scrollY.interpolate({
-    //   inputRange: [0, headerScrollDistance],
-    //   outputRange: [height, height + headerScrollDistance / 3],
-    //   extrapolate: 'clamp',
-    // });
-    // const amountToScalePage = (height + headerScrollDistance / 3) / height;
-    // const pageScaleY = this.state.scrollY.interpolate({
-    //   inputRange: [0, headerScrollDistance],
-    //   outputRange: [1, amountToScalePage]
-    // });
     const tabY = this.state.scrollY.interpolate({
       inputRange: [headerScrollDistance, 2 * headerScrollDistance],
       outputRange: [0, headerScrollDistance],
@@ -1034,50 +1014,43 @@ class RestaurantDetail extends Component {
             scrollEventThrottle={1}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps='always'
-            //overScrollMode='never'
             bounces={false}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
               { useNativeDriver: true },
-              //{ listener: this.currentScrollY.bind(this) }
             )}
           >
-            {/* <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}> */}
-              <Animated.View style={{ opacity }}>
-                {this.renderRating()}
+            <Animated.View style={{ opacity }}>
+              {this.renderRating()}
 
-                {this.renderInfo()}
-              </Animated.View>
+              {this.renderInfo()}
+            </Animated.View>
 
-              {this.renderTabBar(tabY, headerScrollDistance)}
+            {this.renderTabBar(tabY, headerScrollDistance)}
 
-              <Animated.View style={{ height: Math.max(this.state.listHeight, newHeight - 45) }}>
-                <RestaurantNavigator
-                  ref={nav => { this.navigator = nav; }}
-                  screenProps={{
-                    restaurant: this.state.restaurant,
-                    photos: this.state.photos,
-                    comments: this.state.comments,
-                    //scrollY: this.state.scrollY,
-                    //headerScrollDistance,
-                    listHeight: this.state.listHeight,
-                    focused: this.state.focusedTab,
-                    setCommentsHeight: cHeight => {
-                      this.commentsHeight = cHeight;
-                      this.setState({ listHeight: cHeight });
-                    },
-                    scrollToEdit: () => {
-                      this.scrollView._component.scrollTo({
-                        x: 0,
-                        y: headerScrollDistance,
-                        animated: true
-                      });
-                    },
-                    rerenderComments: comments => this.setState({ comments })
-                  }}
-                />
-              </Animated.View>
-            {/* </TouchableOpacity> */}
+            <Animated.View style={{ height: Math.max(this.state.listHeight, newHeight - 45) }}>
+              <RestaurantNavigator
+                ref={nav => { this.navigator = nav; }}
+                screenProps={{
+                  restaurant: this.state.restaurant,
+                  photos: this.state.photos,
+                  comments: this.state.comments,
+                  focused: this.state.focusedTab,
+                  setCommentsHeight: cHeight => {
+                    this.commentsHeight = cHeight;
+                    this.setState({ listHeight: cHeight });
+                  },
+                  scrollToEdit: () => {
+                    this.scrollView._component.scrollTo({
+                      x: 0,
+                      y: headerScrollDistance,
+                      animated: true
+                    });
+                  },
+                  rerenderComments: comments => this.setState({ comments })
+                }}
+              />
+            </Animated.View>
           </Animated.ScrollView>
         </Animated.View>
         {this.renderFooter(pageY)}

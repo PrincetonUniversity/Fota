@@ -122,7 +122,7 @@ class CameraPage extends Component {
           ref={(cam) => { this.camera = cam; }}
           style={cameraStyle}
           aspect={constants.Aspect.fill}
-          captureTarget={constants.CaptureTarget.disk}
+          captureTarget={constants.CaptureTarget.temp}
           onFocusChanged={() => {}}
           onZoomChanged={() => {}}
         />

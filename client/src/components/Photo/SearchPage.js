@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { Text, View, ScrollView, Platform } from 'react-native';
+import { Text, View, ScrollView, Platform, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { ListItem, Separator } from 'native-base';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
@@ -51,11 +51,13 @@ class SearchPage extends Component {
         this.timer = null;
         request.get(searchRequest(this.state.lat, this.state.lng, query))
         .then(response => {
-          this.setState({
-            searching: false,
-            restaurants: response.data.restaurants,
-            categories: response.data.categories
-          });
+          if (this.state.query) {
+            this.setState({
+              searching: false,
+              restaurants: response.data.restaurants,
+              categories: response.data.categories
+            });
+          }
         })
         .catch(e => request.showErrorAlert(e));
       };
@@ -65,18 +67,11 @@ class SearchPage extends Component {
   }
 
   renderFilterHeader() {
-    if (!this.state.searching) {
-      if (this.state.categories.length > 0) {
-        return (
-          <Separator bordered>
-            <Text style={styles.resultHeaderStyle}>Filters</Text>
-          </Separator>
-        );
-      }
-      if (this.state.restaurants.length === 0) {
-        return <NotFoundText height={150} text='No results found.' />;
-      }
-    }
+    return (
+      <Separator bordered>
+        <Text style={styles.resultHeaderStyle}>Filters</Text>
+      </Separator>
+    );
   }
 
   renderFilter(filterId, filterDisplay) {
@@ -88,35 +83,35 @@ class SearchPage extends Component {
   }
 
   renderFilters() {
-    if (!this.state.searching && this.state.categories.length > 0) {
-      return this.state.categories.map(category =>
-        this.renderFilter(category.id, category.category)
-      );
+    if (!this.state.searching) {
+      if (this.state.categories.length > 0) {
+        return (
+          <View>
+            <FlatList
+              data={this.state.categories}
+              keyExtractor={(filter, index) => index}
+              renderItem={filter => this.renderFilter(filter.item.id, filter.item.category)}
+              ListHeaderComponent={() => this.renderFilterHeader()}
+              keyboardShouldPersistTaps={'handled'}
+              bounces={false}
+              scrollEnabled={false}
+              removeClippedSubviews={false}
+            />
+          </View>
+        );
+      }
+      if (this.state.restaurants.length === 0) {
+        return <NotFoundText height={150} text='No results found.' />;
+      }
     }
-    // return (
-    //   <View>
-    //     <FlatList
-    //       data={filters}
-    //       keyExtractor={(filter, index) => index}
-    //       renderItem={filter => this.renderFilter(filter.item)}
-    //       ListHeaderComponent={() => this.renderFilterHeader()}
-    //       keyboardShouldPersistTaps={'handled'}
-    //       bounces={false}
-    //       removeClippedSubviews={false}
-    //       //extraData={[this.state.terms, this.state.categories]}
-    //     />
-    //   </View>
-    // );
   }
 
   renderRestaurantHeader() {
-    if (!this.state.searching && this.state.restaurants.length > 0) {
-      return (
-        <Separator bordered>
-          <Text style={styles.resultHeaderStyle}>Restaurants</Text>
-        </Separator>
-      );
-    }
+    return (
+      <Separator bordered>
+        <Text style={styles.resultHeaderStyle}>Restaurants</Text>
+      </Separator>
+    );
   }
 
   renderRestaurant(restaurant) {
@@ -131,21 +126,19 @@ class SearchPage extends Component {
 
   renderRestaurants() {
     if (!this.state.searching && this.state.restaurants.length > 0) {
-      return this.state.restaurants.map(restaurant =>
-        this.renderRestaurant(restaurant)
+      return (
+        <FlatList
+          data={this.state.restaurants}
+          keyExtractor={(restaurant, index) => index}
+          renderItem={restaurant => this.renderRestaurant(restaurant.item)}
+          ListHeaderComponent={() => this.renderRestaurantHeader()}
+          keyboardShouldPersistTaps={'handled'}
+          bounces={false}
+          scrollEnabled={false}
+          removeClippedSubviews={false}
+        />
       );
     }
-    // return (
-    //   <FlatList
-    //     data={this.state.restaurants}
-    //     keyExtractor={(restaurant, index) => index}
-    //     renderItem={restaurant => this.renderRestaurant(restaurant.item)}
-    //     ListHeaderComponent={() => this.renderRestaurantHeader()}
-    //     keyboardShouldPersistTaps={'handled'}
-    //     bounces={false}
-    //     removeClippedSubviews={false}
-    //   />
-    // );
   }
 
   render() {
@@ -173,13 +166,9 @@ class SearchPage extends Component {
           </View>
         </View>
         <ScrollView keyboardShouldPersistTaps='handled' keyboardDismissMode='on-drag'>
-          {this.renderFilterHeader()}
           {this.renderFilters()}
-          {this.renderRestaurantHeader()}
           {this.renderRestaurants()}
         </ScrollView>
-        {/* {this.renderFilters()}
-        {this.renderRestaurants()} */}
       </View>
     );
   }

@@ -90,11 +90,7 @@ exports.delete = (url, data = null) => (
 
 /*exports.cancel = () => {
   if (cancel !== undefined) {
-    console.log('canceling...');
-    console.log(CancelToken);
     cancel();
-  } else {
-    console.log(cancel);
   }
 };*/
 
