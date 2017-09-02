@@ -1006,6 +1006,7 @@ class RestaurantDetail extends Component {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     });
+    console.log('rerendering');
     return (
       <View style={pageStyle}>
         <StatusBar barStyle='light-content' />
@@ -1033,7 +1034,7 @@ class RestaurantDetail extends Component {
             ref={scroll => { this.scrollView = scroll; }}
             scrollEventThrottle={1}
             showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps='handled'
+            keyboardShouldPersistTaps='always'
             //overScrollMode='never'
             bounces={false}
             onScroll={Animated.event(
@@ -1058,8 +1059,8 @@ class RestaurantDetail extends Component {
                     restaurant: this.state.restaurant,
                     photos: this.state.photos,
                     comments: this.state.comments,
-                    scrollY: this.state.scrollY,
-                    headerScrollDistance,
+                    //scrollY: this.state.scrollY,
+                    //headerScrollDistance,
                     focused: this.state.focusedTab,
                     setCommentsHeight: cHeight => {
                       this.commentsHeight = cHeight;

@@ -3,7 +3,7 @@ import { View, FlatList, Text } from 'react-native';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import moment from 'moment';
-import { NotFoundText } from '../common';
+import { NotFoundText, Spinner } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 import icoMoonConfig from '../../selection.json';
 
@@ -52,6 +52,7 @@ class SubmittedComments extends Component {
   }
 
   render() {
+    if (this.props.screenProps.loading) return <Spinner size='large' />;    
     if (this.props.screenProps.comments.length === 0) {
       return <NotFoundText text='Write a review to see it here!' />;
     }

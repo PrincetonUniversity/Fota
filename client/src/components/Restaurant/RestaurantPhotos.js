@@ -36,69 +36,15 @@ class RestaurantPhotos extends Component {
 
   constructor(props) {
     super(props);
-
-    //const scrollY = new Animated.Value(0);
-    // const panResponder = PanResponder.create({
-    //   onStartShouldSetPanResponder: () => true,
-    //   onPanResponderMove: (event, gesture) => {
-    //     console.log(`Move OffsetY: ${this.state.offsetY._value}`);
-    //     // if (this.state.offsetY._value < 5 && gesture.dy > 0) {
-    //     //   console.log(`GestureY: ${gesture.dy}`);
-    //     //   this.props.screenProps.startScrollUp(gesture.dy);
-    //     // }
-    //   },
-    //   onPanResponderRelease: (event, gesture) => {
-    //     console.log(`release OffsetY: ${this.state.offsetY._value}`);
-    //   },
-    //   onPanResponderReject: (e, gestureState) => {
-    //     console.log(`reject OffsetY: ${this.state.offsetY._value}`);
-    //   },
-    //   onPanResponderGrant: (e, gestureState) => {
-    //     console.log(`grant OffsetY: ${this.state.offsetY._value}`);
-    //   },
-    //   onPanResponderStart: (e, gestureState) => {
-    //     console.log(`start OffsetY: ${this.state.offsetY._value}`);
-    //   },
-    //   onPanResponderEnd: (e, gestureState) => {
-    //     console.log(`end OffsetY: ${this.state.offsetY._value}`);
-    //   },
-    //   onPanResponderTerminate: (event, gesture) => {
-    //    console.log(`terminating OffsetY: ${this.state.offsetY._value}`);
-    //   },
-    //   onPanResponderTerminationRequest: (event, gesture) => {
-    //     console.log(`terminationrequest OffsetY: ${this.state.offsetY._value}`);
-    //     //this.resetPosition();
-    //   }
-  // });
-
     this.state = {
       photos: [],
       selectedPhoto: null,
       modalVisible: false,
-      //offsetY: new Animated.Value(0),
-      //atTop: true,
-      //panResponder,
-      //scrollY
     };
   }
 
   componentWillMount() {
     this.setState({ photos: this.props.screenProps.photos });
-    // this.props.screenProps.scrollY.addListener((e) => {
-    //   this.setState({
-    //     offsetY: e.value
-    //   });
-    // });
-  }
-
-  componentDidMount() {
-    // console.log(this.props.screenProps.scrollY);
-    // this.props.screenProps.scrollY.addListener((e) => {
-    //   this.setState({
-    //     scrollY: e
-    //   });
-    // });
-    //this.props.screenProps.scrollY.addListener(this.state.scrollY.bind(this));
   }
 
   setSelectedPhoto(index) {
@@ -108,15 +54,6 @@ class RestaurantPhotos extends Component {
   resetSelectedPhoto() {
     this.setState({ selectedPhoto: null, modalVisible: false });
   }
-
-  // checkScroll() {
-  //   //console.log(this.state.scrollY);
-  //   console.log(this.props.screenProps.headerScrollDistance);
-  //   if (this.state.offsetY < this.props.screenProps.headerScrollDistance) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
 
   renderPhoto(photo, index) {
     return (
@@ -136,7 +73,11 @@ class RestaurantPhotos extends Component {
 
   render() {
     if (this.state.photos.length === 0) {
-      return <NotFoundText height={150} text='Be the first to upload a photo here!' />;
+      return (
+        <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>        
+          <NotFoundText height={150} text='Be the first to upload a photo here!' />
+        </TouchableOpacity>
+      );
     }
     const photoLinks = this.state.photos.map(photo => photo.url);
     return (
@@ -158,14 +99,10 @@ class RestaurantPhotos extends Component {
         </Modal>
 
         <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
-          <View
-            //{...this.state.panResponder.panHandlers}
-            style={{ flex: 1 }}
-          >
+          <View style={{ flex: 1 }}>
             <FlatList
               data={this.state.photos}
               keyExtractor={(photo, index) => index}
-              // {...this.state.panResponder.panHandlers}
               renderItem={(photo) => this.renderPhoto(photo.item, photo.index)}
               showsVerticalScrollIndicator={false}
               scrollEnabled={false}

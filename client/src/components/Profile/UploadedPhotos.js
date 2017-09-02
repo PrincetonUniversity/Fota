@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
-import { NotFoundText } from '../common';
+import { NotFoundText, Spinner } from '../common';
 import PhotoList from '../Photo/PhotoList';
 import icoMoonConfig from '../../selection.json';
 
@@ -24,6 +24,7 @@ class UploadedPhotos extends Component {
   };
 
   render() {
+    if (this.props.screenProps.loading) return <Spinner size='large' />;    
     if (this.props.screenProps.uploaded.length === 0) {
       return <NotFoundText text='Take your first photo to see it here!' />;
     }

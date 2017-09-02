@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { Banner, FilterDisplay, NotFoundText } from '../common';
+import { Banner, FilterDisplay, NotFoundText, Spinner } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 
 const itemWidth = Dimensions.get('window').width / 2 - 40;
@@ -74,6 +74,7 @@ class BookmarkedRestaurants extends Component {
   }
 
   render() {
+    if (this.props.screenProps.loading) return <Spinner size='large' />;    
     if (this.props.screenProps.bookmarked.length === 0) {
       return <NotFoundText text='See all your bookmarked restaurants here.' />;
     }

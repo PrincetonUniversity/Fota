@@ -35,6 +35,11 @@ class ProfilePage extends Component {
   }
 
   componentWillMount() {
+    this.reloadProfile();
+  }
+
+  reloadProfile() {
+    this.setState({ loading: true });
     request.get(profileRequest()).then(response => {
       this.setState({
         bookmarked: response.data.bookmarks,
@@ -64,10 +69,16 @@ class ProfilePage extends Component {
   }*/
 
   render() {
-    let name = this.props.screenProps.user.displayName;
-    if (!name) {
-      name = this.props.screenProps.user.email;
+    const name = this.props.screenProps.user.displayName || this.props.screenProps.user.email;
+    let uploadtext = '--';
+    let upvotetext = '--';
+    let commenttext = '--';
+    if (!this.state.loading) {
+      uploadtext = this.state.uploaded.length.toString();
+      upvotetext = this.state.upvoted.length.toString();
+      commenttext = this.state.comments.length.toString();
     }
+
     return (
       <View style={{ backgroundColor: '#fff', flex: 1 }}>
         <View style={headerStyle}>
@@ -101,25 +112,19 @@ class ProfilePage extends Component {
           <View style={statContainerStyle}>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
               <View style={statSectionStyle}>
-                <View style={{ height: 25 }}>
-                  <Text style={[statNumberStyle, { marginRight: 1 }]}>{this.state.uploaded.length.toString()}</Text>
-                </View>
-                <Text style={statLabelStyle}>posts</Text>
+                <Text style={[statNumberStyle, { marginRight: 1 }]}>{upvotetext}</Text>
+                <Text style={statLabelStyle}>upvotes</Text>
               </View>
             </View>
 
             <View style={statSectionStyle}>
-              <View style={{ height: 25 }}>
-                <Text style={statNumberStyle}>{this.state.upvoted.length.toString()}</Text>
-              </View>
-              <Text style={statLabelStyle}>total upvotes</Text>
+              <Text style={statNumberStyle}>{uploadtext}</Text>
+              <Text style={statLabelStyle}>posts</Text>
             </View>
 
             <View style={{ flex: 1, alignItems: 'center' }}>
               <View style={statSectionStyle}>
-                <View style={{ height: 25 }}>
-                  <Text style={[statNumberStyle, { marginRight: 3 }]}>{this.state.comments.length.toString()}</Text>
-                </View>
+                <Text style={[statNumberStyle, { marginRight: 3 }]}>{commenttext}</Text>
                 <Text style={statLabelStyle}>reviews</Text>
               </View>
             </View>
@@ -132,6 +137,7 @@ class ProfilePage extends Component {
             uploaded: this.state.uploaded,
             upvoted: this.state.upvoted,
             comments: this.state.comments,
+            loading: this.state.loading
           }}
         />
       </View>
@@ -140,14 +146,14 @@ class ProfilePage extends Component {
 }
 
 const ProfileNavigator = TabNavigator({
+  Upvotes: {
+    screen: UpvotedPhotos
+  },
   Bookmarks: {
     screen: BookmarkedRestaurants
   },
   Uploads: {
     screen: UploadedPhotos
-  },
-  Upvotes: {
-    screen: UpvotedPhotos
   },
   Comments: {
     screen: SubmittedComments
@@ -222,7 +228,8 @@ const styles = {
     fontSize: 20,
     fontWeight: '900',
     color: 'rgba(0, 0, 0, 0.75)',
-    includeFontPadding: false
+    includeFontPadding: false,
+    height: 25
   },
   statLabelStyle: {
     fontSize: 13,
