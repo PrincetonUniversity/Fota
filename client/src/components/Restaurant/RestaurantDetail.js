@@ -828,7 +828,7 @@ class RestaurantDetail extends Component {
                 }
                 LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                 this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Photos' });
-                this.setState({ focusedTab: 0, listHeight: this.photosHeight });
+                this.setState({ focusedTab: 0, /*listHeight: this.photosHeight*/ });
               } else {
                 if (currentScrollY._value > headerScrollDistance) {
                   this.scrollView._component.scrollTo({
@@ -871,7 +871,7 @@ class RestaurantDetail extends Component {
                 }
                 LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                 this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Comments' });
-                this.setState({ focusedTab: 1, listHeight: this.commentsHeight });
+                this.setState({ focusedTab: 1, /*listHeight: this.commentsHeight*/ });
               } else {
                 if (currentScrollY._value > headerScrollDistance) {
                   this.scrollView._component.scrollTo({

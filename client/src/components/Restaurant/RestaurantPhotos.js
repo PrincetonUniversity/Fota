@@ -74,7 +74,7 @@ class RestaurantPhotos extends Component {
   render() {
     if (this.state.photos.length === 0) {
       return (
-        <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>        
+        <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
           <NotFoundText height={150} text='Be the first to upload a photo here!' />
         </TouchableOpacity>
       );

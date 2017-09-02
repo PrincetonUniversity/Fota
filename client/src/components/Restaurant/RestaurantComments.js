@@ -56,9 +56,14 @@ class RestaurantComments extends Component {
       newHeight += 30;
     }
     if (this.props.screenProps.listHeight !== newHeight && this.hasSentHeight) {
+      console.log(`nh: ${newHeight}`);
+      console.log(`lh: ${this.props.screenProps.listHeight}`);
       this.hasSentHeight = false;
     }
     if (!this.hasSentHeight && this.numCommentsAdded === this.state.comments.length && this.props.screenProps.focused === 1) {
+      console.log(`hsh: ${this.hasSentHeight}`);
+      console.log(`nca: ${this.numCommentsAdded}`);
+      console.log(`len: ${this.state.comments.length}`);
       this.hasSentHeight = true;
       this.props.screenProps.setCommentsHeight(newHeight);
     }
