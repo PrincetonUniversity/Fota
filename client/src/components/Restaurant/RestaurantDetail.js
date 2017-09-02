@@ -1006,7 +1006,6 @@ class RestaurantDetail extends Component {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     });
-    console.log('rerendering');
     return (
       <View style={pageStyle}>
         <StatusBar barStyle='light-content' />
@@ -1061,6 +1060,7 @@ class RestaurantDetail extends Component {
                     comments: this.state.comments,
                     //scrollY: this.state.scrollY,
                     //headerScrollDistance,
+                    listHeight: this.state.listHeight,
                     focused: this.state.focusedTab,
                     setCommentsHeight: cHeight => {
                       this.commentsHeight = cHeight;

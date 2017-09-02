@@ -200,6 +200,7 @@ const PictureNavigator = TabNavigator({
     style: {
       elevation: 0,
       backgroundColor: 'white',
+      overflow: 'hidden',
       height: tabStyle.height + 5
     }
   }
