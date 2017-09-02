@@ -17,7 +17,7 @@ class Banner extends Component {
       );
     }
     return (
-      <View style={containerStyle}>
+      <View style={{ backgroundColor: '#7f87b2', ...containerStyle }}>
         {children}
       </View>
     );

@@ -37,7 +37,7 @@ class ProfileHelper extends Component {
           onPress={() => {
             if (screenProps.user && !screenProps.user.isAnonymous) {
               if (!focused) {
-                navigation.navigate('Account');
+                navigation.navigate('Account', { reload: true });
               }
             } else {
               navigation.navigate('Login', { onLoginFinished: 'openAccount' });

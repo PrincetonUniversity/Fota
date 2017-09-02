@@ -52,7 +52,7 @@ class Base extends Component {
           console.log(e);
         });
       } else {
-        AsyncStorage.setItem('JWT', null);        
+        AsyncStorage.setItem('JWT', '');        
         this.props.logInOrOut(user);
         this.setState({ loginFinished: true });
       }
@@ -109,7 +109,7 @@ const MainNavigator = TabNavigator({
   tabBarPosition: 'bottom',
   swipeEnabled: false,
   animationEnabled: false,
-  lazy: true,
+  //lazy: true,
   initialRouteName: 'Home',
   tabBarOptions: {
     showLabel: false,

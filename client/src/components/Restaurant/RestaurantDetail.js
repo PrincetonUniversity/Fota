@@ -713,7 +713,7 @@ class RestaurantDetail extends Component {
     const commentLabel = (this.state.comments.length === 1) ? ' REVIEW' : ' REVIEWS';
     const currentScrollY = new Animated.Value(0);
     this.state.scrollY.addListener(e => currentScrollY.setValue(e.value));
-    console.log(`CurrentScrollY: ${currentScrollY._value}`);
+    //console.log(`CurrentScrollY: ${currentScrollY._value}`);
     //console.log(this.state.listHeight);
     return (
       <Animated.View style={[tabBarContainerStyle, { transform: [{ translateY: tabY }] }]}>
@@ -861,6 +861,7 @@ class RestaurantDetail extends Component {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     });
+    console.log('rerendering');
     return (
       <View style={pageStyle}>
         <StatusBar barStyle='light-content' />
@@ -888,7 +889,7 @@ class RestaurantDetail extends Component {
             ref={scroll => { this.scrollView = scroll; }}
             scrollEventThrottle={1}
             showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps='handled'
+            keyboardShouldPersistTaps='always'
             //overScrollMode='never'
             bounces={false}
             onScroll={Animated.event(
@@ -912,8 +913,8 @@ class RestaurantDetail extends Component {
                     restaurant: this.state.restaurant,
                     photos: this.state.photos,
                     comments: this.state.comments,
-                    scrollY: this.state.scrollY,
-                    headerScrollDistance,
+                    //scrollY: this.state.scrollY,
+                    //headerScrollDistance,
                     focused: this.state.focusedTab,
                     setCommentsHeight: cHeight => {
                       this.commentsHeight = cHeight;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, FlatList, Dimensions, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import RestaurantModal from '../Restaurant/RestaurantModal';
-import { NotFoundText } from '../common';
+import { NotFoundText, Spinner } from '../common';
 
 const photoSize = (Dimensions.get('window').width - 56) / 3;
 
@@ -35,6 +35,7 @@ class UpvotedPhotos extends Component {
   }
 
   render() {
+    if (this.props.screenProps.loading) return <Spinner size='large' />;
     if (this.props.screenProps.upvoted.length === 0) {
       return <NotFoundText text='See all your upvoted photos here.' />;
     }
