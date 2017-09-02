@@ -193,7 +193,7 @@ const HomeNavigator = TabNavigator({
     indicatorStyle: {
       height: 4,
       backgroundColor: '#ff9700',
-      justifyContent: 'center',
+      justifyContent: 'center'
     },
     tabStyle: {
       width: 120,
@@ -203,7 +203,7 @@ const HomeNavigator = TabNavigator({
       backgroundColor: 'white',
       marginHorizontal: Dimensions.get('window').width / 2 - 120,
       overflow: 'hidden',
-      elevation: 0,
+      elevation: 0
     }
   }
 });

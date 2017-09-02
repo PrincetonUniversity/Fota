@@ -16,7 +16,7 @@ class CameraButton extends Component {
               if (!focused) {
                 screenProps.showCamera(true);
                 navigation.navigate('Photo');
-              } 
+              }
             }}
             style={{ color, ...tabStyle }}
           >
@@ -43,6 +43,7 @@ const styles = {
   containerStyle: {
     flex: 1,
     backgroundColor: 'white',
+    borderWidth: 0,
     justifyContent: 'center',
     alignItems: 'center'
   },

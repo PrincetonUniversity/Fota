@@ -22,12 +22,13 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import { phonecall } from 'react-native-communications';
 import LinearGradient from 'react-native-linear-gradient';
-import { FilterDisplay, Banner } from '../common';
+import { Banner } from '../common';
 import request from '../../helpers/axioshelper';
 import {
   restBookmarkRequest, directionsRequest,
   directionsURL, restRecommendRequest
 } from '../../helpers/URL';
+import FilterBar from './FilterBar';
 import RestaurantPhotos from './RestaurantPhotos';
 import RestaurantComments from './RestaurantComments';
 import { pcoords } from '../../Base';
@@ -92,14 +93,16 @@ class RestaurantDetail extends Component {
       distance: '',
       driving: false,
       walking: false,
-      navTime: '',
+      driveTime: '',
+      walkTime: '',
+      price: false,
       modalVisible: false,
       loading: true,
       showRecommend: false,
+      showTime: false,
       ratingHeight: 0,
       infoHeight: 0,
       scrollY: new Animated.Value(0),
-      // panResponder,
       headerScrollDistance: 0,
       userLiked: false,
       userDisliked: false,
@@ -111,6 +114,7 @@ class RestaurantDetail extends Component {
     };
     this.timer = null;
     this.oldValue = null;
+
   }
 
   componentWillMount() {
@@ -124,6 +128,7 @@ class RestaurantDetail extends Component {
       this.commentsHeight = 0;
       this.currentPhotoScrollPosition = 0;
       this.currentCommentScrollPosition = 0;
+      this.currentScrollY = new Animated.Value(0);
       this.setState({
         restaurant: r,
         photos: r.photos,
@@ -175,53 +180,77 @@ class RestaurantDetail extends Component {
   getHours(hours) {
     const today = new Date();
     const dayNumber = (today.getDay() + 6) % 7;
-    const hoursToday = hours.open[dayNumber];
-    const start = hoursToday.start;
-    const end = hoursToday.end;
-    const overnight = hoursToday.is_overnight;
-    return { start, end, overnight };
+    const currentTime = today.getHours() * 100 + today.getMinutes();
+    const filteredHours = hours.open.filter(record => {
+      let endTime = parseInt(record.end);
+      if (record.is_overnight) {
+        endTime += 2400;
+      }
+      return dayNumber === record.day && endTime > currentTime;
+    }
+
+    );
+    if (filteredHours.length === 0) {
+      return { start: 'closed' };
+    }
+    return {
+      start: filteredHours[0].start,
+      end: filteredHours[0].end,
+      overnight: filteredHours[0].is_overnight
+    };
   }
 
   sendNavigationRequest(address, lat, lng) {
     request.get(directionsRequest(lat, lng, address, 'walking'))
     .then(response => {
-      const walkDirections = response.data;
-      const walkTime = walkDirections.routes[0].legs[0].duration.text;
-      const distance = walkDirections.routes[0].legs[0].distance.text;
-      if (!walkTime.includes('hour') && parseInt(walkTime) <= 15) {
-        this.setState({
-          navLoading: false,
-          driving: false,
-          walking: true,
-          navTime: walkTime,
-          distance
-        });
-      } else {
-        request.get(directionsRequest(lat, lng, address, 'driving'))
-        .then(response2 => {
-          const driveDirections = response2.data;
-          const driveTime = driveDirections.routes[0].legs[0].duration.text;
+      request.get(directionsRequest(lat, lng, address, 'driving'))
+      .then(response2 => {
+        const walkDirections = response.data;
+        const driveDirections = response2.data;
+        const walkTime = walkDirections.routes[0].legs[0].duration.text.replace(/s$/, '');
+        const driveTime = driveDirections.routes[0].legs[0].duration.text.replace(/s$/, '');
+        const distance = walkDirections.routes[0].legs[0].distance.text;
+        if (!walkTime.includes('hour') && parseInt(walkTime) <= 15) {
+          this.setState({
+            navLoading: false,
+            driving: false,
+            walking: true,
+            walkTime,
+            driveTime,
+            distance
+          });
+        } else {
           this.setState({
             navLoading: false,
             driving: true,
             walking: false,
-            navTime: driveTime,
+            walkTime,
+            driveTime,
             distance
           });
-        })
-        .catch(e => request.showErrorAlert(e));
-      }
+        }
+      })
+      .catch(e => request.showErrorAlert(e));
     })
     .catch(e => request.showErrorAlert(e));
   }
 
   timeUntilCloseLabel(hoursArray) {
-    if (!hoursArray) return '--';
+    if (!hoursArray) {
+      return ({
+        openClose: '--',
+        untilTime: null
+      });
+    }
+
     const hours = hoursArray[0];
     const trueHours = this.getHours(hours);
     if (!trueHours) return '';
     if (trueHours.start === 'closed') {
-      return 'Closed for today';
+      return ({
+        openClose: 'Closed',
+        untilTime: 'For today'
+      });
     }
 
     const openTime = trueHours.start;
@@ -229,10 +258,16 @@ class RestaurantDetail extends Component {
 
     if (!this.isOpen(hours)) {
       const time = this.timeString(openTime);
-      return `Closed until ${time}`;
+      return ({
+        openClose: 'Closed',
+        untilTime: `Until ${time}`
+      });
     }
     const time = this.timeString(closeTime);
-    return `Open until ${time}`;
+    return ({
+      openClose: 'Open',
+      untilTime: `Until ${time}`
+    });
   }
 
   isOpen(hours) {
@@ -328,30 +363,6 @@ class RestaurantDetail extends Component {
     });
   }
 
-  renderFilters() {
-    return this.state.restaurant.categories.map((filterName, index) =>
-      <FilterDisplay
-        key={index}
-        text={filterName.title}
-        color='white'
-        size={14}
-      />
-    );
-  }
-
-  // checkScroll(headerScrollDistance) {
-  //   console.log(this.state.scrollY);
-  //   console.log(headerScrollDistance);
-  //   if (headerScrollDistance === 0 || this.state.scrollY._value < headerScrollDistance) {
-  //     //this.setState({ scrollEnabled: true })
-  //     console.log(this.state.scrollY._value);
-  //     return true;
-  //   }
-  //   console.log(this.state.scrollY._value);
-  //   this.setState({ scrollEnabled: false });
-  //   return false;
-  // }
-
   renderHeader(headerScrollDistance, pageY) {
     const restaurant = this.state.restaurant;
     const nameTranslateY = this.state.scrollY.interpolate({
@@ -393,13 +404,7 @@ class RestaurantDetail extends Component {
               </View>
 
               <Animated.View style={[filterContainerStyle, { opacity }]}>
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  bounces={false}
-                >
-                  {this.renderFilters()}
-                </ScrollView>
+                <FilterBar filters={this.state.restaurant.categories} />
               </Animated.View>
             </Animated.View>
           </LinearGradient>
@@ -533,34 +538,112 @@ class RestaurantDetail extends Component {
     );
   }
 
-  // Navigation section of the horizontal info bar
-  renderNav() {
-    if (this.state.walking) {
+  renderTime() {
+    const timeInfo = this.timeUntilCloseLabel(this.state.restaurant.hours);
+    if (timeInfo.openClose === '--') {
       return (
         <View style={infoObjectStyle}>
-          <Icon
-            name='walk'
-            size={27}
-            style={{ paddingTop: 3, height: 30 }}
-            color={'rgba(0,0,0,0.63)'}
-          />
-          <Text style={infoIconStyle}>
-            {this.state.navTime.replace(/s$/, '')}
-          </Text>
-        </View>
-      );
-    } else if (this.state.driving) {
-      return (
-        <View style={infoObjectStyle}>
-          <MaterialCommunityIcon
-            name='car'
-            size={30}
+          <MaterialIcon
+            name='access-time'
+            size={31}
             style={{ height: 30 }}
             color={'rgba(0,0,0,0.63)'}
           />
           <Text style={infoIconStyle}>
-            {this.state.navTime.replace(/s$/, '')}
+            {timeInfo.openClose}
           </Text>
+        </View>
+      );
+    } else if (this.state.showTime) {
+      return (
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            activeOpacity={0.75}
+            style={{ marginHorizontal: 7 }}
+            onPress={() => this.setState({ showTime: false })}
+          >
+            <View style={infoObjectStyle}>
+              <MaterialIcon
+                name='access-time'
+                size={31}
+                style={{ height: 30 }}
+                color={'rgba(0,0,0,0.63)'}
+              />
+              <Text style={infoIconStyle}>
+                {timeInfo.untilTime}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    return (
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity
+          activeOpacity={0.75}
+          style={{ marginHorizontal: 7 }}
+          onPress={() => this.setState({ showTime: true })}
+        >
+          <View style={infoObjectStyle}>
+            <MaterialIcon
+              name='access-time'
+              size={31}
+              style={{ height: 30 }}
+              color={'rgba(0,0,0,0.63)'}
+            />
+            <Text style={infoIconStyle}>
+              {timeInfo.openClose}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  // Navigation section of the horizontal info bar
+  renderNav() {
+    if (this.state.walking) {
+      return (
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            activeOpacity={0.75}
+            style={{ marginHorizontal: 7 }}
+            onPress={() => this.setState({ walking: false, driving: true })}
+          >
+            <View style={infoObjectStyle}>
+              <Icon
+                name='walk'
+                size={27}
+                style={{ paddingTop: 3, paddingLeft: 7, height: 30 }}
+                color={'rgba(0,0,0,0.63)'}
+              />
+              <Text style={infoIconStyle}>
+                {this.state.walkTime}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (this.state.driving) {
+      return (
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            activeOpacity={0.75}
+            style={{ marginHorizontal: 7 }}
+            onPress={() => this.setState({ walking: true, driving: false })}
+          >
+            <View style={infoObjectStyle}>
+              <MaterialCommunityIcon
+                name='car'
+                size={30}
+                style={{ height: 30 }}
+                color={'rgba(0,0,0,0.63)'}
+              />
+              <Text style={infoIconStyle}>
+                {this.state.driveTime}
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
       );
     }
@@ -570,52 +653,119 @@ class RestaurantDetail extends Component {
   renderPrice() {
     if (this.state.restaurant.price == null) {
       return (
-        <View style={infoObjectStyle}>
-          <DollarSign />
-          <Text style={infoIconStyle}>--</Text>
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            activeOpacity={0.75}
+            style={{ marginHorizontal: 7 }}
+            onPress={() => this.setState({ price: !this.state.price })}
+          >
+            <View style={infoObjectStyle}>
+              <DollarSign />
+              {this.renderPriceText()}
+            </View>
+          </TouchableOpacity>
         </View>
       );
     }
     if (this.state.restaurant.price.length === 1) {
       return (
-        <View style={infoObjectStyle}>
-          <DollarSign />
-          <Text style={infoIconStyle}>Cheap</Text>
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            activeOpacity={0.75}
+            style={{ marginHorizontal: 7 }}
+            onPress={() => this.setState({ price: !this.state.price })}
+          >
+            <View style={infoObjectStyle}>
+              <DollarSign />
+              {this.renderPriceText()}
+            </View>
+          </TouchableOpacity>
         </View>
       );
     } else if (this.state.restaurant.price.length === 2) {
       return (
-        <View style={infoObjectStyle}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <DollarSign />
-            <DollarSign />
-          </View>
-          <Text style={infoIconStyle}>Moderate</Text>
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            activeOpacity={0.75}
+            style={{ marginHorizontal: 7 }}
+            onPress={() => this.setState({ price: !this.state.price })}
+          >
+            <View style={infoObjectStyle}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <DollarSign />
+                <DollarSign />
+              </View>
+              {this.renderPriceText()}
+            </View>
+          </TouchableOpacity>
         </View>
       );
     } else if (this.state.restaurant.price.length === 3) {
       return (
-        <View style={infoObjectStyle}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <DollarSign />
-            <DollarSign />
-            <DollarSign />
-          </View>
-          <Text style={infoIconStyle}>Expensive</Text>
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            activeOpacity={0.75}
+            style={{ marginHorizontal: 7 }}
+            onPress={() => this.setState({ price: !this.state.price })}
+          >
+            <View style={infoObjectStyle}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <DollarSign />
+                <DollarSign />
+                <DollarSign />
+              </View>
+              {this.renderPriceText()}
+            </View>
+          </TouchableOpacity>
         </View>
       );
     } else if (this.state.restaurant.price.length === 4) {
       return (
-        <View style={infoObjectStyle}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <DollarSign />
-            <DollarSign />
-            <DollarSign />
-            <DollarSign />
-          </View>
-          <Text style={infoIconStyle}>Very Expensive</Text>
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            activeOpacity={0.75}
+            style={{ marginHorizontal: 7 }}
+            onPress={() => this.setState({ price: !this.state.price })}
+          >
+            <View style={infoObjectStyle}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <DollarSign />
+                <DollarSign />
+                <DollarSign />
+                <DollarSign />
+              </View>
+              {this.renderPriceText()}
+            </View>
+          </TouchableOpacity>
         </View>
       );
+    }
+  }
+
+  renderPriceText() {
+    if (this.state.restaurant.price == null) {
+      return (
+        <Text style={infoIconStyle}>--</Text>
+      );
+    } else if (!this.state.price) {
+      if (this.state.restaurant.price.length === 1) {
+        return <Text style={infoIconStyle}>Cheap</Text>;
+      } else if (this.state.restaurant.price.length === 2) {
+        return <Text style={infoIconStyle}>Moderate</Text>;
+      } else if (this.state.restaurant.price.length === 3) {
+        return <Text style={infoIconStyle}>Expensive</Text>;
+      } else if (this.state.restaurant.price.length === 4) {
+        return <Text style={infoIconStyle}>Very Expensive</Text>;
+      }
+    }
+    if (this.state.restaurant.price.length === 1) {
+      return <Text style={infoIconStyle}>Under $10</Text>;
+    } else if (this.state.restaurant.price.length === 2) {
+      return <Text style={infoIconStyle}>$11 to $30</Text>;
+    } else if (this.state.restaurant.price.length === 3) {
+      return <Text style={infoIconStyle}>$31 to $60</Text>;
+    } else if (this.state.restaurant.price.length === 4) {
+      return <Text style={infoIconStyle}>Over $61</Text>;
     }
   }
 
@@ -627,22 +777,139 @@ class RestaurantDetail extends Component {
           style={{ borderTopWidth: this.state.showRecommend ? 0 : 1, ...infoContainerStyle }}
           onLayout={e => this.setInfoHeight(e)}
         >
-          <View style={infoObjectStyle}>
-            <MaterialIcon
-              name='access-time'
-              size={31}
-              style={{ height: 30 }}
-              color={'rgba(0,0,0,0.63)'}
-            />
-            <Text style={infoIconStyle}>
-              {this.timeUntilCloseLabel(this.state.restaurant.hours)}
-            </Text>
-          </View>
+          {this.renderTime()}
 
           {this.renderNav()}
 
           {this.renderPrice()}
         </View>
+      </View>
+    );
+  }
+
+  renderTabBar(tabY, headerScrollDistance) {
+    let photoNumColor = '#ff9700';
+    let commentNumColor = 'rgba(0, 0, 0, 0.23)';
+    let photoTextColor = 'rgba(0, 0, 0, 0.77)';
+    let commentTextColor = 'rgba(0, 0, 0, 0.23)';
+    if (this.state.focusedTab === 1) {
+      commentNumColor = '#ff9700';
+      photoNumColor = 'rgba(0, 0, 0, 0.23)';
+      commentTextColor = 'rgba(0, 0, 0, 0.77)';
+      photoTextColor = 'rgba(0, 0, 0, 0.23)';
+    }
+    const photoLabel = (this.state.photos.length === 1) ? ' PHOTO' : ' PHOTOS';
+    const commentLabel = (this.state.comments.length === 1) ? ' REVIEW' : ' REVIEWS';
+    const currentScrollY = new Animated.Value(0);
+    this.state.scrollY.addListener(e => currentScrollY.setValue(e.value));
+    //console.log(`onrender csy: ${currentScrollY._value}`);
+    //console.log(this.state.listHeight);
+    return (
+      <Animated.View style={[tabBarContainerStyle, { transform: [{ translateY: tabY }] }]}>
+        <View style={tabBarStyle}>
+          <TouchableOpacity
+            onPress={() => {
+              if (this.state.focusedTab !== 0) {
+                this.currentCommentScrollPosition = currentScrollY._value;
+                if (currentScrollY._value >= headerScrollDistance && this.currentPhotoScrollPosition < headerScrollDistance) {
+                  this.scrollView._component.scrollTo({
+                    x: 0,
+                    y: headerScrollDistance,
+                    animated: false
+                  });
+                } else if (currentScrollY._value < headerScrollDistance) {
+                  // do nothing
+                } else {
+                  this.scrollView._component.scrollTo({
+                    x: 0,
+                    y: this.currentPhotoScrollPosition,
+                    animated: false
+                  });
+                }
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Photos' });
+                this.setState({ focusedTab: 0, listHeight: this.photosHeight });
+              } else {
+                if (currentScrollY._value > headerScrollDistance) {
+                  this.scrollView._component.scrollTo({
+                    x: 0,
+                    y: headerScrollDistance,
+                    animated: true
+                  });
+                }
+              }
+            }}
+          >
+            <View style={tabStyle}>
+              <Text style={{ textAlign: 'center' }}>
+                <Text style={{ color: photoNumColor, ...tabLabelStyle }}>
+                  {this.state.photos.length}
+                </Text>
+                <Text style={{ color: photoTextColor, ...tabLabelStyle }}>{photoLabel}</Text>
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              if (this.state.focusedTab !== 1) {
+                this.currentPhotoScrollPosition = currentScrollY._value;
+                if (currentScrollY._value >= headerScrollDistance && this.currentCommentScrollPosition < headerScrollDistance) {
+                  this.scrollView._component.scrollTo({
+                    x: 0,
+                    y: headerScrollDistance,
+                    animated: false
+                  });
+                } else if (currentScrollY._value < headerScrollDistance) {
+                  // do nothing
+                } else {
+                  this.scrollView._component.scrollTo({
+                    x: 0,
+                    y: this.currentCommentScrollPosition,
+                    animated: false
+                  });
+                }
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Comments' });
+                this.setState({ focusedTab: 1, listHeight: this.commentsHeight });
+              } else {
+                if (currentScrollY._value > headerScrollDistance) {
+                  this.scrollView._component.scrollTo({
+                    x: 0,
+                    y: headerScrollDistance,
+                    animated: true
+                  });
+                }
+              }
+            }}
+          >
+            <View style={tabStyle}>
+              <Text style={{ textAlign: 'center' }}>
+                <Text style={{ color: commentNumColor, ...tabLabelStyle }}>
+                  {this.state.comments.length}
+                </Text>
+                <Text style={{ color: commentTextColor, ...tabLabelStyle }}>{commentLabel}</Text>
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        {this.renderIndicator()}
+      </Animated.View>
+    );
+  }
+
+  renderIndicator() {
+    const SCREEN_WIDTH = Dimensions.get('window').width;
+    if (this.state.focusedTab === 0) {
+      return (
+        <View style={indicatorContainerStyle}>
+          <View style={[indicatorStyle, { marginLeft: SCREEN_WIDTH / 2 - 120 }]} />
+        </View>
+      );
+    }
+    return (
+      <View style={indicatorContainerStyle}>
+        <View style={[indicatorStyle, { marginLeft: SCREEN_WIDTH / 2 }]} />
       </View>
     );
   }
@@ -694,128 +961,6 @@ class RestaurantDetail extends Component {
             </View>
           </TouchableOpacity>
         </View>
-      </View>
-    );
-  }
-
-  renderTabBar(tabY, headerScrollDistance) {
-    let photoNumColor = '#ff9700';
-    let commentNumColor = 'rgba(0, 0, 0, 0.23)';
-    let photoTextColor = 'rgba(0, 0, 0, 0.77)';
-    let commentTextColor = 'rgba(0, 0, 0, 0.23)';
-    if (this.state.focusedTab === 1) {
-      commentNumColor = '#ff9700';
-      photoNumColor = 'rgba(0, 0, 0, 0.23)';
-      commentTextColor = 'rgba(0, 0, 0, 0.77)';
-      photoTextColor = 'rgba(0, 0, 0, 0.23)';
-    }
-    const photoLabel = (this.state.photos.length === 1) ? ' PHOTO' : ' PHOTOS';
-    const commentLabel = (this.state.comments.length === 1) ? ' REVIEW' : ' REVIEWS';
-    const currentScrollY = new Animated.Value(0);
-    this.state.scrollY.addListener(e => currentScrollY.setValue(e.value));
-    //console.log(`CurrentScrollY: ${currentScrollY._value}`);
-    //console.log(this.state.listHeight);
-    return (
-      <Animated.View style={[tabBarContainerStyle, { transform: [{ translateY: tabY }] }]}>
-        <View style={tabBarStyle}>
-          <TouchableOpacity
-            onPress={() => {
-              if (this.state.focusedTab !== 0) {
-                this.currentCommentScrollPosition = currentScrollY._value;
-                if (currentScrollY._value > headerScrollDistance && this.currentPhotoScrollPosition < headerScrollDistance) {
-                  this.scrollView._component.scrollTo({
-                    x: 0,
-                    y: headerScrollDistance,
-                    animated: false
-                  });
-                } else if (currentScrollY._value < headerScrollDistance) {
-                  this.scrollView._component.scrollTo({
-                    x: 0,
-                    y: currentScrollY._value,
-                    animated: false
-                  });
-                } else {
-                  this.scrollView._component.scrollTo({
-                    x: 0,
-                    y: this.currentPhotoScrollPosition,
-                    animated: false
-                  });
-                }
-                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Photos' });
-                this.setState({ focusedTab: 0, listHeight: this.photosHeight });
-              }
-            }}
-          >
-            <View style={tabStyle}>
-              <Text style={{ textAlign: 'center' }}>
-                <Text style={{ color: photoNumColor, ...tabLabelStyle }}>
-                  {this.state.photos.length}
-                </Text>
-                <Text style={{ color: photoTextColor, ...tabLabelStyle }}>{photoLabel}</Text>
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              if (this.state.focusedTab !== 1) {
-                //console.log(`CurrentScrollY: ${currentScrollY._value}`);
-                this.currentPhotoScrollPosition = currentScrollY._value;
-                //console.log(`ScrollY: ${this.state.scrollY._value}`);
-                //console.log(`CommentPos: ${this.currentCommentScrollPosition}`);
-                if (currentScrollY._value > headerScrollDistance && this.currentCommentScrollPosition < headerScrollDistance) {
-                  this.scrollView._component.scrollTo({
-                    x: 0,
-                    y: headerScrollDistance,
-                    animated: false
-                  });
-                } else if (currentScrollY._value < headerScrollDistance) {
-                  this.scrollView._component.scrollTo({
-                    x: 0,
-                    y: currentScrollY._value,
-                    animated: false
-                  });
-                } else {
-                  this.scrollView._component.scrollTo({
-                    x: 0,
-                    y: this.currentCommentScrollPosition,
-                    animated: false
-                  });
-                }
-                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Comments' });
-                this.setState({ focusedTab: 1, listHeight: this.commentsHeight });
-              }
-            }}
-          >
-            <View style={tabStyle}>
-              <Text style={{ textAlign: 'center' }}>
-                <Text style={{ color: commentNumColor, ...tabLabelStyle }}>
-                  {this.state.comments.length}
-                </Text>
-                <Text style={{ color: commentTextColor, ...tabLabelStyle }}>{commentLabel}</Text>
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-        {this.renderIndicator()}
-      </Animated.View>
-    );
-  }
-
-  renderIndicator() {
-    const SCREEN_WIDTH = Dimensions.get('window').width;
-    if (this.state.focusedTab === 0) {
-      return (
-        <View style={indicatorContainerStyle}>
-          <View style={[indicatorStyle, { marginLeft: SCREEN_WIDTH / 2 - 120 }]} />
-        </View>
-      );
-    }
-    return (
-      <View style={indicatorContainerStyle}>
-        <View style={[indicatorStyle, { marginLeft: SCREEN_WIDTH / 2 }]} />
       </View>
     );
   }
@@ -894,7 +1039,8 @@ class RestaurantDetail extends Component {
             bounces={false}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
-              { useNativeDriver: true }
+              { useNativeDriver: true },
+              //{ listener: this.currentScrollY.bind(this) }
             )}
           >
             {/* <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}> */}
@@ -974,7 +1120,7 @@ const styles = {
   headerContainerStyle: {
     flex: 1,
     justifyContent: 'flex-end',
-    marginRight: 35,
+    marginRight: 35
   },
   backButtonStyle: { // Back button
     height: 35,
@@ -1000,19 +1146,16 @@ const styles = {
   },
   titleStyle: { // Restaurant name
     color: 'white',
-    //fontFamily: 'Avenir-Black',
     fontSize: 23,
     fontWeight: '900',
     textAlign: 'left',
     letterSpacing: 0.6,
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent'
   },
   filterContainerStyle: {
     alignItems: 'flex-start',
     marginBottom: 15,
-    paddingLeft: 30,
-    marginLeft: 5,
-    marginRight: 5,
+    paddingLeft: 35
   },
   ratingSectionStyle: {
     justifyContent: 'center',
