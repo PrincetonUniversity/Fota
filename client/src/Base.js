@@ -52,7 +52,7 @@ class Base extends Component {
           console.log(e);
         });
       } else {
-        AsyncStorage.setItem('JWT', null);        
+        AsyncStorage.setItem('JWT', '');        
         this.props.logInOrOut(user);
         this.setState({ loginFinished: true });
       }

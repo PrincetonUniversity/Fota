@@ -9,14 +9,15 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-const FilterDisplay = (props) => (
+const FilterMeasurer = (props) => (
   <View
-    style={{ borderColor: props.color, ...styles.containerStyle }}
+    style={styles.containerStyle}
+    onLayout={e => props.addWidth(e.nativeEvent.layout.width)}
   >
     <Text
       numberOfLines={props.numberOfLines}
       ellipsizeMode={props.ellipsizeMode}
-      style={{ fontSize: props.size, color: props.color, ...styles.textStyle }}
+      style={{ fontSize: props.size, ...styles.textStyle }}
     >
       {props.text}
     </Text>
@@ -31,13 +32,15 @@ const styles = {
       alignItems: 'center',
       paddingHorizontal: 8,
       paddingVertical: 1,
-      margin: 5
+      margin: 5,
+      borderColor: 'transparent'
     },
     textStyle: {
       fontWeight: '400',
       marginLeft: 3,
       marginRight: 3,
+      color: 'transparent'
     }
 };
 
-export { FilterDisplay };
+export default FilterMeasurer;

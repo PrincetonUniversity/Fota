@@ -80,7 +80,7 @@ export function cameraErrorAlert() {
 class CameraPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { showCamera: true }; 
+    this.state = { showCamera: true };
     this.pictureTaken = false;
   }
 
@@ -110,7 +110,7 @@ class CameraPage extends Component {
 
   resizeImage(uri, del) {
     ImageResizer.createResizedImage(uri, 800, 1600, 'JPEG', 100).then(reuri => {
-      this.props.navigation.navigate('Location', { full: uri, path: reuri, del }); 
+      this.props.navigation.navigate('Location', { full: uri, path: reuri, del });
       setTimeout(() => { this.pictureTaken = false; }, 200);
     }).catch(() => cameraErrorAlert());
   }
@@ -161,7 +161,7 @@ class CameraPage extends Component {
             showCamera: (showCamera) => this.setState({ showCamera })
           }}
         />
-    </View>
+      </View>
     );
   }
 }

@@ -151,7 +151,7 @@ const styles = {
   photoStyle: {
     height: 300,
     width: 300,
-    backgroundColor: 'transparent',
+    backgroundColor: 'gray',
     borderRadius: 8
   }
 };

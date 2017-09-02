@@ -49,7 +49,7 @@ class RestaurantComments extends Component {
   componentDidUpdate() {
     if (!this.hasSentHeight && this.numCommentsAdded === this.state.comments.length && this.props.screenProps.focused === 1) {
       this.hasSentHeight = true;
-      console.log(this.totalCommentHeight);
+      //console.log(this.totalCommentHeight);
       this.props.screenProps.setCommentsHeight(40 + Math.min(60, this.state.height) + this.totalCommentHeight);
     }
   }
@@ -141,7 +141,6 @@ class RestaurantComments extends Component {
           onFocus={this.openEditorBox.bind(this)}
           onChange={event => {
             const height = event.nativeEvent.contentSize.height;
-            this.props.setEditHeight(Math.min(60, height));
             this.setState({
               message: event.nativeEvent.text,
               height

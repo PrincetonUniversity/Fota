@@ -36,7 +36,10 @@ class RestaurantModal extends Component {
       },
       onPanResponderRelease: (event, gesture) => {
         if (gesture.dx > SWIPE_THRESHOLD) {
-          this.setState({ modalVisible: false });
+          Animated.timing(this.state.position, {
+            toValue: { x: SCREEN_WIDTH, y: 0 },
+            duration: 100
+          }).start(() => this.setState({ modalVisible: false }));
         } else {
           this.resetPosition();
         }
@@ -167,8 +170,8 @@ class RestaurantModal extends Component {
 const styles = {
   modalStyle: {
     flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)'
+    justifyContent: 'center'
+    //backgroundColor: 'rgba(0,0,0,0.5)'
   },
   popupStyle: {
     marginHorizontal: 20,

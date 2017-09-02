@@ -10,7 +10,7 @@ import { pcoords } from '../../Base';
 
 class PhotoFeed extends Component {
   state = { photoList: [], refreshing: false };
-  
+
   componentWillMount() {
     this.getPhotoList();
   }
@@ -34,11 +34,11 @@ class PhotoFeed extends Component {
     AsyncStorage.getItem('SearchRadius').then(radius => {
       request.get(photoRequest(this.props.order, lat, lng, parseInt(radius, 10)))
       .then(response => {
-        this.props.setLoading(false);        
+        this.props.setLoading(false);
         if (response.data.length === 0) {
           if (this.props.noPhotos) this.props.noPhotos();
         } else {
-          this.setState({ photoList: response.data, refreshing: false });          
+          this.setState({ photoList: response.data, refreshing: false });
         }
       })
       .catch(e => request.showErrorAlert(e));
@@ -48,9 +48,9 @@ class PhotoFeed extends Component {
   refreshListView() {
     this.setState({ refreshing: true }, () => this.getPhotoList());
   }
-  
+
   render() {
-    if (this.props.loading) return <LoadingPhotos />;    
+    if (this.props.loading) return <LoadingPhotos />;
     return (
       <View style={{ flex: 1, borderTopWidth: 1, borderColor: 'rgba(0,0,0,0.09)' }} >
         <PhotoList
