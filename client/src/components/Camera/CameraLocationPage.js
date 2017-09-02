@@ -42,15 +42,15 @@ const dayformat = (day) => (
 );
 
 const deleteImage = (path) => {
-  const filepath = path.replace(/^(file:)/, '');
+  const filepath = path.replace(/^(file:\/+)/, '/');
   RNFetchBlob.fs.exists(filepath)
-    .then((result) => {
-      if (result) {
-        return RNFetchBlob.fs.unlink(filepath)
-          .catch(() => cameraErrorAlert());
-      }
-    })
-    .catch(() => cameraErrorAlert());
+  .then((result) => {
+    if (result) {
+      return RNFetchBlob.fs.unlink(filepath)
+      .catch(() => cameraErrorAlert());
+    }
+  })
+  .catch(() => cameraErrorAlert());
 };
 
 class CameraLocationPage extends Component {
@@ -475,6 +475,7 @@ class CameraLocationPage extends Component {
                   style={{ height: listHeight }}
                   keyboardShouldPersistTaps={'handled'}
                   bounces={false}
+                  keyboardDismissMode='on-drag'
                   removeClippedSubviews={false}
                 />
               </View>
