@@ -12,9 +12,7 @@
 
 import { Alert, NetInfo, AsyncStorage } from 'react-native';
 import axios from 'axios';
-
-const CancelToken = axios.CancelToken;
-let cancel;
+import firebase from 'firebase';
 
 function isNetworkConnected() {
   return NetInfo.fetch().then(reachability => {
@@ -36,16 +34,21 @@ function request(method, url, data, resolve, reject) {
   isNetworkConnected().then(isConnected => {
     if (isConnected) {
       AsyncStorage.getItem('JWT').then((idToken) => {
-        axios({
-          method,
-          url,
-          data,
-          //cancelToken: new CancelToken(c => { cancel = c; }),
-          headers: { Authorization: `Bearer ${idToken}` } })
-          .then(response => resolve(response))
-          .catch(e => {
+        axios({ method, url, data, headers: { Authorization: `Bearer ${idToken}` } })
+        .then(response => resolve(response))
+        .catch(e => {
+          if (e.response.status === 401) {
+            firebase.auth().currentUser.getToken(true).then((idTokenNew) => {
+              AsyncStorage.setItem('JWT', idTokenNew);
+              axios({ method, url, data, headers: { Authorization: `Bearer ${idTokenNew}` } })
+              .then(response => resolve(response))
+              .catch(e3 => reject({ etype: 1, ...e3 }));
+            })
+            .catch(e2 => reject({ etype: 1, ...e2 }));
+          } else {
             reject({ etype: 1, ...e });
-          });
+          }
+        });
       });
     } else {
       reject({ etype: 0 });

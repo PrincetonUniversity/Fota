@@ -37,6 +37,7 @@ const styles = {
       fontWeight: '400',
       marginLeft: 3,
       marginRight: 3,
+      backgroundColor: 'transparent'
     }
 };
 

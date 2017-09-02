@@ -12,7 +12,7 @@ import { Text, View } from 'react-native';
 const FilterMeasurer = (props) => (
   <View
     style={styles.containerStyle}
-    onLayout={e => props.addWidth(e.nativeEvent.layout.width)}
+    onLayout={e => props.addWidth(e.nativeEvent.layout.width + 10)}
   >
     <Text
       numberOfLines={props.numberOfLines}
@@ -33,13 +33,15 @@ const styles = {
       paddingHorizontal: 8,
       paddingVertical: 1,
       margin: 5,
-      borderColor: 'transparent'
+      borderColor: 'transparent',
+      backgroundColor: 'transparent'
     },
     textStyle: {
       fontWeight: '400',
       marginLeft: 3,
       marginRight: 3,
-      color: 'transparent'
+      color: 'transparent',
+      backgroundColor: 'transparent'
     }
 };
 
