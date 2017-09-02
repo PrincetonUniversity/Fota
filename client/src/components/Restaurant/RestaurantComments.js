@@ -35,7 +35,7 @@ class RestaurantComments extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { comments: [], editing: false, submitting: false, message: '', height: 20 };
+    this.state = { comments: [], editing: false, submitting: false, message: '', height: 26 };
     this.totalCommentHeight = 0;
     this.numCommentsAdded = 0;
     this.hasSentHeight = false;
@@ -50,7 +50,7 @@ class RestaurantComments extends Component {
     if (!this.hasSentHeight && this.numCommentsAdded === this.state.comments.length && this.props.screenProps.focused === 1) {
       this.hasSentHeight = true;
       //console.log(this.totalCommentHeight);
-      this.props.screenProps.setCommentsHeight(40 + Math.min(60, this.state.height) + this.totalCommentHeight);
+      this.props.screenProps.setCommentsHeight(40 + Math.min(78, this.state.height) + this.totalCommentHeight);
     }
   }
 
@@ -82,7 +82,7 @@ class RestaurantComments extends Component {
           editing: false,
           submitting: false,
           message: '',
-          height: 20
+          height: 26
         });
         this.props.screenProps.rerenderComments(response.data);
       }).catch(e => request.showErrorAlert(e));
@@ -121,7 +121,7 @@ class RestaurantComments extends Component {
   renderEditSubmit() {
     if (this.state.editing) {
       return (
-        <ScrollView 
+        <ScrollView
           scrollEnabled={false}
           bounces={false}
           keyboardShouldPersistTaps='always'
@@ -140,7 +140,7 @@ class RestaurantComments extends Component {
       <TouchableOpacity activeOpacity={1}>
         <View style={editBoxStyle}>
           <TextInput
-            style={{ height: Math.min(60, this.state.height), ...editorStyle }}
+            style={{ height: Math.min(78, this.state.height), ...editorStyle }}
             value={this.state.message}
             placeholder='Add a review...'
             placeholderTextColor='rgba(0,0,0,0.31)'
@@ -148,9 +148,10 @@ class RestaurantComments extends Component {
             onFocus={this.openEditorBox.bind(this)}
             onChange={event => {
               const height = event.nativeEvent.contentSize.height;
+              console.log(height);
               this.setState({
                 message: event.nativeEvent.text,
-                height: Math.min(60, height)
+                height: Math.min(78, height)
               });
             }}
             underlineColorAndroid={'transparent'}
@@ -220,7 +221,7 @@ const styles = {
     padding: 0,
     color: 'rgba(0,0,0,0.75)',
     fontSize: 15,
-    lineHeight: 20,
+    lineHeight: 26,
     fontWeight: '400'
   },
   doneButtonStyle: {
