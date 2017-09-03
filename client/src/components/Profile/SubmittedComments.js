@@ -52,7 +52,7 @@ class SubmittedComments extends Component {
   }
 
   render() {
-    if (this.props.screenProps.loading) return <Spinner size='large' />;    
+    if (this.props.screenProps.loading) return <Spinner size='large' />;
     if (this.props.screenProps.comments.length === 0) {
       return <NotFoundText text='Write a review to see it here!' />;
     }

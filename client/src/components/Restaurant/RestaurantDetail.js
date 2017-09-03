@@ -31,6 +31,7 @@ import {
 import FilterBar from './FilterBar';
 import RestaurantPhotos from './RestaurantPhotos';
 import RestaurantComments from './RestaurantComments';
+import LoadingRestaurants from './LoadingRestaurants';
 import { pcoords } from '../../Base';
 import icoMoonConfig from '../../selection.json';
 
@@ -373,7 +374,7 @@ class RestaurantDetail extends Component {
         <Banner
           photo={(this.state.photos.length > 0) ? this.state.photos[0].url : undefined}
           containerStyle={{ flex: 1 }} // height: 150
-          photoStyle={{ flex: 1 }}
+          photoStyle={{ flex: 1, backgroundColor: '#d3d3d3' }}
         >
           <LinearGradient
             start={{ x: 0.5, y: 0.1 }}
@@ -909,7 +910,7 @@ class RestaurantDetail extends Component {
     const restaurant = this.state.restaurant;
     return (
       <View style={footerStyle}>
-        <View style={bottomSpacerStyle}>
+        <View style={[bottomSpacerStyle, { borderRightWidth: 1 }]}>
           <TouchableOpacity
             style={{ flex: 1 }}
             onPress={() => phonecall(restaurant.phone.substring(1), false)}
@@ -958,11 +959,7 @@ class RestaurantDetail extends Component {
 
   render() {
     if (this.state.loading || this.state.navLoading) {
-      return (
-        <View style={{ flex: 1, backgroundColor: 'white' }}>
-          <StatusBar animated barStyle='light-content' />
-        </View>
-      );
+      return <LoadingRestaurants />;
     }
     let height = 440;
     let headerScrollDistance = this.state.ratingHeight + this.state.infoHeight;
@@ -1037,6 +1034,7 @@ class RestaurantDetail extends Component {
                   comments: this.state.comments,
                   listHeight: this.state.listHeight,
                   focused: this.state.focusedTab,
+                  listHeight: this.state.listHeight,
                   setCommentsHeight: cHeight => {
                     this.commentsHeight = cHeight;
                     this.setState({ listHeight: cHeight });
@@ -1143,7 +1141,7 @@ const styles = {
     //borderTopWidth: 1,
     //borderBottomWidth: 1,
     //marginHorizontal: 30,
-    borderColor: 'rgba(0, 0, 0, 0.1)'
+    //borderColor: 'rgba(0, 0, 0, 0.1)'
   },
   ratingPercentStyle: {
     fontSize: 25,
@@ -1281,7 +1279,6 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: 'rgba(0, 0, 0, 0.2)',
-    borderRightWidth: 1,
   },
 };
 

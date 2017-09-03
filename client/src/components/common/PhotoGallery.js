@@ -139,7 +139,7 @@ const styles = {
     alignItems: 'center'
   },
   spacerStyle: {
-    backgroundColor: 'red'
+    //backgroundColor: 'red'
   },
   photoFrameStyle: {
     height: SCREEN_HEIGHT,
@@ -151,7 +151,7 @@ const styles = {
   photoStyle: {
     height: 300,
     width: 300,
-    backgroundColor: 'gray',
+    backgroundColor: '#d3d3d3',
     borderRadius: 8
   }
 };

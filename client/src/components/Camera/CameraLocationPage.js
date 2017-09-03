@@ -241,7 +241,7 @@ class CameraLocationPage extends Component {
       [{
         text: 'OK',
         onPress: () => {
-          this.cleanup();      
+          this.cleanup();
           this.deletePhotoFromFirebase();
           this.props.navigation.goBack();
         }
