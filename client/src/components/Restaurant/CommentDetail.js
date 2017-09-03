@@ -175,7 +175,6 @@ class CommentDetail extends Component {
         <View
           style={containerStyle}
           onLayout={e => {
-            console.log(e.nativeEvent.layout.height);
             const currentHeight = e.nativeEvent.layout.height;
             if (!this.heightHasBeenAdded) {
               this.heightHasBeenAdded = true;

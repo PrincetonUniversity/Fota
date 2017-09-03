@@ -819,7 +819,7 @@ class RestaurantDetail extends Component {
                 }
                 LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                 this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Photos' });
-                this.setState({ focusedTab: 0, /*listHeight: this.photosHeight*/ });
+                this.setState({ focusedTab: 0, listHeight: this.photosHeight });
               } else {
                 if (currentScrollY._value > headerScrollDistance) {
                   this.scrollView._component.scrollTo({
@@ -862,7 +862,7 @@ class RestaurantDetail extends Component {
                 }
                 LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                 this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Comments' });
-                this.setState({ focusedTab: 1, /*listHeight: this.commentsHeight*/ });
+                this.setState({ focusedTab: 1, listHeight: this.commentsHeight });
               } else {
                 if (currentScrollY._value > headerScrollDistance) {
                   this.scrollView._component.scrollTo({
@@ -1013,7 +1013,7 @@ class RestaurantDetail extends Component {
             ref={scroll => { this.scrollView = scroll; }}
             scrollEventThrottle={1}
             showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps='always'
+            //keyboardShouldPersistTaps='always'
             bounces={false}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
@@ -1035,6 +1035,7 @@ class RestaurantDetail extends Component {
                   restaurant: this.state.restaurant,
                   photos: this.state.photos,
                   comments: this.state.comments,
+                  listHeight: this.state.listHeight,
                   focused: this.state.focusedTab,
                   setCommentsHeight: cHeight => {
                     this.commentsHeight = cHeight;
