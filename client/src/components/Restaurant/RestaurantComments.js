@@ -55,15 +55,21 @@ class RestaurantComments extends Component {
   }
 
   componentWillMount() {
-    const { comments, userLiked, userDisliked, userHasVoted } = this.props.screenProps;
-    this.setState({ comments, userLiked, userDisliked, userHasVoted });
+    this.setState({ comments: this.props.screenProps.comments });
     UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (newProps.screenProps !== this.props.screenProps) {
+      const { userLiked, userDisliked, userHasVoted } = newProps.screenProps;
+      this.setState({ userLiked, userDisliked, userHasVoted });
+    }
   }
 
   componentDidUpdate() {
     let newHeight = 40 + this.state.height + this.totalCommentHeight; // 30 padding + 40 for the done
     if (this.state.editing) {
-      newHeight += 30;
+      newHeight += 35;
     }
     if (this.props.screenProps.listHeight !== newHeight && this.hasSentHeight) {
       this.hasSentHeight = false;
@@ -154,7 +160,7 @@ class RestaurantComments extends Component {
   renderEditBox() {
     let paddingBottom = 20;
     if (this.state.editing) {
-      paddingBottom = 10;
+      paddingBottom = 15;
     }
     return (
       <TouchableOpacity activeOpacity={1}>
@@ -205,6 +211,7 @@ class RestaurantComments extends Component {
   renderRecommend() {
     let yesColor = 'rgba(0, 0, 0, 0.31)';
     let noColor = 'rgba(0, 0, 0, 0.31)';
+    console.log(this.state.userLiked);
     if (this.state.userLiked) {
       yesColor = 'rgba(79, 217, 41, 0.76)';
     }

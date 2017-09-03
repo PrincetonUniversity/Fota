@@ -340,7 +340,8 @@ class RestaurantDetail extends Component {
   clearNoVoteYes() {
     this.sendUpdateRequest('yes');
     this.setState({
-      yesCount: this.state.yesCount + 2,
+      yesCount: this.state.yesCount + 1,
+      noCount: this.state.noCount - 1,
       userLiked: true,
       userDisliked: false,
       userHasVoted: true,
@@ -370,9 +371,10 @@ class RestaurantDetail extends Component {
   clearYesVoteNo() {
     this.sendUpdateRequest('no');
     this.setState({
-      yesCount: this.state.yesCount - 2,
-      userLiked: true,
-      userDisliked: false,
+      yesCount: this.state.yesCount - 1,
+      noCount: this.state.noCount + 1,
+      userLiked: false,
+      userDisliked: true,
       userHasVoted: true,
     });
   }
