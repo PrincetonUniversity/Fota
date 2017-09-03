@@ -64,30 +64,34 @@ class RestaurantModal extends Component {
         this.setState({ longPressed: true }, () => this.setModalVisible(true));
       }
     } else if (this.state.longPressed) {
-      this.setState({ longPressed: false }, () => this.setModalVisible(true));
+      this.setState({ longPressed: false }, () => this.openRestaurantPage());
     } else {
-      this.setState({ loading: true });
-      request.get(restRequest(this.props.restaurantid))
-        .then(response => {
-          request.get(restCommentRequest(this.props.restaurantid))
-            .then(response2 =>
-              this.setState({
-                restaurant: response.data,
-                comments: response2.data,
-                loading: false
-              }))
-            .catch(e => request.showErrorAlert(e));
-        })
-        .catch(e => request.showErrorAlert(e));
-      this.setModalVisible(true);
-      Animated.timing(this.state.position, {
-        toValue: { x: 0, y: 0 }
-      }).start();
+      this.openRestaurantPage();
     }
   }
-
+  
   setModalVisible(visible) {
     this.setState({ modalVisible: visible });
+  }
+
+  openRestaurantPage() {
+    this.setState({ loading: true });
+    request.get(restRequest(this.props.restaurantid))
+      .then(response => {
+        request.get(restCommentRequest(this.props.restaurantid))
+          .then(response2 =>
+            this.setState({
+              restaurant: response.data,
+              comments: response2.data,
+              loading: false
+            }))
+          .catch(e => request.showErrorAlert(e));
+      })
+      .catch(e => request.showErrorAlert(e));
+    this.setModalVisible(true);
+    Animated.timing(this.state.position, {
+      toValue: { x: 0, y: 0 }
+    }).start();
   }
 
   resetPosition() {
@@ -143,11 +147,13 @@ class RestaurantModal extends Component {
   }
 
   render() {
+    const animIn = this.state.longPressed ? 'fadeIn' : 'slideInRight';
+    const animOut = this.state.longPressed ? 'fadeOut' : 'slideOutRight';    
     return (
       <View>
         <Modal
-          animationIn='slideInRight'
-          animationOut='slideOutRight'
+          animationIn={animIn}
+          animationOut={animOut}
           transparent
           style={{ margin: 0, padding: 0 }}
           isVisible={this.state.modalVisible}
@@ -170,8 +176,8 @@ class RestaurantModal extends Component {
 const styles = {
   modalStyle: {
     flex: 1,
-    justifyContent: 'center'
-    //backgroundColor: 'rgba(0,0,0,0.5)'
+    justifyContent: 'center',
+    backgroundColor: 'transparent'
   },
   popupStyle: {
     marginHorizontal: 20,
