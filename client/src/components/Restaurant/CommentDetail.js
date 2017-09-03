@@ -9,7 +9,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, LayoutAnimation, UIManager } from 'react-native';
+import { View, Text, TouchableOpacity, LayoutAnimation, UIManager, TextInput } from 'react-native';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/Entypo';
 import Ionicon from 'react-native-vector-icons/Ionicons';
@@ -26,6 +26,7 @@ class CommentDetail extends Component {
         userLiked: false,
         userDisliked: false,
         userHasVoted: false,
+        isEditing: false
       };
     } else if (props.vote === 'liked') {
       this.state = {
@@ -34,6 +35,7 @@ class CommentDetail extends Component {
         userLiked: true,
         userDisliked: false,
         userHasVoted: true,
+        isEditing: false
       };
     } else if (props.vote === 'disliked') {
       this.state = {
@@ -42,6 +44,7 @@ class CommentDetail extends Component {
         userLiked: false,
         userDisliked: true,
         userHasVoted: true,
+        isEditing: false
       };
     }
     this.timer = null;
@@ -123,6 +126,41 @@ class CommentDetail extends Component {
   }
 
   renderMessage(comment) {
+    // if (this.state.isEditing) {
+    //   return (
+    //     <TouchableOpacity activeOpacity={1}>
+    //       <View style={editBoxStyle}>
+    //         <TextInput
+    //           style={{ height: Math.min(78, this.state.height), ...editorStyle }}
+    //           value={this.state.message}
+    //           placeholder='Add a review...'
+    //           placeholderTextColor='rgba(0,0,0,0.31)'
+    //           multiline
+    //           onFocus={this.openEditorBox.bind(this)}
+    //           onBlur={() => {
+    //             if (this.state.message.length === 0) {
+    //               LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    //               this.setState({ editing: false });
+    //             }
+    //           }}
+    //           onContentSizeChange={event => {
+    //             const height = event.nativeEvent.contentSize.height;
+    //             //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    //             this.setState({
+    //               height: Math.min(78, height)
+    //             });
+    //           }}
+    //           onChangeText={message => {
+    //             this.setState({ message });
+    //           }}
+    //           underlineColorAndroid={'transparent'}
+    //           autoCapitalize={'sentences'}
+    //         />
+    //         {this.renderEditSubmit()}
+    //       </View>
+    //     </TouchableOpacity>
+    //   )
+    // }
     if (!this.state.expanded) {
       return (
         <Text
@@ -156,7 +194,7 @@ class CommentDetail extends Component {
     if (render) {
       return (
         <TouchableOpacity
-          onPress={() => console.log('can\'t edit yet!')}
+          onPress={() => console.log('nothing here yet')}
         >
           <Text style={headingTextStyle}>Edit</Text>
         </TouchableOpacity>
