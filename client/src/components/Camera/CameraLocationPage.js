@@ -347,7 +347,7 @@ class CameraLocationPage extends Component {
       </TouchableOpacity>
     );
   }
-  
+
   renderSaveIcon() {
     if (!this.props.navigation.state.params.del) return;
     if (this.state.saveState === -1) {
@@ -562,6 +562,7 @@ const styles = {
     height: 30,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'transparent',
     zIndex: 6
   },
   bodyStyle: {
