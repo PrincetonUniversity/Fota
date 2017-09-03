@@ -18,7 +18,7 @@ import {
 import { connect } from 'react-redux';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
-import EntypoIcon from 'react-native-vector-icons/Entypo';
+import Octicon from 'react-native-vector-icons/Octicons';
 import firebase from 'firebase';
 import uuid from 'uuid/v1';
 import { Header, Button, Input, Spinner } from '../common';
@@ -365,7 +365,7 @@ class CameraLocationPage extends Component {
     }
     return (
       <View style={downloadButtonStyle}>
-        <EntypoIcon name='check' backgroundColor='transparent' color='white' size={20} />
+        <Octicon name='check' backgroundColor='transparent' color='white' size={25} style={{ paddingLeft: 8 }} />
       </View>
     );
   }

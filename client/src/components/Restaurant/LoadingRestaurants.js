@@ -30,6 +30,7 @@ const styles = {
     shadowOpacity: 0.08,
     shadowRadius: 3,
     shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
   },
   footerStyle: {
     height: 50,

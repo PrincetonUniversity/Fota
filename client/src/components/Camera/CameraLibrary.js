@@ -30,12 +30,12 @@ class CameraLibrary extends Component {
 
   componentWillMount() {
     CameraRoll.getPhotos({
-      first: 40,
+      first: 32,
       assetType: 'Photos',
     }).then(r => {
       if (Platform.OS === 'android') {
         const RNGRP = require('react-native-get-real-path');
-        
+
         const promises = r.edges.map(p => {
           return RNGRP.getRealPathFromURI(p.node.image.uri).then(filePath => filePath);
         });
