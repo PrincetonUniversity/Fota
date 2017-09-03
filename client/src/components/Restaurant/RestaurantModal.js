@@ -69,7 +69,7 @@ class RestaurantModal extends Component {
       this.openRestaurantPage();
     }
   }
-  
+
   setModalVisible(visible) {
     this.setState({ modalVisible: visible });
   }
@@ -148,7 +148,7 @@ class RestaurantModal extends Component {
 
   render() {
     const animIn = this.state.longPressed ? 'fadeIn' : 'slideInRight';
-    const animOut = this.state.longPressed ? 'fadeOut' : 'slideOutRight';    
+    const animOut = this.state.longPressed ? 'fadeOut' : 'slideOutRight';
     return (
       <View>
         <Modal
@@ -177,7 +177,7 @@ const styles = {
   modalStyle: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: 'transparent'
+    backgroundColor: 'white'
   },
   popupStyle: {
     marginHorizontal: 20,
