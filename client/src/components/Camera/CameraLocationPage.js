@@ -12,17 +12,18 @@
 
 import React, { Component } from 'react';
 import {
-  View, Image, Text, FlatList, TouchableWithoutFeedback,
+  View, Image, Text, FlatList, TouchableWithoutFeedback, CameraRoll,
   Keyboard, TouchableOpacity, Alert, LayoutAnimation, Platform
 } from 'react-native';
 import { connect } from 'react-redux';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
+import EntypoIcon from 'react-native-vector-icons/Entypo';
 import firebase from 'firebase';
 import uuid from 'uuid/v1';
-import request from '../../helpers/axioshelper';
 import { Header, Button, Input, Spinner } from '../common';
 import { cameraErrorAlert } from './CameraPage';
+import request from '../../helpers/axioshelper';
 import { nearbyRestRequest, checkPhotoRequest, uploadPhotoRequest } from '../../helpers/URL';
 import { pcoords } from '../../Base';
 import icoMoonConfig from '../../selection.json';
@@ -65,6 +66,7 @@ class CameraLocationPage extends Component {
       index: -1,
       nearBottom: false,
       hidePhoto: false,
+      saveState: -1,
       submitting: false,
       firebaseURL: null,
       labels: [],
@@ -247,6 +249,16 @@ class CameraLocationPage extends Component {
     );
   }
 
+  saveToCameraRoll() {
+    this.setState({ saveState: 0 });
+    CameraRoll.saveToCameraRoll(this.props.navigation.state.params.full)
+    .then(() => this.setState({ saveState: 1 }))
+    .catch(() => {
+      this.setState({ saveState: -1 });
+      cameraErrorAlert();
+    });
+  }
+
   handleOpeningBoxOnIOS() {
     if (this.state.nearBottom && this.state.rlist.length !== 0) {
       if (this.state.rlist.length < 7) {
@@ -294,7 +306,7 @@ class CameraLocationPage extends Component {
     } else {
       this.flatListRef.scrollToIndex({ animated: true, index });
     }
-  }o
+  }
 
   renderRestaurant(restaurant, chosen, index) {
     return (
@@ -325,7 +337,7 @@ class CameraLocationPage extends Component {
               {restaurant.name}
             </Text>
             <Text ellipsizeMode='tail' numberOfLines={1} style={restaurantSubtextStyle}>
-              Frist Campus Center
+              Princeton, NJ
             </Text>
           </View>
           <Text style={[restaurantSubtextStyle, { paddingLeft: 5 }]}>
@@ -335,15 +347,37 @@ class CameraLocationPage extends Component {
       </TouchableOpacity>
     );
   }
+  
+  renderSaveIcon() {
+    if (!this.props.navigation.state.params.del) return;
+    if (this.state.saveState === -1) {
+      return (
+        <TouchableOpacity style={downloadButtonStyle} onPress={() => this.saveToCameraRoll()}>
+          <Icon name='download' backgroundColor='transparent' color='white' size={20} />
+        </TouchableOpacity>
+      );
+    } else if (this.state.saveState === 0) {
+      return (
+        <View style={downloadButtonStyle}>
+          <Spinner size='small' color='white' />
+        </View>
+      );
+    }
+    return (
+      <View style={downloadButtonStyle}>
+        <EntypoIcon name='check' backgroundColor='transparent' color='white' size={20} />
+      </View>
+    );
+  }
 
   renderPhoto() {
     if (!this.state.hidePhoto) {
       return (
         <View style={photoFrameStyle}>
-          <Image
-            style={photoStyle}
-            source={{ uri: this.state.uploadPath }}
-          />
+          <View>
+            <Image style={photoStyle} source={{ uri: this.state.uploadPath }} />
+            {this.renderSaveIcon()}
+          </View>
         </View>
       );
     }
@@ -410,6 +444,7 @@ class CameraLocationPage extends Component {
                   style={backButtonStyle}
                   onPress={() => {
                     if (this.submitting) return;
+                    this.deletePhotoFromFirebase();
                     this.cleanup();
                     this.props.navigation.goBack();
                   }}
@@ -517,7 +552,17 @@ const styles = {
   photoStyle: {
     width: 150,
     height: 150,
-    borderRadius: 15
+    borderRadius: 7
+  },
+  downloadButtonStyle: {
+    position: 'absolute',
+    bottom: 3,
+    right: 8,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 6
   },
   bodyStyle: {
     paddingHorizontal: 50,
@@ -603,6 +648,7 @@ const {
   backButtonStyle,
   photoFrameStyle,
   photoStyle,
+  downloadButtonStyle,
   bodyStyle,
   selectorTitleStyle,
   selectorTitleTextStyle,
