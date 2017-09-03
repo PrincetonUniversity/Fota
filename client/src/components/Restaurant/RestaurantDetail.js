@@ -1054,8 +1054,6 @@ class RestaurantDetail extends Component {
                   comments: this.state.comments,
                   listHeight: this.state.listHeight,
                   focused: this.state.focusedTab,
-<<<<<<< HEAD
-=======
                   userLiked: this.state.userLiked,
                   userDisliked: this.state.userDisliked,
                   userHasVoted: this.state.userHasVoted,
@@ -1065,7 +1063,6 @@ class RestaurantDetail extends Component {
                   voteNo: this.voteNo.bind(this),
                   clearNo: this.clearNo.bind(this),
                   clearYesVoteNo: this.clearYesVoteNo.bind(this),
->>>>>>> 5635a077790ebd81c2f664b9d18044214d4044d4
                   setCommentsHeight: cHeight => {
                     this.commentsHeight = cHeight;
                     this.setState({ listHeight: cHeight });
