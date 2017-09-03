@@ -239,7 +239,7 @@ class CameraLocationPage extends Component {
       [{
         text: 'OK',
         onPress: () => {
-          this.cleanup();      
+          this.cleanup();
           this.deletePhotoFromFirebase();
           this.props.navigation.goBack();
         }
@@ -325,7 +325,7 @@ class CameraLocationPage extends Component {
               {restaurant.name}
             </Text>
             <Text ellipsizeMode='tail' numberOfLines={1} style={restaurantSubtextStyle}>
-              Frist Campus Center
+              Princeton, NJ
             </Text>
           </View>
           <Text style={[restaurantSubtextStyle, { paddingLeft: 5 }]}>
