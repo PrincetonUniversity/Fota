@@ -1034,7 +1034,6 @@ class RestaurantDetail extends Component {
                   comments: this.state.comments,
                   listHeight: this.state.listHeight,
                   focused: this.state.focusedTab,
-                  listHeight: this.state.listHeight,
                   setCommentsHeight: cHeight => {
                     this.commentsHeight = cHeight;
                     this.setState({ listHeight: cHeight });
@@ -1254,7 +1253,7 @@ const styles = {
     alignItems: 'center',
     backgroundColor: 'white',
     borderColor: 'gray',
-    elevation: 2,
+    elevation: 20,
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.17,
     shadowRadius: 5,
