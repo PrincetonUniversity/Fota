@@ -1010,7 +1010,7 @@ class RestaurantDetail extends Component {
             ref={scroll => { this.scrollView = scroll; }}
             scrollEventThrottle={1}
             showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps='always'
+            //keyboardShouldPersistTaps='always'
             bounces={false}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
@@ -1032,6 +1032,7 @@ class RestaurantDetail extends Component {
                   restaurant: this.state.restaurant,
                   photos: this.state.photos,
                   comments: this.state.comments,
+                  listHeight: this.state.listHeight,
                   focused: this.state.focusedTab,
                   listHeight: this.state.listHeight,
                   setCommentsHeight: cHeight => {
