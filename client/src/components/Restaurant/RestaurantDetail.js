@@ -10,7 +10,7 @@
 import React, { Component } from 'react';
 import {
   View, Text, Animated, Linking, LayoutAnimation, Dimensions, Platform,
-  TouchableWithoutFeedback, TouchableOpacity, UIManager, StatusBar
+  TouchableWithoutFeedback, TouchableOpacity, UIManager, StatusBar, Keyboard
 } from 'react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -113,6 +113,9 @@ class RestaurantDetail extends Component {
     };
     this.timer = null;
     this.oldValue = null;
+    this.timer2 = null;
+    this.oldValue2 = null;
+    this.allowCloseKeyboard = false;
   }
 
   componentWillMount() {
@@ -313,11 +316,20 @@ class RestaurantDetail extends Component {
   }
 
   sendUpdateRequest(type) {
-    request.patch(restRecommendRequest(this.state.restaurant.id, type))
-    .catch(e => request.showErrorAlert(e));
+    const patch = () => {
+      const temp = this.oldValue2;
+      this.timer2 = null;
+      this.oldValue2 = null;
+      if (temp === type) return;
+      request.patch(restRecommendRequest(this.state.restaurant.id, type))
+      .catch(e => request.showErrorAlert(e));
+    };
+    if (this.timer2) clearTimeout(this.timer2);
+    this.timer2 = setTimeout(patch, 1000);
   }
 
   voteYes() {
+    this.oldValue2 = 'clear';
     this.sendUpdateRequest('yes');
     this.setState({
       yesCount: this.state.yesCount + 1,
@@ -328,6 +340,7 @@ class RestaurantDetail extends Component {
   }
 
   clearYes() {
+    this.oldValue2 = 'yes';    
     this.sendUpdateRequest('clear');
     this.setState({
       yesCount: this.state.yesCount - 1,
@@ -338,6 +351,7 @@ class RestaurantDetail extends Component {
   }
 
   clearNoVoteYes() {
+    this.oldValue2 = 'no';
     this.sendUpdateRequest('yes');
     this.setState({
       yesCount: this.state.yesCount + 1,
@@ -349,6 +363,7 @@ class RestaurantDetail extends Component {
   }
 
   voteNo() {
+    this.oldValue2 = 'clear';    
     this.sendUpdateRequest('no');
     this.setState({
       noCount: this.state.noCount + 1,
@@ -359,6 +374,7 @@ class RestaurantDetail extends Component {
   }
 
   clearNo() {
+    this.oldValue2 = 'no';    
     this.sendUpdateRequest('clear');
     this.setState({
       noCount: this.state.noCount - 1,
@@ -369,6 +385,7 @@ class RestaurantDetail extends Component {
   }
 
   clearYesVoteNo() {
+    this.oldValue2 = 'yes';    
     this.sendUpdateRequest('no');
     this.setState({
       yesCount: this.state.yesCount - 1,
@@ -1038,6 +1055,12 @@ class RestaurantDetail extends Component {
               [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
               { useNativeDriver: true },
             )}
+            onTouchMove={() => {
+              if (this.allowCloseKeyboard) {
+                Keyboard.dismiss();
+                this.allowCloseKeyboard = false;
+              }
+            }}
           >
             <Animated.View style={{ opacity }}>
               {this.renderRating()}
@@ -1076,7 +1099,8 @@ class RestaurantDetail extends Component {
                       animated: true
                     });
                   },
-                  rerenderComments: comments => this.setState({ comments })
+                  rerenderComments: comments => this.setState({ comments }),
+                  allowKeyboardToClose: () => { this.allowCloseKeyboard = true; }
                 }}
               />
             </Animated.View>
@@ -1110,14 +1134,12 @@ const styles = {
   },
   backContainerStyle: { // Header including back button, name, time until close, call button
     flexDirection: 'row',
-    //justifyContent: 'space-between',
     marginHorizontal: 5,
     marginTop: Platform.OS === 'ios' ? 15 : 5,
     position: 'absolute',
     left: 0,
     top: 0,
     zIndex: 8
-    //marginBottom: 5
   },
   headerContainerStyle: {
     flex: 1,
@@ -1137,7 +1159,6 @@ const styles = {
     alignItems: 'flex-start',
     marginLeft: 5,
     marginRight: 5,
-    //marginBottom: 10
   },
   addressStyle: {
     color: 'white',
@@ -1168,10 +1189,6 @@ const styles = {
     justifyContent: 'space-around',
     alignItems: 'center',
     paddingVertical: 16,
-    //borderTopWidth: 1,
-    //borderBottomWidth: 1,
-    //marginHorizontal: 30,
-    //borderColor: 'rgba(0, 0, 0, 0.1)'
   },
   ratingPercentStyle: {
     fontSize: 25,
@@ -1247,10 +1264,6 @@ const styles = {
     elevation: 0,
     flexDirection: 'row',
     alignItems: 'center',
-    // borderWidth: 1
-    // shadowOffset: { width: 1, height: 5 },
-    // shadowOpacity: 0.07,
-    // shadowRadius: 3
   },
   tabStyle: {
     width: 120,
@@ -1291,8 +1304,6 @@ const styles = {
   },
   footerButtonStyle: {
     flex: 1,
-    // paddingVertical: 10,
-    //width: null,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center'

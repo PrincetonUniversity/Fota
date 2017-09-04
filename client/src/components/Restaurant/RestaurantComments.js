@@ -88,6 +88,7 @@ class RestaurantComments extends Component {
 
   openEditorBox() {
     this.props.screenProps.scrollToEdit();
+    this.props.screenProps.allowKeyboardToClose();
     if (!this.state.editing) {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       this.setState({ editing: true });
