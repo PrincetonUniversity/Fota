@@ -134,7 +134,7 @@ class RestaurantModal extends Component {
     return (
       <Animated.View
         {...this.state.panResponder.panHandlers}
-        style={[this.state.position.getLayout(), styles.modalStyle, { backgroundColor: 'white' }]}
+        style={[this.state.position.getLayout(), styles.modalStyle]}
       >
         <RestaurantDetail
           loading={this.state.loading}
