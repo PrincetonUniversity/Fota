@@ -331,6 +331,7 @@ class RestaurantDetail extends Component {
   voteYes() {
     this.oldValue2 = 'clear';
     this.sendUpdateRequest('yes');
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     this.setState({
       yesCount: this.state.yesCount + 1,
       userLiked: true,
@@ -342,6 +343,7 @@ class RestaurantDetail extends Component {
   clearYes() {
     this.oldValue2 = 'yes';    
     this.sendUpdateRequest('clear');
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     this.setState({
       yesCount: this.state.yesCount - 1,
       userLiked: false,
@@ -353,6 +355,7 @@ class RestaurantDetail extends Component {
   clearNoVoteYes() {
     this.oldValue2 = 'no';
     this.sendUpdateRequest('yes');
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     this.setState({
       yesCount: this.state.yesCount + 1,
       noCount: this.state.noCount - 1,
@@ -365,6 +368,7 @@ class RestaurantDetail extends Component {
   voteNo() {
     this.oldValue2 = 'clear';    
     this.sendUpdateRequest('no');
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     this.setState({
       noCount: this.state.noCount + 1,
       userLiked: false,
@@ -376,6 +380,7 @@ class RestaurantDetail extends Component {
   clearNo() {
     this.oldValue2 = 'no';    
     this.sendUpdateRequest('clear');
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     this.setState({
       noCount: this.state.noCount - 1,
       userLiked: false,
@@ -387,6 +392,7 @@ class RestaurantDetail extends Component {
   clearYesVoteNo() {
     this.oldValue2 = 'yes';    
     this.sendUpdateRequest('no');
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     this.setState({
       yesCount: this.state.yesCount - 1,
       noCount: this.state.noCount + 1,

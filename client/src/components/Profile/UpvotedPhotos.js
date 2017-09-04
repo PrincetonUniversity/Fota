@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 import { NotFoundText, Spinner } from '../common';
 
-const photoSize = (Dimensions.get('window').width - 56) / 3;
+const photoSize = (Dimensions.get('window').width - 44) / 3;
 
 class UpvotedPhotos extends Component {
   static navigationOptions = {
@@ -47,8 +47,8 @@ class UpvotedPhotos extends Component {
           renderItem={photo => this.renderPhoto(photo.item)}
           bounces={false}
           removeClippedSubviews={false}
-          ListHeaderComponent={() => <View style={{ height: 15, backgroundColor: 'white' }} />}
-          ListFooterComponent={() => <View style={{ height: 15, backgroundColor: 'white' }} />}
+          ListHeaderComponent={() => <View style={{ height: 7, backgroundColor: 'white' }} />}
+          ListFooterComponent={() => <View style={{ height: 7, backgroundColor: 'white' }} />}
           getItemLayout={(data, index) => (
             { length: photoSize, offset: photoSize * index, index }
           )}
@@ -63,8 +63,13 @@ const styles = {
   imageStyle: {
     height: photoSize,
     width: photoSize,
-    margin: 7,
-    borderRadius: 5
+    margin: 5,
+    backgroundColor: 'gray',
+    borderRadius: 4,
+    overflow: 'hidden',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    shadowOffset: { height: 1 }
   }
 };
 

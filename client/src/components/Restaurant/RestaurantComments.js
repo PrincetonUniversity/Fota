@@ -212,7 +212,6 @@ class RestaurantComments extends Component {
   renderRecommend() {
     let yesColor = 'rgba(0, 0, 0, 0.31)';
     let noColor = 'rgba(0, 0, 0, 0.31)';
-    console.log(this.state.userLiked);
     if (this.state.userLiked) {
       yesColor = 'rgba(79, 217, 41, 0.76)';
     }
