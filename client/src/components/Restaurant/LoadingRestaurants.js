@@ -1,10 +1,20 @@
 import React from 'react';
 import { View, StatusBar } from 'react-native';
+import * as Animatable from 'react-native-animatable';
+
+const pulse = {
+  from: {
+    opacity: 0.7,
+  },
+  to: {
+    opacity: 1,
+  },
+};
 
 const LoadingRestaurants = () => (
   <View style={{ flex: 1, backgroundColor: 'white' }}>
     <StatusBar animated barStyle='light-content' />
-    <View style={{ height: 175, backgroundColor: '#d3d3d3' }} />
+    <Animatable.View animation={pulse} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={{ height: 175, backgroundColor: '#d3d3d3' }} useNativeDriver />
     <View style={styles.tabBarStyle} />
     <View style={{ flex: 1 }} />
     <View style={styles.footerStyle}>
