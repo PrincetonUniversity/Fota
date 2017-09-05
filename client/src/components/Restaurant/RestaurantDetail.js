@@ -598,7 +598,7 @@ class RestaurantDetail extends Component {
         <View style={{ flex: 1 }}>
           <TouchableOpacity
             activeOpacity={0.75}
-            style={{ marginHorizontal: 7 }}
+            style={{ marginHorizontal: 7, flex: 1 }}
             onPress={() => this.setState({ showTime: false })}
           >
             <View style={infoObjectStyle}>
@@ -620,7 +620,7 @@ class RestaurantDetail extends Component {
       <View style={{ flex: 1 }}>
         <TouchableOpacity
           activeOpacity={0.75}
-          style={{ marginHorizontal: 7 }}
+          style={{ marginHorizontal: 7, flex: 1 }}
           onPress={() => this.setState({ showTime: true })}
         >
           <View style={infoObjectStyle}>

@@ -4,6 +4,7 @@ import { PhotoGallery, NotFoundText } from '../common';
 import { dealWithAndroidBeingStupid } from '../common/GradientImage';
 
 const photoSize = (Dimensions.get('window').width - 44) / 3;
+const green = 'red';
 
 class RestaurantPhotos extends Component {
   static defaultProps = {
@@ -56,13 +57,26 @@ class RestaurantPhotos extends Component {
   }
 
   renderPhoto(photo, index) {
+    console.log(photo);
+    if (photo.url_small == null) {
+      return (
+        <TouchableOpacity
+          onPress={() => this.setSelectedPhoto(index)}
+        >
+          <View key={index} style={photoFrameStyle}>
+            <View style={{ width: photoSize, height: photoSize, borderRadius: 4, backgroundColor: green }} />
+            {dealWithAndroidBeingStupid(4)}
+          </View>
+        </TouchableOpacity>
+      );
+    }
     return (
       <TouchableOpacity
         onPress={() => this.setSelectedPhoto(index)}
       >
         <View key={index} style={photoFrameStyle}>
           <Image
-            source={{ uri: photo.url }}
+            source={{ uri: photo.url_small }}
             style={photoStyle}
           />
           {dealWithAndroidBeingStupid(4)}
