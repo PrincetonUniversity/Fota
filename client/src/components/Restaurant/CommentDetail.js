@@ -373,7 +373,8 @@ class CommentDetail extends Component {
 
 const styles = {
   containerStyle: {
-    flex: 1,
+    //flex: 1,
+    //height: 50,
     paddingHorizontal: 20,
     paddingTop: 20,
     flexDirection: 'column',

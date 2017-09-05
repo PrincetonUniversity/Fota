@@ -15,17 +15,17 @@ import axios from 'axios';
 import firebase from 'firebase';
 
 function isNetworkConnected() {
-  return NetInfo.getConnectionInfo().then(reachability => {
-    // if (reachability.type === 'unknown') {
-    //   return new Promise(resolve => {
-    //     const handleFirstConnectivityChangeIOS = isConnected => {
-    //       NetInfo.isConnected.removeEventListener('change', handleFirstConnectivityChangeIOS);
-    //       resolve(isConnected);
-    //     };
-    //     NetInfo.isConnected.addEventListener('change', handleFirstConnectivityChangeIOS);
-    //   });
-    // }
-    const r = reachability.type.toLowerCase();
+  return NetInfo.fetch().then(reachability => {
+    if (reachability === 'unknown') {
+      return new Promise(resolve => {
+        const handleFirstConnectivityChangeIOS = isConnected => {
+          NetInfo.isConnected.removeEventListener('change', handleFirstConnectivityChangeIOS);
+          resolve(isConnected);
+        };
+        NetInfo.isConnected.addEventListener('change', handleFirstConnectivityChangeIOS);
+      });
+    }
+    const r = reachability.toLowerCase();
     return (r !== 'none' && r !== 'unknown');
   });
 }
