@@ -83,7 +83,7 @@ class CommentDetail extends Component {
     if (this.submitting) return;
     this.submitting = true;
     this.setState({ submitting: true });
-    console.log(this.state.message);
+    //console.log(this.state.message);
     request.patch(commentEdit(this.state.id), {
       message: this.state.message
     })

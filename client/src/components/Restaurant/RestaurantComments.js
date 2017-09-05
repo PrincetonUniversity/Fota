@@ -190,7 +190,7 @@ class RestaurantComments extends Component {
             underlineColorAndroid={'transparent'}
             autoCapitalize={'sentences'}
           />
-          <ScrollView keyboardShouldPersistTaps='handled' onScroll={e => console.log(e)} scrollEventThrottle={1}>
+          <ScrollView keyboardShouldPersistTaps='handled' scrollEventThrottle={1}>
             {this.renderEditFooter()}
           </ScrollView>
         </View>
@@ -221,7 +221,7 @@ class RestaurantComments extends Component {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     if (this.state.message.length > 0) {
       return (
-        <View style={recommendContainerStyle} onStartShouldSetPanResponder={() => { console.log('here'); return true; }}>
+        <View style={recommendContainerStyle} onStartShouldSetPanResponder={() => true}>
           <Text style={recommendPromptStyle}>Recommend this restaurant?</Text>
           <TouchableOpacity onPress={this.handleYesVote.bind(this)}>
             <View style={[voteBoxStyle, { marginLeft: 5 }]}>
@@ -244,7 +244,7 @@ class RestaurantComments extends Component {
       return <View style={doneButtonStyle}><Spinner size="small" /></View>;
     }
     let color = 'rgba(0, 0, 0, 0.3)';
-    let action = () => { console.log('pressed done'); this.setState({ editing: false }); };
+    let action = () => this.setState({ editing: false });
     if (this.state.message.length > 0) {
       color = '#2494ff';
       action = () => this.submitComment();

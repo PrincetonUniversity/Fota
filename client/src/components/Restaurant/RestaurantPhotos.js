@@ -57,7 +57,7 @@ class RestaurantPhotos extends Component {
   }
 
   renderPhoto(photo, index) {
-    console.log(photo);
+//console.log(photo);
     if (photo.url_small == null) {
       return (
         <TouchableOpacity
