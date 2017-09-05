@@ -19,6 +19,8 @@ import { connect } from 'react-redux';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import Octicon from 'react-native-vector-icons/Octicons';
+// eslint-disable-next-line
+import ImageResizer from 'react-native-image-resizer';
 import firebase from 'firebase';
 import uuid from 'uuid/v1';
 import { Header, Button, Input, Spinner } from '../common';
@@ -92,7 +94,8 @@ class CameraLocationPage extends Component {
   componentDidMount() {
     const path = this.props.navigation.state.params.path;
     this.setState({ uploadPath: path });
-    this.uploadPhotoToFirebase(path)
+    this.generateFileNames();
+    this.uploadPhotoToFirebase(path, this.firebaseRef)
     .then(url => {
       request.post(checkPhotoRequest(), { url })
       .then(response => {
@@ -174,15 +177,19 @@ class CameraLocationPage extends Component {
     this.setState({ query, rlist });
   }
 
-  uploadPhotoToFirebase(path, mime = 'image/jpg') {
-    const filepath = path.replace(/^(file:)/, '');
+  generateFileNames() {
     const d = new Date();
     const today = `${d.getFullYear()}${dayformat(d.getMonth() + 1)}${dayformat(d.getDate())}`;
-    const imageName = `${this.props.loginState.uid}-${uuid()}.jpg`;
-    this.firebaseRef = `fota_photos/${today}/${imageName}`;
+    const imageName = `${this.props.loginState.uid}-${uuid()}`;
+    this.firebaseRef = `fota_photos/${today}/${imageName}.jpg`;
+    this.firebaseRefSmall = `fota_photos/${today}/${imageName}-small.jpg`;
+  }
+
+  uploadPhotoToFirebase(path, firebasePath, mime = 'image/jpg') {
+    const filepath = path.replace(/^(file:)/, '');
     return new Promise((resolve, reject) => {
       let uploadBlob = null;
-      const imageRef = firebase.storage().ref().child(`fota_photos/${today}/${imageName}`);
+      const imageRef = firebase.storage().ref().child(firebasePath);
       fs.readFile(filepath, 'base64')
         .then((data) => (
            Blob.build(data, { type: `${mime};BASE64` })
@@ -224,14 +231,21 @@ class CameraLocationPage extends Component {
   }
 
   submitPhoto(url, labels) {
-    request.post(uploadPhotoRequest(), {
-      url,
-      restaurantId: this.state.selected.id,
-      matchingCategories: labels
-    }).then(() => {
-      this.cleanup();
-      this.props.screenProps.goBack();
-    }).catch(error => request.showErrorAlert(error));
+    ImageResizer.createResizedImage(this.state.uploadPath, 250, 500, 'JPEG', 100).then(reuri => {
+      this.uploadPhotoToFirebase(reuri, this.firebaseRefSmall)
+      .then(urlSmall => {
+        request.post(uploadPhotoRequest(), {
+          url,
+          urlSmall,
+          restaurantId: this.state.selected.id,
+          matchingCategories: labels
+        }).then(() => {
+          deleteImage(reuri);
+          this.cleanup();
+          this.props.screenProps.goBack();
+        }).catch(error => request.showErrorAlert(error));
+      }).catch(() => cameraErrorAlert());    
+    }).catch(() => cameraErrorAlert());
   }
 
   showNotFoodAlert(error) {
