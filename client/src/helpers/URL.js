@@ -49,6 +49,10 @@ export function restRecommendRequest(id, type) {
   return `${REST_REQ}/${id}/recommend?key=${CLIENT_API_KEY}&type=${type}`;
 }
 
+export function commentEdit(id) {
+  return `${COMMENT_REQ}/${id}?key=${CLIENT_API_KEY}`;
+}
+
 export function commentVote(id, type) {
   return `${COMMENT_REQ}/${id}/vote?key=${CLIENT_API_KEY}&type=${type}`;
 }

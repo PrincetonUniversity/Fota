@@ -9,48 +9,57 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, LayoutAnimation, UIManager, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, LayoutAnimation, UIManager, TextInput, Platform } from 'react-native';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/Entypo';
 import Ionicon from 'react-native-vector-icons/Ionicons';
+import { Spinner } from '../common';
 import request from '../../helpers/axioshelper';
-import { commentVote } from '../../helpers/URL';
+import { commentEdit, commentVote } from '../../helpers/URL';
 
 class CommentDetail extends Component {
   constructor(props) {
     super(props);
     if (!props.vote) {
       this.state = {
+        message: props.comment.message,
         votecount: props.comment.vote_count,
         id: props.comment.id,
         userLiked: false,
         userDisliked: false,
         userHasVoted: false,
-        isEditing: false
+        isEditing: false,
+        submitting: false
       };
     } else if (props.vote === 'liked') {
       this.state = {
+        message: props.comment.message,
         votecount: props.comment.vote_count,
         id: props.comment.id,
         userLiked: true,
         userDisliked: false,
         userHasVoted: true,
-        isEditing: false
+        isEditing: false,
+        submitting: false
       };
     } else if (props.vote === 'disliked') {
       this.state = {
+        message: props.comment.message,
         votecount: props.comment.vote_count,
         id: props.comment.id,
         userLiked: false,
         userDisliked: true,
         userHasVoted: true,
-        isEditing: false
+        isEditing: false,
+        submitting: false
       };
     }
     this.timer = null;
     this.oldValue = null;
     this.oldHeight = 0;
     this.heightHasBeenAdded = false;
+    this.submitting = false;
+    this.oldMessage = props.comment.message;
   }
 
   componentWillMount() {
@@ -68,6 +77,25 @@ class CommentDetail extends Component {
     };
     if (this.timer) clearTimeout(this.timer);
     this.timer = setTimeout(patch, 1000);
+  }
+
+  changeComment() {
+    if (this.submitting) return;
+    this.submitting = true;
+    this.setState({ submitting: true });
+    console.log(this.state.message);
+    request.patch(commentEdit(this.state.id), {
+      message: this.state.message
+    })
+    .then(() => {
+      this.submitting = false;
+      this.setState({ isEditing: false, submitting: false });
+    })
+    .catch(e => {
+      this.submitting = false;
+      this.setState({ isEditing: false, submitting: false });
+      request.showErrorAlert(e);
+    });
   }
 
   renderUpvote() {
@@ -125,76 +153,130 @@ class CommentDetail extends Component {
     });
   }
 
-  renderMessage(comment) {
-    // if (this.state.isEditing) {
-    //   return (
-    //     <TouchableOpacity activeOpacity={1}>
-    //       <View style={editBoxStyle}>
-    //         <TextInput
-    //           style={{ height: Math.min(78, this.state.height), ...editorStyle }}
-    //           value={this.state.message}
-    //           placeholder='Add a review...'
-    //           placeholderTextColor='rgba(0,0,0,0.31)'
-    //           multiline
-    //           onFocus={this.openEditorBox.bind(this)}
-    //           onBlur={() => {
-    //             if (this.state.message.length === 0) {
-    //               LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    //               this.setState({ editing: false });
-    //             }
-    //           }}
-    //           onContentSizeChange={event => {
-    //             const height = event.nativeEvent.contentSize.height;
-    //             //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    //             this.setState({
-    //               height: Math.min(78, height)
-    //             });
-    //           }}
-    //           onChangeText={message => {
-    //             this.setState({ message });
-    //           }}
-    //           underlineColorAndroid={'transparent'}
-    //           autoCapitalize={'sentences'}
-    //         />
-    //         {this.renderEditSubmit()}
-    //       </View>
-    //     </TouchableOpacity>
-    //   )
-    // }
+  renderMessageAndFooter(comment) {
+    const upvoteColor = this.state.userLiked ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)';
+    const downvoteColor = this.state.userDisliked ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)';
+
+    if (this.state.isEditing) {
+      return (
+        <TouchableOpacity activeOpacity={1}>
+          <View style={editBoxStyle}>
+            <TextInput
+              style={editorStyle}
+              value={this.state.message}
+              placeholder='Add a review...'
+              placeholderTextColor='rgba(0,0,0,0.31)'
+              multiline
+              onFocus={() => this.setState({ isEditing: true })}
+              onBlur={() => {
+                if (this.state.message === this.oldMessage) {
+                  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                  this.setState({ isEditing: false });
+                }
+              }}
+              onChangeText={message => {
+                this.setState({ message });
+              }}
+              underlineColorAndroid={'transparent'}
+              autoCapitalize={'sentences'}
+            />
+            {this.renderEditFooter()}
+          </View>
+        </TouchableOpacity>
+      );
+    }
     if (!this.state.expanded) {
       return (
-        <Text
-          style={messageStyle}
-          numberOfLines={4}
-          suppressHighlighting
-          onPress={() => {
-            //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-            this.setState({ expanded: true });
-          }}
-        >
-          {comment.message}
-        </Text>
+        <View>
+          <Text
+            style={messageStyle}
+            numberOfLines={4}
+            suppressHighlighting
+            onPress={() => {
+              //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+              this.setState({ expanded: true });
+            }}
+          >
+            {this.state.message}
+          </Text>
+
+          <View style={bottomBarStyle}>
+            {this.renderEditButton(comment.my_comment)}
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+              <Text style={voteCountStyle}>
+                {this.state.votecount.toString()}
+              </Text>
+              <TouchableOpacity onPress={() => this.renderDownvote()}>
+                <Ionicon
+                  name='ios-arrow-down'
+                  size={24}
+                  color={downvoteColor}
+                  backgroundColor='transparent'
+                  style={{ marginHorizontal: 10 }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => this.renderUpvote()}>
+                <Ionicon
+                  name='ios-arrow-up'
+                  size={24}
+                  color={upvoteColor}
+                  backgroundColor='transparent'
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
       );
     }
     return (
-      <Text
-        style={messageStyle}
-        suppressHighlighting
-        onPress={() => {
-          //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-          this.setState({ expanded: false });
-        }}
-      >
-        {comment.message}
-      </Text>
+      <View>
+        <Text
+          style={messageStyle}
+          suppressHighlighting
+          onPress={() => {
+            //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+            this.setState({ expanded: false });
+          }}
+        >
+          {this.state.message}
+        </Text>
+
+        <View style={bottomBarStyle}>
+          {this.renderEditButton(comment.my_comment)}
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+            <Text style={voteCountStyle}>
+              {this.state.votecount.toString()}
+            </Text>
+            <TouchableOpacity onPress={() => this.renderDownvote()}>
+              <Ionicon
+                name='ios-arrow-down'
+                size={24}
+                color={downvoteColor}
+                backgroundColor='transparent'
+                style={{ marginHorizontal: 10 }}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.renderUpvote()}>
+              <Ionicon
+                name='ios-arrow-up'
+                size={24}
+                color={upvoteColor}
+                backgroundColor='transparent'
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
     );
   }
 
-  renderEditButton(render) {
-    if (render) {
+  renderEditButton(isMyComment) {
+    if (isMyComment) {
       return (
         <TouchableOpacity
-          onPress={() => console.log('nothing here yet')}
+          onPress={() => { this.setState({ isEditing: true }); }}
         >
           <Text style={headingTextStyle}>Edit</Text>
         </TouchableOpacity>
@@ -203,10 +285,54 @@ class CommentDetail extends Component {
     return <View />;
   }
 
+  renderEditFooter() {
+    if (this.state.isEditing) {
+      return (
+        <View style={editFooterContainerStyle}>
+          {this.renderCancelButton()}
+          {this.renderDoneButton()}
+        </View>
+      );
+    }
+  }
+
+  renderCancelButton() {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          if (this.oldMessage !== this.state.message) {
+            this.setState({ isEditing: false, message: this.oldMessage });
+          }
+        }}
+      >
+        <View style={editFooterButtonStyle}>
+          <Text style={{ color: 'rgba(0, 0, 0, 0.3)', fontSize: 15, fontWeight: '900' }}>CANCEL</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+
+  renderDoneButton() {
+    if (this.state.submitting) {
+      return <View style={editFooterButtonStyle}><Spinner size="small" /></View>;
+    }
+    let color = 'rgba(0, 0, 0, 0.3)';
+    let action = () => { this.setState({ isEditing: false }); };
+    if (this.state.message !== this.oldMessage && this.state.message.length > 0) {
+      color = '#2494ff';
+      action = () => this.changeComment();
+    }
+    return (
+      <TouchableOpacity onPress={action}>
+        <View style={editFooterButtonStyle}>
+          <Text style={{ color, fontSize: 15, fontWeight: '900' }}>DONE</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+
   render() {
     const comment = this.props.comment;
-    const upvoteColor = this.state.userLiked ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)';
-    const downvoteColor = this.state.userDisliked ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)';
 
     return (
       <TouchableOpacity activeOpacity={1}>
@@ -236,34 +362,9 @@ class CommentDetail extends Component {
             <Text style={headingTextStyle}>{moment(comment.uploaded_at).fromNow()}</Text>
           </View>
 
-          {this.renderMessage(comment)}
+          {this.renderMessageAndFooter(comment)}
 
-          <View style={bottomBarStyle}>
-            {this.renderEditButton(comment.my_comment)}
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-              <Text style={voteCountStyle}>
-                {this.state.votecount.toString()}
-              </Text>
-              <TouchableOpacity onPress={() => this.renderDownvote()}>
-                <Ionicon
-                  name='ios-arrow-down'
-                  size={24}
-                  color={downvoteColor}
-                  backgroundColor='transparent'
-                  style={{ marginHorizontal: 10 }}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => this.renderUpvote()}>
-                <Ionicon
-                  name='ios-arrow-up'
-                  size={24}
-                  color={upvoteColor}
-                  backgroundColor='transparent'
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
         </View>
       </TouchableOpacity>
     );
@@ -305,6 +406,31 @@ const styles = {
     marginTop: 5,
     zIndex: 5
   },
+  editBoxStyle: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    backgroundColor: 'white',
+    borderColor: 'rgba(0, 0, 0, 0.06)',
+    borderBottomWidth: 1,
+  },
+  editorStyle: {
+    padding: 0,
+    color: 'rgba(0,0,0,0.75)',
+    fontSize: 15,
+    lineHeight: Platform.OS === 'android' ? 20 : 26,
+    fontWeight: '400',
+    height: 78
+  },
+  editFooterContainerStyle: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: 20
+  },
+  editFooterButtonStyle: {
+    width: 50,
+    height: 20
+  },
   voteCountStyle: {
     fontSize: 16,
     color: 'rgba(0, 0, 0, 0.15)',
@@ -318,6 +444,10 @@ const {
   headingTextStyle,
   messageStyle,
   bottomBarStyle,
+  editBoxStyle,
+  editorStyle,
+  editFooterContainerStyle,
+  editFooterButtonStyle,
   voteCountStyle
 } = styles;
 
