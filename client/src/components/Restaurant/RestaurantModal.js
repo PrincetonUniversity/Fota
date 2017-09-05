@@ -132,17 +132,17 @@ class RestaurantModal extends Component {
       );
     }
     return (
-      <Animated.View
-        {...this.state.panResponder.panHandlers}
-        style={[this.state.position.getLayout(), styles.modalStyle]}
-      >
-        <RestaurantDetail
-          loading={this.state.loading}
-          restaurant={this.state.restaurant}
-          comments={this.state.comments}
-          close={() => this.setModalVisible(false)}
-        />
-      </Animated.View>
+        <Animated.View
+          {...this.state.panResponder.panHandlers}
+          style={[this.state.position.getLayout(), styles.modalStyle]}
+        >
+          <RestaurantDetail
+            loading={this.state.loading}
+            restaurant={this.state.restaurant}
+            comments={this.state.comments}
+            close={() => this.setModalVisible(false)}
+          />
+        </Animated.View>
     );
   }
 

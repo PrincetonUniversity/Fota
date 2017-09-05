@@ -341,7 +341,7 @@ class RestaurantDetail extends Component {
   }
 
   clearYes() {
-    this.oldValue2 = 'yes';    
+    this.oldValue2 = 'yes';
     this.sendUpdateRequest('clear');
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     this.setState({
@@ -366,7 +366,7 @@ class RestaurantDetail extends Component {
   }
 
   voteNo() {
-    this.oldValue2 = 'clear';    
+    this.oldValue2 = 'clear';
     this.sendUpdateRequest('no');
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     this.setState({
@@ -378,7 +378,7 @@ class RestaurantDetail extends Component {
   }
 
   clearNo() {
-    this.oldValue2 = 'no';    
+    this.oldValue2 = 'no';
     this.sendUpdateRequest('clear');
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     this.setState({
@@ -390,7 +390,7 @@ class RestaurantDetail extends Component {
   }
 
   clearYesVoteNo() {
-    this.oldValue2 = 'yes';    
+    this.oldValue2 = 'yes';
     this.sendUpdateRequest('no');
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     this.setState({
@@ -471,7 +471,7 @@ class RestaurantDetail extends Component {
             <TouchableWithoutFeedback onPress={() => this.changeRecommendDisplay()}>
               <View style={ratingSectionStyle}>
                 <View style={{ height: 20, width: 20, marginRight: 15 }} />
-                <View style={ratingContainerStyle} onLayout={e => this.setRatingHeight(e)}>
+                <View style={ratingContainerStyle} /*onLayout={e => this.setRatingHeight(e)}*/>
                   <Text style={ratingPercentStyle}>
                     {rating}
                   </Text>
@@ -646,7 +646,7 @@ class RestaurantDetail extends Component {
         <View style={{ flex: 1 }}>
           <TouchableOpacity
             activeOpacity={0.75}
-            style={{ marginHorizontal: 7 }}
+            style={{ marginHorizontal: 7, flex: 1 }}
             onPress={() => this.setState({ walking: false, driving: true })}
           >
             <View style={infoObjectStyle}>
@@ -668,7 +668,7 @@ class RestaurantDetail extends Component {
         <View style={{ flex: 1 }}>
           <TouchableOpacity
             activeOpacity={0.75}
-            style={{ marginHorizontal: 7 }}
+            style={{ marginHorizontal: 7, flex: 1 }}
             onPress={() => this.setState({ walking: true, driving: false })}
           >
             <View style={infoObjectStyle}>
@@ -695,7 +695,7 @@ class RestaurantDetail extends Component {
         <View style={{ flex: 1 }}>
           <TouchableOpacity
             activeOpacity={0.75}
-            style={{ marginHorizontal: 7 }}
+            style={{ marginHorizontal: 7, flex: 1 }}
             onPress={() => this.setState({ price: !this.state.price })}
           >
             <View style={infoObjectStyle}>
@@ -711,7 +711,7 @@ class RestaurantDetail extends Component {
         <View style={{ flex: 1 }}>
           <TouchableOpacity
             activeOpacity={0.75}
-            style={{ marginHorizontal: 7 }}
+            style={{ marginHorizontal: 7, flex: 1 }}
             onPress={() => this.setState({ price: !this.state.price })}
           >
             <View style={infoObjectStyle}>
@@ -726,7 +726,7 @@ class RestaurantDetail extends Component {
         <View style={{ flex: 1 }}>
           <TouchableOpacity
             activeOpacity={0.75}
-            style={{ marginHorizontal: 7 }}
+            style={{ marginHorizontal: 7, flex: 1 }}
             onPress={() => this.setState({ price: !this.state.price })}
           >
             <View style={infoObjectStyle}>
@@ -744,7 +744,7 @@ class RestaurantDetail extends Component {
         <View style={{ flex: 1 }}>
           <TouchableOpacity
             activeOpacity={0.75}
-            style={{ marginHorizontal: 7 }}
+            style={{ marginHorizontal: 7, flex: 1 }}
             onPress={() => this.setState({ price: !this.state.price })}
           >
             <View style={infoObjectStyle}>
@@ -763,7 +763,7 @@ class RestaurantDetail extends Component {
         <View style={{ flex: 1 }}>
           <TouchableOpacity
             activeOpacity={0.75}
-            style={{ marginHorizontal: 7 }}
+            style={{ marginHorizontal: 7, flex: 1 }}
             onPress={() => this.setState({ price: !this.state.price })}
           >
             <View style={infoObjectStyle}>
@@ -814,7 +814,7 @@ class RestaurantDetail extends Component {
       <View style={{ backgroundColor: 'white', zIndex: 2 }}>
         <View
           style={{ borderTopWidth: this.state.showRecommend ? 0 : 1, ...infoContainerStyle }}
-          onLayout={e => this.setInfoHeight(e)}
+          //onLayout={e => this.setInfoHeight(e)}
         >
           {this.renderTime()}
 
@@ -1007,7 +1007,7 @@ class RestaurantDetail extends Component {
       return <LoadingRestaurants />;
     }
     let height = 440;
-    let headerScrollDistance = this.state.ratingHeight + this.state.infoHeight;
+    let headerScrollDistance = 158; //this.state.ratingHeight + this.state.infoHeight;
     const newHeight = height + headerScrollDistance / 3;
     if (this.state.showRecommend) {
       height += 50;
@@ -1055,7 +1055,7 @@ class RestaurantDetail extends Component {
             ref={scroll => { this.scrollView = scroll; }}
             scrollEventThrottle={1}
             showsVerticalScrollIndicator={false}
-            //keyboardShouldPersistTaps='always'
+            keyboardShouldPersistTaps='handled'
             bounces={false}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
@@ -1194,6 +1194,7 @@ const styles = {
   ratingContainerStyle: {
     justifyContent: 'space-around',
     alignItems: 'center',
+    height: 84.5,
     paddingVertical: 16,
   },
   ratingPercentStyle: {
@@ -1241,6 +1242,7 @@ const styles = {
     paddingVertical: 10,
     marginHorizontal: 30,
     borderBottomWidth: 1,
+    height: 73.5,
     borderColor: 'rgba(0, 0, 0, 0.2)'
   },
   infoIconStyle: { // Time until close

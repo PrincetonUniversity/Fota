@@ -128,7 +128,6 @@ class RestaurantComments extends Component {
   }
 
   handleYesVote() {
-    console.log(this.state);
     if (!this.state.userHasVoted) {
       this.props.screenProps.voteYes();
       this.setState({ userLiked: true, userDisliked: false, userHasVoted: true });
@@ -174,14 +173,13 @@ class RestaurantComments extends Component {
             multiline
             onFocus={this.openEditorBox.bind(this)}
             onBlur={() => {
-              if (this.state.message.length === 0 ) {
+              if (this.state.message.length === 0) {
                 LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                 this.setState({ editing: false });
               }
             }}
             onContentSizeChange={event => {
               const height = event.nativeEvent.contentSize.height;
-              //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
               this.setState({
                 height: Math.min(78, height)
               });
@@ -192,7 +190,9 @@ class RestaurantComments extends Component {
             underlineColorAndroid={'transparent'}
             autoCapitalize={'sentences'}
           />
-          {this.renderEditFooter()}
+          <ScrollView keyboardShouldPersistTaps='handled' onScroll={e => console.log(e)} scrollEventThrottle={1}>
+            {this.renderEditFooter()}
+          </ScrollView>
         </View>
       </TouchableOpacity>
     );
@@ -221,7 +221,7 @@ class RestaurantComments extends Component {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     if (this.state.message.length > 0) {
       return (
-        <View style={recommendContainerStyle}>
+        <View style={recommendContainerStyle} onStartShouldSetPanResponder={() => { console.log('here'); return true; }}>
           <Text style={recommendPromptStyle}>Recommend this restaurant?</Text>
           <TouchableOpacity onPress={this.handleYesVote.bind(this)}>
             <View style={[voteBoxStyle, { marginLeft: 5 }]}>
@@ -244,7 +244,7 @@ class RestaurantComments extends Component {
       return <View style={doneButtonStyle}><Spinner size="small" /></View>;
     }
     let color = 'rgba(0, 0, 0, 0.3)';
-    let action = () => this.setState({ editing: false });
+    let action = () => { console.log('pressed done'); this.setState({ editing: false }); };
     if (this.state.message.length > 0) {
       color = '#2494ff';
       action = () => this.submitComment();
@@ -295,6 +295,7 @@ class RestaurantComments extends Component {
           keyExtractor={comment => comment.id}
           renderItem={c => this.renderComment(c.item)}
           scrollEnabled={false}
+          keyboardShouldPersistTaps='handled'
           showsVerticalScrollIndicator
           overScrollMode='never'
           bounces={false}
@@ -302,14 +303,6 @@ class RestaurantComments extends Component {
         />
       </View>
     );
-    // return (
-    //   <TouchableOpacity activeOpacity={1} style={{ flex: 1 }}>
-    //     <View style={tabContainerStyle}>
-
-    //       {this.renderComments()}
-    //     </View>
-    //   </TouchableOpacity>
-    // );
   }
 }
 

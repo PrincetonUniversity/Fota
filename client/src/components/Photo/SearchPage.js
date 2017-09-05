@@ -34,7 +34,7 @@ class SearchPage extends Component {
     this.state = { lat: pcoords.lat, lng: pcoords.lng, query: '', restaurants: [], categories: [], searching: true };
     this.timer = null;
   }
-  
+
 
   componentWillMount() {
     if (!this.props.browsingPrinceton) {
@@ -45,7 +45,7 @@ class SearchPage extends Component {
   }
 
   updateQuery(query) {
-    this.setState({ query, restaurants: [], categories: [], searching: true });    
+    this.setState({ query, restaurants: [], categories: [], searching: true });
     if (query) {
       const search = () => {
         this.timer = null;

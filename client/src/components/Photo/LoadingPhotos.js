@@ -16,13 +16,23 @@
 
 import React from 'react';
 import { View, Dimensions } from 'react-native';
+import * as Animatable from 'react-native-animatable';
 
 const size = Dimensions.get('window').width - 50;
 
+const pulse = {
+  from: {
+    opacity: 0.6,
+  },
+  to: {
+    opacity: 1,
+  },
+};
+
 const LoadingPhotos = () => (
   <View style={{ borderTopWidth: 1, borderColor: 'rgba(0,0,0,0.09)' }}>
-    <View style={styles.grayPhotoStyle} />
-    <View style={styles.grayPhotoStyle} />
+    <Animatable.View animation={pulse} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={styles.grayPhotoStyle} useNativeDriver />
+    <Animatable.View animation={pulse} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={styles.grayPhotoStyle} useNativeDriver />
   </View>
 );
 
@@ -33,7 +43,7 @@ const styles = {
     width: size,
     height: size,
     borderRadius: 9,
-    backgroundColor: 'rgba(0, 0, 0, 0.06)'
+    backgroundColor: 'rgba(0, 0, 0, 0.08)'
   }
 };
 
