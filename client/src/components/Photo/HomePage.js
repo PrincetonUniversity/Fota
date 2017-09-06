@@ -70,23 +70,23 @@ class HomePage extends Component {
 
   state = { noPhotos: false, filterList: [], modalVisible: false, filter: '' };
 
-  getFilterList(filter) {
+  getFilterList(filter, filterDisplay) {
     if (this.props.browsingPrinceton) {
-      this.sendPhotoRequest(filter, pcoords.lat, pcoords.lng);
+      this.sendPhotoRequest(filter, filterDisplay, pcoords.lat, pcoords.lng);
     } else {
       navigator.geolocation.getCurrentPosition(position => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
-        this.sendPhotoRequest(filter, lat, lng);
+        this.sendPhotoRequest(filter, filterDisplay, lat, lng);
       });
     }
   }
 
-  sendPhotoRequest(filter, lat, lng) {
+  sendPhotoRequest(filter, filterDisplay, lat, lng) {
     AsyncStorage.getItem('SearchRadius').then(radius => {
       request.get(filterRequest(filter, lat, lng, parseInt(radius, 10)))
       .then(response => {
-        this.setState({ filter, modalVisible: false, filterList: response.data });
+        this.setState({ filter: filterDisplay, modalVisible: false, filterList: response.data });
       })
       .catch(e => request.showErrorAlert(e));
     });
@@ -146,7 +146,7 @@ class HomePage extends Component {
         >
           <SearchPage
             onCancel={() => this.setState({ modalVisible: false, filter: '' })}
-            selectFilter={filter => this.getFilterList(filter)}
+            selectFilter={(filter, filterDisplay) => this.getFilterList(filter, filterDisplay)}
           />
         </Modal>
         <View style={{ marginBottom: headerMargin, ...searchContainerStyle }}>

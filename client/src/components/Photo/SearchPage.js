@@ -76,7 +76,7 @@ class SearchPage extends Component {
 
   renderFilter(filterId, filterDisplay) {
     return (
-        <ListItem key={filterId} onPress={() => this.props.selectFilter(filterId)}>
+        <ListItem key={filterId} onPress={() => this.props.selectFilter(filterId, filterDisplay)}>
           <Text style={styles.searchResultStyle}>{filterDisplay}</Text>
         </ListItem>
     );
