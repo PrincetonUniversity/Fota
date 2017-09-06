@@ -166,7 +166,7 @@ class RestaurantComments extends Component {
       <TouchableOpacity activeOpacity={1}>
         <View style={[editBoxStyle, { paddingBottom }]}>
           <TextInput
-            style={{ height: Math.min(78, this.state.height), ...editorStyle }}
+            style={{ height: this.state.height, ...editorStyle }}
             value={this.state.message}
             placeholder='Add a review...'
             placeholderTextColor='rgba(0,0,0,0.31)'
@@ -178,15 +178,10 @@ class RestaurantComments extends Component {
                 this.setState({ editing: false });
               }
             }}
-            onContentSizeChange={event => {
-              const height = event.nativeEvent.contentSize.height;
-              this.setState({
-                height: Math.min(78, height)
-              });
-            }}
-            onChangeText={message => {
-              this.setState({ message });
-            }}
+            onChange={event => this.setState({
+              message: event.nativeEvent.text,
+              height: Math.min(78, event.nativeEvent.contentSize.height)
+            })}
             underlineColorAndroid={'transparent'}
             autoCapitalize={'sentences'}
           />
@@ -321,7 +316,7 @@ const styles = {
     color: 'rgba(0,0,0,0.75)',
     fontSize: 15,
     lineHeight: Platform.OS === 'android' ? 20 : 26,
-    fontWeight: '400'
+    fontWeight: '400',
   },
   editFooterContainerStyle: {
     flexDirection: 'row',

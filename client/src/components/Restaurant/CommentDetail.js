@@ -98,6 +98,10 @@ class CommentDetail extends Component {
     });
   }
 
+  deleteComment() {
+
+  }
+
   renderUpvote() {
     let newVoteCount = this.state.votecount;
     let userNewLike = true;
@@ -162,81 +166,42 @@ class CommentDetail extends Component {
         <TouchableOpacity activeOpacity={1}>
           <View style={editBoxStyle}>
             <TextInput
+              autoFocus
               style={editorStyle}
               value={this.state.message}
               placeholder='Add a review...'
               placeholderTextColor='rgba(0,0,0,0.31)'
               multiline
-              onFocus={() => this.setState({ isEditing: true })}
+              /* onFocus={() => this.setState({ isEditing: true })}
               onBlur={() => {
                 if (this.state.message === this.oldMessage) {
                   LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                   this.setState({ isEditing: false });
                 }
-              }}
+              }} */
               onChangeText={message => {
                 this.setState({ message });
               }}
               underlineColorAndroid={'transparent'}
               autoCapitalize={'sentences'}
             />
-            {this.renderEditFooter()}
           </View>
+          {this.renderEditFooter()}
         </TouchableOpacity>
       );
     }
-    if (!this.state.expanded) {
-      return (
-        <View>
-          <Text
-            style={messageStyle}
-            numberOfLines={4}
-            suppressHighlighting
-            onPress={() => {
-              //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-              this.setState({ expanded: true });
-            }}
-          >
-            {this.state.message}
-          </Text>
-
-          <View style={bottomBarStyle}>
-            {this.renderEditButton(comment.my_comment)}
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
-              <Text style={voteCountStyle}>
-                {this.state.votecount.toString()}
-              </Text>
-              <TouchableOpacity onPress={() => this.renderDownvote()}>
-                <Ionicon
-                  name='ios-arrow-down'
-                  size={24}
-                  color={downvoteColor}
-                  backgroundColor='transparent'
-                  style={{ marginHorizontal: 10 }}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => this.renderUpvote()}>
-                <Ionicon
-                  name='ios-arrow-up'
-                  size={24}
-                  color={upvoteColor}
-                  backgroundColor='transparent'
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      );
+    let numberOfLines = 4;
+    if (this.state.expanded) {
+      numberOfLines = null;
     }
     return (
       <View>
         <Text
           style={messageStyle}
+          numberOfLines={numberOfLines}
           suppressHighlighting
           onPress={() => {
-            //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-            this.setState({ expanded: false });
+            this.setState({ expanded: !this.state.expanded });
           }}
         >
           {this.state.message}
@@ -272,19 +237,6 @@ class CommentDetail extends Component {
     );
   }
 
-  renderEditButton(isMyComment) {
-    if (isMyComment) {
-      return (
-        <TouchableOpacity
-          onPress={() => { this.setState({ isEditing: true }); }}
-        >
-          <Text style={headingTextStyle}>Edit</Text>
-        </TouchableOpacity>
-      );
-    }
-    return <View />;
-  }
-
   renderEditFooter() {
     if (this.state.isEditing) {
       return (
@@ -299,13 +251,9 @@ class CommentDetail extends Component {
   renderCancelButton() {
     return (
       <TouchableOpacity
-        onPress={() => {
-          if (this.oldMessage !== this.state.message) {
-            this.setState({ isEditing: false, message: this.oldMessage });
-          }
-        }}
+        onPress={() => this.setState({ isEditing: false, message: this.oldMessage })}
       >
-        <View style={editFooterButtonStyle}>
+        <View style={{ width: 75, height: 20 }}>
           <Text style={{ color: 'rgba(0, 0, 0, 0.3)', fontSize: 15, fontWeight: '900' }}>CANCEL</Text>
         </View>
       </TouchableOpacity>
@@ -324,11 +272,32 @@ class CommentDetail extends Component {
     }
     return (
       <TouchableOpacity onPress={action}>
-        <View style={editFooterButtonStyle}>
+        <View style={{ width: 50, height: 20 }}>
           <Text style={{ color, fontSize: 15, fontWeight: '900' }}>DONE</Text>
         </View>
       </TouchableOpacity>
     );
+  }
+
+  renderEditButton(isMyComment) {
+    if (isMyComment) {
+      return (
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity
+            onPress={() => this.setState({ isEditing: true })}
+          >
+            <Text style={headingTextStyle}>Edit</Text>
+          </TouchableOpacity>
+          <Icon name='dot-single' size={13} color='rgba(0, 0, 0, 0.3)' style={{ marginHorizontal: 5 }} />
+          <TouchableOpacity
+            onPress={() => this.deleteComment()}
+          >
+            <Text style={headingTextStyle}>Delete</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    return <View />;
   }
 
   render() {
@@ -408,11 +377,13 @@ const styles = {
     zIndex: 5
   },
   editBoxStyle: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
     backgroundColor: 'white',
-    borderColor: 'rgba(0, 0, 0, 0.06)',
-    borderBottomWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.09)',
+    borderWidth: 1,
+    height: 90,
+    padding: 4,
+    paddingHorizontal: 8,
+    borderRadius: 5
   },
   editorStyle: {
     padding: 0,
@@ -420,17 +391,14 @@ const styles = {
     fontSize: 15,
     lineHeight: Platform.OS === 'android' ? 20 : 26,
     fontWeight: '400',
-    height: 78
+    flex: 1
   },
   editFooterContainerStyle: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    marginTop: 20
-  },
-  editFooterButtonStyle: {
-    width: 50,
-    height: 20
+    marginTop: 10,
+    marginBottom: 20
   },
   voteCountStyle: {
     fontSize: 16,
