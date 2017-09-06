@@ -67,8 +67,6 @@ class CommentDetail extends Component {
   }
 
   componentWillUnmount() {
-    console.log('unmounting');
-    console.log(this.state.message);
     this.props.subtractHeight(this.oldHeight);
   }
 
@@ -89,7 +87,6 @@ class CommentDetail extends Component {
     if (this.submitting) return;
     this.submitting = true;
     this.setState({ submitting: true });
-    //console.log(this.state.message);
     request.patch(commentEdit(this.state.id), {
       message: this.state.message
     })
@@ -334,16 +331,12 @@ class CommentDetail extends Component {
           style={containerStyle}
           onLayout={e => {
             const currentHeight = e.nativeEvent.layout.height;
-            console.log(this.heightHasBeenAdded);
-            console.log(this.state.id);
             if (!this.heightHasBeenAdded) {
-              console.log(`Adding Height: ${currentHeight}`);
               this.heightHasBeenAdded = true;
               this.oldHeight = currentHeight;
               this.props.addHeight(currentHeight);
             } else {
               if (this.oldHeight !== currentHeight) {
-                console.log('Changing height...');
                 const diffHeight = currentHeight - this.oldHeight;
                 this.oldHeight = currentHeight;
                 this.props.changeHeight(diffHeight);

@@ -49,13 +49,6 @@ class SignupForm extends Component {
   onCreateUserSuccess(user) {
     const displayName = `${this.state.first} ${this.state.last}`;
     user.updateProfile({ displayName });
-    // user.getToken(false).then(idToken => {
-    //   AsyncStorage.setItem('JWT', idToken).then(() => {
-    //     console.log(idToken);
-    //     request.patch(changeNameRequest(displayName))
-    //     .catch(e => request.showErrorAlert(e));
-    //   });
-    // });
     this.setState({ first: '', last: '', email: '', pass: '', loading: false });
     if (this.props.screenProps.onLoginFinished) {
       this.props.screenProps.onLoginFinished();

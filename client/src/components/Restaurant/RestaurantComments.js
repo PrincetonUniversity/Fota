@@ -61,9 +61,7 @@ class RestaurantComments extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    console.log(newProps);
     if (newProps.screenProps !== this.props.screenProps) {
-      console.log('changing props');
       const { userLiked, userDisliked, userHasVoted } = newProps.screenProps;
       this.setState({ userLiked, userDisliked, userHasVoted });
     }
@@ -73,8 +71,6 @@ class RestaurantComments extends Component {
   }
 
   updateHeight() {
-    console.log('');
-    console.log('DID UPDATE');
     let newHeight = 40 + this.state.height + this.totalCommentHeight; // 40 for the done
     if (this.state.editing) {
       newHeight += 35;
@@ -82,8 +78,6 @@ class RestaurantComments extends Component {
     if (this.props.screenProps.listHeight !== newHeight && this.hasSentHeight) {
       this.hasSentHeight = false;
     }
-    console.log(`Should be false: ${this.hasSentHeight}`);
-    console.log(`${this.numCommentsAdded} === ${this.state.comments.length}`);
     if (!this.hasSentHeight && this.numCommentsAdded === this.state.comments.length) {
       this.hasSentHeight = true;
       this.props.screenProps.setCommentsHeight(newHeight);
@@ -92,12 +86,6 @@ class RestaurantComments extends Component {
       }
     }
   }
-
-  // setListHeight(event) {
-  //   //const listHeight = event.nativeEvent.layout.height;
-  //   console.log(this.totalCommentHeight);
-  //   this.props.screenProps.setCommentHeight(this.totalCommentHeight);
-  // }
 
   openEditorBox() {
     this.props.screenProps.scrollToEdit();
@@ -145,12 +133,8 @@ class RestaurantComments extends Component {
     });
   }
 
-  removeComment(id, height) {
-    console.log(height);
+  removeComment(id) {
     const commentList = this.state.comments.filter(comment => comment.id !== id);
-    //this.totalCommentHeight -= height;
-    //this.numCommentsAdded -= 1;
-    console.log(commentList);
     this.setState({ comments: commentList }, () => this.updateHeight());
     this.props.screenProps.rerenderComments(commentList);
   }
@@ -288,7 +272,6 @@ class RestaurantComments extends Component {
   }
 
   renderComment(comment) {
-    //console.log(`${comment.message}`);
     return (
       <CommentDetail
         key={comment.id}
@@ -317,9 +300,6 @@ class RestaurantComments extends Component {
   }
 
   render() {
-    console.log('');
-    console.log('RENDERING');
-    console.log(this.state);
     if (this.state.comments.length === 0) {
       return (
         <View style={{ flex: 1 }}>

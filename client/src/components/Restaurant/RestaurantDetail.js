@@ -51,35 +51,6 @@ class RestaurantDetail extends Component {
   constructor(props) {
     super(props);
 
-    // const panResponder = PanResponder.create({
-    //   onStartShouldSetPanResponder: () => true,
-    //   onPanResponderMove: (event, gesture) => {
-    //     console.log(gesture.dy);
-    //   },
-    //   onPanResponderRelease: (event, gesture) => {
-
-    //   },
-      // onPanResponderReject: (e, gestureState) => {
-      //
-      // },
-      // onPanResponderGrant: (e, gestureState) => {
-      //   console.log('grant')
-      // },
-      // onPanResponderStart: (e, gestureState) => {
-      //   console.log('start')
-      // },
-      // onPanResponderEnd: (e, gestureState) => {
-      //   console.log('end')
-      // },
-      // onPanResponderTerminate: (event, gesture) => {
-      //  console.log('terminating panresponder');
-      // },
-      // onPanResponderTerminationRequest: (event, gesture) => {
-        //console.log('terminationrequest')
-        //this.resetPosition();
-    //   }
-    // });
-
     this.state = {
       restaurant: null,
       photos: [],
@@ -1028,8 +999,6 @@ class RestaurantDetail extends Component {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     });
-    //console.log(this.commentsHeight);
-    //console.log(this.state.listHeight);
     return (
       <View style={pageStyle}>
         <StatusBar barStyle='light-content' />
