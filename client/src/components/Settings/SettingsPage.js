@@ -50,11 +50,11 @@ class SettingsPage extends Component {
           />
 
           <SettingsHeader text='About' />
-          <SettingsButton text='Help &amp; Support' />
-          <SettingsButton text='Terms of Service' />
-          <SettingsButton text='Privacy Policy' />
-          <SettingsButton text='Acknowledgements' />
-          <SettingsButton text='Report a Bug' />
+          {/* <SettingsButton text='Help &amp; Support' /> */}
+          <SettingsButton text='Terms of Service' onPress={() => this.props.navigation.navigate('TOS')} />
+          <SettingsButton text='Privacy Policy' onPress={() => this.props.navigation.navigate('PP')} />
+          {/* <SettingsButton text='Acknowledgements' /> */}
+          {/* <SettingsButton text='Report a Bug' /> */}
 
           <SettingsHeader text='' />
           <SettingsButton text='Sign out' onPress={() => firebase.auth().signOut()} />

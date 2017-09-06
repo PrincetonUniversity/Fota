@@ -15,7 +15,7 @@ import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 //mport LoginPage from '../Account/LoginPage';
 import ProfilePage from './ProfilePage';
 import SettingsPage from '../Settings/SettingsPage';
-import SettingsRadioButton from '../Settings/SettingsRadioButton';
+import { SettingsRadius, TermsOfService, PrivacyPolicy } from '../Settings/SettingsIndex';
 import { tabWidth, tabHeight, horizontalPadding } from '../../Base';
 import icoMoonConfig from '../../selection.json';
 
@@ -70,20 +70,12 @@ class ProfileHelper extends Component {
   }
 }
 
-const SettingsRadius = (props) => (
-  <SettingsRadioButton
-    title='Search Radius'
-    name='SearchRadius'
-    extraText=' mi.'
-    options={['1', '3', '5', '10']}
-    navigation={props.navigation}
-  />
-);
-
 const ProfileNavigator = StackNavigator({
   Profile: { screen: ProfilePage },
   Settings: { screen: SettingsPage },
-  Radius: { screen: SettingsRadius }
+  Radius: { screen: SettingsRadius },
+  TOS: { screen: TermsOfService },
+  PP: { screen: PrivacyPolicy }
 },
 {
   headerMode: 'none',
