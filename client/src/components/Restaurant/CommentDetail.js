@@ -302,7 +302,9 @@ class CommentDetail extends Component {
 
   render() {
     const comment = this.props.comment;
-
+    let recommendation = 'Undecided';
+    if (comment.author_recommended_yes) recommendation = 'Recommended';
+    if (comment.author_recommended_no) recommendation = 'Not Recommended';
     return (
       <TouchableOpacity activeOpacity={1}>
         <View
@@ -326,7 +328,7 @@ class CommentDetail extends Component {
             {comment.my_comment && <Text style={youTextStyle}>(You) </Text>}
             <Text style={headingTextStyle}>{comment.author}</Text>
             <Icon name='dot-single' size={13} color='rgba(0, 0, 0, 0.3)' style={{ marginHorizontal: 5 }} />
-            <Text style={headingTextStyle}>Undecided</Text>
+            <Text style={headingTextStyle}>{recommendation}</Text>
             <Icon name='dot-single' size={13} color='rgba(0, 0, 0, 0.3)' style={{ marginHorizontal: 5 }} />
             <Text style={headingTextStyle}>{moment(comment.uploaded_at).fromNow()}</Text>
           </View>
