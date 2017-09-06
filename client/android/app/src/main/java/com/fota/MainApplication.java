@@ -29,10 +29,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNGRPPackage(),
             new VectorIconsPackage(),
             new LinearGradientPackage(),
             new ImageResizerPackage(),
+            new RNGRPPackage(),
             new RNFetchBlobPackage(),
             new RCTCameraPackage()
       );
