@@ -6,7 +6,6 @@ import { NotFoundText, Spinner } from '../common';
 import { dealWithAndroidBeingStupid } from '../common/GradientImage';
 
 const photoSize = (Dimensions.get('window').width - 44) / 3;
-const purple = 'red';
 
 class UpvotedPhotos extends Component {
   static navigationOptions = {
@@ -30,7 +29,7 @@ class UpvotedPhotos extends Component {
       return (
         <RestaurantModal restaurantid={photo.rest_id}>
           <View style={styles.photoFrameStyle}>
-            <View style={{ width: photoSize, height: photoSize, borderRadius: 4, backgroundColor: purple }} />
+            <View style={{ width: photoSize, height: photoSize, borderRadius: 4, backgroundColor: 'green' }} />
             {dealWithAndroidBeingStupid(4)}
           </View>
         </RestaurantModal>
