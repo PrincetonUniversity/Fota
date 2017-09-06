@@ -9,7 +9,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, LayoutAnimation, UIManager, TextInput, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, LayoutAnimation, UIManager, TextInput, Platform, Alert } from 'react-native';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/Entypo';
 import Ionicon from 'react-native-vector-icons/Ionicons';
@@ -66,6 +66,12 @@ class CommentDetail extends Component {
     UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 
+  componentWillUnmount() {
+    console.log('unmounting');
+    console.log(this.state.message);
+    this.props.subtractHeight(this.oldHeight);
+  }
+
   sendUpdateRequest(type) {
     const patch = () => {
       const temp = this.oldValue;
@@ -98,8 +104,26 @@ class CommentDetail extends Component {
     });
   }
 
-  deleteComment() {
+  showDeleteAlert() {
+    Alert.alert(
+      'Delete Comment',
+      'Do you want to delete this comment?',
+      [
+        { text: 'Cancel' },
+        { text: 'Delete', onPress: () => this.deleteComment() }
+      ]
+    );
+  }
 
+  deleteComment() {
+    request.delete(commentEdit(this.state.id))
+    .then(() => {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      this.props.deleteComment(this.state.id, this.oldHeight);
+    })
+    .catch(e => {
+      request.showErrorAlert(e);
+    });
   }
 
   renderUpvote() {
@@ -210,7 +234,6 @@ class CommentDetail extends Component {
         <View style={bottomBarStyle}>
           {this.renderEditButton(comment.my_comment)}
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
             <Text style={voteCountStyle}>
               {this.state.votecount.toString()}
             </Text>
@@ -290,7 +313,7 @@ class CommentDetail extends Component {
           </TouchableOpacity>
           <Icon name='dot-single' size={13} color='rgba(0, 0, 0, 0.3)' style={{ marginHorizontal: 5 }} />
           <TouchableOpacity
-            onPress={() => this.deleteComment()}
+            onPress={() => this.showDeleteAlert()}
           >
             <Text style={headingTextStyle}>Delete</Text>
           </TouchableOpacity>
@@ -302,19 +325,23 @@ class CommentDetail extends Component {
 
   render() {
     const comment = this.props.comment;
-
+    //console.log(`CommentDetail rerender ${comment.message}`);
     return (
       <TouchableOpacity activeOpacity={1}>
         <View
           style={containerStyle}
           onLayout={e => {
             const currentHeight = e.nativeEvent.layout.height;
+            console.log(this.heightHasBeenAdded);
+            console.log(this.state.id);
             if (!this.heightHasBeenAdded) {
+              console.log(`Adding Height: ${currentHeight}`);
               this.heightHasBeenAdded = true;
               this.oldHeight = currentHeight;
               this.props.addHeight(currentHeight);
             } else {
               if (this.oldHeight !== currentHeight) {
+                console.log('Changing height...');
                 const diffHeight = currentHeight - this.oldHeight;
                 this.oldHeight = currentHeight;
                 this.props.changeHeight(diffHeight);

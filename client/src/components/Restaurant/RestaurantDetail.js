@@ -1028,6 +1028,8 @@ class RestaurantDetail extends Component {
       outputRange: [1, 0],
       extrapolate: 'clamp',
     });
+    //console.log(this.commentsHeight);
+    //console.log(this.state.listHeight);
     return (
       <View style={pageStyle}>
         <StatusBar barStyle='light-content' />
@@ -1094,10 +1096,8 @@ class RestaurantDetail extends Component {
                   voteNo: this.voteNo.bind(this),
                   clearNo: this.clearNo.bind(this),
                   clearYesVoteNo: this.clearYesVoteNo.bind(this),
-                  setCommentsHeight: cHeight => {
-                    this.commentsHeight = cHeight;
-                    this.setState({ listHeight: cHeight });
-                  },
+                  setCommentsHeight: cHeight => { this.commentsHeight = cHeight; },
+                  renderCommentHeight: cHeight => this.setState({ listHeight: cHeight }),
                   scrollToEdit: () => {
                     this.scrollView._component.scrollTo({
                       x: 0,

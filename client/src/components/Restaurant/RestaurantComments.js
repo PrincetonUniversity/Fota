@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import {
   View, Text, FlatList, TextInput, ScrollView, TouchableOpacity,
-  Platform, LayoutAnimation, UIManager
+  Platform, LayoutAnimation, UIManager, Keyboard
 } from 'react-native';
+import { connect } from 'react-redux';
 import CommentDetail from './CommentDetail';
 import { Spinner, NotFoundText } from '../common';
 import request from '../../helpers/axioshelper';
@@ -46,7 +47,7 @@ class RestaurantComments extends Component {
       height: 26,
       userLiked: false,
       userDisliked: false,
-      userHasVoted: false
+      userHasVoted: false,
     };
     this.totalCommentHeight = 0;
     this.numCommentsAdded = 0;
@@ -60,23 +61,35 @@ class RestaurantComments extends Component {
   }
 
   componentWillReceiveProps(newProps) {
+    console.log(newProps);
     if (newProps.screenProps !== this.props.screenProps) {
+      console.log('changing props');
       const { userLiked, userDisliked, userHasVoted } = newProps.screenProps;
       this.setState({ userLiked, userDisliked, userHasVoted });
     }
+    // if (newProps.screenProps.focused !== this.props.screenProps.focused) {
+    //   this.setState({ focused: newProps.screenProps.focused });
+    // }
   }
 
-  componentDidUpdate() {
-    let newHeight = 40 + this.state.height + this.totalCommentHeight; // 30 padding + 40 for the done
+  updateHeight() {
+    console.log('');
+    console.log('DID UPDATE');
+    let newHeight = 40 + this.state.height + this.totalCommentHeight; // 40 for the done
     if (this.state.editing) {
       newHeight += 35;
     }
     if (this.props.screenProps.listHeight !== newHeight && this.hasSentHeight) {
       this.hasSentHeight = false;
     }
-    if (!this.hasSentHeight && this.numCommentsAdded === this.state.comments.length && this.props.screenProps.focused === 1) {
+    console.log(`Should be false: ${this.hasSentHeight}`);
+    console.log(`${this.numCommentsAdded} === ${this.state.comments.length}`);
+    if (!this.hasSentHeight && this.numCommentsAdded === this.state.comments.length) {
       this.hasSentHeight = true;
       this.props.screenProps.setCommentsHeight(newHeight);
+      if (this.props.screenProps.focused) {
+        this.props.screenProps.renderCommentHeight(newHeight);
+      }
     }
   }
 
@@ -101,24 +114,45 @@ class RestaurantComments extends Component {
     this.setState({ submitting: true });
     request.post(restCommentRequest(this.props.screenProps.restaurant.id), {
       message: this.state.message
-    }).then(() => {
-      request.get(restCommentRequest(this.props.screenProps.restaurant.id))
-      .then(response => {
-        this.submitting = false;
-        this.setState({
-          comments: response.data,
-          editing: false,
-          submitting: false,
-          message: '',
-          height: 26
-        });
-        this.props.screenProps.rerenderComments(response.data);
-      }).catch(e => request.showErrorAlert(e));
+    }).then(comment => {
+      Keyboard.dismiss();
+      const newComment = {
+        id: comment.data.id,
+        message: this.state.message,
+        author: this.props.loginState.displayName,
+        vote_count: 0,
+        rest_id: this.props.screenProps.restaurant.id,
+        user_upvote: false,
+        user_downvote: false,
+        my_comment: true,
+        uploaded_at: comment.data.now
+      };
+      const commentList = [newComment, ...this.state.comments];
+      this.submitting = false;
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      this.setState({
+        comments: commentList,
+        editing: false,
+        submitting: false,
+        message: '',
+        height: 26
+      });
+      this.props.screenProps.rerenderComments(commentList);
     }).catch(e => {
       this.submitting = false;
       this.setState({ submitting: false });
       request.showErrorAlert(e);
     });
+  }
+
+  removeComment(id, height) {
+    console.log(height);
+    const commentList = this.state.comments.filter(comment => comment.id !== id);
+    //this.totalCommentHeight -= height;
+    //this.numCommentsAdded -= 1;
+    console.log(commentList);
+    this.setState({ comments: commentList }, () => this.updateHeight());
+    this.props.screenProps.rerenderComments(commentList);
   }
 
   findVote(upvote, downvote) {
@@ -254,10 +288,20 @@ class RestaurantComments extends Component {
   }
 
   renderComment(comment) {
+    //console.log(`${comment.message}`);
     return (
       <CommentDetail
+        key={comment.id}
         comment={comment}
-        addHeight={height => { this.totalCommentHeight += height; this.numCommentsAdded += 1; }}
+        subtractHeight={height => {
+          this.totalCommentHeight -= height;
+          this.numCommentsAdded -= 1;
+        }}
+        addHeight={height => {
+          this.totalCommentHeight += height;
+          this.numCommentsAdded += 1;
+          this.updateHeight();
+        }}
         changeHeight={height => {
           this.totalCommentHeight += height;
           let newHeight = 40 + this.state.height + this.totalCommentHeight;
@@ -266,12 +310,16 @@ class RestaurantComments extends Component {
           }
           this.props.screenProps.setCommentsHeight(newHeight);
         }}
+        deleteComment={this.removeComment.bind(this)}
         vote={this.findVote(comment.user_upvote, comment.user_downvote)}
       />
     );
   }
 
   render() {
+    console.log('');
+    console.log('RENDERING');
+    console.log(this.state);
     if (this.state.comments.length === 0) {
       return (
         <View style={{ flex: 1 }}>
@@ -365,4 +413,8 @@ const {
   doneButtonStyle,
 } = styles;
 
-export default RestaurantComments;
+function mapStateToProps({ loginState }) {
+  return { loginState };
+}
+
+export default connect(mapStateToProps)(RestaurantComments);

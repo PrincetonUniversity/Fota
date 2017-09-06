@@ -42,6 +42,7 @@ class PhotoList extends Component {
   }
 
   render() {
+    console.log(this.props.list);
     return (
       <FlatList
         data={this.props.list}
