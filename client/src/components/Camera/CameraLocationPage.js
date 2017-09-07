@@ -244,7 +244,7 @@ class CameraLocationPage extends Component {
           this.cleanup();
           this.props.screenProps.goBack();
         }).catch(error => request.showErrorAlert(error));
-      }).catch(() => cameraErrorAlert());    
+      }).catch(() => cameraErrorAlert());
     }).catch(() => cameraErrorAlert());
   }
 
