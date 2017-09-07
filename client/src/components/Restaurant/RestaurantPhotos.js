@@ -14,26 +14,6 @@ class RestaurantPhotos extends Component {
     tabBarVisible: false
   }
 
-  // static navigationOptions = ({ screenProps }) => ({
-  //   tabBarLabel: ({ focused, tintColor }) => {
-  //     const numColor = focused ? '#ff9700' : 'rgba(0, 0, 0, 0.23)';
-  //     let labelText = ' PHOTOS';
-  //     if (screenProps.photos.length === 1) {
-  //       labelText = ' PHOTO';
-  //     }
-  //     return (
-  //       <View style={{ flexDirection: 'row' }}>
-  //         <Text style={[tabLabelStyle, { color: numColor }]}>
-  //           {screenProps.photos.length}
-  //         </Text>
-  //         <Text style={[tabLabelStyle, { color: tintColor }]}>
-  //           {labelText}
-  //         </Text>
-  //       </View>
-  //     );
-  //   },
-  // });
-
   constructor(props) {
     super(props);
     this.state = {

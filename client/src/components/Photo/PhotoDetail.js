@@ -18,11 +18,11 @@ import React, { Component } from 'react';
 import { View, Text, Dimensions, Alert, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
+import RestaurantModal from '../Restaurant/RestaurantModal';
+import { GradientImage } from '../common';
+import { voteOnPhotoTable } from '../../actions';
 import request from '../../helpers/axioshelper';
 import { photoVote } from '../../helpers/URL';
-import { voteOnPhotoTable } from '../../actions';
-import { GradientImage } from '../common';
-import RestaurantModal from '../Restaurant/RestaurantModal';
 
 class PhotoDetail extends Component {
   constructor(props) {
@@ -77,14 +77,17 @@ class PhotoDetail extends Component {
     this.setState({ modalVisible: false });
   }
 
-  sendUpdateRequest(type) {
+  sendUpdateRequest(type, newCount, newLike, newDislike) {
     const patch = () => {
       const temp = this.oldValue;
       this.timer = null;
       this.oldValue = null; 
       if (temp === type) return;
+      if (this.props.shouldRenderWithRedux) {
+        this.props.voteOnPhotoTable(this.state.photo.id, newCount, newLike, newDislike);
+      }
       request.patch(photoVote(this.state.photo.id, type))
-      .catch(e => request.showErrorAlert(e));
+        .catch(e => request.showErrorAlert(e));
     };
     if (this.timer) clearTimeout(this.timer);
     this.timer = setTimeout(patch, 1000);
@@ -97,24 +100,17 @@ class PhotoDetail extends Component {
     if (!this.state.userHasVoted) {
       newVoteCount += 1;
       if (this.oldValue == null) this.oldValue = 'clear';
-      this.sendUpdateRequest('up');
+      this.sendUpdateRequest('up', newVoteCount, userNewLike, false);
     } else if (this.state.userDisliked) {
         newVoteCount += 2;
         if (this.oldValue == null) this.oldValue = 'down';
-        this.sendUpdateRequest('up');
+        this.sendUpdateRequest('up', newVoteCount, userNewLike, false);
     } else if (this.state.userLiked) {
         newVoteCount -= 1;
         userNewLike = false;
         userVoted = false;
         if (this.oldValue == null) this.oldValue = 'up';
-        this.sendUpdateRequest('clear');
-    }
-    if (this.props.shouldRenderWithRedux) {
-      // const photo = this.props.photoTable[this.state.photo.id];
-      // photo.vote_count = newVoteCount;
-      // photo.user_upvote = userNewLike;
-      // photo.user_downvote = false;
-      this.props.voteOnPhotoTable(this.state.photo.id, newVoteCount, userNewLike, false);
+        this.sendUpdateRequest('clear', newVoteCount, userNewLike, false);
     }
     this.setState({
       votecount: newVoteCount,
@@ -131,24 +127,17 @@ class PhotoDetail extends Component {
     if (!this.state.userHasVoted) {
       newVoteCount -= 1;
       if (this.oldValue == null) this.oldValue = 'clear';
-      this.sendUpdateRequest('down');
+      this.sendUpdateRequest('down', newVoteCount, false, userHasDisliked);
     } else if (this.state.userLiked) {
       newVoteCount -= 2;
       if (this.oldValue == null) this.oldValue = 'up';
-      this.sendUpdateRequest('down');
+      this.sendUpdateRequest('down', newVoteCount, false, userHasDisliked);
     } else if (this.state.userDisliked) {
       newVoteCount += 1;
       userHasDisliked = false;
       userVoted = false;
       if (this.oldValue == null) this.oldValue = 'down';
-      this.sendUpdateRequest('clear');
-    }
-    if (this.props.shouldRenderWithRedux) {
-      // const photo = this.props.photoTable[this.state.photo.id];
-      // photo.vote_count = newVoteCount;
-      // photo.user_upvote = false;
-      // photo.user_downvote = userHasDisliked;
-      this.props.voteOnPhotoTable(this.state.photo.id, newVoteCount, false, userHasDisliked);
+      this.sendUpdateRequest('clear', newVoteCount, false, userHasDisliked);
     }
     this.setState({
       votecount: newVoteCount,
@@ -268,27 +257,12 @@ const styles = {
   },
   voteTextStyle: { // Text at bottom of photo
     fontSize: 16,
-    //textAlign: 'justify',
     fontWeight: '900',
     marginRight: 10,
     paddingTop: 8,
     paddingBottom: 13,
     color: 'white'
-    //marginBottom: 10
-  },
-  // photoInfoStyle: {
-  //   paddingTop: 10,
-  //   paddingBottom: 10,
-  //   backgroundColor: '#FFFFFF',
-  //   borderBottomLeftRadius: 7,
-  //   borderBottomRightRadius: 7,
-  //   justifyContent: 'space-between',
-  //   flexDirection: 'row',
-  //   position: 'relative',
-  //   shadowOffset: { width: 1, height: 5 },
-  //   shadowOpacity: 0.1,
-  //   shadowRadius: 15
-  // },
+  }
 };
 
 const {

@@ -14,29 +14,6 @@ class RestaurantComments extends Component {
     tabBarVisible: false
   }
 
-  // static navigationOptions = ({ screenProps }) => ({
-  //   tabBarLabel: ({ focused, tintColor }) => {
-  //     const numColor = focused ? '#ff9700' : 'rgba(0, 0, 0, 0.25)';
-  //     let labelText = ' REVIEWS';
-  //     if (screenProps.comments.length === 1) {
-  //       labelText = ' REVIEW';
-  //     }
-  //     return (
-  //       <View style={{ flexDirection: 'row' }}>
-  //         <Text style={[tabLabelStyle, { color: numColor }]}>
-  //           {screenProps.comments.length}
-  //         </Text>
-  //         <Text style={[tabLabelStyle, { color: tintColor }]}>
-  //           {labelText}
-  //         </Text>
-  //       </View>
-  //     );
-  //   },
-  //   indicatorStyle: () => ({
-  //     marginRight: 50
-  //   })
-  // });
-
   constructor(props) {
     super(props);
     this.state = {
@@ -65,15 +42,12 @@ class RestaurantComments extends Component {
       const { userLiked, userDisliked, userHasVoted } = newProps.screenProps;
       this.setState({ userLiked, userDisliked, userHasVoted });
     }
-    // if (newProps.screenProps.focused !== this.props.screenProps.focused) {
-    //   this.setState({ focused: newProps.screenProps.focused });
-    // }
   }
 
   updateHeight() {
-    let newHeight = 40 + this.state.height + this.totalCommentHeight; // 40 for the done
+    let newHeight = 40 + this.state.height + this.totalCommentHeight; // 40 for padding
     if (this.state.editing) {
-      newHeight += 35;
+      newHeight += 35; // for the Done button
     }
     if (this.props.screenProps.listHeight !== newHeight && this.hasSentHeight) {
       this.hasSentHeight = false;
@@ -333,8 +307,6 @@ const styles = {
   editBoxStyle: {
     paddingHorizontal: 20,
     paddingTop: 20,
-    //paddingBottom: 10,
-    // padding: 20,
     backgroundColor: 'white',
     borderColor: 'rgba(0, 0, 0, 0.06)',
     borderBottomWidth: 1,
@@ -367,10 +339,7 @@ const styles = {
   },
   recommendPromptStyle: {
     fontSize: 14,
-    //flex: 1,
-    //textAlign: 'center',
     color: 'rgba(0, 0, 0, 0.31)',
-    //marginLeft: 15
   },
   recommendVoteStyle: {
     fontSize: 12,

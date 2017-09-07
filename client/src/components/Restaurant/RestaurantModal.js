@@ -15,9 +15,9 @@ import {
   TouchableOpacity, TouchableWithoutFeedback
 } from 'react-native';
 import Modal from 'react-native-modal';
+import RestaurantDetail from './RestaurantDetail';
 import request from '../../helpers/axioshelper';
 import { restRequest, restCommentRequest } from '../../helpers/URL';
-import RestaurantDetail from './RestaurantDetail';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = SCREEN_WIDTH / 2;

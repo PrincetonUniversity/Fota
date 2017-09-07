@@ -30,7 +30,7 @@ const pulse = {
 };
 
 const LoadingPhotos = () => (
-  <View style={{ borderTopWidth: 1, borderColor: 'rgba(0,0,0,0.09)' }}>
+  <View style={{ borderTopWidth: 1, borderColor: 'rgba(0,0,0,0.09)', paddingTop: 5 }}>
     <Animatable.View animation={pulse} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={styles.grayPhotoStyle} useNativeDriver />
     <Animatable.View animation={pulse} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={styles.grayPhotoStyle} useNativeDriver />
   </View>

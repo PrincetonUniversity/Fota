@@ -36,9 +36,9 @@ class CameraLibrary extends Component {
       if (Platform.OS === 'android') {
         const RNGRP = require('react-native-get-real-path');
 
-        const promises = r.edges.map(p => {
-          return RNGRP.getRealPathFromURI(p.node.image.uri).then(filePath => filePath);
-        });
+        const promises = r.edges.map(p => (
+          RNGRP.getRealPathFromURI(p.node.image.uri).then(filePath => filePath)
+        ));
         Promise.all(promises).then(results => {
           const uris = results.map(uri => `file://${uri}`);
           this.setState({ photos: uris });

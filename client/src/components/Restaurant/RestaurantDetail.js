@@ -13,7 +13,6 @@ import {
   TouchableWithoutFeedback, TouchableOpacity, UIManager, StatusBar, Keyboard
 } from 'react-native';
 import { connect } from 'react-redux';
-import moment from 'moment';
 import { TabNavigator } from 'react-navigation';
 import FoundationIcon from 'react-native-vector-icons/Foundation';
 import Ionicon from 'react-native-vector-icons/Ionicons';
@@ -22,16 +21,17 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import { phonecall } from 'react-native-communications';
 import LinearGradient from 'react-native-linear-gradient';
+import moment from 'moment';
+import FilterBar from './FilterBar';
+import RestaurantPhotos from './RestaurantPhotos';
+import RestaurantComments from './RestaurantComments';
+import LoadingRestaurants from './LoadingRestaurants';
 import { Banner } from '../common';
 import request from '../../helpers/axioshelper';
 import {
   restBookmarkRequest, directionsRequest,
   directionsURL, restRecommendRequest
 } from '../../helpers/URL';
-import FilterBar from './FilterBar';
-import RestaurantPhotos from './RestaurantPhotos';
-import RestaurantComments from './RestaurantComments';
-import LoadingRestaurants from './LoadingRestaurants';
 import { pcoords } from '../../Base';
 import icoMoonConfig from '../../selection.json';
 
@@ -783,14 +783,9 @@ class RestaurantDetail extends Component {
   renderInfo() {
     return (
       <View style={{ backgroundColor: 'white', zIndex: 2 }}>
-        <View
-          style={{ borderTopWidth: this.state.showRecommend ? 0 : 1, ...infoContainerStyle }}
-          //onLayout={e => this.setInfoHeight(e)}
-        >
+        <View style={{ borderTopWidth: this.state.showRecommend ? 0 : 1, ...infoContainerStyle }}>
           {this.renderTime()}
-
           {this.renderNav()}
-
           {this.renderPrice()}
         </View>
       </View>
@@ -978,7 +973,7 @@ class RestaurantDetail extends Component {
       return <LoadingRestaurants />;
     }
     let height = 440;
-    let headerScrollDistance = 158; //this.state.ratingHeight + this.state.infoHeight;
+    let headerScrollDistance = 158;
     const newHeight = height + headerScrollDistance / 3;
     if (this.state.showRecommend) {
       height += 50;
@@ -1138,7 +1133,6 @@ const styles = {
   addressStyle: {
     color: 'white',
     fontSize: 14,
-    //fontWeight: 'bold',
     textAlign: 'center',
     backgroundColor: 'transparent'
   },
@@ -1197,7 +1191,6 @@ const styles = {
   recommendPromptStyle: {
     fontSize: 14,
     flex: 1,
-    //textAlign: 'center',
     color: 'rgba(0, 0, 0, 0.31)',
     marginLeft: 15
   },

@@ -17,23 +17,11 @@ const LoadingRestaurants = () => (
     <Animatable.View animation={pulse} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={{ height: 175, backgroundColor: '#d3d3d3' }} useNativeDriver />
     <View style={styles.tabBarStyle} />
     <View style={{ flex: 1 }} />
-    <View style={styles.footerStyle}>
-      {/* <View style={[styles.bottomSpacerStyle, { borderRightWidth: 1 }]} /> */}
-      {/* <View style={styles.bottomSpacerStyle} /> */}
-    </View>
+    <View style={styles.footerStyle} />
   </View>
 );
 
 const styles = {
-  // infoContainerStyle: {
-  //   height: 73.5,
-  //   backgroundColor: 'white',
-  //   zIndex: 4,
-  //   marginHorizontal: 30,
-  //   //borderTopWidth: 1,
-  //   //borderBottomWidth: 1,
-  //   borderColor: 'rgba(0, 0, 0, 0.2)'
-  // },
   tabBarStyle: {
     height: 203,
     backgroundColor: 'white',

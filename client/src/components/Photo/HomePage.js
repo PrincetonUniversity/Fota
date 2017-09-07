@@ -26,8 +26,8 @@ import PhotoFeed from './PhotoFeed';
 import PhotoList from './PhotoList';
 import SearchPage from './SearchPage';
 import { NotFoundText } from '../common';
-import { browseFromPrinceton, makePhotoTable, setLoading } from '../../actions';
 import { tabWidth, tabHeight, horizontalPadding, pcoords } from '../../Base';
+import { browseFromPrinceton, makePhotoTable, setLoading } from '../../actions';
 import request from '../../helpers/axioshelper';
 import { photoRequest, filterRequest } from '../../helpers/URL';
 import icoMoonConfig from '../../selection.json';
@@ -139,10 +139,6 @@ class HomePage extends Component {
       .catch(e => request.showErrorAlert(e));
     });
   }
-
-  // refreshListView() {
-  //   this.setState({ refreshing: true }, () => this.getPhotoList());
-  // }
 
   renderList() {
     if (this.state.filter) {

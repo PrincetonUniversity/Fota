@@ -23,13 +23,7 @@ export const BackButton = (props) => (
       style={styles.backButtonStyle}
       onPress={props.onPress}
     >
-      <Ionicon
-        name='ios-arrow-back'
-        backgroundColor='white'
-        color='black'
-        //onPress={props.onPress}
-        size={20}
-      />
+      <Ionicon name='ios-arrow-back' backgroundColor='white' color='black' size={20} />
     </TouchableOpacity>
   </View>
 );
@@ -44,10 +38,7 @@ class SettingsPage extends Component {
 
         <ScrollView bounces={false}>
           <SettingsHeader text='Location' />
-          <SettingsButton
-            text='Search Radius'
-            onPress={() => this.props.navigation.navigate('Radius')}
-          />
+          <SettingsButton text='Search Radius' onPress={() => this.props.navigation.navigate('Radius')} />
 
           <SettingsHeader text='About' />
           {/* <SettingsButton text='Help &amp; Support' /> */}
