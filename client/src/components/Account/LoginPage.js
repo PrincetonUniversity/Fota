@@ -22,7 +22,7 @@ class LoginPage extends Component {
   static navigationOptions = {
     gesturesEnabled: false
   };
-  
+
   render() {
     let screenProps = {
       onSkip: this.props.onSkip,
@@ -34,23 +34,21 @@ class LoginPage extends Component {
       screenProps = { onSkip: goBack, onLoginFinished: goBack };
       if (this.props.navigation.state.params.onLoginFinished === 'openCamera') {
         screenProps.onLoginFinished = openCamera;
-      } 
+      }
       if (this.props.navigation.state.params.onLoginFinished === 'openAccount') {
         screenProps.onLoginFinished = () => {
           goBack();
           this.props.navigation.navigate('Account');
         };
-      } 
+      }
     }
 
     return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ flex: 1, backgroundColor: '#fff' }}>
-          <LoginNavigator 
-            screenProps={screenProps} 
-          />
-        </View>
-      </TouchableWithoutFeedback>
+      <View style={{ flex: 1, backgroundColor: '#fff' }}>
+        <LoginNavigator
+          screenProps={screenProps}
+        />
+      </View>
     );
   }
 }
@@ -70,11 +68,13 @@ const LoginNavigator = StackNavigator({
 export const loginStyles = {
   pageStart: {
     marginHorizontal: 50,
-    marginTop: 35
+    marginTop: 40,
+    justifyContent: 'center'
   },
   pageEnd: {
     marginHorizontal: 50,
-    marginBottom: 35
+    marginBottom: 65,
+    marginTop: 10
   },
   header: {
     flexDirection: 'row',
@@ -100,7 +100,7 @@ export const loginStyles = {
   },
   error: {
     marginTop: 20,
-    fontSize: 20,
+    fontSize: 15,
     alignSelf: 'center',
     color: 'red'
   }
