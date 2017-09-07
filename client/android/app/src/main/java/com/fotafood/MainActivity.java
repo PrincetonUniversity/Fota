@@ -1,4 +1,4 @@
-package com.fota;
+package com.fotafood;
 
 import com.facebook.react.ReactActivity;
 
