@@ -8,12 +8,14 @@
  ******************************************************************************/
 
 
-import { LOADING } from '../actions/index';
+import { LOADING, PHOTOS } from '../actions/index';
 
 export default function (state = true, action) {
   switch (action.type) {
     case LOADING:
       return action.payload;
+    case PHOTOS:
+      return false;
     default:
       return state;
   }

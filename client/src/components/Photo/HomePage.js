@@ -26,10 +26,10 @@ import PhotoFeed from './PhotoFeed';
 import PhotoList from './PhotoList';
 import SearchPage from './SearchPage';
 import { NotFoundText } from '../common';
-import { browseFromPrinceton } from '../../actions';
+import { browseFromPrinceton, makePhotoTable, setLoading } from '../../actions';
 import { tabWidth, tabHeight, horizontalPadding, pcoords } from '../../Base';
 import request from '../../helpers/axioshelper';
-import { filterRequest } from '../../helpers/URL';
+import { photoRequest, filterRequest } from '../../helpers/URL';
 import icoMoonConfig from '../../selection.json';
 
 const Icon = createIconSetFromIcoMoon(icoMoonConfig);
@@ -68,21 +68,69 @@ class HomePage extends Component {
     }
   });
 
-  state = { noPhotos: false, filterList: [], modalVisible: false, filter: '' };
+  state = { 
+    noPhotos: false,
+    filterList: [],
+    hotList: [],
+    newList: [],
+    modalVisible: false,
+    filter: '',
+    refreshing: false
+  };
+
+  componentWillMount() {
+    this.loadPhotos(false);
+  }
 
   getFilterList(filter, filterDisplay) {
     if (this.props.browsingPrinceton) {
-      this.sendPhotoRequest(filter, filterDisplay, pcoords.lat, pcoords.lng);
+      this.sendFilteredPhotoRequest(filter, filterDisplay, pcoords.lat, pcoords.lng);
     } else {
       navigator.geolocation.getCurrentPosition(position => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
-        this.sendPhotoRequest(filter, filterDisplay, lat, lng);
+        this.sendFilteredPhotoRequest(filter, filterDisplay, lat, lng);
       });
     }
   }
 
-  sendPhotoRequest(filter, filterDisplay, lat, lng) {
+  loadPhotos(refreshing) {
+    if (refreshing) {
+      this.setState({ refreshing: true });
+    } else {
+      this.props.setLoading(true);
+    }
+    if (this.props.browsingPrinceton) {
+      this.sendPhotoRequest(pcoords.lat, pcoords.lng);
+    } else {
+      navigator.geolocation.getCurrentPosition(position => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        this.sendPhotoRequest(lat, lng);
+      });
+    }
+  }
+
+  sendPhotoRequest(lat, lng) {
+    AsyncStorage.getItem('SearchRadius').then(radius => {
+      const promises = [
+        request.get(photoRequest('hot', lat, lng, parseInt(radius, 10)))
+          .then(response => response.data),
+        request.get(photoRequest('new', lat, lng, parseInt(radius, 10)))
+          .then(response => response.data)
+      ];
+      Promise.all(promises).then(result => {
+        if (result[0].length === 0) {
+          this.setState({ noPhotos: true, refreshing: false });
+        } else {
+          this.props.makePhotoTable(result[0]);
+          this.setState({ hotList: result[0], newList: result[1], refreshing: false });
+        }
+      }).catch(e => request.showErrorAlert(e));    
+    });
+  }
+
+  sendFilteredPhotoRequest(filter, filterDisplay, lat, lng) {
     AsyncStorage.getItem('SearchRadius').then(radius => {
       request.get(filterRequest(filter, lat, lng, parseInt(radius, 10)))
       .then(response => {
@@ -92,9 +140,9 @@ class HomePage extends Component {
     });
   }
 
-  refreshListView() {
-    this.setState({ refreshing: true }, () => this.getPhotoList());
-  }
+  // refreshListView() {
+  //   this.setState({ refreshing: true }, () => this.getPhotoList());
+  // }
 
   renderList() {
     if (this.state.filter) {
@@ -108,7 +156,10 @@ class HomePage extends Component {
     return (
       <HomeNavigator
         screenProps={{
-          noPhotos: () => this.setState({ noPhotos: true })
+          hotList: this.state.hotList,
+          newList: this.state.newList,
+          refreshing: this.state.refreshing,
+          refreshPhotos: () => this.loadPhotos(true)
         }}
       />
     );
@@ -170,8 +221,21 @@ class HomePage extends Component {
   }
 }
 
-const HotPage = (props) => <PhotoFeed order='hot' noPhotos={props.screenProps.noPhotos} />;
-const NewPage = () => <PhotoFeed order='new' />;
+const HotPage = (props) => (
+  <PhotoFeed 
+    list={props.screenProps.hotList}
+    refreshPhotos={props.screenProps.refreshPhotos}
+    refreshing={props.screenProps.refreshing}
+  />
+);
+
+const NewPage = (props) => (
+  <PhotoFeed
+    list={props.screenProps.newList}
+    refreshPhotos={props.screenProps.refreshPhotos}
+    refreshing={props.screenProps.refreshing}
+  />
+);
 
 const HomeNavigator = TabNavigator({
   Hot: { screen: HotPage },
@@ -274,4 +338,4 @@ function mapStateToProps({ browsingPrinceton }) {
   return { browsingPrinceton };
 }
 
-export default connect(mapStateToProps, { browseFromPrinceton })(HomePage);
+export default connect(mapStateToProps, { browseFromPrinceton, makePhotoTable, setLoading })(HomePage);

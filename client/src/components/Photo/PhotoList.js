@@ -15,27 +15,19 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { FlatList, View, Dimensions } from 'react-native';
+import { FlatList, View } from 'react-native';
 import PhotoDetail from './PhotoDetail';
 
-const itemHeight = Dimensions.get('window').width - 20;
+//const itemHeight = Dimensions.get('window').width - 20;
 
 class PhotoList extends Component {
-  findVote(upvote, downvote) {
-    if (upvote) return 'liked';
-    if (downvote) return 'disliked';
-    return null;
-  }
-
   renderPhoto(photo) {
     return (
       <View style={{ marginLeft: 25, marginRight: 25, marginTop: 15, marginBottom: 15 }}>
         <PhotoDetail
           key={photo.id}
           photo={photo}
-          distance={photo.distance}
-          vote={this.findVote(photo.user_upvote, photo.user_downvote)}
-          restaurantid={photo.rest_id}
+          shouldRenderWithRedux={this.props.shouldRenderWithRedux}
         />
       </View>
     );

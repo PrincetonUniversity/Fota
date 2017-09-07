@@ -1,10 +1,12 @@
 import { combineReducers } from 'redux';
 import LoginReducer from './login';
 import LoadingReducer from './loading';
-import browseLocationReducer from './browseLocation';
+import BrowseLocationReducer from './browseLocation';
+import PhotoReducer from './photos';
 
 export default combineReducers({
     loginState: LoginReducer,
     loading: LoadingReducer,
-    browsingPrinceton: browseLocationReducer
+    browsingPrinceton: BrowseLocationReducer,
+    photoTable: PhotoReducer
 });

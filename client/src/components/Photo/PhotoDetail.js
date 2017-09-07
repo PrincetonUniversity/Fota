@@ -16,48 +16,57 @@
 
 import React, { Component } from 'react';
 import { View, Text, Dimensions, Alert, TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import request from '../../helpers/axioshelper';
 import { photoVote } from '../../helpers/URL';
+import { voteOnPhotoTable } from '../../actions';
 import { GradientImage } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 
 class PhotoDetail extends Component {
   constructor(props) {
     super(props);
-    if (!props.vote) {
+    if (props.shouldRenderWithRedux) {
+      const photo = props.photoTable[props.photo.id];
+      const userHasVoted = photo.user_upvote || photo.user_downvote;
       this.state = {
-        url: props.photo.url,
-        votecount: props.photo.vote_count,
-        id: props.photo.id,
-        userLiked: false,
-        userDisliked: false,
-        userHasVoted: false,
+        photo,
+        userLiked: photo.user_upvote,
+        userDisliked: photo.user_downvote,
+        userHasVoted,
+        votecount: photo.vote_count,
         modalVisible: false
       };
-    } else if (props.vote === 'liked') {
-        this.state = {
-          url: props.photo.url,
-          votecount: props.photo.vote_count,
-          id: props.photo.id,
-          userLiked: true,
-          userDisliked: false,
-          userHasVoted: true,
-          modalVisible: false
-        };
-    } else if (props.vote === 'disliked') {
-        this.state = {
-          url: props.photo.url,
-          votecount: props.photo.vote_count,
-          id: props.photo.id,
-          userLiked: false,
-          userDisliked: true,
-          userHasVoted: true,
-          modalVisible: false
-        };
+    } else {
+      const userHasVoted = props.photo.user_upvote || props.photo.user_downvote;
+      this.state = {
+        photo: props.photo,
+        userLiked: props.photo.user_upvote,
+        userDisliked: props.photo.user_downvote,
+        userHasVoted,
+        votecount: props.photo.vote_count,
+        modalVisible: false,
+      };
     }
     this.timer = null;
     this.oldValue = null;
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (newProps.shouldRenderWithRedux) {
+      const id = newProps.photo.id;
+      if (this.props.photoTable && newProps.photoTable[id] !== this.props.photoTable[id]) {
+        const photo = newProps.photoTable[id];
+        const userHasVoted = photo.user_upvote || photo.user_downvote;
+        this.setState({
+          userLiked: photo.user_upvote,
+          userDisliked: photo.user_downvote,
+          userHasVoted,
+          votecount: photo.vote_count,
+        });
+      }
+    }
   }
 
   setModalVisible(visible) {
@@ -74,7 +83,7 @@ class PhotoDetail extends Component {
       this.timer = null;
       this.oldValue = null; 
       if (temp === type) return;
-      request.patch(photoVote(this.state.id, type))
+      request.patch(photoVote(this.state.photo.id, type))
       .catch(e => request.showErrorAlert(e));
     };
     if (this.timer) clearTimeout(this.timer);
@@ -99,6 +108,13 @@ class PhotoDetail extends Component {
         userVoted = false;
         if (this.oldValue == null) this.oldValue = 'up';
         this.sendUpdateRequest('clear');
+    }
+    if (this.props.shouldRenderWithRedux) {
+      // const photo = this.props.photoTable[this.state.photo.id];
+      // photo.vote_count = newVoteCount;
+      // photo.user_upvote = userNewLike;
+      // photo.user_downvote = false;
+      this.props.voteOnPhotoTable(this.state.photo.id, newVoteCount, userNewLike, false);
     }
     this.setState({
       votecount: newVoteCount,
@@ -127,6 +143,13 @@ class PhotoDetail extends Component {
       if (this.oldValue == null) this.oldValue = 'down';
       this.sendUpdateRequest('clear');
     }
+    if (this.props.shouldRenderWithRedux) {
+      // const photo = this.props.photoTable[this.state.photo.id];
+      // photo.vote_count = newVoteCount;
+      // photo.user_upvote = false;
+      // photo.user_downvote = userHasDisliked;
+      this.props.voteOnPhotoTable(this.state.photo.id, newVoteCount, false, userHasDisliked);
+    }
     this.setState({
       votecount: newVoteCount,
       userLiked: false,
@@ -136,14 +159,14 @@ class PhotoDetail extends Component {
   }
 
   renderDistance() {
-    if (this.props.distance) {
+    if (this.state.photo.distance) {
       return (
         <View style={distanceContainerStyle}>
           <Text style={distanceTextStyle}>
-            {`${this.props.distance.toFixed(1)} mi`}
+            {`${this.state.photo.distance.toFixed(1)} mi`}
           </Text>
         </View>
-      )
+      );
     }
   }
 
@@ -153,14 +176,14 @@ class PhotoDetail extends Component {
     return (
       <View>
         <RestaurantModal
-          restaurantid={this.props.restaurantid}
+          restaurantid={this.state.photo.rest_id}
           options={[{
             name: 'Report as Spam',
             onClick: () => setTimeout(() => Alert.alert(
-                  '',
-                  'This photo has been reported. Thanks for letting us know!',
-                  [{ text: 'OK' }]
-                ), 550)
+              '',
+              'This photo has been reported. Thanks for letting us know!',
+              [{ text: 'OK' }]
+            ), 550)
           }]}
         >
           <View style={photoFrameStyle}>
@@ -170,7 +193,7 @@ class PhotoDetail extends Component {
               colors={['transparent', 'rgba(0, 0, 0, 0.3)']}
               photoStyle={photoStyle}
               gradientStyle={{ flex: 1 }}
-              source={this.state.url}
+              source={this.state.photo.url}
             >
               <View style={{ flex: 1, zIndex: 6 }}>
                 <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end' }}>
@@ -277,4 +300,8 @@ const {
   voteTextStyle,
 } = styles;
 
-export default PhotoDetail;
+function mapStateToProps({ photoTable }) {
+  return { photoTable };
+}
+
+export default connect(mapStateToProps, { voteOnPhotoTable })(PhotoDetail);
