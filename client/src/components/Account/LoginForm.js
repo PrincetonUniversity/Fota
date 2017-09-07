@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import { NavigationActions } from 'react-navigation';
 import firebase from 'firebase';
@@ -53,6 +53,11 @@ class LoginForm extends Component {
     this.setState({ error: message, loading: false });
   }
 
+  shouldBlur() {
+    if (this.state.email.length > 0 && this.state.pass.length > 0) return true;
+    return false;
+  }
+
   renderButton() {
     if (this.state.loading) {
       return <Spinner size="large" />;
@@ -77,42 +82,55 @@ class LoginForm extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1, justifyContent: 'space-between' }}>
-        <View style={loginStyles.pageStart}>
-          <View style={loginStyles.header}>
-            <Ionicon.Button
-              name='ios-arrow-back'
-              backgroundColor='#fff'
-              color='rgba(0, 0, 0, 0.75)'
-              size={28}
-              onPress={() => this.props.navigation.dispatch(NavigationActions.back())}
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={{ flex: 1, justifyContent: 'space-between' }}>
+          <View style={loginStyles.pageStart}>
+            <View style={loginStyles.header}>
+              <Ionicon.Button
+                name='ios-arrow-back'
+                backgroundColor='#fff'
+                color='rgba(0, 0, 0, 0.75)'
+                size={28}
+                onPress={() => this.props.navigation.dispatch(NavigationActions.back())}
+              />
+              <Text style={loginStyles.headerText}>Log in</Text>
+            </View>
+
+            <Text style={styles.welcomeStyle}>Welcome back!</Text>
+
+            <LoginInput
+              label='Email'
+              value={this.state.email}
+              keyboardType='email-address'
+              onChangeText={email => this.setState({ email })}
+              onSubmitEditing={() => this.passwordInput.focus()}
             />
-            <Text style={loginStyles.headerText}>Log in</Text>
+            <LoginInput
+              ref={passwordInput => { this.passwordInput = passwordInput; }}
+              label='Password'
+              value={this.state.pass}
+              onChangeText={pass => this.setState({ pass })}
+              blurOnSubmit={this.shouldBlur()}
+              returnKeyType={'go'}
+              onSubmitEditing={() => {
+                if (this.state.email.length > 0 && this.state.pass.length > 0) {
+                  this.onLoginButtonPress();
+                } else {
+                  this.setState({ error: 'Please fill in all fields before submitting.' });
+                }
+              }}
+              secure
+            />
+
+            <Text style={loginStyles.small}>Forgot your password?</Text>
+            <Text style={loginStyles.error}>{this.state.error}</Text>
           </View>
 
-          <Text style={styles.welcomeStyle}>Welcome back!</Text>
-
-          <LoginInput
-            label='Email'
-            value={this.state.email}
-            keyboardType='email-address'
-            onChangeText={email => this.setState({ email })}
-          />
-          <LoginInput
-            label='Password'
-            value={this.state.pass}
-            onChangeText={pass => this.setState({ pass })}
-            secure
-          />
-
-          <Text style={loginStyles.small}>Forgot your password?</Text>
-          <Text style={loginStyles.error}>{this.state.error}</Text>
+          <View style={loginStyles.doneButton}>
+            {this.renderButton()}
+          </View>
         </View>
-
-        <View style={loginStyles.doneButton}>
-          {this.renderButton()}
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 }

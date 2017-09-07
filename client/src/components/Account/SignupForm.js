@@ -15,7 +15,10 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, AsyncStorage } from 'react-native';
+import {
+  View, Text, AsyncStorage, TouchableWithoutFeedback, Keyboard,
+  LayoutAnimation
+} from 'react-native';
 import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import { NavigationActions } from 'react-navigation';
@@ -27,7 +30,7 @@ import request from '../../helpers/axioshelper';
 import { changeNameRequest } from '../../helpers/URL';
 
 class SignupForm extends Component {
-  state = { first: '', last: '', email: '', pass: '', error: '', loading: false };
+  state = { first: '', last: '', email: '', pass: '', error: '', loading: false, displayFirst: true };
 
   onSignupButtonPress() {
     const { email, pass } = this.state;
@@ -67,6 +70,29 @@ class SignupForm extends Component {
     this.setState({ error: message, loading: false });
   }
 
+  shouldBlur() {
+    const { first, last, email, pass } = this.state;
+    if (first.length > 0 && last.length > 0 && email.length > 0 && pass.length > 0) return true;
+    return false;
+  }
+
+  shouldDisplayFirst() {
+    if (this.state.displayFirst) {
+      return (
+        <View style={{ paddingRight: 75 }}>
+          <LoginInput
+            label='First Name'
+            autoCapitalize='words'
+            value={this.state.first}
+            onChangeText={first => this.setState({ first })}
+            onSubmitEditing={() => this.lastNameInput.focus()}
+          />
+        </View>
+      );
+    }
+    return <View />;
+  }
+
   renderButton() {
     if (this.state.loading) {
       return <Spinner size="large" />;
@@ -92,58 +118,77 @@ class SignupForm extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1, justifyContent: 'space-between' }}>
-        <View style={loginStyles.pageStart}>
-          <View style={loginStyles.header}>
-            <Ionicon.Button
-              name='ios-arrow-back'
-              backgroundColor='#fff'
-              color='rgba(0, 0, 0, 0.75)'
-              size={28}
-              onPress={() => this.props.navigation.dispatch(NavigationActions.back())}
-            />
-            <Text style={loginStyles.headerText}>Sign up</Text>
-          </View>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={{ flex: 1, justifyContent: 'space-between' }}>
+          <View style={loginStyles.pageStart}>
+            <View style={loginStyles.header}>
+              <Ionicon.Button
+                name='ios-arrow-back'
+                backgroundColor='#fff'
+                color='rgba(0, 0, 0, 0.75)'
+                size={28}
+                onPress={() => this.props.navigation.dispatch(NavigationActions.back())}
+              />
+              <Text style={loginStyles.headerText}>Sign up</Text>
+            </View>
 
-          <View style={{ paddingRight: 75 }}>
+            {this.shouldDisplayFirst()}
+            <View style={{ paddingRight: 75 }}>
+              <LoginInput
+                ref={lastNameInput => { this.lastNameInput = lastNameInput; }}
+                label='Last Name'
+                autoCapitalize='words'
+                value={this.state.last}
+                onChangeText={last => this.setState({ last })}
+                onSubmitEditing={() => this.emailInput.focus()}
+              />
+            </View>
             <LoginInput
-              label='First Name'
-              autoCapitalize='words'
-              value={this.state.first}
-              onChangeText={first => this.setState({ first })}
+              ref={emailInput => { this.emailInput = emailInput; }}
+              label='Email'
+              keyboardType='email-address'
+              value={this.state.email}
+              onChangeText={email => this.setState({ email })}
+              onSubmitEditing={() => this.passwordInput.focus()}
             />
-          </View>
-          <View style={{ paddingRight: 75 }}>
             <LoginInput
-              label='Last Name'
-              autoCapitalize='words'
-              value={this.state.last}
-              onChangeText={last => this.setState({ last })}
+              ref={passwordInput => { this.passwordInput = passwordInput; }}
+              label='Password'
+              value={this.state.pass}
+              onChangeText={pass => this.setState({ pass })}
+              blurOnSubmit={this.shouldBlur()}
+              onBlur={() => {
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                this.setState({ displayFirst: true });
+              }}
+              onFocus={() => {
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                this.setState({ displayFirst: false });
+              }}
+              returnKeyType={'go'}
+              onSubmitEditing={() => {
+                if (this.state.email.length > 0 && this.state.pass.length > 0) {
+                  this.onSignupButtonPress();
+                } else {
+                  this.setState({ error: 'Please fill in all fields before submitting.' });
+                }
+              }}
+              secure
             />
+
+            <View>
+              <Text style={loginStyles.small}>
+                By signing up, I agree to Fota's Terms of Service and Privacy Policy.
+              </Text>
+            </View>
+            <Text style={loginStyles.error}>{this.state.error}</Text>
           </View>
-          <LoginInput
-            label='Email'
-            keyboardType='email-address'
-            value={this.state.email}
-            onChangeText={email => this.setState({ email })}
-          />
-          <LoginInput
-            label='Password'
-            value={this.state.pass}
-            onChangeText={pass => this.setState({ pass })}
-            secure
-          />
 
-          <Text style={loginStyles.small}>
-            By signing up, I agree to Fota's Terms of Service and Privacy Policy.
-          </Text>
-          <Text style={loginStyles.error}>{this.state.error}</Text>
+          <View style={loginStyles.doneButton}>
+            {this.renderButton()}
+          </View>
         </View>
-
-        <View style={loginStyles.doneButton}>
-          {this.renderButton()}
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 }

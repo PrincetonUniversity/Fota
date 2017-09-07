@@ -17,10 +17,10 @@ const Button = (props) => {
   return (
     <TouchableOpacity
       onPress={props.onPress}
-      style={{ 
+      style={{
         backgroundColor: colors.fill,
         borderColor: colors.border,
-        borderRadius: props.round ? 14 : 0,
+        borderRadius: props.round ? 20 : 0,
         ...styles.buttonStyle
       }}
     >
@@ -38,7 +38,7 @@ const styles = {
     fontSize: 15,
     fontWeight: '900',
     letterSpacing: 1,
-    padding: 10,
+    padding: 8,
   },
   buttonStyle: {
     flex: 1,

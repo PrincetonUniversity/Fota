@@ -18,6 +18,7 @@ import React, { Component } from 'react';
 import { View, Text, Image, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import firebase from 'firebase';
+import { Pages } from 'react-native-pages';
 import { Button } from '../common';
 import { loginStyles } from './LoginPage';
 
@@ -44,11 +45,35 @@ class LoginWelcome extends Component {
         <View style={loginStyles.pageStart}>
           <Image style={styles.logoStyle} source={fotaLogo} />
           <Text style={styles.titleStyle}>FOTA</Text>
-          <Text style={styles.subtitleStyle}>See what's popping.</Text>
         </View>
 
+
+        <Pages
+          //startPage={0}
+          //style={{ backgroundColor: 'purple' }}
+          indicatorColor='#ff9700'
+          scrollEnabled
+        >
+          <View style={styles.swipeContainerStyle}>
+            <View style={styles.graphicContainerStyle}>
+              <Image style={styles.logoStyle} source={fotaLogo} />
+            </View>
+            <View style={styles.captionContainerStyle}>
+              <Text style={styles.subtitleStyle}>See the best food</Text>
+            </View>
+          </View>
+          <View style={styles.swipeContainerStyle}>
+            <View style={styles.graphicContainerStyle}>
+              <Image style={styles.logoStyle} source={fotaLogo} />
+            </View>
+            <View style={styles.captionContainerStyle}>
+              <Text style={styles.subtitleStyle}>Food near you</Text>
+            </View>
+          </View>
+        </Pages>
+
         <View style={loginStyles.pageEnd}>
-          <View style={styles.buttonHolderStyle}>
+          {/* <View style={styles.buttonHolderStyle}>
             <Button
               onPress={this.logInWithFacebook.bind(this)}
               colors={{ text: '#fff', fill: '#ff9700', border: '#ff9700' }}
@@ -63,30 +88,35 @@ class LoginWelcome extends Component {
                 size={18}
               />
             </Button>
+          </View> */}
 
-          </View>
           <View style={styles.buttonHolderStyle}>
             <Button
               onPress={() => this.props.navigation.navigate('Signup')}
-              colors={{ text: 'rgba(0, 0, 0, 0.6)', fill: '#fff', border: 'rgba(0, 0, 0, 0.6)' }}
-              text={'Create an Account'}
+              colors={{ text: 'white', fill: '#ff9700', border: '#ff9700' }}
+              text={'Get Started'}
               round
             />
           </View>
 
           <View style={styles.textHolderStyle}>
-            <Text
-              style={styles.loginTextStyle}
-              onPress={() => this.props.navigation.navigate('Login')}
-            >
-              Log in
+            <Text>
+              <Text style={styles.loginTextStyle}>
+                {'Already have an account? '}
+              </Text>
+              <Text
+                style={[styles.loginTextStyle, { textDecorationLine: 'underline' }]}
+                onPress={() => this.props.navigation.navigate('Login')}
+              >
+                Log in here.
+              </Text>
             </Text>
-            <Text
+            {/* <Text
               style={styles.skipTextStyle}
               onPress={this.props.screenProps.onSkip.bind(this)}
             >
               Not now
-            </Text>
+            </Text> */}
           </View>
         </View>
 
@@ -104,8 +134,9 @@ const styles = {
     fontSize: 32,
     fontWeight: '900',
     color: 'rgba(0, 0, 0, 0.8)',
-    marginTop: 20,
-    marginBottom: 10
+    marginLeft: 10
+    //marginTop: 20,
+    //marginBottom: 10
   },
   subtitleStyle: {
     fontSize: 20,
@@ -115,10 +146,23 @@ const styles = {
     borderBottomWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.3)'
   },
+  swipeContainerStyle: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  graphicContainerStyle: {
+    flex: 2,
+    justifyContent: 'center'
+  },
+  captionContainerStyle: {
+    flex: 1,
+    justifyContent: 'center'
+  },
   loginTextStyle: {
-    fontSize: 17,
-    fontWeight: '900',
-    color: '#ff9700',
+    fontSize: 12,
+    //fontWeight: '900',
+    color: 'rgba(0,0,0,0.4)',
   },
   skipTextStyle: {
     fontSize: 15,
@@ -131,9 +175,9 @@ const styles = {
     marginVertical: 10
   },
   textHolderStyle: {
-    marginTop: 20,
+    //marginTop: 20,
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
   }
 };
 

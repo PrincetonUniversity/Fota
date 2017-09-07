@@ -14,6 +14,10 @@ import { Text, View, TextInput } from 'react-native';
 class LoginInput extends Component {
   state = { hidePassword: true };
 
+  focus() {
+    this.textInput.focus();
+  }
+
   renderShowHide() {
     if (this.props.secure) {
       return (
@@ -28,17 +32,35 @@ class LoginInput extends Component {
   }
 
   render() {
-    const { label, secure, value, onChangeText, keyboardType, autoCapitalize } = this.props;
+    const {
+      label,
+      secure,
+      value,
+      onChangeText,
+      onBlur,
+      onFocus,
+      blurOnSubmit,
+      keyboardType,
+      autoCapitalize,
+      onSubmitEditing,
+      returnKeyType
+    } = this.props;
     return (
       <View style={{ marginVertical: 15 }}>
         <Text style={styles.labelStyle}>{label}</Text>
         <View style={styles.containerStyle}>
           <TextInput
+            ref={textInput => { this.textInput = textInput; }}
             style={styles.textStyle}
             value={value}
             onChangeText={onChangeText}
+            onBlur={onBlur}
+            onFocus={onFocus}
+            blurOnSubmit={blurOnSubmit}
             autoCapitalize={autoCapitalize || 'none'}
             autoCorrect={false}
+            onSubmitEditing={onSubmitEditing}
+            returnKeyType={returnKeyType || 'default'}
             secureTextEntry={secure ? this.state.hidePassword : false}
             underlineColorAndroid={'transparent'}
             keyboardType={keyboardType || 'default'}
