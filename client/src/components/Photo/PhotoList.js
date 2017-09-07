@@ -16,11 +16,19 @@
 
 import React, { Component } from 'react';
 import { FlatList, View } from 'react-native';
+import { connect } from 'react-redux';
 import PhotoDetail from './PhotoDetail';
+import { setScrollingList } from '../../actions';
 
 //const itemHeight = Dimensions.get('window').width - 20;
 
 class PhotoList extends Component {
+  componentDidMount() {
+    if (this.props.shouldRenderWithRedux && this.props.name) {
+      this.props.setScrollingList(this.list, this.props.name);      
+    }
+  }
+
   renderPhoto(photo) {
     return (
       <View style={{ marginLeft: 25, marginRight: 25, marginTop: 15, marginBottom: 15 }}>
@@ -37,6 +45,7 @@ class PhotoList extends Component {
   render() {
     return (
       <FlatList
+        ref={list => { this.list = list; }}
         data={this.props.list}
         extraData={this.props.extraData}
         keyExtractor={photo => photo.id}
@@ -53,4 +62,4 @@ class PhotoList extends Component {
   }
 }
 
-export default PhotoList;
+export default connect(null, { setScrollingList })(PhotoList);

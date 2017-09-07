@@ -9,6 +9,7 @@
  ******************************************************************************/
 export const PHOTOS = '34u09oijfhgiu';
 export const VOTE = 'DH(*#ODSfuewfh3';
+export const LISTS = 'dsoijfaredux';
 export const LOGIN = 'randomtext';
 export const LOADING = '9(AA6969asD)';
 export const LOCATION = ')!sdj0ad!SDAD::L';
@@ -25,6 +26,13 @@ export function voteOnPhotoTable(id, newCount, newLike, newDislike) {
   return {
     type: VOTE,
     payload: { id, newCount, newLike, newDislike }
+  };
+}
+
+export function setScrollingList(listRef, name) {
+  return {
+    type: LISTS,
+    payload: { listRef, name }
   };
 }
 

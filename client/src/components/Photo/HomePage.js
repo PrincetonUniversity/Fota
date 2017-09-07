@@ -36,10 +36,9 @@ const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 const noPhotosImage = require('../../img/no_photos_found.png');
 
 class HomePage extends Component {
-  static navigationOptions = ({ navigation }) => ({
+  static navigationOptions = ({ navigation, screenProps }) => ({
     tabBarIcon: ({ focused }) => {
-      let color = '#ccc';
-      if (focused) color = '#ff9700';
+      const color = focused ? '#ff9700' : '#ccc';
       return (
         <TouchableOpacity
           style={{
@@ -49,7 +48,10 @@ class HomePage extends Component {
             alignItems: 'center',
           }}
           onPress={() => {
-            if (!focused) {
+            if (screenProps.focusedTab === 0) {
+              screenProps.scrollToTop();
+            } else {
+              screenProps.changeFocusedTab(0);
               navigation.navigate('Home');
             }
           }}
@@ -219,6 +221,7 @@ class HomePage extends Component {
 
 const HotPage = (props) => (
   <PhotoFeed 
+    name='hot'
     list={props.screenProps.hotList}
     refreshPhotos={props.screenProps.refreshPhotos}
     refreshing={props.screenProps.refreshing}
@@ -227,6 +230,7 @@ const HotPage = (props) => (
 
 const NewPage = (props) => (
   <PhotoFeed
+    name='new'
     list={props.screenProps.newList}
     refreshPhotos={props.screenProps.refreshPhotos}
     refreshing={props.screenProps.refreshing}

@@ -95,6 +95,7 @@ exports.delete = (url, data = null) => (
 };*/
 
 exports.showErrorAlert = (error) => {
+  console.log(error);
   if (error.etype === 0) {
     Alert.alert(
       'No Connection',

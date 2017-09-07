@@ -36,7 +36,7 @@ export const tabHeight = 50;
 class Base extends Component {
   constructor(props) {
     super(props);
-    this.state = { loginFinished: false };
+    this.state = { loginFinished: false, focusedTab: 0 };
   }
 
   componentWillMount() {
@@ -71,6 +71,7 @@ class Base extends Component {
   }
 
   render() {
+    console.log(Dimensions.get('window'));
     if (this.state.loginFinished) {
       if (this.props.loginState) {
         return (
@@ -79,7 +80,17 @@ class Base extends Component {
             <FotaNavigator 
               screenProps={{ 
                 user: this.props.loginState,
-                reloadProfile: this.props.reloadProfile
+                reloadProfile: this.props.reloadProfile,
+                focusedTab: this.state.focusedTab,
+                changeFocusedTab: tab => this.setState({ focusedTab: tab }),
+                scrollToTop: () => {
+                  if (this.props.lists.hot) {
+                    this.props.lists.hot.scrollToOffset({ offset: 0, animated: true });
+                  }
+                  if (this.props.lists.new) {
+                    this.props.lists.new.scrollToOffset({ offset: 0, animated: true });
+                  }
+                }
               }}
             />
           </View>
@@ -145,8 +156,8 @@ const FotaNavigator = StackNavigator({
   headerMode: 'none',
 });
 
-function mapStateToProps({ loginState, reloadProfile }) {
-  return { loginState, reloadProfile };
+function mapStateToProps({ loginState, reloadProfile, lists }) {
+  return { loginState, reloadProfile, lists };
 }
 
 export default connect(mapStateToProps, { logInOrOut, browseFromPrinceton })(Base);

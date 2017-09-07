@@ -13,6 +13,7 @@ class PhotoFeed extends Component {
           list={this.props.list}
           onRefresh={this.props.refreshPhotos}
           refreshing={this.props.refreshing}
+          name={this.props.name}
           shouldRenderWithRedux
           options={[{
             name: 'Report as Spam',

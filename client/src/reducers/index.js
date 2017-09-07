@@ -4,6 +4,7 @@ import LoadingReducer from './loading';
 import BrowseLocationReducer from './browseLocation';
 import PhotoReducer from './photos';
 import ProfileReloadReducer from './profileReloader';
+import ListsReducer from './scrollingList';
 
 export default combineReducers({
     loginState: LoginReducer,
@@ -11,4 +12,5 @@ export default combineReducers({
     browsingPrinceton: BrowseLocationReducer,
     photoTable: PhotoReducer,
     reloadProfile: ProfileReloadReducer,
+    lists: ListsReducer,
 });

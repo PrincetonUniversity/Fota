@@ -23,8 +23,7 @@ const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 class ProfileHelper extends Component {
   static navigationOptions = ({ navigation, screenProps }) => ({
     tabBarIcon: ({ focused }) => {
-      let color = '#ccc';
-      if (focused) color = '#ff9700';
+      const color = focused ? '#ff9700' : '#ccc';
       return (
         <TouchableOpacity
           style={{
@@ -35,7 +34,8 @@ class ProfileHelper extends Component {
           }}
           onPress={() => {
             if (screenProps.user && !screenProps.user.isAnonymous) {
-              if (!focused) {
+              if (screenProps.focusedTab !== 1) {
+                screenProps.changeFocusedTab(1);
                 navigation.navigate('Account');
                 screenProps.reloadProfile();
               }
