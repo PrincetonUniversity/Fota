@@ -319,7 +319,6 @@ const styles = {
   },
   searchTextStyle: {
     fontSize: 15,
-    letterSpacing: 1
   }
 };
 
