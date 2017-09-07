@@ -62,11 +62,12 @@ class SubmittedComments extends Component {
           data={this.props.screenProps.comments}
           keyExtractor={comment => comment.id}
           renderItem={comment => this.renderComment(comment.item)}
-          bounces={false}
           removeClippedSubviews={false}
           getItemLayout={(data, index) => (
             { length: 50, offset: 50 * index, index }
           )}
+          onRefresh={this.props.screenProps.refreshPage}
+          refreshing={this.props.screenProps.refreshing}
         />
       </View>
     );

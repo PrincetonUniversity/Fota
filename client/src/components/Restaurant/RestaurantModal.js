@@ -107,7 +107,7 @@ class RestaurantModal extends Component {
         activeOpacity={0.9}
         onPress={() => {
           this.setModalVisible(false);
-          option.onClick();
+          setTimeout(() => option.onClick(this.props.photoid), 600);
         }}
       >
         <View style={styles.optionsCardStyle}>
@@ -177,7 +177,7 @@ const styles = {
   modalStyle: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: 'white'
+    backgroundColor: 'transparent'
   },
   popupStyle: {
     marginHorizontal: 20,

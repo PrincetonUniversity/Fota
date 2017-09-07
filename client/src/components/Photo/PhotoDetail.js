@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, Dimensions, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import RestaurantModal from '../Restaurant/RestaurantModal';
@@ -90,7 +90,7 @@ class PhotoDetail extends Component {
         .catch(e => request.showErrorAlert(e));
     };
     if (this.timer) clearTimeout(this.timer);
-    this.timer = setTimeout(patch, 1000);
+    this.timer = setTimeout(patch, 600);
   }
 
   renderUpvote() {
@@ -166,14 +166,8 @@ class PhotoDetail extends Component {
       <View>
         <RestaurantModal
           restaurantid={this.state.photo.rest_id}
-          options={[{
-            name: 'Report as Spam',
-            onClick: () => setTimeout(() => Alert.alert(
-              '',
-              'This photo has been reported. Thanks for letting us know!',
-              [{ text: 'OK' }]
-            ), 550)
-          }]}
+          options={this.props.options}
+          photoid={this.state.photo.id}
         >
           <View style={photoFrameStyle}>
             <GradientImage

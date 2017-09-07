@@ -73,6 +73,7 @@ class CameraLocationPage extends Component {
       firebaseURL: null,
       labels: [],
       error: null,
+      markForDelete: false
     };
     this.submitting = false;
     this.selectedName = null;
@@ -99,14 +100,18 @@ class CameraLocationPage extends Component {
     .then(url => {
       request.post(checkPhotoRequest(), { url })
       .then(response => {
-        if (this.state.submitting) {
+        if (this.state.markForDelete) {
+          this.deletePhotoFromFirebase();
+        } else if (this.state.submitting) {
           this.submitPhoto(url, response.data.matchingCategories);
         } else {
           this.setState({ firebaseURL: url, labels: response.data.matchingCategories });
-        }
+        }  
       })
       .catch(e => {
-        if (this.state.submitting) {
+        if (this.state.markForDelete) {
+          this.deletePhotoFromFirebase();
+        } else if (this.state.submitting) {
           if (e.etype === 1 && e.response.status === 400) {
             this.showNotFoodAlert(e.response.data.error);
           } else {
@@ -459,7 +464,11 @@ class CameraLocationPage extends Component {
                   style={backButtonStyle}
                   onPress={() => {
                     if (this.submitting) return;
-                    this.deletePhotoFromFirebase();
+                    if (this.state.firebaseURL) {
+                      this.deletePhotoFromFirebase();
+                    } else {
+                      this.setState({ markForDelete: true });
+                    }
                     this.cleanup();
                     this.props.navigation.goBack();
                   }}

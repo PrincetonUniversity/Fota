@@ -76,7 +76,12 @@ class Base extends Component {
         return (
           <View style={{ flex: 1 }}>
             <StatusBar hidden={false} />
-            <FotaNavigator screenProps={{ user: this.props.loginState }} />
+            <FotaNavigator 
+              screenProps={{ 
+                user: this.props.loginState,
+                reloadProfile: this.props.reloadProfile
+              }}
+            />
           </View>
         );
       }
@@ -140,8 +145,8 @@ const FotaNavigator = StackNavigator({
   headerMode: 'none',
 });
 
-function mapStateToProps({ loginState }) {
-  return { loginState };
+function mapStateToProps({ loginState, reloadProfile }) {
+  return { loginState, reloadProfile };
 }
 
 export default connect(mapStateToProps, { logInOrOut, browseFromPrinceton })(Base);

@@ -6,11 +6,11 @@
  *
  ******************************************************************************/
 
-import { LOCATION } from '../actions/index';
+import { PROFILE_RELOAD } from '../actions/index';
 
-export default function (state = false, action) {
+export default function (state = [], action) {
   switch (action.type) {
-    case LOCATION:
+    case PROFILE_RELOAD:
       return action.payload;
     default:
       return state;

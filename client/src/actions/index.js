@@ -12,6 +12,7 @@ export const VOTE = 'DH(*#ODSfuewfh3';
 export const LOGIN = 'randomtext';
 export const LOADING = '9(AA6969asD)';
 export const LOCATION = ')!sdj0ad!SDAD::L';
+export const PROFILE_RELOAD = 'efiwewk09';
 
 export function makePhotoTable(list) {
   return {
@@ -24,6 +25,13 @@ export function voteOnPhotoTable(id, newCount, newLike, newDislike) {
   return {
     type: VOTE,
     payload: { id, newCount, newLike, newDislike }
+  };
+}
+
+export function setProfileReloader(func) {
+  return {
+    type: PROFILE_RELOAD,
+    payload: func
   };
 }
 

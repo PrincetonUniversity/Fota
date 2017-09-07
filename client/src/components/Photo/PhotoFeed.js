@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import PhotoList from './PhotoList';
 import LoadingPhotos from './LoadingPhotos';
@@ -14,6 +14,14 @@ class PhotoFeed extends Component {
           onRefresh={this.props.refreshPhotos}
           refreshing={this.props.refreshing}
           shouldRenderWithRedux
+          options={[{
+            name: 'Report as Spam',
+            onClick: () => Alert.alert(
+              '',
+              'This photo has been reported. Thanks for letting us know!',
+              [{ text: 'OK' }]
+            )
+          }]}
         />
       </View>
     );

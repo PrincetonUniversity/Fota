@@ -25,21 +25,12 @@ class UpvotedPhotos extends Component {
   };
 
   renderPhoto(photo) {
-    if (photo.url_small == null) {
-      return (
-        <RestaurantModal restaurantid={photo.rest_id}>
-          <View style={styles.photoFrameStyle}>
-            <View style={{ width: photoSize, height: photoSize, borderRadius: 4, backgroundColor: 'green' }} />
-            {dealWithAndroidBeingStupid(4)}
-          </View>
-        </RestaurantModal>
-      );
-    }
+    const smallurl = photo.url_small || photo.url;
     return (
       <RestaurantModal restaurantid={photo.rest_id}>
         <View style={styles.photoFrameStyle}>
           <Image
-            source={{ uri: photo.url }}
+            source={{ uri: smallurl }}
             style={styles.photoStyle}
           />
           {dealWithAndroidBeingStupid(4)}
@@ -59,13 +50,14 @@ class UpvotedPhotos extends Component {
           data={this.props.screenProps.upvoted}
           keyExtractor={photo => photo.url}
           renderItem={photo => this.renderPhoto(photo.item)}
-          bounces={false}
           removeClippedSubviews={false}
           ListHeaderComponent={() => <View style={{ height: 7, backgroundColor: 'white' }} />}
           ListFooterComponent={() => <View style={{ height: 7, backgroundColor: 'white' }} />}
           getItemLayout={(data, index) => (
             { length: photoSize, offset: photoSize * index, index }
           )}
+          onRefresh={this.props.screenProps.refreshPage}
+          refreshing={this.props.screenProps.refreshing}
           numColumns={3}
         />
       </View>

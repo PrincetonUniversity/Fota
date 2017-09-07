@@ -11,14 +11,16 @@
 
 import React, { Component } from 'react';
 import { Text, View, Platform, TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Ionicon from 'react-native-vector-icons/Ionicons';
-import request from '../../helpers/axioshelper';
-import { profileRequest } from '../../helpers/URL';
 import BookmarkedRestaurants from './BookmarkedRestaurants';
 import UpvotedPhotos from './UpvotedPhotos';
 import UploadedPhotos from './UploadedPhotos';
 import SubmittedComments from './SubmittedComments';
+import { setProfileReloader } from '../../actions';
+import request from '../../helpers/axioshelper';
+import { profileRequest } from '../../helpers/URL';
 
 class ProfilePage extends Component {
   constructor(props) {
@@ -29,26 +31,38 @@ class ProfilePage extends Component {
       uploaded: [],
       comments: [],
       deleting: false,
-      loading: true
+      loading: true,
+      refreshing: false
     };
     this.deleting = false;
   }
 
   componentWillMount() {
-    this.reloadProfile();
+    this.reloadProfile(false);
+    this.props.setProfileReloader(() => this.reloadProfile(false));
   }
 
-  reloadProfile() {
-    this.setState({ loading: true });
+  reloadProfile(refresh) {
+    if (refresh) {
+      this.setState({ refreshing: true });
+    } else {
+      this.setState({ loading: true });      
+    }
     request.get(profileRequest()).then(response => {
       this.setState({
         bookmarked: response.data.bookmarks,
         upvoted: response.data.upvoted_photos,
         uploaded: response.data.uploaded_photos,
         comments: response.data.written_comments,
-        loading: false
+        loading: false,
+        refreshing: false
       });
     }).catch(e => request.showErrorAlert(e));
+  }
+
+  updateWithDeletedPhoto(id) {
+    const newUploaded = this.state.uploaded.filter(photo => photo.id !== id);
+    this.setState({ uploaded: newUploaded });
   }
 
   /*deleteFromServer(photo) {
@@ -137,7 +151,10 @@ class ProfilePage extends Component {
             uploaded: this.state.uploaded,
             upvoted: this.state.upvoted,
             comments: this.state.comments,
-            loading: this.state.loading
+            loading: this.state.loading,
+            refreshing: this.state.refreshing,
+            refreshPage: () => this.reloadProfile(true),
+            updateWithDeletedPhoto: id => this.updateWithDeletedPhoto(id)
           }}
         />
       </View>
@@ -249,4 +266,4 @@ const {
   statLabelStyle
 } = styles;
 
-export default ProfilePage;
+export default connect(null, { setProfileReloader })(ProfilePage);

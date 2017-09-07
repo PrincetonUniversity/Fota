@@ -80,7 +80,7 @@ class CommentDetail extends Component {
       .catch(e => request.showErrorAlert(e));
     };
     if (this.timer) clearTimeout(this.timer);
-    this.timer = setTimeout(patch, 1000);
+    this.timer = setTimeout(patch, 600);
   }
 
   changeComment() {

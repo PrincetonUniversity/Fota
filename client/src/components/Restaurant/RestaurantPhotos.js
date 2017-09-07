@@ -36,25 +36,14 @@ class RestaurantPhotos extends Component {
   }
 
   renderPhoto(photo, index) {
-    if (photo.url_small == null) {
-      return (
-        <TouchableOpacity
-          onPress={() => this.setSelectedPhoto(index)}
-        >
-          <View key={index} style={photoFrameStyle}>
-            <View style={{ width: photoSize, height: photoSize, borderRadius: 4, backgroundColor: 'blue' }} />
-            {dealWithAndroidBeingStupid(4)}
-          </View>
-        </TouchableOpacity>
-      );
-    }
+    const smallurl = photo.url_small || photo.url;    
     return (
       <TouchableOpacity
         onPress={() => this.setSelectedPhoto(index)}
       >
         <View key={index} style={photoFrameStyle}>
           <Image
-            source={{ uri: photo.url_small }}
+            source={{ uri: smallurl }}
             style={photoStyle}
           />
           {dealWithAndroidBeingStupid(4)}

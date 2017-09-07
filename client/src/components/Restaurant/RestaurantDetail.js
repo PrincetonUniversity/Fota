@@ -270,7 +270,7 @@ class RestaurantDetail extends Component {
         .catch(e => request.showErrorAlert(e));
       };
       if (this.timer) clearTimeout(this.timer);
-      this.timer = setTimeout(del, 1000);
+      this.timer = setTimeout(del, 600);
     } else {
       this.setState({ userBookmarked: true });
       const post = () => {
@@ -282,7 +282,7 @@ class RestaurantDetail extends Component {
         .catch(e => request.showErrorAlert(e));
       };
       if (this.timer) clearTimeout(this.timer);
-      this.timer = setTimeout(post, 1000);
+      this.timer = setTimeout(post, 600);
     }
   }
 
@@ -296,7 +296,7 @@ class RestaurantDetail extends Component {
       .catch(e => request.showErrorAlert(e));
     };
     if (this.timer2) clearTimeout(this.timer2);
-    this.timer2 = setTimeout(patch, 1000);
+    this.timer2 = setTimeout(patch, 600);
   }
 
   voteYes() {

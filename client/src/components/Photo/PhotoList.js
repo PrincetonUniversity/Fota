@@ -27,6 +27,7 @@ class PhotoList extends Component {
         <PhotoDetail
           key={photo.id}
           photo={photo}
+          options={this.props.options}
           shouldRenderWithRedux={this.props.shouldRenderWithRedux}
         />
       </View>

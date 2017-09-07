@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { Banner, FilterDisplay, NotFoundText, Spinner } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
+import { Banner, FilterDisplay, NotFoundText, Spinner } from '../common';
+import { dealWithAndroidBeingStupid2 } from '../common/GradientImage';
 
 const itemWidth = Dimensions.get('window').width / 2 - 40;
 const PHOTO_BORDER_RADIUS = 7;
@@ -68,6 +69,7 @@ class BookmarkedRestaurants extends Component {
               </View>
             </View>
           </View>
+          {dealWithAndroidBeingStupid2(PHOTO_BORDER_RADIUS)}
         </View>
       </RestaurantModal>
     );
@@ -84,10 +86,11 @@ class BookmarkedRestaurants extends Component {
           data={this.props.screenProps.bookmarked}
           keyExtractor={rest => rest.id}
           renderItem={rest => this.renderRestaurant(rest.item)}
-          bounces={false}
-          ListHeaderComponent={() => <View style={{ height: 15, backgroundColor: 'white' }} />}
-          ListFooterComponent={() => <View style={{ height: 15, backgroundColor: 'white' }} />}
+          ListHeaderComponent={() => <View style={{ height: 10, backgroundColor: 'white' }} />}
+          ListFooterComponent={() => <View style={{ height: 10, backgroundColor: 'white' }} />}
           removeClippedSubviews={false}
+          onRefresh={this.props.screenProps.refreshPage}
+          refreshing={this.props.screenProps.refreshing}
           numColumns={2}
         />
       </View>

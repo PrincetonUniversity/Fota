@@ -22,6 +22,27 @@ export const dealWithAndroidBeingStupid = (borderRadius) => {
   }
 };
 
+export const dealWithAndroidBeingStupid2 = (borderRadius) => {
+  if (Platform.OS === 'android') {
+    return (
+      <View
+        style={{
+          position: 'absolute',
+          top: -borderRadius,
+          bottom: -borderRadius,
+          right: -borderRadius,
+          left: -borderRadius,
+          borderTopLeftRadius: borderRadius * 2,
+          borderTopRightRadius: borderRadius * 2,
+          borderWidth: borderRadius,
+          borderColor: '#fff',
+          zIndex: 5
+        }}
+      />
+    );
+  }
+};
+
 const GradientImage = ({ children, start, end, colors, gradientStyle, photoStyle, source }) => (
   <Image
     source={{ uri: source }}
