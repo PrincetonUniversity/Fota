@@ -50,7 +50,6 @@ class SearchPage extends Component {
       const search = () => {
         this.timer = null;
         const fQuery = encodeURIComponent(query);
-        console.log(fQuery);
         request.get(searchRequest(this.state.lat, this.state.lng, fQuery))
         .then(response => {
           if (this.state.query) {

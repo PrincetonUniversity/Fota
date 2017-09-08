@@ -282,7 +282,7 @@ const styles = {
   noPhotosPageStyle: {
     flex: 1,
     backgroundColor: 'white',
-    paddingHorizontal: 75,
+    paddingHorizontal: 60,
     paddingVertical: 50,
     justifyContent: 'space-around',
     alignItems: 'center'
