@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import firebase from 'firebase';
 import LoginInput from './LoginInput';
@@ -82,14 +82,14 @@ class LoginForm extends Component {
         <View style={{ flex: 1, justifyContent: 'space-between' }}>
           <View style={loginStyles.pageStart}>
             <View style={loginStyles.header}>
-              <Icon.Button
-                name='chevron-left'
-                backgroundColor='white'
-                color='rgba(0, 0, 0, 0.75)'
-                size={25}
-                style={{ height: 25 }}
-                onPress={() => this.props.navigation.goBack()}
-              />
+              <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                <Icon
+                  name='chevron-left'
+                  color='rgba(0, 0, 0, 0.75)'
+                  size={20}
+                  style={{ height: 20, marginRight: 15 }}
+                />
+              </TouchableOpacity>
               <Text style={loginStyles.headerText}>Log in</Text>
             </View>
 
@@ -143,7 +143,7 @@ class LoginForm extends Component {
                 >
                   password
                 </Text>
-                <Text>?</Text>
+                <Text style={loginStyles.small}>?</Text>
               </Text>
             <Text style={loginStyles.error}>{this.state.error}</Text>
           </View>

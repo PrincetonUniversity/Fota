@@ -67,8 +67,8 @@ const styles = {
   containerStyle: {
     flexDirection: 'row',
     alignItems: 'center',
-    //height: 40,
-    backgroundColor: 'rgba(0,0,0,0.05)',  
+    height: 37,
+    backgroundColor: 'rgba(0,0,0,0.05)',
     borderRadius: 7,
     marginVertical: 8
   }

@@ -31,7 +31,6 @@ function isNetworkConnected() {
 }
 
 function request(method, url, data, resolve, reject) {
-  console.log(url);
   isNetworkConnected().then(isConnected => {
     if (isConnected) {
       AsyncStorage.getItem('JWT').then((idToken) => {

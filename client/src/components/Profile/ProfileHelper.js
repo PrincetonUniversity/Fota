@@ -37,7 +37,7 @@ class ProfileHelper extends Component {
               if (screenProps.focusedTab !== 1) {
                 screenProps.changeFocusedTab(1);
                 navigation.navigate('Account');
-                screenProps.reloadProfile();
+                if (screenProps.reloadProfile) screenProps.reloadProfile();
               }
             } else {
               navigation.navigate('Login', { onLoginFinished: 'openAccount' });
@@ -64,9 +64,9 @@ class ProfileHelper extends Component {
     }
     return (
       <ProfileNavigator
-        screenProps={{ 
-          user: this.props.loginState, 
-          changeFocusedTab: this.props.screenProps.changeFocusedTab 
+        screenProps={{
+          user: this.props.loginState,
+          changeFocusedTab: this.props.screenProps.changeFocusedTab
         }}
       />
     );

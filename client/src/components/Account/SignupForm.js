@@ -15,13 +15,14 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, TouchableWithoutFeedback, Keyboard, LayoutAnimation } from 'react-native';
+import { View, Text, TouchableWithoutFeedback, Keyboard, LayoutAnimation, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import firebase from 'firebase';
 import LoginInput from './LoginInput';
 import { loginStyles } from './LoginPage';
 import { Spinner, Button } from '../common';
+import { logInOrOut } from '../../actions';
 import request from '../../helpers/axioshelper';
 import { changeNameRequest } from '../../helpers/URL';
 
@@ -44,7 +45,6 @@ class SignupForm extends Component {
   }
 
   onCreateUserSuccess(user) {
-    console.log(user);
     const displayName = `${this.state.first} ${this.state.last}`;
     user.updateProfile({ displayName });
     request.patch(changeNameRequest(encodeURIComponent(displayName), user.uid)).then(() => {
@@ -64,7 +64,7 @@ class SignupForm extends Component {
     } else if (error.code === 'auth/weak-password') {
       message = 'Password is too weak.';
     }
-    this.setState({ error: message, loading: false });
+    this.setState({ error: message, loading: false, editing: false });
   }
 
   shouldBlur() {
@@ -72,7 +72,13 @@ class SignupForm extends Component {
     return (first.length > 0 && last.length > 0 && email.length > 0 && pass.length > 0);
   }
 
+  changeEditingState(editing) {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    this.setState({ editing });
+  }
+
   renderFacebookAndSkip() {
+    if (this.state.editing) return null;
     return (
       <View>
         <Button
@@ -135,73 +141,81 @@ class SignupForm extends Component {
         <View style={{ flex: 1, justifyContent: 'space-between' }}>
           <View style={loginStyles.pageStart}>
             <View style={loginStyles.header}>
-              <Icon.Button
-                name='chevron-left'
-                backgroundColor='white'
-                color='rgba(0, 0, 0, 0.75)'
-                size={25}
-                style={{ height: 25 }}
-                onPress={() => this.props.navigation.goBack()}
-              />
+              <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                <Icon
+                  name='chevron-left'
+                  color='rgba(0, 0, 0, 0.75)'
+                  size={20}
+                  style={{ height: 20, marginRight: 15 }}
+                />
+              </TouchableOpacity>
               <Text style={loginStyles.headerText}>Sign up</Text>
             </View>
 
             {this.renderFacebookAndSkip()}
-
-            <LoginInput
-              label='First Name'
-              autoCapitalize='words'
-              returnKeyType='next'
-              blurOnSubmit={false}
-              value={this.state.first}
-              onChangeText={first => this.setState({ first })}
-              onSubmitEditing={() => this.lastNameInput.focus()}
-            />
-            <LoginInput
-              ref={lastNameInput => { this.lastNameInput = lastNameInput; }}
-              label='Last Name'
-              autoCapitalize='words'
-              returnKeyType='next'
-              blurOnSubmit={false}
-              value={this.state.last}
-              onChangeText={last => this.setState({ last })}
-              onSubmitEditing={() => this.emailInput.focus()}
-            />
-            <LoginInput
-              ref={emailInput => { this.emailInput = emailInput; }}
-              label='Email'
-              keyboardType='email-address'
-              returnKeyType='next'
-              blurOnSubmit={false}
-              value={this.state.email}
-              onChangeText={email => this.setState({ email })}
-              onSubmitEditing={() => this.passwordInput.focus()}
-            />
-            <LoginInput
-              ref={passwordInput => { this.passwordInput = passwordInput; }}
-              label='Password'
-              returnKeyType='go'
-              value={this.state.pass}
-              onChangeText={pass => this.setState({ pass })}
-              blurOnSubmit={this.shouldBlur()}
-              /* onBlur={() => {
-                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                this.setState({ displayFirst: true });
-              }}
-              onFocus={() => {
-                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                this.setState({ displayFirst: false });
-              }} */
-              onSubmitEditing={() => {
-                if (this.state.email.length > 0 && this.state.pass.length > 0) {
-                  this.onSignupButtonPress();
-                } else {
-                  this.setState({ error: 'Please fill in all fields before submitting.' });
-                }
-              }}
-              secure
-            />
-            <Text style={loginStyles.error}>{this.state.error}</Text>
+            <View style={{ backgroundColor: 'white', zIndex: 2 }}>
+              <LoginInput
+                label='First Name'
+                autoCapitalize='words'
+                returnKeyType='next'
+                blurOnSubmit={false}
+                onBlur={() => this.changeEditingState(false)}
+                onFocus={() => this.changeEditingState(true)}
+                value={this.state.first}
+                onChangeText={first => this.setState({ first })}
+                onSubmitEditing={() => this.lastNameInput.focus()}
+              />
+              <LoginInput
+                ref={lastNameInput => { this.lastNameInput = lastNameInput; }}
+                label='Last Name'
+                autoCapitalize='words'
+                returnKeyType='next'
+                blurOnSubmit={false}
+                onBlur={() => this.changeEditingState(false)}
+                onFocus={() => this.changeEditingState(true)}
+                value={this.state.last}
+                onChangeText={last => this.setState({ last })}
+                onSubmitEditing={() => this.emailInput.focus()}
+              />
+              <LoginInput
+                ref={emailInput => { this.emailInput = emailInput; }}
+                label='Email'
+                keyboardType='email-address'
+                returnKeyType='next'
+                blurOnSubmit={false}
+                onBlur={() => this.changeEditingState(false)}
+                onFocus={() => this.changeEditingState(true)}
+                value={this.state.email}
+                onChangeText={email => this.setState({ email })}
+                onSubmitEditing={() => this.passwordInput.focus()}
+              />
+              <LoginInput
+                ref={passwordInput => { this.passwordInput = passwordInput; }}
+                label='Password'
+                returnKeyType='go'
+                value={this.state.pass}
+                onChangeText={pass => this.setState({ pass })}
+                blurOnSubmit={this.shouldBlur()}
+                onBlur={() => this.changeEditingState(false)}
+                onFocus={() => this.changeEditingState(true)}              /* onBlur={() => {
+                  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                  this.setState({ displayFirst: true });
+                }}
+                onFocus={() => {
+                  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                  this.setState({ displayFirst: false });
+                }} */
+                onSubmitEditing={() => {
+                  if (this.state.email.length > 0 && this.state.pass.length > 0) {
+                    this.onSignupButtonPress();
+                  } else {
+                    this.setState({ error: 'Please fill in all fields before submitting.' });
+                  }
+                }}
+                secure
+              />
+              <Text style={loginStyles.error}>{this.state.error}</Text>
+            </View>
           </View>
 
           <View>
@@ -214,14 +228,14 @@ class SignupForm extends Component {
                 >
                   Terms of Service
                 </Text>
-                <Text> and </Text>
+                <Text style={loginStyles.small}> and </Text>
                 <Text
                   style={loginStyles.link}
                   onPress={() => this.props.navigation.navigate('PP')}
                 >
                   Privacy Policy
                 </Text>
-                <Text>.</Text>
+                <Text style={loginStyles.small}>.</Text>
               </Text>
             </View>
             <View style={loginStyles.doneButton}>
@@ -257,4 +271,4 @@ function mapStateToProps({ loginState }) {
   return { loginState };
 }
 
-export default connect(mapStateToProps)(SignupForm);
+export default connect(mapStateToProps, { logInOrOut })(SignupForm);

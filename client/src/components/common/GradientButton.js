@@ -13,7 +13,7 @@ import LinearGradient from 'react-native-linear-gradient';
 const GradientButton = (props) => (
   <TouchableOpacity onPress={props.onPress}>
     <View style={styles.buttonStyle}>
-      <LinearGradient 
+      <LinearGradient
         style={{ flex: 1, borderRadius: 20 }}
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 1 }}
@@ -27,6 +27,7 @@ const GradientButton = (props) => (
 
 const styles = {
   textStyle: {
+    backgroundColor: 'transparent',
     alignSelf: 'center',
     color: 'white',
     fontSize: 15,

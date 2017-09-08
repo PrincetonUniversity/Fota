@@ -16,7 +16,7 @@ const Button = (props) => {
   }
   return (
     <TouchableOpacity onPress={props.onPress} style={props.style}>
-      <View 
+      <View
         style={{
           backgroundColor: colors.fill,
           borderColor: colors.border,
@@ -25,7 +25,16 @@ const Button = (props) => {
         }}
       >
         {props.children}
-        <Text style={{ color: colors.text, ...styles.textStyle }}> {props.text}</Text>
+        <Text
+          style={{
+            color: colors.text,
+            fontWeight: props.round ? '800' : '900',
+            letterSpacing: props.round ? 0 : 1,
+            ...styles.textStyle
+          }}
+        >
+          {props.text}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -35,8 +44,6 @@ const styles = {
   textStyle: {
     alignSelf: 'center',
     fontSize: 15,
-    fontWeight: '900',
-    letterSpacing: 1,
     padding: 8,
   },
   buttonStyle: {

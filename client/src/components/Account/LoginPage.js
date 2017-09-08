@@ -41,6 +41,7 @@ class LoginPage extends Component {
       if (this.props.navigation.state.params.onLoginFinished === 'openAccount') {
         screenProps.onLoginFinished = () => {
           goBack();
+          this.props.screenProps.changeFocusedTab(1);
           this.props.navigation.navigate('Account');
         };
       }
@@ -90,7 +91,7 @@ export const loginStyles = {
   },
   headerText: {
     color: 'rgba(0, 0, 0, 0.75)',
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '900',
     paddingVertical: 5,
   },

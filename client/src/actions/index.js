@@ -44,6 +44,7 @@ export function setProfileReloader(func) {
 }
 
 export function logInOrOut(user) {
+  console.log(user);
   return {
     type: LOGIN,
     payload: user
