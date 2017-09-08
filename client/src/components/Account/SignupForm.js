@@ -15,7 +15,10 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, TouchableWithoutFeedback, Keyboard, LayoutAnimation, TouchableOpacity } from 'react-native';
+import {
+  View, Text, TouchableWithoutFeedback, Keyboard,
+  LayoutAnimation, TouchableOpacity, UIManager
+} from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import firebase from 'firebase';
@@ -28,6 +31,12 @@ import { changeNameRequest } from '../../helpers/URL';
 
 class SignupForm extends Component {
   state = { first: '', last: '', email: '', pass: '', error: '', loading: false, displayTop: true };
+
+  componentWillMount() {
+    if (UIManager.setLayoutAnimationEnabledExperimental) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }
 
   onSignupButtonPress() {
     const { email, pass } = this.state;
@@ -137,7 +146,12 @@ class SignupForm extends Component {
 
   render() {
     return (
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <TouchableWithoutFeedback 
+        onPress={() => {
+          Keyboard.dismiss();
+          this.changeEditingState(false);
+        }}
+      >
         <View style={{ flex: 1, justifyContent: 'space-between' }}>
           <View style={loginStyles.pageStart}>
             <View style={loginStyles.header}>
@@ -159,7 +173,6 @@ class SignupForm extends Component {
                 autoCapitalize='words'
                 returnKeyType='next'
                 blurOnSubmit={false}
-                onBlur={() => this.changeEditingState(false)}
                 onFocus={() => this.changeEditingState(true)}
                 value={this.state.first}
                 onChangeText={first => this.setState({ first })}
@@ -171,7 +184,6 @@ class SignupForm extends Component {
                 autoCapitalize='words'
                 returnKeyType='next'
                 blurOnSubmit={false}
-                onBlur={() => this.changeEditingState(false)}
                 onFocus={() => this.changeEditingState(true)}
                 value={this.state.last}
                 onChangeText={last => this.setState({ last })}
@@ -183,7 +195,6 @@ class SignupForm extends Component {
                 keyboardType='email-address'
                 returnKeyType='next'
                 blurOnSubmit={false}
-                onBlur={() => this.changeEditingState(false)}
                 onFocus={() => this.changeEditingState(true)}
                 value={this.state.email}
                 onChangeText={email => this.setState({ email })}
@@ -196,18 +207,11 @@ class SignupForm extends Component {
                 value={this.state.pass}
                 onChangeText={pass => this.setState({ pass })}
                 blurOnSubmit={this.shouldBlur()}
-                onBlur={() => this.changeEditingState(false)}
-                onFocus={() => this.changeEditingState(true)}              /* onBlur={() => {
-                  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                  this.setState({ displayFirst: true });
-                }}
-                onFocus={() => {
-                  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                  this.setState({ displayFirst: false });
-                }} */
+                onFocus={() => this.changeEditingState(true)}
                 onSubmitEditing={() => {
                   if (this.state.email.length > 0 && this.state.pass.length > 0) {
                     this.onSignupButtonPress();
+                    this.changeEditingState(false);
                   } else {
                     this.setState({ error: 'Please fill in all fields before submitting.' });
                   }
