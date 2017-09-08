@@ -944,21 +944,15 @@ class RestaurantDetail extends Component {
           <TouchableOpacity
             style={{ flex: 1 }}
             onPress={() => {
-              // const formattedAddress = this.state.restaurant.location.display_address.map(address =>
-              //  address.replace(/\s/g, '+')
-              // );
               const { name, location } = this.state.restaurant;
               let formattedAddress = name.replace(/\s/g, '+');
-              formattedAddress += `+${location.city}+${location.state}+${location.zip_code}`;
+              formattedAddress += location.display_address.map(address =>
+               address.replace(/\s/g, '+')
+              );
               const mode = this.state.walking ? 'walking' : 'driving';
-              Linking.canOpenURL(directionsURL(formattedAddress, mode)).then(supported => {
-                if (supported) {
-                  Linking.openURL(directionsURL(formattedAddress, mode))
-                    .catch(e => request.showErrorAlert(e));
-                } else {
-                  Linking.openURL(directionsURL(formattedAddress, mode))
-                    .catch(e => request.showErrorAlert(e));
-                }
+              Linking.canOpenURL(directionsURL(formattedAddress, mode)).then(() => {
+                Linking.openURL(directionsURL(formattedAddress, mode))
+                  .catch(e => request.showErrorAlert(e));
               });
             }}
           >

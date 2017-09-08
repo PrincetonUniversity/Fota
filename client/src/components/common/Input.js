@@ -23,7 +23,7 @@ class Input extends Component {
             color='gray'
             backgroundColor='white'
             size={19}
-            style={{ marginRight: 5 }}
+            style={{ marginRight: 10 }}
           />
         </TouchableOpacity>
       );
