@@ -48,7 +48,13 @@ class SettingsPage extends Component {
           {/* <SettingsButton text='Report a Bug' /> */}
 
           <SettingsHeader text='' />
-          <SettingsButton text='Sign out' onPress={() => firebase.auth().signOut()} />
+          <SettingsButton 
+            text='Sign out'
+            onPress={() => {
+              this.props.screenProps.changeFocusedTab(0);
+              firebase.auth().signOut();
+            }}
+          />
         </ScrollView>
       </View>
     );

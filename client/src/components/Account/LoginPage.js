@@ -12,11 +12,14 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import LoginWelcome from './LoginWelcome';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
+import PasswordResetForm from './PasswordResetForm';
+import { TermsOfService, PrivacyPolicy } from '../Settings/SettingsIndex';
+
 
 class LoginPage extends Component {
   static navigationOptions = {
@@ -56,7 +59,10 @@ class LoginPage extends Component {
 const LoginNavigator = StackNavigator({
   Welcome: { screen: LoginWelcome },
   Login: { screen: LoginForm },
-  Signup: { screen: SignupForm }
+  Signup: { screen: SignupForm },
+  Forgot: { screen: PasswordResetForm },
+  TOS: { screen: TermsOfService },
+  PP: { screen: PrivacyPolicy }
 },
 {
   headerMode: 'none',
@@ -67,18 +73,19 @@ const LoginNavigator = StackNavigator({
 
 export const loginStyles = {
   pageStart: {
-    marginHorizontal: 50,
-    marginTop: 40,
+    marginHorizontal: 40,
+    marginTop: 30,
     justifyContent: 'center'
   },
   pageEnd: {
-    marginHorizontal: 50,
-    marginBottom: 65,
+    marginHorizontal: 40,
+    marginBottom: 30,
     marginTop: 10
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    alignItems: 'center',
     marginBottom: 15
   },
   headerText: {
@@ -88,15 +95,19 @@ export const loginStyles = {
     paddingVertical: 5,
   },
   small: {
-    marginTop: 10,
     color: 'rgba(0, 0, 0, 0.5)',
-    fontSize: 15
+    fontSize: 13
+  },
+  link: {
+    color: '#2494ff',
+    fontSize: 13
   },
   doneButton: {
-    height: 60,
+    height: 50,
     borderTopWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.09)',
-    flexDirection: 'row',
+    //flexDirection: 'row',
+    justifyContent: 'center'
   },
   error: {
     marginTop: 20,

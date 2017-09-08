@@ -8,32 +8,27 @@
 
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
-const Button = (props) => {
-  let colors = props.colors;
-  if (colors == null) {
-    colors = { text: '#aaa', fill: '#fff', border: '#aaa' };
-  }
-  return (
-    <TouchableOpacity onPress={props.onPress} style={props.style}>
-      <View 
-        style={{
-          backgroundColor: colors.fill,
-          borderColor: colors.border,
-          borderRadius: props.round ? 20 : 0,
-          ...styles.buttonStyle
-        }}
+const GradientButton = (props) => (
+  <TouchableOpacity onPress={props.onPress}>
+    <View style={styles.buttonStyle}>
+      <LinearGradient 
+        style={{ flex: 1, borderRadius: 20 }}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 1 }}
+        colors={props.colors}
       >
-        {props.children}
-        <Text style={{ color: colors.text, ...styles.textStyle }}> {props.text}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
+        <Text style={styles.textStyle}>{props.text}</Text>
+      </LinearGradient>
+    </View>
+  </TouchableOpacity>
+);
 
 const styles = {
   textStyle: {
     alignSelf: 'center',
+    color: 'white',
     fontSize: 15,
     fontWeight: '900',
     letterSpacing: 1,
@@ -44,9 +39,7 @@ const styles = {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    margin: 1
   }
 };
 
-export { Button };
+export { GradientButton };

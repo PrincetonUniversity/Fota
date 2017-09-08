@@ -64,7 +64,10 @@ class ProfileHelper extends Component {
     }
     return (
       <ProfileNavigator
-        screenProps={{ user: this.props.loginState }}
+        screenProps={{ 
+          user: this.props.loginState, 
+          changeFocusedTab: this.props.screenProps.changeFocusedTab 
+        }}
       />
     );
   }

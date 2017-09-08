@@ -254,7 +254,6 @@ class CameraLocationPage extends Component {
   }
 
   showNotFoodAlert(error) {
-    console.log(error);
     Alert.alert(
       'Invalid Photo',
       'You may have uploaded an invalid photo. Please make sure you submit a picture of food.',

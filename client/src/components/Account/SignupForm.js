@@ -15,13 +15,9 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import {
-  View, Text, AsyncStorage, TouchableWithoutFeedback, Keyboard,
-  LayoutAnimation
-} from 'react-native';
+import { View, Text, TouchableWithoutFeedback, Keyboard, LayoutAnimation } from 'react-native';
 import { connect } from 'react-redux';
-import Ionicon from 'react-native-vector-icons/Ionicons';
-import { NavigationActions } from 'react-navigation';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import firebase from 'firebase';
 import LoginInput from './LoginInput';
 import { loginStyles } from './LoginPage';
@@ -30,13 +26,11 @@ import request from '../../helpers/axioshelper';
 import { changeNameRequest } from '../../helpers/URL';
 
 class SignupForm extends Component {
-  state = { first: '', last: '', email: '', pass: '', error: '', loading: false, displayFirst: true };
+  state = { first: '', last: '', email: '', pass: '', error: '', loading: false, displayTop: true };
 
   onSignupButtonPress() {
     const { email, pass } = this.state;
-
     this.setState({ error: '', loading: true });
-
     if (this.props.loginState && this.props.loginState.isAnonymous) {
       const credential = firebase.auth.EmailAuthProvider.credential(email, pass);
       this.props.loginState.linkWithCredential(credential)
@@ -50,12 +44,15 @@ class SignupForm extends Component {
   }
 
   onCreateUserSuccess(user) {
+    console.log(user);
     const displayName = `${this.state.first} ${this.state.last}`;
     user.updateProfile({ displayName });
-    this.setState({ first: '', last: '', email: '', pass: '', loading: false });
-    if (this.props.screenProps.onLoginFinished) {
-      this.props.screenProps.onLoginFinished();
-    }
+    request.patch(changeNameRequest(encodeURIComponent(displayName), user.uid)).then(() => {
+      this.setState({ first: '', last: '', email: '', pass: '', loading: false });
+      if (this.props.screenProps.onLoginFinished) {
+        this.props.screenProps.onLoginFinished();
+      }
+    }).catch(e => request.showErrorAlert(e));
   }
 
   onCreateUserFail(error) {
@@ -72,25 +69,41 @@ class SignupForm extends Component {
 
   shouldBlur() {
     const { first, last, email, pass } = this.state;
-    if (first.length > 0 && last.length > 0 && email.length > 0 && pass.length > 0) return true;
-    return false;
+    return (first.length > 0 && last.length > 0 && email.length > 0 && pass.length > 0);
   }
 
-  shouldDisplayFirst() {
-    if (this.state.displayFirst) {
-      return (
-        <View style={{ paddingRight: 75 }}>
-          <LoginInput
-            label='First Name'
-            autoCapitalize='words'
-            value={this.state.first}
-            onChangeText={first => this.setState({ first })}
-            onSubmitEditing={() => this.lastNameInput.focus()}
+  renderFacebookAndSkip() {
+    return (
+      <View>
+        <Button
+          style={{ marginVertical: 8 }}
+          onPress={() => this.props.screenProps.logInWithFacebook()}
+          colors={{ text: '#fff', fill: '#2494ff', border: '#2494ff' }}
+          text={'Continue with Facebook'}
+          round
+        >
+          <Icon
+            name='facebook'
+            backgroundColor='transparent'
+            color='white'
+            style={{ paddingRight: 10 }}
+            size={16}
           />
+        </Button>
+        <Button
+          style={{ marginVertical: 8 }}
+          onPress={() => this.props.screenProps.onSkip()}
+          colors={{ text: '#ff9700', fill: '#fff', border: '#ff9700' }}
+          text={'Sign Up Later'}
+          round
+        />
+        <View style={styles.emailHeaderStyle}>
+          <View style={styles.emailBarStyle} />
+          <Text style={styles.emailTextStyle}>or sign up with email</Text>
+          <View style={styles.emailBarStyle} />
         </View>
-      );
-    }
-    return <View />;
+      </View>
+    );
   }
 
   renderButton() {
@@ -109,7 +122,7 @@ class SignupForm extends Component {
     }
     return (
       <Button
-        onPress={() => {}}
+        onPress={() => this.setState({ error: 'Please fill in all fields before submitting.' })}
         colors={{ text: 'rgba(0,0,0,0.3)', fill: '#fff', border: '#fff' }}
         text={'DONE'}
       />
@@ -122,31 +135,44 @@ class SignupForm extends Component {
         <View style={{ flex: 1, justifyContent: 'space-between' }}>
           <View style={loginStyles.pageStart}>
             <View style={loginStyles.header}>
-              <Ionicon.Button
-                name='ios-arrow-back'
-                backgroundColor='#fff'
+              <Icon.Button
+                name='chevron-left'
+                backgroundColor='white'
                 color='rgba(0, 0, 0, 0.75)'
-                size={28}
-                onPress={() => this.props.navigation.dispatch(NavigationActions.back())}
+                size={25}
+                style={{ height: 25 }}
+                onPress={() => this.props.navigation.goBack()}
               />
               <Text style={loginStyles.headerText}>Sign up</Text>
             </View>
 
-            {this.shouldDisplayFirst()}
-            <View style={{ paddingRight: 75 }}>
-              <LoginInput
-                ref={lastNameInput => { this.lastNameInput = lastNameInput; }}
-                label='Last Name'
-                autoCapitalize='words'
-                value={this.state.last}
-                onChangeText={last => this.setState({ last })}
-                onSubmitEditing={() => this.emailInput.focus()}
-              />
-            </View>
+            {this.renderFacebookAndSkip()}
+
+            <LoginInput
+              label='First Name'
+              autoCapitalize='words'
+              returnKeyType='next'
+              blurOnSubmit={false}
+              value={this.state.first}
+              onChangeText={first => this.setState({ first })}
+              onSubmitEditing={() => this.lastNameInput.focus()}
+            />
+            <LoginInput
+              ref={lastNameInput => { this.lastNameInput = lastNameInput; }}
+              label='Last Name'
+              autoCapitalize='words'
+              returnKeyType='next'
+              blurOnSubmit={false}
+              value={this.state.last}
+              onChangeText={last => this.setState({ last })}
+              onSubmitEditing={() => this.emailInput.focus()}
+            />
             <LoginInput
               ref={emailInput => { this.emailInput = emailInput; }}
               label='Email'
               keyboardType='email-address'
+              returnKeyType='next'
+              blurOnSubmit={false}
               value={this.state.email}
               onChangeText={email => this.setState({ email })}
               onSubmitEditing={() => this.passwordInput.focus()}
@@ -154,18 +180,18 @@ class SignupForm extends Component {
             <LoginInput
               ref={passwordInput => { this.passwordInput = passwordInput; }}
               label='Password'
+              returnKeyType='go'
               value={this.state.pass}
               onChangeText={pass => this.setState({ pass })}
               blurOnSubmit={this.shouldBlur()}
-              onBlur={() => {
+              /* onBlur={() => {
                 LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                 this.setState({ displayFirst: true });
               }}
               onFocus={() => {
                 LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                 this.setState({ displayFirst: false });
-              }}
-              returnKeyType={'go'}
+              }} */
               onSubmitEditing={() => {
                 if (this.state.email.length > 0 && this.state.pass.length > 0) {
                   this.onSignupButtonPress();
@@ -175,17 +201,32 @@ class SignupForm extends Component {
               }}
               secure
             />
-
-            <View>
-              <Text style={loginStyles.small}>
-                By signing up, I agree to Fota's Terms of Service and Privacy Policy.
-              </Text>
-            </View>
             <Text style={loginStyles.error}>{this.state.error}</Text>
           </View>
 
-          <View style={loginStyles.doneButton}>
-            {this.renderButton()}
+          <View>
+            <View style={loginStyles.pageEnd}>
+              <Text style={{ marginTop: 10 }}>
+                <Text style={loginStyles.small}>By signing up, I agree to Fota's </Text>
+                <Text
+                  style={loginStyles.link}
+                  onPress={() => this.props.navigation.navigate('TOS')}
+                >
+                  Terms of Service
+                </Text>
+                <Text> and </Text>
+                <Text
+                  style={loginStyles.link}
+                  onPress={() => this.props.navigation.navigate('PP')}
+                >
+                  Privacy Policy
+                </Text>
+                <Text>.</Text>
+              </Text>
+            </View>
+            <View style={loginStyles.doneButton}>
+              {this.renderButton()}
+            </View>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -193,9 +234,27 @@ class SignupForm extends Component {
   }
 }
 
+const styles = {
+  emailHeaderStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 25
+  },
+  emailTextStyle: {
+    fontSize: 15,
+    fontWeight: '400',
+    color: 'rgba(0, 0, 0, 0.5)',
+    marginHorizontal: 15
+  },
+  emailBarStyle: {
+    height: 1,
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  }
+};
+
 function mapStateToProps({ loginState }) {
   return { loginState };
 }
-
 
 export default connect(mapStateToProps)(SignupForm);

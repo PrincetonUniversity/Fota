@@ -1,6 +1,7 @@
 export * from './Banner';
 export * from './Button';
 export * from './FilterDisplay';
+export * from './GradientButton';
 export * from './GradientHeader';
 export * from './GradientImage';
 export * from './Header';

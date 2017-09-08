@@ -71,7 +71,6 @@ class Base extends Component {
   }
 
   render() {
-    console.log(Dimensions.get('window'));
     if (this.state.loginFinished) {
       if (this.props.loginState) {
         return (

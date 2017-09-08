@@ -16,8 +16,7 @@
 
 import React, { Component } from 'react';
 import { View, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import Ionicon from 'react-native-vector-icons/Ionicons';
-import { NavigationActions } from 'react-navigation';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import firebase from 'firebase';
 import LoginInput from './LoginInput';
 import { loginStyles } from './LoginPage';
@@ -28,9 +27,7 @@ class LoginForm extends Component {
 
   onLoginButtonPress() {
     const { email, pass } = this.state;
-
     this.setState({ error: '', loading: true });
-
     firebase.auth().signInWithEmailAndPassword(email, pass)
       .then(this.onLoginSuccess.bind(this))
       .catch(this.onLoginFail.bind(this));
@@ -54,8 +51,7 @@ class LoginForm extends Component {
   }
 
   shouldBlur() {
-    if (this.state.email.length > 0 && this.state.pass.length > 0) return true;
-    return false;
+    return (this.state.email.length > 0 && this.state.pass.length > 0);
   }
 
   renderButton() {
@@ -73,7 +69,7 @@ class LoginForm extends Component {
     }
     return (
       <Button
-        onPress={() => {}}
+        onPress={() => this.setState({ error: 'Please fill in all fields before submitting.' })}
         colors={{ text: 'rgba(0,0,0,0.3)', fill: '#fff', border: '#fff' }}
         text={'DONE'}
       />
@@ -86,32 +82,49 @@ class LoginForm extends Component {
         <View style={{ flex: 1, justifyContent: 'space-between' }}>
           <View style={loginStyles.pageStart}>
             <View style={loginStyles.header}>
-              <Ionicon.Button
-                name='ios-arrow-back'
-                backgroundColor='#fff'
+              <Icon.Button
+                name='chevron-left'
+                backgroundColor='white'
                 color='rgba(0, 0, 0, 0.75)'
-                size={28}
-                onPress={() => this.props.navigation.dispatch(NavigationActions.back())}
+                size={25}
+                style={{ height: 25 }}
+                onPress={() => this.props.navigation.goBack()}
               />
               <Text style={loginStyles.headerText}>Log in</Text>
             </View>
 
-            <Text style={styles.welcomeStyle}>Welcome back!</Text>
+            <Button
+              style={{ marginTop: 8, marginBottom: 20 }}
+              onPress={() => this.props.screenProps.logInWithFacebook()}
+              colors={{ text: '#fff', fill: '#2494ff', border: '#2494ff' }}
+              text={'Continue with Facebook'}
+              round
+            >
+              <Icon
+                name='facebook'
+                backgroundColor='transparent'
+                color='white'
+                style={{ paddingRight: 10 }}
+                size={16}
+              />
+            </Button>
 
             <LoginInput
               label='Email'
-              value={this.state.email}
               keyboardType='email-address'
+              returnKeyType='next'
+              blurOnSubmit={false}
+              value={this.state.email}
               onChangeText={email => this.setState({ email })}
               onSubmitEditing={() => this.passwordInput.focus()}
             />
             <LoginInput
               ref={passwordInput => { this.passwordInput = passwordInput; }}
               label='Password'
+              returnKeyType='go'
+              blurOnSubmit={this.shouldBlur()}
               value={this.state.pass}
               onChangeText={pass => this.setState({ pass })}
-              blurOnSubmit={this.shouldBlur()}
-              returnKeyType={'go'}
               onSubmitEditing={() => {
                 if (this.state.email.length > 0 && this.state.pass.length > 0) {
                   this.onLoginButtonPress();
@@ -122,7 +135,16 @@ class LoginForm extends Component {
               secure
             />
 
-            <Text style={loginStyles.small}>Forgot your password?</Text>
+            <Text style={{ marginTop: 10 }}>
+                <Text style={loginStyles.small}>Forgot your </Text>
+                <Text
+                  style={loginStyles.link}
+                  onPress={() => this.props.navigation.navigate('Forgot')}
+                >
+                  password
+                </Text>
+                <Text>?</Text>
+              </Text>
             <Text style={loginStyles.error}>{this.state.error}</Text>
           </View>
 
@@ -134,15 +156,5 @@ class LoginForm extends Component {
     );
   }
 }
-
-const styles = {
-  welcomeStyle: {
-    color: 'rgba(0, 0, 0, 0.75)',
-    fontSize: 24,
-    fontWeight: '700',
-    marginTop: 20,
-    marginBottom: 10
-  }
-};
 
 export default LoginForm;

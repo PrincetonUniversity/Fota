@@ -65,8 +65,8 @@ export function profileRequest() {
   return `${USER_REQ}/?key=${CLIENT_API_KEY}`;
 }
 
-export function changeNameRequest(displayName) {
-  return `${USER_REQ}/?displayName=${displayName}&key=${CLIENT_API_KEY}`;
+export function changeNameRequest(displayName, uid) {
+  return `${USER_REQ}/?displayName=${displayName}&uid=${uid}&key=${CLIENT_API_KEY}`;
 }
 
 export function nearbyRestRequest(lat, lng) {

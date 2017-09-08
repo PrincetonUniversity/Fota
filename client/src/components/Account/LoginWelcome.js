@@ -15,61 +15,40 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, Image, Alert } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import firebase from 'firebase';
+import { View, Text, Image } from 'react-native';
 import { Pages } from 'react-native-pages';
-import { Button } from '../common';
+import { GradientButton } from '../common';
 import { loginStyles } from './LoginPage';
 
-const fotaLogo = require('../../img/fota_home_activated.png');
+const fotaLogo = require('../../img/fota_logo.png');
+const slide1 = require('../../img/slide_1_noodles.png');
+const slide2 = require('../../img/slide_2.png');
+const slide3 = require('../../img/slide_3.png');
+const slide4 = require('../../img/slide_4.png');
+
+const Graphic = (props) => (
+  <View style={styles.swipeContainerStyle}>
+    <View style={{ flex: 1, justifyContent: 'center' }}>
+      <Image source={props.source} resizeMode='contain' />
+    </View>
+    <Text style={styles.captionStyle}>{props.text}</Text>
+  </View>
+);
 
 class LoginWelcome extends Component {
-  logInWithFacebook() {
-    const provider = new firebase.auth.FacebookAuthProvider();
-    firebase.auth().signInWithRedirect(provider);
-    firebase.auth().getRedirectResult().then(result => {
-      //this.props.screenProps.onLoginFinished();
-    }).catch(error => {
-      Alert.alert(
-        'Error',
-        error.message,
-        [{ text: 'OK' }]
-      );
-    });
-  }
-
   render() {
     return (
       <View style={{ flex: 1, justifyContent: 'space-between' }}>
         <View style={loginStyles.pageStart}>
-          <Image style={styles.logoStyle} source={fotaLogo} />
-          <Text style={styles.titleStyle}>FOTA</Text>
+          <Image style={styles.logoStyle} source={fotaLogo} resizeMode='contain' />
         </View>
 
 
-        <Pages
-          //startPage={0}
-          //style={{ backgroundColor: 'purple' }}
-          indicatorColor='#ff9700'
-          scrollEnabled
-        >
-          <View style={styles.swipeContainerStyle}>
-            <View style={styles.graphicContainerStyle}>
-              <Image style={styles.logoStyle} source={fotaLogo} />
-            </View>
-            <View style={styles.captionContainerStyle}>
-              <Text style={styles.subtitleStyle}>See the best food</Text>
-            </View>
-          </View>
-          <View style={styles.swipeContainerStyle}>
-            <View style={styles.graphicContainerStyle}>
-              <Image style={styles.logoStyle} source={fotaLogo} />
-            </View>
-            <View style={styles.captionContainerStyle}>
-              <Text style={styles.subtitleStyle}>Food near you</Text>
-            </View>
-          </View>
+        <Pages indicatorColor='#ff9700' >
+          <Graphic source={slide1} text='See the best food' />
+          <Graphic source={slide2} text='Food near you' />
+          <Graphic source={slide3} text='Streamlined restaurant info' />
+          <Graphic source={slide4} text='User uploaded community' />
         </Pages>
 
         <View style={loginStyles.pageEnd}>
@@ -90,20 +69,17 @@ class LoginWelcome extends Component {
             </Button>
           </View> */}
 
-          <View style={styles.buttonHolderStyle}>
-            <Button
+          <View style={{ marginVertical: 10 }}>
+            <GradientButton
               onPress={() => this.props.navigation.navigate('Signup')}
-              colors={{ text: 'white', fill: '#ff9700', border: '#ff9700' }}
-              text={'Get Started'}
-              round
+              colors={['#ff470d', '#ffa32b']}
+              text={'GET STARTED'}
             />
           </View>
 
-          <View style={styles.textHolderStyle}>
+          <View style={{ alignItems: 'center', marginBottom: 40 }}>
             <Text>
-              <Text style={styles.loginTextStyle}>
-                {'Already have an account? '}
-              </Text>
+              <Text style={styles.loginTextStyle}>Already have an account? </Text>
               <Text
                 style={[styles.loginTextStyle, { textDecorationLine: 'underline' }]}
                 onPress={() => this.props.navigation.navigate('Login')}
@@ -111,15 +87,8 @@ class LoginWelcome extends Component {
                 Log in here.
               </Text>
             </Text>
-            {/* <Text
-              style={styles.skipTextStyle}
-              onPress={this.props.screenProps.onSkip.bind(this)}
-            >
-              Not now
-            </Text> */}
           </View>
         </View>
-
       </View>
     );
   }
@@ -127,57 +96,27 @@ class LoginWelcome extends Component {
 
 const styles = {
   logoStyle: {
-    width: 40,
-    height: 40
-  },
-  titleStyle: {
-    fontSize: 32,
-    fontWeight: '900',
-    color: 'rgba(0, 0, 0, 0.8)',
-    marginLeft: 10
-    //marginTop: 20,
-    //marginBottom: 10
-  },
-  subtitleStyle: {
-    fontSize: 20,
-    fontWeight: '300',
-    color: 'rgba(0, 0, 0, 0.6)',
-    paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.3)'
+    width: 135,
+    height: 45,
+    alignSelf: 'center',
+    marginTop: 20,
+    marginBottom: 30
   },
   swipeContainerStyle: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
   },
-  graphicContainerStyle: {
-    flex: 2,
-    justifyContent: 'center'
-  },
-  captionContainerStyle: {
-    flex: 1,
-    justifyContent: 'center'
+  captionStyle: {
+    fontSize: 20,
+    fontWeight: '400',
+    color: 'rgba(0, 0, 0, 0.7)',
+    marginBottom: 50,
   },
   loginTextStyle: {
-    fontSize: 12,
-    //fontWeight: '900',
+    fontSize: 13,
+    fontWeight: '300',
     color: 'rgba(0,0,0,0.4)',
-  },
-  skipTextStyle: {
-    fontSize: 15,
-    color: 'rgba(0, 0, 0, 0.6)',
-    position: 'absolute',
-    right: 0
-  },
-  buttonHolderStyle: {
-    flexDirection: 'row',
-    marginVertical: 10
-  },
-  textHolderStyle: {
-    //marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'center',
   }
 };
 
