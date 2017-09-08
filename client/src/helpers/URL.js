@@ -41,8 +41,8 @@ export function directionsRequest(curLat, curLng, dest, mode) {
   return `${GOOGLE_MAPS_API_URL}?origin=${curLat},${curLng}&destination=${dest}&mode=${mode}&key=${CLIENT_API_KEY}`;
 }
 
-export function directionsURL(dest) {
-  return `${GOOGLE_MAPS_URL}/?api=1&destination=${dest}/`;
+export function directionsURL(dest, mode) {
+  return `${GOOGLE_MAPS_URL}/?api=1&destination=${dest}&travelmode=${mode}/`;
 }
 
 export function restBookmarkRequest(id) {

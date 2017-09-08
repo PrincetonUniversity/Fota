@@ -944,11 +944,16 @@ class RestaurantDetail extends Component {
           <TouchableOpacity
             style={{ flex: 1 }}
             onPress={() => {
-              const formattedAddress = this.state.restaurant.location.display_address.map(address =>
+              const { name, location } = this.state.restaurant;
+              let formattedAddress = name.replace(/\s/g, '+');
+              formattedAddress += location.display_address.map(address =>
                address.replace(/\s/g, '+')
               );
-              Linking.openURL(directionsURL(formattedAddress))
-                .catch(e => request.showErrorAlert(e));
+              const mode = this.state.walking ? 'walking' : 'driving';
+              Linking.canOpenURL(directionsURL(formattedAddress, mode)).then(() => {
+                Linking.openURL(directionsURL(formattedAddress, mode))
+                  .catch(e => request.showErrorAlert(e));
+              });
             }}
           >
             <View style={footerButtonStyle}>

@@ -173,8 +173,7 @@ class CommentDetail extends Component {
       votecount: newVoteCount,
       userLiked: false,
       userDisliked: userHasDisliked,
-      userHasVoted: userVoted,
-      expanded: false
+      userHasVoted: userVoted
     });
   }
 
@@ -221,9 +220,7 @@ class CommentDetail extends Component {
           style={messageStyle}
           numberOfLines={numberOfLines}
           suppressHighlighting
-          onPress={() => {
-            this.setState({ expanded: !this.state.expanded });
-          }}
+          onPress={() => this.setState({ expanded: !this.state.expanded })}
         >
           {this.state.message}
         </Text>
@@ -323,8 +320,13 @@ class CommentDetail extends Component {
   render() {
     const comment = this.props.comment;
     let recommendation = 'Undecided';
-    if (comment.author_recommended_yes) recommendation = 'Recommended';
-    if (comment.author_recommended_no) recommendation = 'Not Recommended';
+    if (comment.my_comment) {
+      if (this.props.userLiked) recommendation = 'Recommended';
+      if (this.props.userDisliked) recommendation = 'Not Recommended';
+    } else {
+      if (comment.author_recommended_yes) recommendation = 'Recommended';
+      if (comment.author_recommended_no) recommendation = 'Not Recommended';
+    }
     return (
       <TouchableOpacity activeOpacity={1}>
         <View
@@ -350,7 +352,7 @@ class CommentDetail extends Component {
             <Icon name='dot-single' size={13} color='rgba(0, 0, 0, 0.3)' style={{ marginHorizontal: 5 }} />
             <Text style={headingTextStyle}>{recommendation}</Text>
             <Icon name='dot-single' size={13} color='rgba(0, 0, 0, 0.3)' style={{ marginHorizontal: 5 }} />
-            <Text style={headingTextStyle}>{moment(comment.uploaded_at).fromNow()}</Text>
+            <Text style={headingTextStyle} numberOfLines={1} ellipsizeMode='tail'>{moment(comment.uploaded_at).fromNow()}</Text>
           </View>
 
           {this.renderMessageAndFooter(comment)}
@@ -367,7 +369,6 @@ const styles = {
     paddingHorizontal: 20,
     paddingTop: 20,
     flexDirection: 'column',
-    backgroundColor: 'white',
     borderColor: 'rgba(0, 0, 0, 0.06)',
     borderBottomWidth: 1,
     zIndex: 5

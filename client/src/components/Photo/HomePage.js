@@ -70,7 +70,7 @@ class HomePage extends Component {
     }
   });
 
-  state = { 
+  state = {
     noPhotos: false,
     filterList: [],
     hotList: [],
@@ -85,13 +85,14 @@ class HomePage extends Component {
   }
 
   getFilterList(filter, filterDisplay) {
+    const fFilter = encodeURIComponent(filter);
     if (this.props.browsingPrinceton) {
-      this.sendFilteredPhotoRequest(filter, filterDisplay, pcoords.lat, pcoords.lng);
+      this.sendFilteredPhotoRequest(fFilter, filterDisplay, pcoords.lat, pcoords.lng);
     } else {
       navigator.geolocation.getCurrentPosition(position => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
-        this.sendFilteredPhotoRequest(filter, filterDisplay, lat, lng);
+        this.sendFilteredPhotoRequest(fFilter, filterDisplay, lat, lng);
       });
     }
   }
@@ -115,20 +116,20 @@ class HomePage extends Component {
 
   sendPhotoRequest(lat, lng) {
     AsyncStorage.getItem('SearchRadius').then(radius => {
-      const promises = [
-        request.get(photoRequest('hot', lat, lng, parseInt(radius, 10)))
-          .then(response => response.data),
-        request.get(photoRequest('new', lat, lng, parseInt(radius, 10)))
-          .then(response => response.data)
-      ];
-      Promise.all(promises).then(result => {
-        if (result[0].length === 0) {
+      // const promises = [
+      //   request.get(photoRequest('hot', lat, lng, parseInt(radius, 10)))
+      //     .then(response => response.data),
+      //   request.get(photoRequest('new', lat, lng, parseInt(radius, 10)))
+      //     .then(response => response.data)
+      // ];
+      request.get(photoRequest('hot', lat, lng, parseInt(radius, 10))).then(response => {
+        if (response.data.hotPhotos.length === 0) {
           this.setState({ noPhotos: true, refreshing: false });
         } else {
-          this.props.makePhotoTable(result[0]);
-          this.setState({ hotList: result[0], newList: result[1], refreshing: false });
+          this.props.makePhotoTable(response.data.hotPhotos);
+          this.setState({ hotList: response.data.hotPhotos, newList: response.data.newPhotos, refreshing: false });
         }
-      }).catch(e => request.showErrorAlert(e));    
+      }).catch(e => request.showErrorAlert(e));
     });
   }
 
@@ -220,7 +221,7 @@ class HomePage extends Component {
 }
 
 const HotPage = (props) => (
-  <PhotoFeed 
+  <PhotoFeed
     name='hot'
     list={props.screenProps.hotList}
     refreshPhotos={props.screenProps.refreshPhotos}
@@ -281,7 +282,7 @@ const styles = {
   noPhotosPageStyle: {
     flex: 1,
     backgroundColor: 'white',
-    paddingHorizontal: 75,
+    paddingHorizontal: 60,
     paddingVertical: 50,
     justifyContent: 'space-around',
     alignItems: 'center'

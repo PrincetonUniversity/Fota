@@ -87,6 +87,8 @@ class RestaurantComments extends Component {
         user_upvote: false,
         user_downvote: false,
         my_comment: true,
+        author_recommended_yes: this.state.userLiked,
+        author_recommended_no: this.state.userDisliked,
         uploaded_at: comment.data.now
       };
       const commentList = [newComment, ...this.state.comments];
@@ -267,6 +269,8 @@ class RestaurantComments extends Component {
           }
           this.props.screenProps.setCommentsHeight(newHeight);
         }}
+        userLiked={this.state.userLiked}
+        userDisliked={this.state.userDisliked}
         deleteComment={this.removeComment.bind(this)}
         vote={this.findVote(comment.user_upvote, comment.user_downvote)}
       />
@@ -289,6 +293,7 @@ class RestaurantComments extends Component {
         {this.renderEditBox()}
         <FlatList
           data={this.state.comments}
+          extraData={[this.state.userLiked, this.state.userDisliked]}
           keyExtractor={comment => comment.id}
           renderItem={c => this.renderComment(c.item)}
           scrollEnabled={false}

@@ -49,7 +49,8 @@ class SearchPage extends Component {
     if (query) {
       const search = () => {
         this.timer = null;
-        request.get(searchRequest(this.state.lat, this.state.lng, query))
+        const fQuery = encodeURIComponent(query);
+        request.get(searchRequest(this.state.lat, this.state.lng, fQuery))
         .then(response => {
           if (this.state.query) {
             this.setState({
@@ -150,6 +151,8 @@ class SearchPage extends Component {
               style={styles.searchBarStyle}
               placeholder='Search'
               autoFocus
+              showDeleteAll
+              delete={() => this.setState({ query: '' })}
               value={this.state.query}
               onChangeText={query => this.updateQuery(query)}
             >
@@ -193,8 +196,9 @@ const styles = {
     marginRight: 25
   },
   searchBarStyle: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    //alignItems: 'center',
     height: 32,
     marginLeft: 25,
     marginRight: 15,

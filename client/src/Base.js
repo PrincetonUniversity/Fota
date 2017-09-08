@@ -52,7 +52,7 @@ class Base extends Component {
           console.log(e);
         });
       } else {
-        AsyncStorage.setItem('JWT', '');        
+        AsyncStorage.setItem('JWT', '');
         this.props.logInOrOut(user);
         this.setState({ loginFinished: true });
       }
@@ -76,8 +76,8 @@ class Base extends Component {
         return (
           <View style={{ flex: 1 }}>
             <StatusBar hidden={false} />
-            <FotaNavigator 
-              screenProps={{ 
+            <FotaNavigator
+              screenProps={{
                 user: this.props.loginState,
                 reloadProfile: this.props.reloadProfile,
                 focusedTab: this.state.focusedTab,

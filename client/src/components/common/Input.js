@@ -8,37 +8,64 @@
  *
  ******************************************************************************/
 
-import React from 'react';
-import { View, TextInput } from 'react-native';
+import React, { Component } from 'react';
+import { View, TextInput, TouchableOpacity } from 'react-native';
+import Ionicon from 'react-native-vector-icons/Ionicons';
 
-const Input = ({
-  style,
-  children,
-  placeholder,
-  autoFocus,
-  onFocus,
-  placeholderAlign,
-  secure,
-  value,
-  onChangeText
-}) => (
-  <View style={{ ...style, ...styles.containerStyle }}>
-    {children}
-    <TextInput
-      style={styles.inputStyle}
-      value={value}
-      placeholder={placeholder}
-      placeholderTextColor='rgba(0, 0, 0, 0.2)'
-      textAlign={placeholderAlign}
-      onChangeText={onChangeText}
-      autoFocus={autoFocus}
-      onFocus={onFocus}
-      autoCorrect
-      secureTextEntry={secure}
-      underlineColorAndroid={'transparent'}
-    />
-  </View>
-);
+class Input extends Component {
+  renderDeleteButton() {
+    if (this.props.showDeleteAll) {
+      return (
+        <TouchableOpacity onPress={this.props.delete}>
+          <Ionicon
+            name='ios-close-circle'
+            borderRadius={0}
+            color='gray'
+            backgroundColor='white'
+            size={19}
+            style={{ marginRight: 10 }}
+          />
+        </TouchableOpacity>
+      );
+    }
+    return <View />;
+  }
+
+  render() {
+    const {
+      style,
+      children,
+      placeholder,
+      autoFocus,
+      onFocus,
+      placeholderAlign,
+      secure,
+      value,
+      onChangeText
+    } = this.props;
+    return (
+      <View style={{ ...style, ...styles.containerStyle }}>
+        {children}
+        <TextInput
+          style={styles.inputStyle}
+          value={value}
+          placeholder={placeholder}
+          placeholderTextColor='rgba(0, 0, 0, 0.2)'
+          textAlign={placeholderAlign}
+          onChangeText={onChangeText}
+          autoFocus={autoFocus}
+          onFocus={onFocus}
+          autoCorrect
+          secureTextEntry={secure}
+          underlineColorAndroid={'transparent'}
+        />
+        <View style={{ alignItems: 'flex-end' }}>
+          {this.renderDeleteButton()}
+        </View>
+      </View>
+    );
+  }
+}
 
 const styles = {
   inputStyle: {

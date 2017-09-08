@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Text, FlatList, CameraRoll, Dimensions, Platform } from 'react-native';
-import { ImageButton } from '../common';
+import { View, Text, FlatList, CameraRoll, Dimensions, Platform } from 'react-native';
+import { Spinner, ImageButton } from '../common';
 import { tabStyle } from './CameraPage';
 
 const imageSize = Dimensions.get('window').width / 4;
@@ -16,7 +16,7 @@ class CameraLibrary extends Component {
               if (!focused) {
                 screenProps.showCamera(false);
                 navigation.navigate('Library');
-              } 
+              }
             }}
             style={{ color, ...tabStyle }}
           >
@@ -26,13 +26,39 @@ class CameraLibrary extends Component {
     }
   });
 
-  state = { photos: [] };
+  state = { photos: [], lastCursor: null, noMorePhotos: false, loadingMore: false };
 
   componentWillMount() {
-    CameraRoll.getPhotos({
+    this.loadPhotos();
+  }
+
+  getMorePhotos() {
+    if (!this.state.noMorePhotos) {
+      if (!this.state.loadingMore) {
+        this.setState({ loadingMore: true }, () => { this.loadPhotos(); });
+      }
+    }
+  }
+
+  loadPhotos() {
+    const fetchParams = {
       first: 100,
-      assetType: 'Photos',
-    }).then(r => {
+      assetType: 'Photos'
+    };
+    if (this.state.lastCursor) {
+      fetchParams.after = this.state.lastCursor;
+    }
+    CameraRoll.getPhotos(fetchParams).then(r => {
+      const assets = r.edges;
+      const loadingMore = false;
+      let noMorePhotos = false;
+      if (!r.page_info.has_next_page) {
+        noMorePhotos = true;
+      }
+      let lastCursor = null;
+      if (assets.length > 0) {
+        lastCursor = r.page_info.end_cursor;
+      }
       if (Platform.OS === 'android') {
         const RNGRP = require('react-native-get-real-path');
 
@@ -41,13 +67,13 @@ class CameraLibrary extends Component {
         ));
         Promise.all(promises).then(results => {
           const uris = results.map(uri => `file://${uri}`);
-          this.setState({ photos: uris });
+          this.setState({ photos: this.state.photos.concat(uris), loadingMore, noMorePhotos, lastCursor });
         });
       } else {
         const uris = r.edges.map(p => p.node.image.uri);
-        this.setState({ photos: uris });
+        this.setState({ photos: this.state.photos.concat(uris), loadingMore, noMorePhotos, lastCursor });
       }
-    });
+    }).catch(e => console.log(e));
   }
 
   renderPhoto(uri) {
@@ -60,6 +86,17 @@ class CameraLibrary extends Component {
     );
   }
 
+  renderSpinner() {
+    if (this.state.loadingMore) {
+      return (
+        <View style={{ height: 50, alignItems: 'center', justifyContent: 'center' }}>
+          <Spinner size='large' color='black' />
+        </View>
+      );
+    }
+    return <View />;
+  }
+
   render() {
     return (
       <FlatList
@@ -67,7 +104,10 @@ class CameraLibrary extends Component {
         keyExtractor={photo => photo}
         renderItem={photo => this.renderPhoto(photo.item)}
         bounces={false}
+        onEndReachedThreshold={0.5}
+        onEndReached={() => this.getMorePhotos()}
         removeClippedSubviews={false}
+        ListFooterComponent={() => this.renderSpinner()}
         getItemLayout={(data, index) => (
           { length: imageSize, offset: imageSize * index, index }
         )}
