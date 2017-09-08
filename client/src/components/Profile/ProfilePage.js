@@ -46,7 +46,7 @@ class ProfilePage extends Component {
     if (refresh) {
       this.setState({ refreshing: true });
     } else {
-      this.setState({ loading: true });      
+      this.setState({ loading: true });
     }
     request.get(profileRequest()).then(response => {
       this.setState({
@@ -106,7 +106,7 @@ class ProfilePage extends Component {
                   size={17}
                   style={{ alignSelf: 'center', paddingRight: 5 }}
                 />
-                <Text style={infoTextStyle}>Certified Foodie</Text>
+                <Text style={infoTextStyle}>Beta Tester</Text>
               </View>
             </View>
             <TouchableOpacity
