@@ -11,7 +11,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 const GradientButton = (props) => (
-  <TouchableOpacity onPress={props.onPress}>
+  <TouchableOpacity onPress={props.onPress} style={props.style}>
     <View style={styles.buttonStyle}>
       <LinearGradient
         style={{ flex: 1, borderRadius: 20 }}
