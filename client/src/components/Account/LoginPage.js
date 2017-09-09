@@ -14,17 +14,36 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
+import firebase from 'firebase';
 import LoginWelcome from './LoginWelcome';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 import PasswordResetForm from './PasswordResetForm';
 import { TermsOfService, PrivacyPolicy } from '../Settings/SettingsIndex';
 
+const { FBLoginManager } = require('react-native-facebook-login');
 
 class LoginPage extends Component {
   static navigationOptions = {
     gesturesEnabled: false
   };
+
+  logInWithFacebook() {
+    console.log(FBLoginManager);
+    FBLoginManager.loginWithPermissions(['email'], (error, data) => {
+      console.log(data);
+      if (!error) {
+        const credential = firebase.auth.FacebookAuthProvider.credential(data.credentials.token);
+        firebase
+          .auth()
+          .signInWithCredential(credential)
+          .then(() => console.log('account made'))
+          .catch((error2) => console.log('Account not made'));
+      } else {
+        console.log(error, data);
+      }
+    });
+  }
 
   render() {
     let screenProps = {
@@ -50,7 +69,10 @@ class LoginPage extends Component {
     return (
       <View style={{ flex: 1, backgroundColor: '#fff' }}>
         <LoginNavigator
-          screenProps={screenProps}
+          screenProps={{
+            logInWithFacebook: () => this.logInWithFacebook(),
+            ...screenProps
+          }}
         />
       </View>
     );
