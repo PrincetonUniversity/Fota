@@ -1,9 +1,14 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { GradientButton, Button } from '../common';
+import { View, Text, Image } from 'react-native';
+import { GradientButton } from '../common';
+
+const noAccountPhoto = require('../../img/no_account.png');
 
 const RequestSignup = (props) => (
   <View style={styles.pageStyle}>
+    <View style={{ alignItems: 'center' }}>
+      <Image source={noAccountPhoto} style={styles.imageStyle} resizeMode='contain' />
+    </View>
     <Text style={styles.textStyle}>{props.text}</Text>
     <GradientButton
       style={{ marginVertical: 8 }}
@@ -31,6 +36,10 @@ const RequestSignup = (props) => (
 );
 
 const styles = {
+  imageStyle: {
+    width: 98,
+    height: 182
+  },
   pageStyle: {
     flex: 1,
     backgroundColor: 'white',
