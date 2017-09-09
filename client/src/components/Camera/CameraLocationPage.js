@@ -634,7 +634,8 @@ const styles = {
     height: 70,
     borderTopWidth: 1,
     borderColor: 'rgba(0,0,0,0.09)',
-    flexDirection: 'row',
+    justifyContent: 'center',
+    //flexDirection: 'row',
     borderWidth: 1,
     marginTop: 30
   },
