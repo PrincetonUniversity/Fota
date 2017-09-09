@@ -38,7 +38,7 @@ const noPhotosImage = require('../../img/no_photos_found.png');
 class HomePage extends Component {
   static navigationOptions = ({ navigation, screenProps }) => ({
     tabBarIcon: ({ focused }) => {
-      const color = focused ? '#ff9700' : '#ccc';
+      const color = focused ? '#ff7f00' : '#ccc';
       return (
         <TouchableOpacity
           style={{
@@ -248,7 +248,7 @@ const HomeNavigator = TabNavigator({
   swipeEnabled: false,
   animationEnabled: Platform.OS === 'ios',
   tabBarOptions: {
-    activeTintColor: '#ff9700',
+    activeTintColor: '#ff7f00',
     inactiveTintColor: 'rgba(0, 0, 0, 0.23)',
     labelStyle: {
       fontSize: 16,
@@ -257,7 +257,7 @@ const HomeNavigator = TabNavigator({
     },
     indicatorStyle: {
       height: 4,
-      backgroundColor: '#ff9700',
+      backgroundColor: '#ff7f00',
       justifyContent: 'center'
     },
     tabStyle: {

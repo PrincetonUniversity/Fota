@@ -642,7 +642,7 @@ const styles = {
   chosenIndicatorStyle: {
     width: 5,
     marginRight: 10,
-    backgroundColor: '#ff9700',
+    backgroundColor: '#ff7f00',
     position: 'absolute',
     left: 0,
     top: 0,

@@ -100,7 +100,7 @@ class SignupForm extends Component {
       <Button
         style={{ marginVertical: 8 }}
         onPress={() => this.props.screenProps.onSkip()}
-        colors={{ text: '#ff9700', fill: '#fff', border: '#ff9700' }}
+        colors={{ text: '#ff7f00', fill: '#fff', border: '#ff7f00' }}
         text={'Sign Up Later'}
         round
       />

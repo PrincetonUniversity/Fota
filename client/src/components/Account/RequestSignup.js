@@ -12,7 +12,7 @@ const RequestSignup = (props) => (
         goto: 'Signup'
       })}
       colors={['#ff5b13', '#ff7b1f']}
-      // colors={{ text: '#fff', fill: '#ff9700', border: '#ff9700' }}
+      // colors={{ text: '#fff', fill: '#ff7f00', border: '#ff7f00' }}
       text={'CREATE AN ACCOUNT'}
       //round
     />
@@ -23,7 +23,7 @@ const RequestSignup = (props) => (
         goto: 'Login'
       })}
       colors={['#ff5b13', '#ff7b1f']}
-      // colors={{ text: '#fff', fill: '#ff9700', border: '#ff9700' }}
+      // colors={{ text: '#fff', fill: '#ff7f00', border: '#ff7f00' }}
       text={'LOG IN'}
       //round
     />

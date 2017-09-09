@@ -528,7 +528,7 @@ class RestaurantDetail extends Component {
   renderBookmark() {
     let bookmarkColor = 'rgba(0, 0, 0, 0.16)';
     if (this.state.userBookmarked) {
-      bookmarkColor = '#ff9700';
+      bookmarkColor = '#ff7f00';
     }
     return (
       <View style={{ flex: 1, alignItems: 'flex-end' }}>
@@ -793,12 +793,12 @@ class RestaurantDetail extends Component {
   }
 
   renderTabBar(tabY, headerScrollDistance) {
-    let photoNumColor = '#ff9700';
+    let photoNumColor = '#ff7f00';
     let commentNumColor = 'rgba(0, 0, 0, 0.23)';
     let photoTextColor = 'rgba(0, 0, 0, 0.77)';
     let commentTextColor = 'rgba(0, 0, 0, 0.23)';
     if (this.state.focusedTab === 1) {
-      commentNumColor = '#ff9700';
+      commentNumColor = '#ff7f00';
       photoNumColor = 'rgba(0, 0, 0, 0.23)';
       commentTextColor = 'rgba(0, 0, 0, 0.77)';
       photoTextColor = 'rgba(0, 0, 0, 0.23)';
@@ -1260,7 +1260,7 @@ const styles = {
   indicatorStyle: {
     height: 5,
     width: 120,
-    backgroundColor: '#ff9700'
+    backgroundColor: '#ff7f00'
   },
   footerStyle: {
     position: 'absolute',

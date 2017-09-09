@@ -14,7 +14,7 @@ class SubmittedComments extends Component {
     tabBarIcon: ({ focused }) => {
       let color = 'rgba(0,0,0,0.21)';
       if (focused) {
-        color = '#ff9700';
+        color = '#ff7f00';
       }
       return (
         <Icon

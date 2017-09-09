@@ -9,7 +9,7 @@ class CameraButton extends Component {
   static navigationOptions = ({ navigation, screenProps }) => ({
     tabBarIcon: ({ focused }) => {
       let color = 'rgba(0,0,0,0.23)';
-      if (focused) color = '#ff9700';
+      if (focused) color = '#ff7f00';
       return (
           <Text
             onPress={() => {

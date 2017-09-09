@@ -17,7 +17,7 @@ import { tabWidth, tabHeight } from '../../Base';
 class CameraHelper extends Component {
   static navigationOptions = ({ navigation, screenProps }) => ({
     tabBarIcon: ({ focused }) => {
-      const color = focused ? '#ff9700' : '#ccc';
+      const color = focused ? '#ff7f00' : '#ccc';
       return (     
         <TouchableOpacity
           style={{

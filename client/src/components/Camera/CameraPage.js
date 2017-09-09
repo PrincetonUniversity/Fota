@@ -193,7 +193,7 @@ const PictureNavigator = TabNavigator({
     },
     indicatorStyle: {
       height: 3,
-      backgroundColor: '#ff9700',
+      backgroundColor: '#ff7f00',
       position: 'absolute',
       top: 0,
       zIndex: 3

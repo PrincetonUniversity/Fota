@@ -376,7 +376,7 @@ const styles = {
   youTextStyle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#ff9700'
+    color: '#ff7f00'
   },
   headingTextStyle: {
     fontSize: 14,

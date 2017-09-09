@@ -44,7 +44,7 @@ class LoginWelcome extends Component {
         </View>
 
 
-        <Pages indicatorColor='#ff9700' >
+        <Pages indicatorColor='#ff7f00' >
           <Graphic source={slide1} text='See the best food' />
           <Graphic source={slide2} text='Food near you' />
           <Graphic source={slide3} text='Streamlined restaurant info' />
@@ -55,7 +55,7 @@ class LoginWelcome extends Component {
           {/* <View style={styles.buttonHolderStyle}>
             <Button
               onPress={this.logInWithFacebook.bind(this)}
-              colors={{ text: '#fff', fill: '#ff9700', border: '#ff9700' }}
+              colors={{ text: '#fff', fill: '#ff7f00', border: '#ff7f00' }}
               text={'Continue with Facebook'}
               round
             >

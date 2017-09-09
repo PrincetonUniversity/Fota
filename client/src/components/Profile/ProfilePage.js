@@ -102,7 +102,7 @@ class ProfilePage extends Component {
               <View style={{ flexDirection: 'row', paddingBottom: 10 }} >
                 <Ionicon
                   name={'md-star'}
-                  color={'#ff9700'}
+                  color={'#ff7f00'}
                   size={17}
                   style={{ alignSelf: 'center', paddingRight: 5 }}
                 />
@@ -230,7 +230,7 @@ const styles = {
   infoTextStyle: {
     fontSize: 15,
     fontWeight: '400',
-    color: '#ff9700'
+    color: '#ff7f00'
   },
   statContainerStyle: {
     flexDirection: 'row',

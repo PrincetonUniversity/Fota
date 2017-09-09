@@ -33,7 +33,7 @@ class SettingsRadioButton extends Component {
     if (item === this.state.selected) {
       return (
         <View style={styles.checkStyle}>
-          <Icon name='check' color='#ff9700' size={20} />
+          <Icon name='check' color='#ff7f00' size={20} />
         </View>
       );
     }
