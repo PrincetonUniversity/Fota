@@ -21,19 +21,25 @@ class CameraNavigator extends Component {
   static navigationOptions = {
     gesturesEnabled: false
   };
-  
+
   render() {
     if (!this.props.loginState || this.props.loginState.isAnonymous) {
       return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
     }
-    const screenProps = { goBack: () => this.props.navigation.goBack() };
-    if (this.props.navigation.state.params && this.props.navigation.state.params.goBack) {
-      screenProps.goBack = this.props.navigation.state.params.goBack;
+    const screenProps = {
+      onCameraClose: () => this.props.navigation.goBack(),
+    };
+    if (this.props.navigation.state.params && this.props.navigation.state.params.onCameraClose) {
+      screenProps.onCameraClose = () => this.props.navigation.dispatch({
+        type: 'Navigation/RESET',
+        index: 0,
+        actions: [{ type: 'Navigation/NAVIGATE', routeName: 'Main' }]
+      });
     }
     return (
       <View style={{ flex: 1 }}>
-        <CameraNav 
-          screenProps={screenProps} 
+        <CameraNav
+          screenProps={screenProps}
         />
       </View>
     );

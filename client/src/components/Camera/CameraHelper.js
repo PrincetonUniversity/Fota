@@ -8,7 +8,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
 import RequestSignup from '../Account/RequestSignup';
@@ -53,13 +53,16 @@ class CameraHelper extends Component {
   });
 
   render() {
-    return (
-      <RequestSignup 
-        navigation={this.props.navigation} 
-        onLoginFinished='openCamera'
-        text={'Sign up to upload photos.'}
-      />
-    );
+    if (!this.props.loginState || this.props.loginState.isAnonymous) {
+      return (
+        <RequestSignup
+          navigation={this.props.navigation}
+          onLoginFinished='openCamera'
+          text={'Sign up to upload photos.'}
+        />
+      );
+    }
+    return <View style={{ flex: 1, backgroundColor: 'white' }} />;
   }
 }
 

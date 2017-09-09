@@ -108,6 +108,7 @@ class HomePage extends Component {
       this.props.setLoading(true);
     }
     if (this.props.browsingPrinceton) {
+      console.log('browsingPrinceton');
       this.sendPhotoRequest(pcoords.lat, pcoords.lng);
     } else {
       navigator.geolocation.getCurrentPosition(position => {
@@ -180,7 +181,7 @@ class HomePage extends Component {
           <TouchableOpacity
             onPress={() => {
               this.props.browseFromPrinceton(true);
-              this.setState({ noPhotos: false });
+              this.setState({ noPhotos: false }, () => this.loadPhotos(false));
             }}
           >
             <View>

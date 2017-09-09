@@ -139,7 +139,7 @@ class CameraPage extends Component {
             <TouchableOpacity
               style={buttonContainerStyle}
               onPress={() => {
-                this.props.screenProps.goBack();
+                this.props.screenProps.onCameraClose();
               }}
             >
               <Icon

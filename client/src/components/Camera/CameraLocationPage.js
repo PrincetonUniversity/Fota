@@ -106,7 +106,7 @@ class CameraLocationPage extends Component {
           this.submitPhoto(url, response.data.matchingCategories);
         } else {
           this.setState({ firebaseURL: url, labels: response.data.matchingCategories });
-        }  
+        }
       })
       .catch(e => {
         if (this.state.markForDelete) {
@@ -247,7 +247,7 @@ class CameraLocationPage extends Component {
         }).then(() => {
           deleteImage(reuri);
           this.cleanup();
-          this.props.screenProps.goBack();
+          this.props.screenProps.onCameraClose();
         }).catch(error => request.showErrorAlert(error));
       }).catch(() => cameraErrorAlert());
     }).catch(() => cameraErrorAlert());

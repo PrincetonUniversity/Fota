@@ -35,12 +35,12 @@ class LoginPage extends Component {
     };
     if (this.props.navigation) {
       const goBack = () => this.props.navigation.goBack();
-      const returnHome = () => {
-        goBack();
-        this.props.screenProps.changeFocusedTab(0);
-        this.props.navigation.navigate('Home');
-      };
-      const openCamera = () => this.props.navigation.navigate('Camera', { goBack });
+      // const returnHome = () => {
+      //   goBack();
+      //   this.props.screenProps.changeFocusedTab(0);
+      //   this.props.navigation.navigate('Home');
+      // };
+      const openCamera = () => this.props.navigation.navigate('Camera', { onCameraClose: goBack });
       this.screenProps = { onSkip: goBack, onLoginFinished: goBack };
       if (this.props.navigation.state.params.onLoginFinished === 'openCamera') {
         this.screenProps.onLoginFinished = openCamera;
@@ -91,6 +91,7 @@ const LoginNavigator = StackNavigator({
 },
 {
   headerMode: 'none',
+  mode: 'modal',
   cardStyle: {
     backgroundColor: '#fff'
   }

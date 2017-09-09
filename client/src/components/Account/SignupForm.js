@@ -94,6 +94,19 @@ class SignupForm extends Component {
     }
   }
 
+  renderSkip() {
+    if (this.props.screenProps.goto) return null;
+    return (
+      <Button
+        style={{ marginVertical: 8 }}
+        onPress={() => this.props.screenProps.onSkip()}
+        colors={{ text: '#ff9700', fill: '#fff', border: '#ff9700' }}
+        text={'Sign Up Later'}
+        round
+      />
+    );
+  }
+
   renderFacebookAndSkip() {
     if (this.state.editing) return null;
     return (
@@ -113,13 +126,7 @@ class SignupForm extends Component {
             size={16}
           />
         </Button>
-        <Button
-          style={{ marginVertical: 8 }}
-          onPress={() => this.props.screenProps.onSkip()}
-          colors={{ text: '#ff9700', fill: '#fff', border: '#ff9700' }}
-          text={'Sign Up Later'}
-          round
-        />
+        {this.renderSkip()}
         <View style={styles.emailHeaderStyle}>
           <View style={styles.emailBarStyle} />
           <Text style={styles.emailTextStyle}>or sign up with email</Text>
@@ -154,7 +161,7 @@ class SignupForm extends Component {
 
   render() {
     return (
-      <TouchableWithoutFeedback 
+      <TouchableWithoutFeedback
         onPress={() => {
           Keyboard.dismiss();
           this.changeEditingState(false);
