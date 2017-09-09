@@ -10,18 +10,18 @@
 
 import React, { Component } from 'react';
 import { View, TextInput, TouchableOpacity } from 'react-native';
-import Ionicon from 'react-native-vector-icons/Ionicons';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 class Input extends Component {
   renderDeleteButton() {
     if (this.props.showDeleteAll) {
       return (
         <TouchableOpacity onPress={this.props.delete}>
-          <Ionicon
-            name='ios-close-circle'
+          <MaterialIcon
+            name='cancel'
             borderRadius={0}
-            color='gray'
-            backgroundColor='white'
+            color='rgba(0,0,0,0.3)'
+            backgroundColor='transparent'
             size={19}
             style={{ marginRight: 10 }}
           />
