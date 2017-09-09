@@ -86,6 +86,14 @@ class SignupForm extends Component {
     this.setState({ editing });
   }
 
+  pressBackButton() {
+    if (this.props.screenProps.goto) {
+      this.props.screenProps.onSkip();
+    } else {
+      this.props.navigation.goBack();
+    }
+  }
+
   renderFacebookAndSkip() {
     if (this.state.editing) return null;
     return (
@@ -155,7 +163,7 @@ class SignupForm extends Component {
         <View style={{ flex: 1, justifyContent: 'space-between' }}>
           <View style={loginStyles.pageStart}>
             <View style={loginStyles.header}>
-              <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+              <TouchableOpacity onPress={() => this.pressBackButton()}>
                 <Icon
                   name='chevron-left'
                   color='rgba(0, 0, 0, 0.75)'

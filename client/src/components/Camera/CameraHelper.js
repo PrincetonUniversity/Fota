@@ -8,9 +8,10 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
+import RequestSignup from '../Account/RequestSignup';
 import { tabWidth, tabHeight } from '../../Base';
 
 class CameraHelper extends Component {
@@ -26,8 +27,10 @@ class CameraHelper extends Component {
         onPress={() => {
           if (screenProps.user && !screenProps.user.isAnonymous) {
             navigation.navigate('Camera');
-          } else {
-            navigation.navigate('Login', { onLoginFinished: 'openCamera' });
+          } else if (screenProps.focusedTab !== 1) {
+            screenProps.changeFocusedTab(1);
+            navigation.navigate('CameraOpener');
+            //navigation.navigate('Login', { onLoginFinished: 'openCamera' });
           }
         }}
       >
@@ -50,7 +53,13 @@ class CameraHelper extends Component {
   });
 
   render() {
-    return <View />;
+    return (
+      <RequestSignup 
+        navigation={this.props.navigation} 
+        onLoginFinished='openCamera'
+        text={'Sign up to upload photos.'}
+      />
+    );
   }
 }
 

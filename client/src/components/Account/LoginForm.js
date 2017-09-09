@@ -54,6 +54,14 @@ class LoginForm extends Component {
     return (this.state.email.length > 0 && this.state.pass.length > 0);
   }
 
+  pressBackButton() {
+    if (this.props.screenProps.goto) {
+      this.props.screenProps.onSkip();
+    } else {
+      this.props.navigation.goBack();
+    }
+  }
+
   renderButton() {
     if (this.state.loading) {
       return <Spinner size="large" />;
@@ -82,7 +90,7 @@ class LoginForm extends Component {
         <View style={{ flex: 1, justifyContent: 'space-between' }}>
           <View style={loginStyles.pageStart}>
             <View style={loginStyles.header}>
-              <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+              <TouchableOpacity onPress={() => this.pressBackButton()}>
                 <Icon
                   name='chevron-left'
                   color='rgba(0, 0, 0, 0.75)'

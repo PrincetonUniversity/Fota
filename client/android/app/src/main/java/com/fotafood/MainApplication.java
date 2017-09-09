@@ -3,7 +3,7 @@ package com.fotafood;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.facebook.reactnative.androidsdk.FBSDKPackage;
+import com.magus.fblogin.FacebookLoginPackage; 
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import fr.bamlab.rnimageresizer.ImageResizerPackage;
@@ -30,7 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new FBSDKPackage(),
+            new FacebookLoginPackage(),
             new VectorIconsPackage(),
             new LinearGradientPackage(),
             new ImageResizerPackage(),

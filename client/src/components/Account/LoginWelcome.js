@@ -21,22 +21,29 @@ import { GradientButton } from '../common';
 import { loginStyles } from './LoginPage';
 
 const fotaLogo = require('../../img/fota_logo.png');
-const slide1 = require('../../img/slide_1_noodles.png');
-const slide2 = require('../../img/slide_2.png');
-const slide3 = require('../../img/slide_3.png');
-const slide4 = require('../../img/slide_4.png');
+const slide1 = require('../../img/1.png');
+const slide2 = require('../../img/2.png');
+const slide3 = require('../../img/3.png');
+const slide4 = require('../../img/4.png');
 
 const Graphic = (props) => (
   <View style={styles.swipeContainerStyle}>
     <View style={{ flex: 1, justifyContent: 'center' }}>
-      <Image source={props.source} resizeMode='contain' />
+      <Image source={props.source} style={styles.graphicStyle} resizeMode='contain' />
     </View>
     <Text style={styles.captionStyle}>{props.text}</Text>
   </View>
 );
 
 class LoginWelcome extends Component {
+  componentWillMount() {
+    if (this.props.screenProps.goto) {
+      this.props.navigation.navigate(this.props.screenProps.goto);
+    }
+  }
+
   render() {
+    if (this.props.screenProps.goto) return null;
     return (
       <View style={{ flex: 1, justifyContent: 'space-between' }}>
         <View style={loginStyles.pageStart}>
@@ -106,6 +113,9 @@ const styles = {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  graphicStyle: {
+    flex: 1,
   },
   captionStyle: {
     fontSize: 20,

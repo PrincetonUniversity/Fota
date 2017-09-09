@@ -84,6 +84,10 @@ class HomePage extends Component {
     this.loadPhotos(false);
   }
 
+  componentWillUnmount() {
+    console.log('unmounting');
+  }
+
   getFilterList(filter, filterDisplay) {
     const fFilter = encodeURIComponent(filter);
     if (this.props.browsingPrinceton) {

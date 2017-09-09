@@ -28,17 +28,37 @@ class LoginPage extends Component {
     gesturesEnabled: false
   };
 
+  componentWillMount() {
+    this.screenProps = {
+      onSkip: this.props.onSkip,
+      onLoginFinished: this.props.onLoginFinished
+    };
+    if (this.props.navigation) {
+      const goBack = () => this.props.navigation.goBack();
+      const returnHome = () => {
+        goBack();
+        this.props.screenProps.changeFocusedTab(0);
+        this.props.navigation.navigate('Home');
+      };
+      const openCamera = () => this.props.navigation.navigate('Camera', { goBack });
+      this.screenProps = { onSkip: goBack, onLoginFinished: goBack };
+      if (this.props.navigation.state.params.onLoginFinished === 'openCamera') {
+        this.screenProps.onLoginFinished = openCamera;
+      }
+      if (this.props.navigation.state.params.onLoginFinished === 'openAccount') {
+        this.screenProps.onLoginFinished = goBack;
+      }
+    }
+  }
+
   logInWithFacebook() {
-    console.log(FBLoginManager);
     FBLoginManager.loginWithPermissions(['email'], (error, data) => {
-      console.log(data);
       if (!error) {
         const credential = firebase.auth.FacebookAuthProvider.credential(data.credentials.token);
-        firebase
-          .auth()
-          .signInWithCredential(credential)
-          .then(() => console.log('account made'))
-          .catch((error2) => console.log('Account not made'));
+        firebase.auth().signInWithCredential(credential)
+        .then(() => {
+          if (this.screenProps.onLoginFinished) this.screenProps.onLoginFinished();
+        }).catch(() => console.log('Account not made'));
       } else {
         console.log(error, data);
       }
@@ -46,32 +66,14 @@ class LoginPage extends Component {
   }
 
   render() {
-    let screenProps = {
-      onSkip: this.props.onSkip,
-      onLoginFinished: this.props.onLoginFinished
-    };
-    if (this.props.navigation) {
-      const goBack = () => this.props.navigation.goBack();
-      const openCamera = () => this.props.navigation.navigate('Camera', { goBack });
-      screenProps = { onSkip: goBack, onLoginFinished: goBack };
-      if (this.props.navigation.state.params.onLoginFinished === 'openCamera') {
-        screenProps.onLoginFinished = openCamera;
-      }
-      if (this.props.navigation.state.params.onLoginFinished === 'openAccount') {
-        screenProps.onLoginFinished = () => {
-          goBack();
-          this.props.screenProps.changeFocusedTab(1);
-          this.props.navigation.navigate('Account');
-        };
-      }
-    }
-
+    const goto = this.props.navigation ? this.props.navigation.state.params.goto : null;
     return (
       <View style={{ flex: 1, backgroundColor: '#fff' }}>
         <LoginNavigator
           screenProps={{
             logInWithFacebook: () => this.logInWithFacebook(),
-            ...screenProps
+            goto,
+            ...this.screenProps
           }}
         />
       </View>

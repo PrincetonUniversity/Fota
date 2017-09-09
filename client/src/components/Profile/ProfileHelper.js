@@ -8,11 +8,12 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { StackNavigator } from 'react-navigation';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import ProfilePage from './ProfilePage';
+import RequestSignup from '../Account/RequestSignup';
 import SettingsPage from '../Settings/SettingsPage';
 import { SettingsRadius, TermsOfService, PrivacyPolicy } from '../Settings/SettingsIndex';
 import { tabWidth, tabHeight, horizontalPadding } from '../../Base';
@@ -33,15 +34,23 @@ class ProfileHelper extends Component {
             alignItems: 'center'
           }}
           onPress={() => {
-            if (screenProps.user && !screenProps.user.isAnonymous) {
-              if (screenProps.focusedTab !== 1) {
-                screenProps.changeFocusedTab(1);
-                navigation.navigate('Account');
-                if (screenProps.reloadProfile) screenProps.reloadProfile();
+            if (screenProps.focusedTab !== 2) {
+              screenProps.changeFocusedTab(2);
+              navigation.navigate('Account');
+              if (screenProps.user && !screenProps.user.isAnonymous && screenProps.reloadProfile) {
+                screenProps.reloadProfile();
               }
-            } else {
-              navigation.navigate('Login', { onLoginFinished: 'openAccount' });
             }
+            //if (screenProps.user && !screenProps.user.isAnonymous) {
+            //  if (screenProps.focusedTab !== 1) {
+            //    screenProps.changeFocusedTab(1);
+            //    navigation.navigate('Account');
+            //    if (screenProps.reloadProfile) screenProps.reloadProfile();
+            //  }
+            //} 
+            //else {
+            //  navigation.navigate('Login', { onLoginFinished: 'openAccount' });
+            //}
           }}
         >
           <Icon
@@ -60,7 +69,13 @@ class ProfileHelper extends Component {
 
   render() {
     if (!this.props.loginState || this.props.loginState.isAnonymous) {
-      return <View />;
+      return (
+        <RequestSignup 
+          navigation={this.props.navigation} 
+          onLoginFinished='openAccount'
+          text={'You don\'t have an account yet!'}
+        />
+      );
     }
     return (
       <ProfileNavigator
