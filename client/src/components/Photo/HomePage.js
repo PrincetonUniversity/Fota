@@ -84,10 +84,6 @@ class HomePage extends Component {
     this.loadPhotos(false);
   }
 
-  componentWillUnmount() {
-    console.log('unmounting');
-  }
-
   getFilterList(filter, filterDisplay) {
     const fFilter = encodeURIComponent(filter);
     if (this.props.browsingPrinceton) {
@@ -108,7 +104,6 @@ class HomePage extends Component {
       this.props.setLoading(true);
     }
     if (this.props.browsingPrinceton) {
-      console.log('browsingPrinceton');
       this.sendPhotoRequest(pcoords.lat, pcoords.lng);
     } else {
       navigator.geolocation.getCurrentPosition(position => {

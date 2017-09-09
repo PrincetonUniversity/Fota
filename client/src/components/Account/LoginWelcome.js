@@ -36,14 +36,7 @@ const Graphic = (props) => (
 );
 
 class LoginWelcome extends Component {
-  componentWillMount() {
-    if (this.props.screenProps.goto) {
-      this.props.navigation.navigate(this.props.screenProps.goto);
-    }
-  }
-
   render() {
-    if (this.props.screenProps.goto) return null;
     return (
       <View style={{ flex: 1, justifyContent: 'space-between' }}>
         <View style={loginStyles.pageStart}>

@@ -35,12 +35,7 @@ class LoginPage extends Component {
     };
     if (this.props.navigation) {
       const goBack = () => this.props.navigation.goBack();
-      // const returnHome = () => {
-      //   goBack();
-      //   this.props.screenProps.changeFocusedTab(0);
-      //   this.props.navigation.navigate('Home');
-      // };
-      const openCamera = () => this.props.navigation.navigate('Camera', { onCameraClose: goBack });
+      const openCamera = () => this.props.navigation.navigate('Camera', { resetOnClose: true });
       this.screenProps = { onSkip: goBack, onLoginFinished: goBack };
       if (this.props.navigation.state.params.onLoginFinished === 'openCamera') {
         this.screenProps.onLoginFinished = openCamera;
@@ -58,21 +53,47 @@ class LoginPage extends Component {
         firebase.auth().signInWithCredential(credential)
         .then(() => {
           if (this.screenProps.onLoginFinished) this.screenProps.onLoginFinished();
-        }).catch(() => console.log('Account not made'));
+        }).catch(() => { /* handle error */ });
       } else {
-        console.log(error, data);
+        // handle error
       }
     });
   }
 
   render() {
     const goto = this.props.navigation ? this.props.navigation.state.params.goto : null;
+    if (goto === 'Signup') {
+      return (
+        <View style={{ flex: 1, backgroundColor: '#fff' }}>
+          <SignupNavigator
+            screenProps={{
+              logInWithFacebook: () => this.logInWithFacebook(),
+              anonymousAccount: true,
+              ...this.screenProps
+            }}
+          />
+        </View>
+      ); 
+    }
+    if (goto === 'Login') {
+      return (
+        <View style={{ flex: 1, backgroundColor: '#fff' }}>
+          <LoginNavigator
+            screenProps={{
+              logInWithFacebook: () => this.logInWithFacebook(),
+              anonymousAccount: true,
+              ...this.screenProps
+            }}
+          />
+        </View>
+      );
+    }
     return (
       <View style={{ flex: 1, backgroundColor: '#fff' }}>
-        <LoginNavigator
+        <FullNavigator
           screenProps={{
             logInWithFacebook: () => this.logInWithFacebook(),
-            goto,
+            anonymousAccount: false,
             ...this.screenProps
           }}
         />
@@ -81,11 +102,36 @@ class LoginPage extends Component {
   }
 }
 
-const LoginNavigator = StackNavigator({
+const FullNavigator = StackNavigator({
   Welcome: { screen: LoginWelcome },
   Login: { screen: LoginForm },
   Signup: { screen: SignupForm },
   Forgot: { screen: PasswordResetForm },
+  TOS: { screen: TermsOfService },
+  PP: { screen: PrivacyPolicy }
+},
+{
+  headerMode: 'none',
+  mode: 'modal',
+  cardStyle: {
+    backgroundColor: '#fff'
+  }
+});
+
+const LoginNavigator = StackNavigator({
+  Login: { screen: LoginForm },
+  Forgot: { screen: PasswordResetForm },
+},
+{
+  headerMode: 'none',
+  mode: 'modal',
+  cardStyle: {
+    backgroundColor: '#fff'
+  }
+});
+
+const SignupNavigator = StackNavigator({
+  Signup: { screen: SignupForm },
   TOS: { screen: TermsOfService },
   PP: { screen: PrivacyPolicy }
 },

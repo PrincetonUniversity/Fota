@@ -14,7 +14,7 @@
  *
  ******************************************************************************/
 
-import React, {Component} from 'react';
+import React from 'react';
 import { View, Dimensions } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 
@@ -29,24 +29,12 @@ const pulse = {
   },
 };
 
-class LoadingPhotos extends Component {
-  componentWillMount() {
-    console.log('mounting lp');
-  }
-
-  componentWillUnmount() {
-    console.log('unmounting lp');
-  }
-
-  render() {
-    return (
-      <View style={{ borderTopWidth: 1, borderColor: 'rgba(0,0,0,0.09)', paddingTop: 5 }}>
-        <Animatable.View animation={pulse} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={styles.grayPhotoStyle} useNativeDriver />
-        <Animatable.View animation={pulse} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={styles.grayPhotoStyle} useNativeDriver />
-      </View>
-    );
-  }
-}
+const LoadingPhotos = () => (
+  <View style={{ borderTopWidth: 1, borderColor: 'rgba(0,0,0,0.09)', paddingTop: 5 }}>
+    <Animatable.View animation={pulse} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={styles.grayPhotoStyle} useNativeDriver />
+    <Animatable.View animation={pulse} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={styles.grayPhotoStyle} useNativeDriver />
+  </View>
+);
 
 const styles = {
   grayPhotoStyle: {

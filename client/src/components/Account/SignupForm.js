@@ -87,7 +87,7 @@ class SignupForm extends Component {
   }
 
   pressBackButton() {
-    if (this.props.screenProps.goto) {
+    if (this.props.screenProps.anonymousAccount) {
       this.props.screenProps.onSkip();
     } else {
       this.props.navigation.goBack();
@@ -95,7 +95,7 @@ class SignupForm extends Component {
   }
 
   renderSkip() {
-    if (this.props.screenProps.goto) return null;
+    if (this.props.screenProps.anonymousAccount) return null;
     return (
       <Button
         style={{ marginVertical: 8 }}

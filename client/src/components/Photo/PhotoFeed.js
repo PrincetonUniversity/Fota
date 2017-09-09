@@ -7,7 +7,6 @@ import LoadingPhotos from './LoadingPhotos';
 class PhotoFeed extends Component {
   render() {
     if (this.props.loading) return <LoadingPhotos />;
-    console.log(`done loading photos on ${this.props.name}`);
     return (
       <View style={{ flex: 1, borderTopWidth: 1, borderColor: 'rgba(0,0,0,0.09)' }} >
         <PhotoList

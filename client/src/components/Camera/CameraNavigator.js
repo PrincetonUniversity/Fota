@@ -11,7 +11,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, BackHandler } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
 import CameraPage from './CameraPage';
@@ -22,24 +22,37 @@ class CameraNavigator extends Component {
     gesturesEnabled: false
   };
 
-  render() {
-    if (!this.props.loginState || this.props.loginState.isAnonymous) {
-      return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
-    }
-    const screenProps = {
+  componentWillMount() {
+    this.screenProps = {
       onCameraClose: () => this.props.navigation.goBack(),
     };
-    if (this.props.navigation.state.params && this.props.navigation.state.params.onCameraClose) {
-      screenProps.onCameraClose = () => this.props.navigation.dispatch({
+    if (this.props.navigation.state.params && this.props.navigation.state.params.resetOnClose) {
+      this.screenProps.onCameraClose = () => this.props.navigation.dispatch({
         type: 'Navigation/RESET',
         index: 0,
         actions: [{ type: 'Navigation/NAVIGATE', routeName: 'Main' }]
       });
     }
+    this.backhandler = BackHandler.addEventListener('hardwareBackPress', this.pressBack.bind(this));
+  }
+
+  componentWillUnmount() {
+    this.backhandler.remove();
+  }
+
+  pressBack() {
+    this.screenProps.onCameraClose();
+    return true;
+  }
+
+  render() {
+    if (!this.props.loginState || this.props.loginState.isAnonymous) {
+      return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
+    }
     return (
       <View style={{ flex: 1 }}>
         <CameraNav
-          screenProps={screenProps}
+          screenProps={this.screenProps}
         />
       </View>
     );

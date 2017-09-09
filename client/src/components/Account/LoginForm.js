@@ -55,7 +55,7 @@ class LoginForm extends Component {
   }
 
   pressBackButton() {
-    if (this.props.screenProps.goto) {
+    if (this.props.screenProps.anonymousAccount) {
       this.props.screenProps.onSkip();
     } else {
       this.props.navigation.goBack();

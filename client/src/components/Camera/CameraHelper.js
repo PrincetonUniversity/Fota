@@ -16,40 +16,43 @@ import { tabWidth, tabHeight } from '../../Base';
 
 class CameraHelper extends Component {
   static navigationOptions = ({ navigation, screenProps }) => ({
-    tabBarIcon: () => (
-      <TouchableOpacity
-        style={{
-          width: tabWidth,
-          height: tabHeight,
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-        onPress={() => {
-          if (screenProps.user && !screenProps.user.isAnonymous) {
-            navigation.navigate('Camera');
-          } else if (screenProps.focusedTab !== 1) {
-            screenProps.changeFocusedTab(1);
-            navigation.navigate('CameraOpener');
-            //navigation.navigate('Login', { onLoginFinished: 'openCamera' });
-          }
-        }}
-      >
-        <Icon
-          name={'md-add'}
-          color='#ccc'
-          size={30}
+    tabBarIcon: ({ focused }) => {
+      const color = focused ? '#ff9700' : '#ccc';
+      return (     
+        <TouchableOpacity
           style={{
-            borderColor: '#ccc',
-            borderRadius: 5,
-            borderWidth: 2,
-            width: 38,
-            height: 38,
-            padding: 4,
-            textAlign: 'center',
+            width: tabWidth,
+            height: tabHeight,
+            justifyContent: 'center',
+            alignItems: 'center'
           }}
-        />
-      </TouchableOpacity>
-    )
+          onPress={() => {
+            if (screenProps.user && !screenProps.user.isAnonymous) {
+              navigation.navigate('Camera');
+            } else if (screenProps.focusedTab !== 1) {
+              screenProps.changeFocusedTab(1);
+              navigation.navigate('CameraOpener');
+              //navigation.navigate('Login', { onLoginFinished: 'openCamera' });
+            }
+          }}
+        >
+          <Icon
+            name={'md-add'}
+            color={color}
+            size={30}
+            style={{
+              borderColor: color,
+              borderRadius: 5,
+              borderWidth: 2,
+              width: 38,
+              height: 38,
+              padding: 4,
+              textAlign: 'center',
+            }}
+          />
+        </TouchableOpacity>
+      );
+    }
   });
 
   render() {

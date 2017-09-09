@@ -16,7 +16,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, AsyncStorage, Alert, StatusBar, Dimensions } from 'react-native';
+import { View, AsyncStorage, Alert, StatusBar, Dimensions, BackHandler } from 'react-native';
 import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
@@ -57,6 +57,17 @@ class Base extends Component {
         this.setState({ loginFinished: true });
       }
     });
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      const nav = this.navigator.state.nav;
+      if (nav.routes.length === 1) {
+        if (nav.routes[0].index === 0) return false;
+        this.setState({ focusedTab: 0 });
+        this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Home' });
+        return true;
+      }
+      this.navigator.dispatch({ type: 'Navigation/BACK' });
+      return true;
+    });
   }
 
   logInAnonymously() {
@@ -77,6 +88,7 @@ class Base extends Component {
           <View style={{ flex: 1 }}>
             <StatusBar hidden={false} />
             <FotaNavigator
+              ref={nav => { this.navigator = nav; }}
               screenProps={{
                 user: this.props.loginState,
                 reloadProfile: this.props.reloadProfile,
@@ -126,6 +138,7 @@ const MainNavigator = TabNavigator({
   animationEnabled: false,
   lazy: true,
   initialRouteName: 'Home',
+  backBehavior: 'none',
   tabBarOptions: {
     showLabel: false,
     showIcon: true,
