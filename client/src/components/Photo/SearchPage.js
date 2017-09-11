@@ -119,7 +119,10 @@ class SearchPage extends Component {
     return (
       <RestaurantModal key={restaurant.id} restaurantid={restaurant.id}>
         <ListItem>
-          <Text style={styles.searchResultStyle}>{restaurant.name}</Text>
+          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={styles.searchResultStyle}>{restaurant.name}</Text>
+            <Text style={styles.searchResultInfoStyle}>{`${restaurant.distance.toFixed(1)} mi`}</Text>
+          </View>
         </ListItem>
       </RestaurantModal>
     );
@@ -219,6 +222,10 @@ const styles = {
     fontSize: 16,
     fontWeight: '600',
     color: 'rgba(0,0,0,0.7)'
+  },
+  searchResultInfoStyle: {
+    fontSize: 11,
+    color: 'rgba(0,0,0,0.3)'
   }
 };
 

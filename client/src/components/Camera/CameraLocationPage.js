@@ -26,7 +26,9 @@ import uuid from 'uuid/v1';
 import { Header, Button, Input, Spinner } from '../common';
 import { cameraErrorAlert } from './CameraPage';
 import request from '../../helpers/axioshelper';
-import { nearbyRestRequest, checkPhotoRequest, uploadPhotoRequest } from '../../helpers/URL';
+import {
+  nearbyRestRequest, checkPhotoRequest, uploadPhotoRequest, searchRequest
+} from '../../helpers/URL';
 import { pcoords } from '../../Base';
 import icoMoonConfig from '../../selection.json';
 
@@ -78,6 +80,8 @@ class CameraLocationPage extends Component {
     this.submitting = false;
     this.selectedName = null;
     this.firebaseRef = null;
+    this.lat = null;
+    this.lng = null;
   }
 
   componentWillMount() {
@@ -85,9 +89,9 @@ class CameraLocationPage extends Component {
       this.sendLocationRequest(pcoords.lat, pcoords.lng);
     } else {
       navigator.geolocation.getCurrentPosition(position => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        this.sendLocationRequest(lat, lng);
+        this.lat = position.coords.latitude;
+        this.lng = position.coords.longitude;
+        this.sendLocationRequest(this.lat, this.lng);
       });
     }
   }
@@ -179,7 +183,20 @@ class CameraLocationPage extends Component {
       return false;
     });
     rlist = rlist.slice(0, 20);
-    this.setState({ query, rlist });
+    if (rlist.length === 0) {
+      this.setState({ query });
+      const fQuery = encodeURIComponent(query);
+      request.get(searchRequest(this.lat, this.lng, fQuery))
+      .then(response => {
+        this.setState({
+          rlist: response.data.restaurants,
+        });
+      })
+      .catch(e => request.showErrorAlert(e));
+      //set rlist to the search result
+    } else {
+      this.setState({ query, rlist });
+    }
   }
 
   generateFileNames() {

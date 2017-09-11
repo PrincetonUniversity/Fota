@@ -25,7 +25,7 @@ import { setScrollingList } from '../../actions';
 class PhotoList extends Component {
   componentDidMount() {
     if (this.props.shouldRenderWithRedux && this.props.name) {
-      this.props.setScrollingList(this.list, this.props.name);      
+      this.props.setScrollingList(this.list, this.props.name);
     }
   }
 
@@ -53,6 +53,7 @@ class PhotoList extends Component {
         ListHeaderComponent={() => <View style={{ backgroundColor: 'white', height: 5 }} />}
         onRefresh={this.props.onRefresh}
         refreshing={this.props.refreshing}
+        keyboardShouldPersistTaps='handled'
         showsVerticalScrollIndicator={false}
         removeClippedSubviews={false}
         windowSize={10}
