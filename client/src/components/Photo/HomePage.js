@@ -95,7 +95,7 @@ class HomePage extends Component {
         this.sendFilteredPhotoRequest(fFilter, filterDisplay, lat, lng);
       },
       e => request.showErrorAlert(e),
-      { enableHighAccuracy: true });
+      { enableHighAccuracy: Platform.OS === 'ios', maximumAge: 1000 });
     }
   }
 
@@ -114,7 +114,7 @@ class HomePage extends Component {
         this.sendPhotoRequest(lat, lng);
       },
       e => request.showErrorAlert(e),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 });
+      { enableHighAccuracy: Platform.OS === 'ios', timeout: 20000, maximumAge: 1000 });
     }
   }
 

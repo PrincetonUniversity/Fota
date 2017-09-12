@@ -94,7 +94,7 @@ class CameraLocationPage extends Component {
         this.sendLocationRequest(this.lat, this.lng);
       },
       e => request.showErrorAlert(e),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 });
+      { enableHighAccuracy: Platform.OS === 'ios', timeout: 20000, maximumAge: 1000 });
     }
   }
 
