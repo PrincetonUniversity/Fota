@@ -20,6 +20,8 @@ import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 import PasswordResetForm from './PasswordResetForm';
 import { TermsOfService, PrivacyPolicy } from '../Settings/SettingsIndex';
+import request from '../../helpers/axioshelper';
+import { changeNameRequest } from '../../helpers/URL';
 
 const { FBLoginManager } = require('react-native-facebook-login');
 
@@ -51,8 +53,10 @@ class LoginPage extends Component {
       if (!error) {
         const credential = firebase.auth.FacebookAuthProvider.credential(data.credentials.token);
         firebase.auth().signInWithCredential(credential)
-        .then(() => {
-          if (this.screenProps.onLoginFinished) this.screenProps.onLoginFinished();
+        .then(user => {
+          request.patch(changeNameRequest(encodeURIComponent(user.displayName), user.uid))
+            .catch(e => request.showErrorAlert(e));
+          if (this.props.screenProps.onLoginFinished) this.props.screenProps.onLoginFinished();          
         }).catch(() => { /* handle error */ });
       } else {
         // handle error

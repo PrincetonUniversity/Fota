@@ -56,12 +56,12 @@ class SignupForm extends Component {
   onCreateUserSuccess(user) {
     const displayName = `${this.state.first} ${this.state.last}`;
     user.updateProfile({ displayName });
-    request.patch(changeNameRequest(encodeURIComponent(displayName), user.uid)).then(() => {
-      this.setState({ first: '', last: '', email: '', pass: '', loading: false });
-      if (this.props.screenProps.onLoginFinished) {
-        this.props.screenProps.onLoginFinished();
-      }
-    }).catch(e => request.showErrorAlert(e));
+    request.patch(changeNameRequest(encodeURIComponent(displayName), user.uid))
+      .catch(e => request.showErrorAlert(e));
+    this.setState({ first: '', last: '', email: '', pass: '', loading: false });
+    if (this.props.screenProps.onLoginFinished) {
+      this.props.screenProps.onLoginFinished();
+    }
   }
 
   onCreateUserFail(error) {
