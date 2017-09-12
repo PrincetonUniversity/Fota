@@ -38,6 +38,7 @@ class Input extends Component {
       placeholder,
       autoFocus,
       onFocus,
+      autocorrect,
       placeholderAlign,
       secure,
       value,
@@ -55,7 +56,7 @@ class Input extends Component {
           onChangeText={onChangeText}
           autoFocus={autoFocus}
           onFocus={onFocus}
-          autoCorrect
+          autoCorrect={autocorrect}
           secureTextEntry={secure}
           underlineColorAndroid={'transparent'}
         />

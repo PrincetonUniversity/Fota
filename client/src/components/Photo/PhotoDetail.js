@@ -14,7 +14,7 @@
  *
  ******************************************************************************/
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
@@ -24,7 +24,7 @@ import { voteOnPhotoTable } from '../../actions';
 import request from '../../helpers/axioshelper';
 import { photoVote } from '../../helpers/URL';
 
-class PhotoDetail extends Component {
+class PhotoDetail extends PureComponent {
   constructor(props) {
     super(props);
     if (props.shouldRenderWithRedux) {
@@ -81,7 +81,7 @@ class PhotoDetail extends Component {
     const patch = () => {
       const temp = this.oldValue;
       this.timer = null;
-      this.oldValue = null; 
+      this.oldValue = null;
       if (temp === type) return;
       if (this.props.shouldRenderWithRedux) {
         this.props.voteOnPhotoTable(this.state.photo.id, newCount, newLike, newDislike);
@@ -149,10 +149,14 @@ class PhotoDetail extends Component {
 
   renderDistance() {
     if (this.state.photo.distance) {
+      let distanceText = `${this.state.photo.distance.toFixed(1)} mi`;
+      if (this.state.photo.rest_id.startsWith('pufota')) {
+        distanceText = 'Princeton University';
+      }
       return (
         <View style={distanceContainerStyle}>
           <Text style={distanceTextStyle}>
-            {`${this.state.photo.distance.toFixed(1)} mi`}
+            {distanceText}
           </Text>
         </View>
       );
@@ -229,7 +233,7 @@ const styles = {
     borderRadius: 9
   },
   distanceContainerStyle: {
-    flex: 1,
+    flex: 3,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -244,7 +248,7 @@ const styles = {
     color: 'white'
   },
   voteContainerStyle: {
-    flex: 1,
+    flex: 2,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',

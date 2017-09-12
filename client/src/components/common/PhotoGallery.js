@@ -39,7 +39,7 @@ class PhotoGallery extends Component {
 
   render() {
     return (
-      <Pages startPage={this.props.initialIndex} indicatorPosition={'none'}>
+      <Pages startPage={this.props.initialIndex}>
         {this.renderPhotos()}
       </Pages>
     );
@@ -60,10 +60,10 @@ const styles = {
     flex: 1,
   },
   photoStyle: {
-    height: 300,
-    width: 300,
+    width: Dimensions.get('window').width - 50,
+    height: Dimensions.get('window').width - 50,
     backgroundColor: '#d3d3d3',
-    borderRadius: 8
+    borderRadius: 9
   }
 };
 

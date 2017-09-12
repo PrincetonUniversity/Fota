@@ -93,7 +93,9 @@ class HomePage extends Component {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         this.sendFilteredPhotoRequest(fFilter, filterDisplay, lat, lng);
-      });
+      },
+      e => request.showErrorAlert(e),
+      { enableHighAccuracy: true });
     }
   }
 
@@ -110,7 +112,9 @@ class HomePage extends Component {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         this.sendPhotoRequest(lat, lng);
-      });
+      },
+      e => request.showErrorAlert(e),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 });
     }
   }
 
@@ -245,7 +249,7 @@ const HomeNavigator = TabNavigator({
 {
   tabBarPosition: 'top',
   tabBarComponent: TabBarTop,
-  swipeEnabled: false,
+  swipeEnabled: Platform.OS === 'ios',
   animationEnabled: Platform.OS === 'ios',
   tabBarOptions: {
     activeTintColor: '#ff7f00',

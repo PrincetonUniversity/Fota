@@ -40,7 +40,9 @@ class SearchPage extends Component {
     if (!this.props.browsingPrinceton) {
       navigator.geolocation.getCurrentPosition(position => {
         this.setState({ lat: position.coords.latitude, lng: position.coords.longitude });
-      });
+      },
+      e => request.showErrorAlert(e),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 });
     }
   }
 

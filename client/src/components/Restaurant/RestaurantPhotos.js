@@ -36,7 +36,7 @@ class RestaurantPhotos extends Component {
   }
 
   renderPhoto(photo, index) {
-    const smallurl = photo.url_small || photo.url;    
+    const smallurl = photo.url_small || photo.url;
     return (
       <TouchableOpacity
         onPress={() => this.setSelectedPhoto(index)}
@@ -69,7 +69,7 @@ class RestaurantPhotos extends Component {
           visible={this.state.modalVisible}
           onRequestClose={() => { this.resetSelectedPhoto(); }}
         >
-          <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
+          <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.8)' }}>
             <PhotoGallery
               closeModal={() => this.setState({ modalVisible: false })}
               photos={photoLinks}

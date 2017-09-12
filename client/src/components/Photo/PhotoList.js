@@ -14,7 +14,7 @@
  *
  ******************************************************************************/
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { FlatList, View } from 'react-native';
 import { connect } from 'react-redux';
 import PhotoDetail from './PhotoDetail';
@@ -22,7 +22,7 @@ import { setScrollingList } from '../../actions';
 
 //const itemHeight = Dimensions.get('window').width - 20;
 
-class PhotoList extends Component {
+class PhotoList extends PureComponent {
   componentDidMount() {
     if (this.props.shouldRenderWithRedux && this.props.name) {
       this.props.setScrollingList(this.list, this.props.name);
@@ -57,7 +57,8 @@ class PhotoList extends Component {
         showsVerticalScrollIndicator={false}
         removeClippedSubviews={false}
         windowSize={10}
-        initialNumToRender={2}
+        initialNumToRender={10}
+        //disableVirtualization
       />
     );
   }

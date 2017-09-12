@@ -87,10 +87,22 @@ class ProfilePage extends Component {
     let uploadtext = '--';
     let upvotetext = '--';
     let commenttext = '--';
+    let uploadInfo = 'posts';
+    let upvoteInfo = 'upvotes';
+    let commentInfo = 'comments';
     if (!this.state.loading) {
       uploadtext = this.state.uploaded.length.toString();
       upvotetext = this.state.upvoted.length.toString();
       commenttext = this.state.comments.length.toString();
+      if (this.state.uploaded.length === 1) {
+        uploadInfo = 'post';
+      }
+      if (this.state.upvoted.length === 1) {
+        upvoteInfo = 'upvote';
+      }
+      if (this.state.comments.length === 1) {
+        commentInfo = 'comment';
+      }
     }
 
     return (
@@ -127,19 +139,19 @@ class ProfilePage extends Component {
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
               <View style={statSectionStyle}>
                 <Text style={[statNumberStyle, { marginRight: 1 }]}>{upvotetext}</Text>
-                <Text style={statLabelStyle}>upvotes</Text>
+                <Text style={statLabelStyle}>{upvoteInfo}</Text>
               </View>
             </View>
 
             <View style={statSectionStyle}>
               <Text style={statNumberStyle}>{uploadtext}</Text>
-              <Text style={statLabelStyle}>posts</Text>
+              <Text style={statLabelStyle}>{uploadInfo}</Text>
             </View>
 
             <View style={{ flex: 1, alignItems: 'center' }}>
               <View style={statSectionStyle}>
                 <Text style={[statNumberStyle, { marginRight: 3 }]}>{commenttext}</Text>
-                <Text style={statLabelStyle}>reviews</Text>
+                <Text style={statLabelStyle}>{commentInfo}</Text>
               </View>
             </View>
           </View>

@@ -78,7 +78,7 @@ class CameraLocationPage extends Component {
       markForDelete: false
     };
     this.submitting = false;
-    this.selectedName = null;
+    this.selectedID = null;
     this.firebaseRef = null;
     this.lat = null;
     this.lng = null;
@@ -92,7 +92,9 @@ class CameraLocationPage extends Component {
         this.lat = position.coords.latitude;
         this.lng = position.coords.longitude;
         this.sendLocationRequest(this.lat, this.lng);
-      });
+      },
+      e => request.showErrorAlert(e),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 });
     }
   }
 
@@ -353,7 +355,7 @@ class CameraLocationPage extends Component {
           if (this.submitting) return;
           if (chosen) {
             this.setState({ selected: null, index: -1 });
-            this.selectedName = null;
+            this.selectedID = null;
             this.updateQuery(this.state.query);
           } else {
             if (Platform.OS === 'ios') {
@@ -361,7 +363,7 @@ class CameraLocationPage extends Component {
             } else {
               this.handleSelectOnAndroid(restaurant, index);
             }
-            this.selectedName = restaurant.name;
+            this.selectedID = restaurant.id;
             this.updateQuery(this.state.query);
           }
         }}
@@ -517,6 +519,7 @@ class CameraLocationPage extends Component {
                     placeholder="Where'd you take this?"
                     value={this.state.query}
                     onChangeText={query => this.updateQuery(query)}
+                    autocorrect={false}
                     onFocus={() => {
                       if (this.submitting) return;
                       LayoutAnimation.easeInEaseOut();
@@ -539,7 +542,7 @@ class CameraLocationPage extends Component {
                   keyExtractor={restaurant => restaurant.id}
                   renderItem={restaurant => this.renderRestaurant(
                     restaurant.item,
-                    restaurant.item.name === this.selectedName,
+                    restaurant.item.id === this.selectedID,
                     restaurant.index
                   )}
                   getItemLayout={(data, index) => (
@@ -671,7 +674,8 @@ const styles = {
     height: 60,
     borderTopWidth: 1,
     borderColor: 'rgba(0,0,0,0.09)',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: 'white'
   },
   restaurantTextStyle: {
     fontSize: 16,

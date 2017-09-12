@@ -141,7 +141,9 @@ class RestaurantDetail extends Component {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         this.sendNavigationRequest(formattedAddress, lat, lng);
-      });
+      },
+      e => request.showErrorAlert(e),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 });
     }
   }
 
@@ -373,6 +375,36 @@ class RestaurantDetail extends Component {
     });
   }
 
+  handleYesVote() {
+    if (!this.state.userHasVoted) {
+      this.voteYes();
+      this.setState({ userLiked: true, userDisliked: false, userHasVoted: true });
+    } else {
+      if (this.state.userLiked) {
+        this.clearYes();
+        this.setState({ userLiked: false, userDisliked: false, userHasVoted: false });
+      } else {
+        this.clearNoVoteYes();
+        this.setState({ userLiked: true, userDisliked: false, userHasVoted: true });
+      }
+    }
+  }
+
+  handleNoVote() {
+    if (!this.state.userHasVoted) {
+      this.voteNo();
+      this.setState({ userLiked: false, userDisliked: true, userHasVoted: true });
+    } else {
+      if (this.state.userDisliked) {
+        this.clearNo();
+        this.setState({ userLiked: false, userDisliked: false, userHasVoted: false });
+      } else {
+        this.clearYesVoteNo();
+        this.setState({ userLiked: false, userDisliked: true, userHasVoted: true });
+      }
+    }
+  }
+
   renderHeader(headerScrollDistance, pageY) {
     const restaurant = this.state.restaurant;
     const nameTranslateY = this.state.scrollY.interpolate({
@@ -469,58 +501,33 @@ class RestaurantDetail extends Component {
 
   renderRecommend() {
     if (this.state.showRecommend) {
-      if (!this.state.userHasVoted) {
-        return (
-          <View
-            style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)', paddingHorizontal: 30, zIndex: 1 }}
-          >
-            <View style={recommendContainerStyle}>
-              <Text style={recommendPromptStyle}>Do you recommend this restaurant?</Text>
-              <TouchableOpacity onPress={this.voteYes.bind(this)}>
-                <View style={voteBoxStyle}>
-                  <Text style={recommendVoteStyle}>YES</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.voteNo.bind(this)}>
-                <View style={voteBoxStyle}>
-                  <Text style={recommendVoteStyle}>NO</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-        );
+      let yesColor = 'rgba(0, 0, 0, 0.31)';
+      let noColor = 'rgba(0, 0, 0, 0.31)';
+      if (this.state.userLiked) {
+        yesColor = 'rgba(79, 217, 41, 0.76)';
       }
+      if (this.state.userDisliked) {
+        noColor = 'rgba(255, 112, 112, 1)';
+      }
+
       return (
-        <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)', paddingRight: 30, zIndex: 1 }}>
+        <View
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.04)', paddingHorizontal: 30, zIndex: 1 }}
+        >
           <View style={recommendContainerStyle}>
-            {this.renderYesNo()}
-            <Text style={[recommendPromptStyle, { marginLeft: 15 }]}>Thanks for voting!</Text>
+            <Text style={recommendPromptStyle}>Do you recommend this restaurant?</Text>
+            <TouchableOpacity onPress={this.handleYesVote.bind(this)}>
+              <View style={voteBoxStyle}>
+                <Text style={[recommendVoteStyle, { color: yesColor }]}>YES</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.handleNoVote.bind(this)}>
+              <View style={voteBoxStyle}>
+                <Text style={[recommendVoteStyle, { color: noColor }]}>NO</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
-      );
-    }
-  }
-
-  renderYesNo() {
-    const yesBoxStyle = { backgroundColor: 'rgba(79, 217, 41, 0.76)', ...hasVotedBoxStyle };
-    const noBoxStyle = { backgroundColor: 'rgba(255, 112, 112, 1)', ...hasVotedBoxStyle };
-
-    if (this.state.userLiked) {
-      return (
-        <TouchableOpacity onPress={this.clearYes.bind(this)}>
-          <View style={yesBoxStyle}>
-            <Text style={recommendVoteStyle}>YES</Text>
-          </View>
-        </TouchableOpacity>
-      );
-    }
-    if (this.state.userDisliked) {
-      return (
-        <TouchableOpacity onPress={this.clearNo.bind(this)}>
-          <View style={noBoxStyle}>
-            <Text style={recommendVoteStyle}>NO</Text>
-          </View>
-        </TouchableOpacity>
       );
     }
   }
@@ -677,6 +684,16 @@ class RestaurantDetail extends Component {
         </View>
       );
     }
+    if (this.state.restaurant.id.startsWith('pufota')) {
+      return (
+        <View style={{ flex: 1 }}>
+          <View style={infoObjectStyle}>
+            <DollarSign />
+            {this.renderPriceText()}
+          </View>
+        </View>
+      );
+    }
     if (this.state.restaurant.price.length === 1) {
       return (
         <View style={{ flex: 1 }}>
@@ -753,6 +770,13 @@ class RestaurantDetail extends Component {
   }
 
   renderPriceText() {
+    if (this.state.restaurant.id.startsWith('pufota')) {
+      let priceText = 'Dining Hall';
+      if (this.state.restaurant.price === 'pc') {
+        priceText = 'Eating Club';
+      }
+      return <Text style={infoIconStyle}>{priceText}</Text>;
+    }
     if (this.state.restaurant.price == null) {
       return (
         <Text style={infoIconStyle}>--</Text>
