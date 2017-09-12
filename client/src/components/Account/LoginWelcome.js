@@ -72,7 +72,7 @@ class LoginWelcome extends Component {
           <View style={{ marginVertical: 10 }}>
             <GradientButton
               onPress={() => this.props.navigation.navigate('Signup')}
-              colors={['#ff470d', '#ffa32b']}
+              colors={['#ff5b14', '#fe7d20']}
               text={'GET STARTED'}
             />
           </View>

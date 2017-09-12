@@ -22,7 +22,7 @@ const size = Dimensions.get('window').width - 50;
 
 const pulse = {
   from: {
-    opacity: 0.6,
+    opacity: 0.4,
   },
   to: {
     opacity: 1,
@@ -43,7 +43,7 @@ const styles = {
     width: size,
     height: size,
     borderRadius: 9,
-    backgroundColor: 'rgba(0, 0, 0, 0.08)'
+    backgroundColor: 'rgba(0, 0, 0, 0.13)'
   }
 };
 

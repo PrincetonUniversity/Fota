@@ -4,7 +4,7 @@ import * as Animatable from 'react-native-animatable';
 
 const pulse = {
   from: {
-    opacity: 0.65,
+    opacity: 0.5,
   },
   to: {
     opacity: 1,
@@ -14,7 +14,7 @@ const pulse = {
 const LoadingRestaurants = () => (
   <View style={{ flex: 1, backgroundColor: 'white' }}>
     <StatusBar animated barStyle='light-content' />
-    <Animatable.View animation={pulse} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={{ height: 175, backgroundColor: '#d3d3d3' }} useNativeDriver />
+    <Animatable.View animation={pulse} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={{ height: 175, backgroundColor: 'rgba(0, 0, 0, 0.22)' }} useNativeDriver />
     <View style={styles.tabBarStyle} />
     <View style={{ flex: 1 }} />
     <View style={styles.footerStyle} />
