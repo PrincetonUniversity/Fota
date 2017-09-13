@@ -267,6 +267,8 @@ class CameraLocationPage extends Component {
           deleteImage(reuri);
           this.cleanup();
           this.props.screenProps.onCameraClose();
+          this.props.navigateToHome();
+          this.props.navigateToNew(true);
         }).catch(error => request.showErrorAlert(error));
       }).catch(() => cameraErrorAlert());
     }).catch(() => cameraErrorAlert());
@@ -708,8 +710,8 @@ const {
   restaurantSubtextStyle
 } = styles;
 
-function mapStateToProps({ loginState, browsingPrinceton }) {
-  return { loginState, browsingPrinceton };
+function mapStateToProps({ loginState, browsingPrinceton, navigateToHome, navigateToNew }) {
+  return { loginState, browsingPrinceton, navigateToHome, navigateToNew };
 }
 
 export default connect(mapStateToProps)(CameraLocationPage);

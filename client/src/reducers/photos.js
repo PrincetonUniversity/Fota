@@ -13,6 +13,7 @@ export default function (state = {}, action) {
     case PHOTOS: {
       const photoTable = {};
       action.payload.map(photo => { photoTable[photo.id] = photo; return 0; });
+      console.log(photoTable);
       return photoTable;
     }
     case VOTE: {

@@ -25,7 +25,7 @@ import HomePage from './components/Photo/HomePage';
 import ProfileHelper from './components/Profile/ProfileHelper';
 import CameraNavigator from './components/Camera/CameraNavigator';
 import CameraHelper from './components/Camera/CameraHelper';
-import { logInOrOut, browseFromPrinceton } from './actions';
+import { logInOrOut, browseFromPrinceton, saveBaseNavHome } from './actions';
 
 export const pcoords = { lat: 40.3440, lng: -74.6514 };
 
@@ -67,6 +67,13 @@ class Base extends Component {
       }
       this.navigator.dispatch({ type: 'Navigation/BACK' });
       return true;
+    });
+  }
+
+  componentDidMount() {
+    this.props.saveBaseNavHome(() => {
+      this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Home' });
+      this.setState({ focusedTab: 0 });
     });
   }
 
@@ -173,4 +180,4 @@ function mapStateToProps({ loginState, reloadProfile, lists }) {
   return { loginState, reloadProfile, lists };
 }
 
-export default connect(mapStateToProps, { logInOrOut, browseFromPrinceton })(Base);
+export default connect(mapStateToProps, { logInOrOut, browseFromPrinceton, saveBaseNavHome })(Base);

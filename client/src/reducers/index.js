@@ -5,6 +5,8 @@ import BrowseLocationReducer from './browseLocation';
 import PhotoReducer from './photos';
 import ProfileReloadReducer from './profileReloader';
 import ListsReducer from './scrollingList';
+import HomeNavReducer from './navigateToNew';
+import BaseNavReducer from './navigateToHome';
 
 export default combineReducers({
     loginState: LoginReducer,
@@ -13,4 +15,6 @@ export default combineReducers({
     photoTable: PhotoReducer,
     reloadProfile: ProfileReloadReducer,
     lists: ListsReducer,
+    navigateToNew: HomeNavReducer,
+    navigateToHome: BaseNavReducer
 });

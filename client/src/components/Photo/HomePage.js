@@ -27,7 +27,7 @@ import PhotoList from './PhotoList';
 import SearchPage from './SearchPage';
 import { NotFoundText } from '../common';
 import { tabWidth, tabHeight, horizontalPadding, pcoords } from '../../Base';
-import { browseFromPrinceton, makePhotoTable, setLoading } from '../../actions';
+import { browseFromPrinceton, makePhotoTable, setLoading, saveNavNew } from '../../actions';
 import request from '../../helpers/axioshelper';
 import { photoRequest, filterRequest } from '../../helpers/URL';
 import icoMoonConfig from '../../selection.json';
@@ -84,6 +84,16 @@ class HomePage extends Component {
     this.loadPhotos(false);
   }
 
+  componentDidMount() {
+    this.props.saveNavNew(nav => {
+      if (nav) {
+        this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'New' });
+        this.props.screenProps.scrollToTop();
+      }
+      this.loadPhotos(true);
+    });
+  }
+
   getFilterList(filter, filterDisplay) {
     const fFilter = encodeURIComponent(filter);
     if (this.props.browsingPrinceton) {
@@ -120,12 +130,6 @@ class HomePage extends Component {
 
   sendPhotoRequest(lat, lng) {
     AsyncStorage.getItem('SearchRadius').then(radius => {
-      // const promises = [
-      //   request.get(photoRequest('hot', lat, lng, parseInt(radius, 10)))
-      //     .then(response => response.data),
-      //   request.get(photoRequest('new', lat, lng, parseInt(radius, 10)))
-      //     .then(response => response.data)
-      // ];
       request.get(photoRequest('hot', lat, lng, parseInt(radius, 10))).then(response => {
         if (response.data.hotPhotos.length === 0) {
           this.setState({ noPhotos: true, refreshing: false });
@@ -158,6 +162,7 @@ class HomePage extends Component {
     }
     return (
       <HomeNavigator
+        ref={nav => { this.navigator = nav; }}
         screenProps={{
           hotList: this.state.hotList,
           newList: this.state.newList,
@@ -342,4 +347,4 @@ function mapStateToProps({ browsingPrinceton }) {
   return { browsingPrinceton };
 }
 
-export default connect(mapStateToProps, { browseFromPrinceton, makePhotoTable, setLoading })(HomePage);
+export default connect(mapStateToProps, { browseFromPrinceton, makePhotoTable, setLoading, saveNavNew })(HomePage);

@@ -62,25 +62,9 @@ class ProfilePage extends Component {
 
   updateWithDeletedPhoto(id) {
     const newUploaded = this.state.uploaded.filter(photo => photo.id !== id);
+    //this.props.navigateToNew(false); // Update redux table !!
     this.setState({ uploaded: newUploaded });
   }
-
-  /*deleteFromServer(photo) {
-    if (this.deleting) {
-      return;
-    }
-    this.deleting = true;
-    request.delete('https://fotafood.herokuapp.com/api/photo', { id: photo.id })
-    .then(() => {
-      this.deleting = false;
-      const newUploaded = [];
-      for (const item of this.state.uploaded) {
-        if (item.id !== photo.id) newUploaded.push(item);
-      }
-      this.setState({ uploaded: newUploaded });
-    })
-    .catch(e => request.showErrorAlert(e));
-  }*/
 
   render() {
     const name = this.props.screenProps.user.displayName || this.props.screenProps.user.email;
@@ -278,4 +262,8 @@ const {
   statLabelStyle
 } = styles;
 
-export default connect(null, { setProfileReloader })(ProfilePage);
+function mapStateToProps({ navigateToNew }) {
+  return { navigateToNew };
+}
+
+export default connect(mapStateToProps, { setProfileReloader })(ProfilePage);

@@ -14,6 +14,8 @@ export const LOGIN = 'randomtext';
 export const LOADING = '9(AA6969asD)';
 export const LOCATION = ')!sdj0ad!SDAD::L';
 export const PROFILE_RELOAD = 'efiwewk09';
+export const NAV_TO_NEW = '98z8xh3,x98ekjn';
+export const NAV_TO_HOME = '9z8ijx,qmnsdjhfoiux';
 
 export function makePhotoTable(list) {
   return {
@@ -63,4 +65,18 @@ export function browseFromPrinceton(browsing) {
     type: LOCATION,
     payload: browsing
   };
+}
+
+export function saveNavNew(func) {
+  return {
+    type: NAV_TO_NEW,
+    payload: func
+  };
+}
+
+export function saveBaseNavHome(func) {
+  return {
+    type: NAV_TO_HOME,
+    payload: func
+  }
 }
