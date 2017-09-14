@@ -28,10 +28,6 @@ class PhotoDetail extends PureComponent {
   constructor(props) {
     super(props);
     if (props.shouldRenderWithRedux) {
-      console.log(props.photoTable[props.photo.id]);
-      console.log(props.photoTable);
-      console.log(props.photo.id);
-
       const photo = props.photoTable[props.photo.id];
       const userHasVoted = photo.user_upvote || photo.user_downvote;
       this.state = {
@@ -171,9 +167,6 @@ class PhotoDetail extends PureComponent {
   }
 
   render() {
-    if (this.state.photo.rest_id === 'cafe-vivian-princeton') {
-      console.log(this.state);
-    }
     const upvoteColor = this.state.userLiked === true ? 'white' : 'rgba(255, 255, 255, 0.6)';
     const downvoteColor = this.state.userDisliked === true ? 'white' : 'rgba(255, 255, 255, 0.6)';
     return (

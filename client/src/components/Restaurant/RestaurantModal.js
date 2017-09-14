@@ -14,10 +14,12 @@ import {
   Text, View, Animated, PanResponder, Dimensions,
   TouchableOpacity, TouchableWithoutFeedback
 } from 'react-native';
+import { connect } from 'react-redux';
 import Modal from 'react-native-modal';
 import RestaurantDetail from './RestaurantDetail';
 import request from '../../helpers/axioshelper';
-import { restRequest, restCommentRequest } from '../../helpers/URL';
+import { restRequest, restCommentRequest, directionsRequest, coordinateRequest } from '../../helpers/URL';
+import { pcoords } from '../../Base';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = SCREEN_WIDTH / 2;
@@ -53,6 +55,7 @@ class RestaurantModal extends Component {
       loading: false,
       restaurant: null,
       comments: [],
+      mapsData: null,
       panResponder,
       position
     };
@@ -75,23 +78,49 @@ class RestaurantModal extends Component {
   }
 
   openRestaurantPage() {
-    this.setState({ loading: true });
-    request.get(restRequest(this.props.restaurantid))
-      .then(response => {
-        request.get(restCommentRequest(this.props.restaurantid))
-          .then(response2 =>
-            this.setState({
-              restaurant: response.data,
-              comments: response2.data,
-              loading: false
-            }))
-          .catch(e => request.showErrorAlert(e));
-      })
-      .catch(e => request.showErrorAlert(e));
-    this.setModalVisible(true);
+    this.setState({ loading: true, modalVisible: true });
+    if (this.props.browsingPrinceton) {
+      this.sendNavigationRequest(pcoords.lat, pcoords.lng);
+    } else {
+      navigator.geolocation.getCurrentPosition(position => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        this.sendNavigationRequest(lat, lng);
+      },
+      e => request.showErrorAlert(e),
+      /*{ enableHighAccuracy: Platform.OS === 'ios', timeout: 5000, maximumAge: 10000 }*/);
+    }
+    //this.setModalVisible(true);
     Animated.timing(this.state.position, {
       toValue: { x: 0, y: 0 }
     }).start();
+  }
+
+  sendNavigationRequest(lat, lng) {
+    request.get(coordinateRequest(this.props.restaurantid)).then(response => {
+      const destLat = response.data.latitude;
+      const destLng = response.data.longitude;
+      const promises = [
+        request.get(restRequest(this.props.restaurantid)),
+        request.get(restCommentRequest(this.props.restaurantid)),
+        request.get(directionsRequest(lat, lng, destLat, destLng, 'walking')),
+        request.get(directionsRequest(lat, lng, destLat, destLng, 'driving'))
+      ];
+      Promise.all(promises).then(result => {
+        const walkDirections = result[2].data;
+        const driveDirections = result[3].data;
+        const walkTime = walkDirections.routes[0].legs[0].duration.text.replace(/s$/, '');
+        const driveTime = driveDirections.routes[0].legs[0].duration.text.replace(/s$/, '');
+        const distance = walkDirections.routes[0].legs[0].distance.text;
+        const showWalk = (!walkTime.includes('hour') && parseInt(walkTime) <= 15);
+        this.setState({
+          restaurant: result[0].data,
+          comments: result[1].data,
+          loading: false,
+          mapsData: { walking: showWalk, walkTime, driveTime, distance }
+        });
+      }).catch(e => request.showErrorAlert(e));
+    }).catch(e => request.showErrorAlert(e));
   }
 
   resetPosition() {
@@ -140,6 +169,7 @@ class RestaurantModal extends Component {
             loading={this.state.loading}
             restaurant={this.state.restaurant}
             comments={this.state.comments}
+            mapsData={this.state.mapsData}
             close={() => this.setModalVisible(false)}
           />
         </Animated.View>
@@ -195,4 +225,8 @@ const styles = {
   }
 };
 
-export default RestaurantModal;
+function mapStateToProps({ browsingPrinceton }) {
+  return { browsingPrinceton };
+}
+
+export default connect(mapStateToProps)(RestaurantModal);

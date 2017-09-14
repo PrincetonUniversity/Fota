@@ -42,7 +42,7 @@ class SearchPage extends Component {
         this.setState({ lat: position.coords.latitude, lng: position.coords.longitude });
       },
       e => request.showErrorAlert(e),
-      { enableHighAccuracy: Platform.OS === 'ios', timeout: 20000, maximumAge: 1000 });
+      /*{ enableHighAccuracy: Platform.OS === 'ios', timeout: 5000, maximumAge: 10000 }*/);
     }
   }
 

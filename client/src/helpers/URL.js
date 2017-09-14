@@ -29,6 +29,10 @@ export function filterRequest(filter, lat, lng, radius) {
   return `${PHOTO_REQ}/${filter}?key=${CLIENT_API_KEY}&order=hot&latitude=${lat}&longitude=${lng}&radius=${radius}`;
 }
 
+export function coordinateRequest(id) {
+  return `${REST_REQ}/${id}/coordinates?key=${CLIENT_API_KEY}`;
+}
+
 export function restRequest(id) {
   return `${REST_REQ}/${id}?key=${CLIENT_API_KEY}`;
 }
@@ -37,8 +41,8 @@ export function restCommentRequest(id) {
   return `${REST_REQ}/${id}/comments/?key=${CLIENT_API_KEY}`;
 }
 
-export function directionsRequest(curLat, curLng, dest, mode) {
-  return `${GOOGLE_MAPS_API_URL}?origin=${curLat},${curLng}&destination=${dest}&mode=${mode}&key=${CLIENT_API_KEY}`;
+export function directionsRequest(curLat, curLng, destLat, destLng, mode) {
+  return `${GOOGLE_MAPS_API_URL}?origin=${curLat},${curLng}&destination=${destLat},${destLng}&mode=${mode}&key=${CLIENT_API_KEY}`;
 }
 
 export function directionsURL(dest, mode) {

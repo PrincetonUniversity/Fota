@@ -12,7 +12,6 @@ import {
   View, Text, Animated, Linking, LayoutAnimation, Dimensions, Platform,
   TouchableWithoutFeedback, TouchableOpacity, UIManager, StatusBar, Keyboard
 } from 'react-native';
-import { connect } from 'react-redux';
 import { TabNavigator } from 'react-navigation';
 import FoundationIcon from 'react-native-vector-icons/Foundation';
 import Ionicon from 'react-native-vector-icons/Ionicons';
@@ -28,11 +27,7 @@ import RestaurantComments from './RestaurantComments';
 import LoadingRestaurants from './LoadingRestaurants';
 import { Banner } from '../common';
 import request from '../../helpers/axioshelper';
-import {
-  restBookmarkRequest, directionsRequest,
-  directionsURL, restRecommendRequest
-} from '../../helpers/URL';
-import { pcoords } from '../../Base';
+import { restBookmarkRequest, directionsURL, restRecommendRequest } from '../../helpers/URL';
 import icoMoonConfig from '../../selection.json';
 
 const Icon = createIconSetFromIcoMoon(icoMoonConfig);
@@ -59,12 +54,10 @@ class RestaurantDetail extends Component {
       yesCount: 0,
       noCount: 0,
       selectedPhoto: null,
-      navLoading: true,
+      walking: true,
       distance: '',
-      driving: false,
-      walking: false,
-      driveTime: '',
       walkTime: '',
+      driveTime: '',
       price: false,
       modalVisible: false,
       loading: true,
@@ -105,6 +98,10 @@ class RestaurantDetail extends Component {
         restaurant: r,
         photos: r.photos,
         comments: nextProps.comments,
+        walking: nextProps.mapsData.walking,
+        distance: nextProps.mapsData.distance,
+        walkTime: nextProps.mapsData.walkTime,
+        driveTime: nextProps.mapsData.driveTime,
         userBookmarked: r.user_bookmarked,
         yesCount: r.recommend_yes_count,
         noCount: r.recommend_no_count,
@@ -114,7 +111,7 @@ class RestaurantDetail extends Component {
         loading: nextProps.loading,
         listHeight: this.photosHeight
       });
-      this.getNavigation(nextProps.restaurant);
+      //this.getNavigation(nextProps.restaurant);
     }
   }
 
@@ -130,22 +127,22 @@ class RestaurantDetail extends Component {
     });
   }
 
-  getNavigation(restaurant) {
-    const formattedAddress = restaurant.location.display_address.map(address =>
-      address.replace(/\s/g, '+')
-    );
-    if (this.props.browsingPrinceton) {
-      this.sendNavigationRequest(formattedAddress, pcoords.lat, pcoords.lng);
-    } else {
-      navigator.geolocation.getCurrentPosition(position => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        this.sendNavigationRequest(formattedAddress, lat, lng);
-      },
-      e => request.showErrorAlert(e),
-      { enableHighAccuracy: Platform.OS === 'ios', timeout: 20000, maximumAge: 1000 });
-    }
-  }
+  // getNavigation(restaurant) {
+  //   const formattedAddress = restaurant.location.display_address.map(address =>
+  //     address.replace(/\s/g, '+')
+  //   );
+  //   if (this.props.browsingPrinceton) {
+  //     this.sendNavigationRequest(formattedAddress, pcoords.lat, pcoords.lng);
+  //   } else {
+  //     navigator.geolocation.getCurrentPosition(position => {
+  //       const lat = position.coords.latitude;
+  //       const lng = position.coords.longitude;
+  //       this.sendNavigationRequest(formattedAddress, lat, lng);
+  //     },
+  //     e => request.showErrorAlert(e),
+  //     /*{ enableHighAccuracy: Platform.OS === 'ios', timeout: 5000, maximumAge: 10000 }*/);
+  //   }
+  // }
 
   getHours(hours) {
     const today = new Date();
@@ -170,40 +167,40 @@ class RestaurantDetail extends Component {
     };
   }
 
-  sendNavigationRequest(address, lat, lng) {
-    request.get(directionsRequest(lat, lng, address, 'walking'))
-    .then(response => {
-      request.get(directionsRequest(lat, lng, address, 'driving'))
-      .then(response2 => {
-        const walkDirections = response.data;
-        const driveDirections = response2.data;
-        const walkTime = walkDirections.routes[0].legs[0].duration.text.replace(/s$/, '');
-        const driveTime = driveDirections.routes[0].legs[0].duration.text.replace(/s$/, '');
-        const distance = walkDirections.routes[0].legs[0].distance.text;
-        if (!walkTime.includes('hour') && parseInt(walkTime) <= 15) {
-          this.setState({
-            navLoading: false,
-            driving: false,
-            walking: true,
-            walkTime,
-            driveTime,
-            distance
-          });
-        } else {
-          this.setState({
-            navLoading: false,
-            driving: true,
-            walking: false,
-            walkTime,
-            driveTime,
-            distance
-          });
-        }
-      })
-      .catch(e => request.showErrorAlert(e));
-    })
-    .catch(e => request.showErrorAlert(e));
-  }
+  // sendNavigationRequest(address, lat, lng) {
+  //   request.get(directionsRequest(lat, lng, address, 'walking'))
+  //   .then(response => {
+  //     request.get(directionsRequest(lat, lng, address, 'driving'))
+  //     .then(response2 => {
+  //       const walkDirections = response.data;
+  //       const driveDirections = response2.data;
+  //       const walkTime = walkDirections.routes[0].legs[0].duration.text.replace(/s$/, '');
+  //       const driveTime = driveDirections.routes[0].legs[0].duration.text.replace(/s$/, '');
+  //       const distance = walkDirections.routes[0].legs[0].distance.text;
+  //       if (!walkTime.includes('hour') && parseInt(walkTime) <= 15) {
+  //         this.setState({
+  //           navLoading: false,
+  //           driving: false,
+  //           walking: true,
+  //           walkTime,
+  //           driveTime,
+  //           distance
+  //         });
+  //       } else {
+  //         this.setState({
+  //           navLoading: false,
+  //           driving: true,
+  //           walking: false,
+  //           walkTime,
+  //           driveTime,
+  //           distance
+  //         });
+  //       }
+  //     })
+  //     .catch(e => request.showErrorAlert(e));
+  //   })
+  //   .catch(e => request.showErrorAlert(e));
+  // }
 
   timeUntilCloseLabel(hoursArray) {
     if (!hoursArray) {
@@ -625,7 +622,7 @@ class RestaurantDetail extends Component {
           <TouchableOpacity
             activeOpacity={0.75}
             style={{ marginHorizontal: 7, flex: 1 }}
-            onPress={() => this.setState({ walking: false, driving: true })}
+            onPress={() => this.setState({ walking: false })}
           >
             <View style={infoObjectStyle}>
               <Icon
@@ -641,29 +638,28 @@ class RestaurantDetail extends Component {
           </TouchableOpacity>
         </View>
       );
-    } else if (this.state.driving) {
-      return (
-        <View style={{ flex: 1 }}>
-          <TouchableOpacity
-            activeOpacity={0.75}
-            style={{ marginHorizontal: 7, flex: 1 }}
-            onPress={() => this.setState({ walking: true, driving: false })}
-          >
-            <View style={infoObjectStyle}>
-              <MaterialCommunityIcon
-                name='car'
-                size={30}
-                style={{ height: 30 }}
-                color={'rgba(0,0,0,0.63)'}
-              />
-              <Text style={infoIconStyle}>
-                {this.state.driveTime}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-      );
     }
+    return (
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity
+          activeOpacity={0.75}
+          style={{ marginHorizontal: 7, flex: 1 }}
+          onPress={() => this.setState({ walking: true })}
+        >
+          <View style={infoObjectStyle}>
+            <MaterialCommunityIcon
+              name='car'
+              size={30}
+              style={{ height: 30 }}
+              color={'rgba(0,0,0,0.63)'}
+            />
+            <Text style={infoIconStyle}>
+              {this.state.driveTime}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
   }
 
   // Price section of the horizontal info bar
@@ -998,7 +994,7 @@ class RestaurantDetail extends Component {
   }
 
   render() {
-    if (this.state.loading || this.state.navLoading) {
+    if (this.state.loading) {
       return <LoadingRestaurants />;
     }
     let height = 440;
@@ -1337,7 +1333,7 @@ const {
   ratingCountStyle,
   recommendContainerStyle,
   voteBoxStyle,
-  hasVotedBoxStyle,
+  //hasVotedBoxStyle,
   recommendPromptStyle,
   recommendVoteStyle,
   infoContainerStyle,
@@ -1355,8 +1351,4 @@ const {
   bottomSpacerStyle,
 } = styles;
 
-function mapStateToProps({ browsingPrinceton }) {
-  return { browsingPrinceton };
-}
-
-export default connect(mapStateToProps)(RestaurantDetail);
+export default RestaurantDetail;
