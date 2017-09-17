@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList, CameraRoll, Dimensions, Platform } from 'react-native';
-import { Spinner, ImageButton } from '../common';
+import { connect } from 'react-redux';
+import Permissions from 'react-native-permissions';
+import { Spinner, ImageButton, MissingPermission } from '../common';
 import { tabStyle } from './CameraPage';
+import { setPermission } from '../../actions';
 
 const imageSize = Dimensions.get('window').width / 4;
 
@@ -30,6 +33,15 @@ class CameraLibrary extends Component {
 
   componentWillMount() {
     this.loadPhotos();
+    Permissions.check('photo').then(response => {
+      if (response === 'authorized') {
+        this.props.setPermission({ photo: true });
+      } else if (response === 'undetermined') {
+        this.requestLibraryPermission();
+      } else {
+        this.props.setPermission({ photo: false });
+      }
+    });
   }
 
   getMorePhotos() {
@@ -38,6 +50,16 @@ class CameraLibrary extends Component {
         this.setState({ loadingMore: true }, () => { this.loadPhotos(); });
       }
     }
+  }
+
+  requestLibraryPermission() {
+    Permissions.request('photo').then(response => {
+      if (response === 'authorized') {
+        this.props.setPermission({ camera: true });
+      } else {
+        this.props.setPermission({ camera: false });
+      }
+    });
   }
 
   loadPhotos() {
@@ -98,24 +120,35 @@ class CameraLibrary extends Component {
   }
 
   render() {
-    return (
-      <FlatList
-        data={this.state.photos}
-        keyExtractor={photo => photo}
-        renderItem={photo => this.renderPhoto(photo.item)}
-        bounces={false}
-        onEndReachedThreshold={0.5}
-        onEndReached={() => this.getMorePhotos()}
-        removeClippedSubviews={false}
-        ListFooterComponent={() => this.renderSpinner()}
-        getItemLayout={(data, index) => (
-          { length: imageSize, offset: imageSize * index, index }
-        )}
-        numColumns={4}
-        style={{ backgroundColor: 'white' }}
-      />
-    );
+    switch (this.props.permissions.photo) {
+      case true:
+        return (
+          <FlatList
+            data={this.state.photos}
+            keyExtractor={photo => photo}
+            renderItem={photo => this.renderPhoto(photo.item)}
+            bounces={false}
+            onEndReachedThreshold={0.5}
+            onEndReached={() => this.getMorePhotos()}
+            removeClippedSubviews={false}
+            ListFooterComponent={() => this.renderSpinner()}
+            getItemLayout={(data, index) => (
+              { length: imageSize, offset: imageSize * index, index }
+            )}
+            numColumns={4}
+            style={{ backgroundColor: 'white' }}
+          />
+        );
+      case false:
+        return <MissingPermission type='library' />;
+      default:
+        return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
+    }
   }
 }
 
-export default CameraLibrary;
+function mapStateToProps({ permissions }) {
+  return { permissions };
+}
+
+export default connect(mapStateToProps, { setPermission })(CameraLibrary);
