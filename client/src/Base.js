@@ -16,8 +16,9 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, AsyncStorage, Alert, StatusBar, Dimensions, BackHandler } from 'react-native';
+import { View, Text, AsyncStorage, Alert, StatusBar, Dimensions, BackHandler } from 'react-native';
 import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
+import Permissions from 'react-native-permissions';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
 import LoginPage from './components/Account/LoginPage';
@@ -25,7 +26,7 @@ import HomePage from './components/Photo/HomePage';
 import ProfileHelper from './components/Profile/ProfileHelper';
 import CameraNavigator from './components/Camera/CameraNavigator';
 import CameraHelper from './components/Camera/CameraHelper';
-import { logInOrOut, browseFromPrinceton, saveBaseNavHome } from './actions';
+import { logInOrOut, browseFromPrinceton, saveBaseNavHome, setPermission } from './actions';
 
 export const pcoords = { lat: 40.3440, lng: -74.6514 };
 
@@ -68,12 +69,31 @@ class Base extends Component {
       this.navigator.dispatch({ type: 'Navigation/BACK' });
       return true;
     });
+    Permissions.check('location').then(response => {
+      if (response === 'authorized') {
+        this.props.setPermission({ location: true });
+      } else if (response === 'undetermined') {
+        this.requestLocationPermission();
+      } else {
+        this.setState({ location: false });
+      }
+    });
   }
 
   componentDidMount() {
     this.props.saveBaseNavHome(() => {
       this.navigator.dispatch({ type: 'Navigation/NAVIGATE', routeName: 'Home' });
       this.setState({ focusedTab: 0 });
+    });
+  }
+
+  requestLocationPermission() {
+    Permissions.request('location').then(response => {
+      if (response === 'authorized') {
+        this.setState({ location: true });
+      } else {
+        this.setState({ location: false });
+      }
     });
   }
 
@@ -91,28 +111,37 @@ class Base extends Component {
   render() {
     if (this.state.loginFinished) {
       if (this.props.loginState) {
-        return (
-          <View style={{ flex: 1 }}>
-            <StatusBar hidden={false} />
-            <FotaNavigator
-              ref={nav => { this.navigator = nav; }}
-              screenProps={{
-                user: this.props.loginState,
-                reloadProfile: this.props.reloadProfile,
-                focusedTab: this.state.focusedTab,
-                changeFocusedTab: tab => this.setState({ focusedTab: tab }),
-                scrollToTop: () => {
-                  if (this.props.lists.hot) {
-                    this.props.lists.hot.scrollToOffset({ offset: 0, animated: true });
-                  }
-                  if (this.props.lists.new) {
-                    this.props.lists.new.scrollToOffset({ offset: 0, animated: true });
-                  }
-                }
-              }}
-            />
-          </View>
-        );
+        switch (this.props.permissions.location) {
+          case true:
+            return (
+              <View style={{ flex: 1 }}>
+                <StatusBar hidden={false} />
+                <FotaNavigator
+                  ref={nav => { this.navigator = nav; }}
+                  screenProps={{
+                    user: this.props.loginState,
+                    reloadProfile: this.props.reloadProfile,
+                    focusedTab: this.state.focusedTab,
+                    changeFocusedTab: tab => this.setState({ focusedTab: tab }),
+                    scrollToTop: () => {
+                      if (this.props.lists.hot) this.props.lists.hot.scrollToOffset({ offset: 0, animated: true });
+                      if (this.props.lists.new) this.props.lists.new.scrollToOffset({ offset: 0, animated: true });
+                      if (this.props.lists.search) this.props.lists.search.scrollToOffset({ offset: 0, animated: true });
+                    }
+                  }}
+                />
+              </View>
+            );
+          case false:
+            return (
+              <View style={{ flex: 1 }}>
+                <StatusBar hidden={false} />
+                <Text>Fota needs your location!</Text>
+              </View>
+            );
+          default:
+            return null;
+        }
       }
       return (
         <View style={{ flex: 1 }}>
@@ -121,9 +150,7 @@ class Base extends Component {
         </View>
       );
     }
-    return (
-      <View />
-    );
+    return null;
   }
 }
 
@@ -176,8 +203,10 @@ const FotaNavigator = StackNavigator({
   headerMode: 'none',
 });
 
-function mapStateToProps({ loginState, reloadProfile, lists }) {
-  return { loginState, reloadProfile, lists };
+function mapStateToProps({ loginState, reloadProfile, lists, permissions }) {
+  return { loginState, reloadProfile, lists, permissions };
 }
 
-export default connect(mapStateToProps, { logInOrOut, browseFromPrinceton, saveBaseNavHome })(Base);
+const dispatch = { logInOrOut, browseFromPrinceton, saveBaseNavHome, setPermission };
+
+export default connect(mapStateToProps, dispatch)(Base);

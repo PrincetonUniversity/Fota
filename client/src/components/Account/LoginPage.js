@@ -56,7 +56,7 @@ class LoginPage extends Component {
         .then(user => {
           request.patch(changeNameRequest(encodeURIComponent(user.displayName), user.uid))
             .catch(e => request.showErrorAlert(e));
-          if (this.props.screenProps.onLoginFinished) this.props.screenProps.onLoginFinished();          
+          if (this.screenProps.onLoginFinished) this.screenProps.onLoginFinished();          
         }).catch(() => { /* handle error */ });
       } else {
         // handle error

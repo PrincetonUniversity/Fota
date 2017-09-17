@@ -153,7 +153,9 @@ class HomePage extends Component {
 
   renderList() {
     if (this.state.filter) {
-      if (this.state.filterList.length > 0) return <PhotoList list={this.state.filterList} />;
+      if (this.state.filterList.length > 0) {
+        return <PhotoList list={this.state.filterList} name='search' />;
+      } 
       return (
         <NotFoundText
           text='No photos of that filter were found in your area. Try searching another term or increasing your search radius through your profile settings.'

@@ -24,8 +24,14 @@ import { setScrollingList } from '../../actions';
 
 class PhotoList extends PureComponent {
   componentDidMount() {
-    if (this.props.shouldRenderWithRedux && this.props.name) {
+    if (this.props.name) {
       this.props.setScrollingList(this.list, this.props.name);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.props.name) {
+      this.props.setScrollingList(null, this.props.name);
     }
   }
 

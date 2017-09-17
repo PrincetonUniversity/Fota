@@ -7,6 +7,7 @@ import ProfileReloadReducer from './profileReloader';
 import ListsReducer from './scrollingList';
 import HomeNavReducer from './navigateToNew';
 import BaseNavReducer from './navigateToHome';
+import PermissionReducer from './permission';
 
 export default combineReducers({
     loginState: LoginReducer,
@@ -16,5 +17,6 @@ export default combineReducers({
     reloadProfile: ProfileReloadReducer,
     lists: ListsReducer,
     navigateToNew: HomeNavReducer,
-    navigateToHome: BaseNavReducer
+    navigateToHome: BaseNavReducer,
+    permissions: PermissionReducer
 });

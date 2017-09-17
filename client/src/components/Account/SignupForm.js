@@ -30,7 +30,16 @@ import request from '../../helpers/axioshelper';
 import { changeNameRequest } from '../../helpers/URL';
 
 class SignupForm extends Component {
-  state = { first: '', last: '', email: '', pass: '', error: '', loading: false, displayTop: true };
+  state = {
+    first: '',
+    last: '',
+    email: '',
+    pass: '',
+    error: '',
+    loading: false,
+    displayTop: true,
+    fbLoading: false
+  };
 
   componentWillMount() {
     if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -39,6 +48,7 @@ class SignupForm extends Component {
   }
 
   onSignupButtonPress() {
+    if (this.state.fbLoading || this.state.loading) return;    
     const { email, pass } = this.state;
     this.setState({ error: '', loading: true });
     if (this.props.loginState && this.props.loginState.isAnonymous) {
@@ -109,13 +119,17 @@ class SignupForm extends Component {
 
   renderFacebookAndSkip() {
     if (this.state.editing) return null;
+    const text = this.state.fbLoading ? 'Logging you in...' : 'Continue with Facebook';
     return (
       <View>
         <Button
           style={{ marginVertical: 8 }}
-          onPress={() => this.props.screenProps.logInWithFacebook()}
+          onPress={() => {
+            this.setState({ fbLoading: true });
+            this.props.screenProps.logInWithFacebook();
+          }}
           colors={{ text: '#fff', fill: '#2494ff', border: '#2494ff' }}
-          text={'Continue with Facebook'}
+          text={text}
           round
         >
           <Icon

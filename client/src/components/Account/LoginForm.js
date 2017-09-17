@@ -23,9 +23,10 @@ import { loginStyles } from './LoginPage';
 import { Spinner, Button } from '../common';
 
 class LoginForm extends Component {
-  state = { email: '', pass: '', error: '', loading: false };
+  state = { email: '', pass: '', error: '', loading: false, fbLoading: false };
 
   onLoginButtonPress() {
+    if (this.state.fbLoading || this.state.loading) return;
     const { email, pass } = this.state;
     this.setState({ error: '', loading: true });
     firebase.auth().signInWithEmailAndPassword(email, pass)
@@ -85,6 +86,7 @@ class LoginForm extends Component {
   }
 
   render() {
+    const text = this.state.fbLoading ? 'Logging you in...' : 'Continue with Facebook';    
     return (
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={{ flex: 1, justifyContent: 'space-between' }}>
@@ -103,9 +105,12 @@ class LoginForm extends Component {
 
             <Button
               style={{ marginTop: 8, marginBottom: 20 }}
-              onPress={() => this.props.screenProps.logInWithFacebook()}
+              onPress={() => {
+                this.setState({ fbLoading: true });
+                this.props.screenProps.logInWithFacebook();
+              }}
               colors={{ text: '#fff', fill: '#2494ff', border: '#2494ff' }}
-              text={'Continue with Facebook'}
+              text={text}
               round
             >
               <Icon

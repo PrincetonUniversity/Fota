@@ -16,6 +16,7 @@ export const LOCATION = ')!sdj0ad!SDAD::L';
 export const PROFILE_RELOAD = 'efiwewk09';
 export const NAV_TO_NEW = '98z8xh3,x98ekjn';
 export const NAV_TO_HOME = '9z8ijx,qmnsdjhfoiux';
+export const PERMISSION = 'hialbertitsbenny';
 
 export function makePhotoTable(list) {
   return {
@@ -78,5 +79,12 @@ export function saveBaseNavHome(func) {
   return {
     type: NAV_TO_HOME,
     payload: func
-  }
+  };
+}
+
+export function setPermission(permission) {
+  return {
+    type: PERMISSION,
+    payload: permission
+  };
 }
