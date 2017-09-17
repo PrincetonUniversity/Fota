@@ -105,13 +105,10 @@ class CameraLocationPage extends Component {
     const path = this.props.navigation.state.params.path;
     this.setState({ uploadPath: path });
     this.generateFileNames();
-    console.log('uploading big photo to firebase');
     this.uploadPhotoToFirebase(path, this.firebaseRef)
     .then(url => {
-      console.log('Finished uploading big photo to firebase. Checking big photo');
       request.post(checkPhotoRequest(), { url })
       .then(response => {
-        console.log('Finished checking big photo');
         if (this.state.markForDelete) {
           this.deletePhotoFromFirebase();
         } else if (this.state.submitting && this.firebaseSmallURL) {
@@ -140,14 +137,10 @@ class CameraLocationPage extends Component {
       });
     })
     .catch(() => cameraErrorAlert());
-
-    console.log('resizing image');
     ImageResizer.createResizedImage(path, 250, 500, 'JPEG', 100).then(reuri => {
-      console.log('Finished resizing image. Uploading small photo to firebase');
       this.reuri = reuri;
       this.uploadPhotoToFirebase(reuri, this.firebaseRefSmall)
       .then(urlSmall => {
-        console.log('Finished uploading small photo to firebase');
         if (this.state.markForDelete) {
           this.deletePhotoFromFirebase();
         } else if (this.state.submitting && this.firebaseURL) {
@@ -281,7 +274,7 @@ class CameraLocationPage extends Component {
       if (this.state.error) {
         this.showNotFoodAlert(this.state.error);
       } else {
-        this.submitPhoto(this.firebaseURL, this.labels);
+        this.submitPhoto(this.firebaseURL, this.firebaseSmallURL, this.labels);
       }
     }
   }
