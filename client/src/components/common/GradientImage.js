@@ -43,10 +43,11 @@ export const dealWithAndroidBeingStupid2 = (borderRadius) => {
   }
 };
 
-const GradientImage = ({ children, start, end, colors, gradientStyle, photoStyle, source }) => (
+const GradientImage = ({ children, start, end, colors, gradientStyle, photoStyle, source, onLoad }) => (
   <Image
     source={{ uri: source }}
     style={photoStyle}
+    onLoad={onLoad}
   >
     <LinearGradient
       start={start}
@@ -59,5 +60,37 @@ const GradientImage = ({ children, start, end, colors, gradientStyle, photoStyle
     {dealWithAndroidBeingStupid(photoStyle.borderRadius)}
   </Image>
 );
+// class GradientImage extends Component {
+//   state = { showGradient: false }
+//
+//   renderGradient() {
+//     const { children, start, end, colors, gradientStyle } = this.props;
+//     if (this.state.showGradient) {
+//       return (
+//
+//       );
+//     }
+//   }
+//   render() {
+//     const { photoStyle, source, onLoad } = this.props;
+//     return (
+//       <Image
+//         source={{ uri: source }}
+//         style={photoStyle}
+//         onLoad={onLoad}
+//       >
+//         <LinearGradient
+//           start={start}
+//           end={end}
+//           colors={colors}
+//           style={gradientStyle}
+//         >
+//           {children}
+//         </LinearGradient>
+//         {dealWithAndroidBeingStupid(photoStyle.borderRadius)}
+//       </Image>
+//     );
+//   }
+// }
 
 export { GradientImage };

@@ -124,7 +124,7 @@ class HomePage extends Component {
         this.sendPhotoRequest(lat, lng);
       },
       e => request.showErrorAlert(e),
-      /*{ enableHighAccuracy: Platform.OS === 'ios', timeout: 5000, maximumAge: 10000 }*/);
+    /*{ enableHighAccuracy: Platform.OS === 'ios', timeout: 5000, maximumAge: 10000 }*/);
     }
   }
 

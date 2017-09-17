@@ -123,6 +123,26 @@ class CommentDetail extends Component {
     });
   }
 
+  renderRecommendText() {
+    const comment = this.props.comment;
+    let recommendation = '';
+    if (comment.my_comment) {
+      if (this.props.userLiked) recommendation = 'Recommend';
+      if (this.props.userDisliked) recommendation = 'Doesn\'t Recommend';
+    } else {
+      if (comment.author_recommended_yes) recommendation = 'Recommend';
+      if (comment.author_recommended_no) recommendation = 'Doesn\'t Recommend';
+    }
+    if (recommendation !== '') {
+      return (
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={headingTextStyle}>{recommendation}</Text>
+          <Icon name='dot-single' size={13} color='rgba(0, 0, 0, 0.3)' style={{ marginHorizontal: 5 }} />
+        </View>
+      );
+    }
+  }
+
   renderUpvote() {
     let newVoteCount = this.state.votecount;
     let userNewLike = true;
@@ -319,13 +339,20 @@ class CommentDetail extends Component {
 
   render() {
     const comment = this.props.comment;
-    let recommendation = 'Undecided';
-    if (comment.my_comment) {
-      if (this.props.userLiked) recommendation = 'Recommended';
-      if (this.props.userDisliked) recommendation = 'Not Recommended';
-    } else {
-      if (comment.author_recommended_yes) recommendation = 'Recommended';
-      if (comment.author_recommended_no) recommendation = 'Not Recommended';
+    const rawAuthor = comment.author.split(' ');
+    const author = rawAuthor.map((name, index) => {
+      if (index === 0) return name;
+      return ` ${name[0]}.`;
+    });
+    moment.updateLocale('en', {
+      relativeTime: {
+        m: 'a min',
+        mm: '%d min'
+      }
+    });
+    let timestamp = moment(comment.uploaded_at).fromNow();
+    if (timestamp.includes('seconds')) {
+      timestamp = 'Just now';
     }
     return (
       <TouchableOpacity activeOpacity={1}>
@@ -348,11 +375,10 @@ class CommentDetail extends Component {
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
             {comment.my_comment && <Text style={youTextStyle}>(You) </Text>}
-            <Text style={headingTextStyle}>{comment.author}</Text>
+            <Text style={headingTextStyle}>{author}</Text>
             <Icon name='dot-single' size={13} color='rgba(0, 0, 0, 0.3)' style={{ marginHorizontal: 5 }} />
-            <Text style={headingTextStyle}>{recommendation}</Text>
-            <Icon name='dot-single' size={13} color='rgba(0, 0, 0, 0.3)' style={{ marginHorizontal: 5 }} />
-            <Text style={headingTextStyle} numberOfLines={1} ellipsizeMode='tail'>{moment(comment.uploaded_at).fromNow()}</Text>
+            {this.renderRecommendText()}
+            <Text style={headingTextStyle} numberOfLines={1} ellipsizeMode='tail'>{timestamp}</Text>
           </View>
 
           {this.renderMessageAndFooter(comment)}
