@@ -38,13 +38,13 @@ class CameraNavigator extends Component {
       });
     }
     this.backhandler = BackHandler.addEventListener('hardwareBackPress', this.pressBack.bind(this));
-    Permissions.check('photo').then(response => {
+    Permissions.check('camera').then(response => {
       if (response === 'authorized') {
-        this.props.setPermission({ photo: true });
+        this.props.setPermission({ camera: true });
       } else if (response === 'undetermined') {
         this.requestCameraPermission();
       } else {
-        this.props.setPermission({ photo: false });
+        this.props.setPermission({ camera: false });
       }
     });
   }
@@ -59,11 +59,11 @@ class CameraNavigator extends Component {
   }
 
   requestCameraPermission() {
-    Permissions.request('photo').then(response => {
+    Permissions.request('camera').then(response => {
       if (response === 'authorized') {
-        this.props.setPermission({ photo: true });
+        this.props.setPermission({ camera: true });
       } else {
-        this.props.setPermission({ photo: false });
+        this.props.setPermission({ camera: false });
       }
     });
   }
@@ -72,7 +72,7 @@ class CameraNavigator extends Component {
     if (!this.props.loginState || this.props.loginState.isAnonymous) {
       return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
     }
-    switch (this.props.permissions.photo) {
+    switch (this.props.permissions.camera) {
       case true:
         return (
           <View style={{ flex: 1 }}>
