@@ -53,6 +53,7 @@ class RestaurantDetail extends Component {
       userBookmarked: false,
       yesCount: 0,
       noCount: 0,
+      gradientColor: 'transparent',
       selectedPhoto: null,
       walking: true,
       distance: '',
@@ -420,11 +421,12 @@ class RestaurantDetail extends Component {
           photo={(this.state.photos.length > 0) ? this.state.photos[0].url : undefined}
           containerStyle={{ flex: 1 }} // height: 150
           photoStyle={{ flex: 1, backgroundColor: '#d3d3d3' }}
+          onLoad={() => this.setState({ gradientColor: 'rgba(0, 0, 0, 0.36)' })}
         >
           <LinearGradient
             start={{ x: 0.5, y: 0.1 }}
             end={{ x: 0.5, y: 1.0 }}
-            colors={['transparent', 'rgba(0, 0, 0, 0.36)']}
+            colors={['transparent', this.state.gradientColor]}
             style={{ flex: 1 }}
           >
             <Animated.View

@@ -58,7 +58,6 @@ class PhotoList extends PureComponent {
         removeClippedSubviews={false}
         windowSize={10}
         initialNumToRender={10}
-        //disableVirtualization
       />
     );
   }

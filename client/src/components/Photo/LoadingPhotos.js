@@ -31,8 +31,8 @@ const pulse = {
 
 const LoadingPhotos = () => (
   <View style={{ borderTopWidth: 1, borderColor: 'rgba(0,0,0,0.09)', paddingTop: 5 }}>
-    <Animatable.View animation={pulse} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={styles.grayPhotoStyle} useNativeDriver />
-    <Animatable.View animation={pulse} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={styles.grayPhotoStyle} useNativeDriver />
+    <Animatable.View animation={pulse} duration={800} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={styles.grayPhotoStyle} useNativeDriver />
+    <Animatable.View animation={pulse} duration={800} direction='alternate-reverse' iterationCount='infinite' easing='ease-in-out-sine' style={styles.grayPhotoStyle} useNativeDriver />
   </View>
 );
 
@@ -43,7 +43,7 @@ const styles = {
     width: size,
     height: size,
     borderRadius: 9,
-    backgroundColor: 'rgba(0, 0, 0, 0.13)'
+    backgroundColor: 'rgba(0, 0, 0, 0.17)'
   }
 };
 

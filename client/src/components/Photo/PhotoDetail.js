@@ -18,11 +18,21 @@ import React, { PureComponent } from 'react';
 import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
+import * as Animatable from 'react-native-animatable';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 import { GradientImage } from '../common';
 import { voteOnPhotoTable } from '../../actions';
 import request from '../../helpers/axioshelper';
 import { photoVote } from '../../helpers/URL';
+
+const pulse = {
+  from: {
+    opacity: 0.7,
+  },
+  to: {
+    opacity: 1,
+  },
+};
 
 class PhotoDetail extends PureComponent {
   constructor(props) {
@@ -36,7 +46,8 @@ class PhotoDetail extends PureComponent {
         userDisliked: photo.user_downvote,
         userHasVoted,
         votecount: photo.vote_count,
-        modalVisible: false
+        modalVisible: false,
+        loaded: false,
       };
     } else {
       const userHasVoted = props.photo.user_upvote || props.photo.user_downvote;
@@ -47,6 +58,7 @@ class PhotoDetail extends PureComponent {
         userHasVoted,
         votecount: props.photo.vote_count,
         modalVisible: false,
+        loaded: false
       };
     }
     this.timer = null;
@@ -169,6 +181,7 @@ class PhotoDetail extends PureComponent {
   render() {
     const upvoteColor = this.state.userLiked === true ? 'white' : 'rgba(255, 255, 255, 0.6)';
     const downvoteColor = this.state.userDisliked === true ? 'white' : 'rgba(255, 255, 255, 0.6)';
+    const gradient = this.state.loaded ? 'rgba(0, 0, 0, 0.3)' : 'transparent';
     return (
       <View>
         <RestaurantModal
@@ -177,44 +190,59 @@ class PhotoDetail extends PureComponent {
           photoid={this.state.photo.id}
         >
           <View style={photoFrameStyle}>
-            <GradientImage
-              start={{ x: 0.5, y: 0.58 }}
-              end={{ x: 0.5, y: 1.0 }}
-              colors={['transparent', 'rgba(0, 0, 0, 0.3)']}
-              photoStyle={photoStyle}
-              gradientStyle={{ flex: 1 }}
-              source={this.state.photo.url}
+            <Animatable.View
+              ref={anim => { this.animation = anim; }}
+              animation={pulse}
+              direction='alternate-reverse'
+              duration={800}
+              iterationCount='infinite'
+              easing='ease-in-out-sine'
+              style={[photoStyle, { backgroundColor: 'rgba(0,0,0,0.17)' }]}
+              useNativeDriver
             >
-              <View style={{ flex: 1, zIndex: 6 }}>
-                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end' }}>
-                  {this.renderDistance()}
+              <GradientImage
+                start={{ x: 0.5, y: 0.58 }}
+                end={{ x: 0.5, y: 1.0 }}
+                colors={['transparent', gradient]}
+                photoStyle={photoStyle}
+                gradientStyle={{ flex: 1 }}
+                source={this.state.photo.url}
+                onLoad={() => {
+                  this.animation.stopAnimation();
+                  this.setState({ loaded: true });
+                }}
+              >
+                <View style={{ flex: 1, zIndex: 6 }}>
+                  <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end' }}>
+                    {this.renderDistance()}
 
-                  <View style={voteContainerStyle}>
-                    <Text style={voteTextStyle}>
-                      {this.state.votecount.toString()}
-                    </Text>
-                    <TouchableOpacity onPress={() => this.renderDownvote()}>
-                      <Ionicon
-                        name='ios-arrow-down'
-                        size={40}
-                        color={downvoteColor}
-                        backgroundColor='transparent'
-                        style={{ marginRight: 10, marginVertical: 0 }}
-                      />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.renderUpvote()}>
-                      <Ionicon
-                        name='ios-arrow-up'
-                        size={40}
-                        color={upvoteColor}
-                        backgroundColor='transparent'
-                        style={{ marginRight: 20, marginVertical: 0 }}
-                      />
-                    </TouchableOpacity>
+                    <View style={voteContainerStyle}>
+                      <Text style={voteTextStyle}>
+                        {this.state.votecount.toString()}
+                      </Text>
+                      <TouchableOpacity onPress={() => this.renderDownvote()}>
+                        <Ionicon
+                          name='ios-arrow-down'
+                          size={40}
+                          color={downvoteColor}
+                          backgroundColor='transparent'
+                          style={{ marginRight: 10, marginVertical: 0 }}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => this.renderUpvote()}>
+                        <Ionicon
+                          name='ios-arrow-up'
+                          size={40}
+                          color={upvoteColor}
+                          backgroundColor='transparent'
+                          style={{ marginRight: 20, marginVertical: 0 }}
+                        />
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
-              </View>
-            </GradientImage>
+              </GradientImage>
+            </Animatable.View>
           </View>
         </RestaurantModal>
       </View>

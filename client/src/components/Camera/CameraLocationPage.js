@@ -180,7 +180,7 @@ class CameraLocationPage extends Component {
     rlist = rlist.filter(restaurant => {
       const arr = restaurant.name.toLowerCase().split(' ');
       for (const word of arr) {
-        if (word.startsWith(current)) return true;
+        if (word.includes(current)) return true;
       }
       return false;
     });
