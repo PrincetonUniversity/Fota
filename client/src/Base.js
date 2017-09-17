@@ -16,11 +16,12 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View, Text, AsyncStorage, Alert, StatusBar, Dimensions, BackHandler } from 'react-native';
+import { View, AsyncStorage, Alert, StatusBar, Dimensions, BackHandler } from 'react-native';
 import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
 import Permissions from 'react-native-permissions';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
+import { MissingPermission } from './components/common';
 import LoginPage from './components/Account/LoginPage';
 import HomePage from './components/Photo/HomePage';
 import ProfileHelper from './components/Profile/ProfileHelper';
@@ -75,7 +76,7 @@ class Base extends Component {
       } else if (response === 'undetermined') {
         this.requestLocationPermission();
       } else {
-        this.setState({ location: false });
+        this.props.setPermission({ location: false });
       }
     });
   }
@@ -90,9 +91,9 @@ class Base extends Component {
   requestLocationPermission() {
     Permissions.request('location').then(response => {
       if (response === 'authorized') {
-        this.setState({ location: true });
+        this.props.setPermission({ location: true });
       } else {
-        this.setState({ location: false });
+        this.props.setPermission({ location: false });
       }
     });
   }
@@ -133,12 +134,7 @@ class Base extends Component {
               </View>
             );
           case false:
-            return (
-              <View style={{ flex: 1 }}>
-                <StatusBar hidden={false} />
-                <Text>Fota needs your location!</Text>
-              </View>
-            );
+            return <MissingPermission type='location' />;
           default:
             return null;
         }

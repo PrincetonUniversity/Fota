@@ -23,10 +23,16 @@ import { loginStyles } from './LoginPage';
 import { Spinner, Button } from '../common';
 
 class LoginForm extends Component {
-  state = { email: '', pass: '', error: '', loading: false, fbLoading: false };
+  constructor(props) {
+    super(props);
+    this.state = { email: '', pass: '', error: '', loading: false, fbLoading: false };
+    this.deactivateButtons = false;
+  }
 
   onLoginButtonPress() {
-    if (this.state.fbLoading || this.state.loading) return;
+    if (this.deactivateButtons) return;
+    this.deactivateButtons = true;
+    //if (this.state.fbLoading || this.state.loading) return;
     const { email, pass } = this.state;
     this.setState({ error: '', loading: true });
     firebase.auth().signInWithEmailAndPassword(email, pass)
@@ -56,6 +62,7 @@ class LoginForm extends Component {
   }
 
   pressBackButton() {
+    if (this.deactivateButtons) return;
     if (this.props.screenProps.anonymousAccount) {
       this.props.screenProps.onSkip();
     } else {
@@ -106,6 +113,8 @@ class LoginForm extends Component {
             <Button
               style={{ marginTop: 8, marginBottom: 20 }}
               onPress={() => {
+                if (this.deactivateButtons) return;
+                this.deactivateButtons = true;
                 this.setState({ fbLoading: true });
                 this.props.screenProps.logInWithFacebook();
               }}

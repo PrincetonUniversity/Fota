@@ -13,9 +13,13 @@
 import React, { Component } from 'react';
 import { View, BackHandler } from 'react-native';
 import { StackNavigator } from 'react-navigation';
+import Permissions from 'react-native-permissions';
 import { connect } from 'react-redux';
 import CameraPage from './CameraPage';
 import CameraLocationPage from './CameraLocationPage';
+import { MissingPermission } from '../common';
+import { setPermission } from '../../actions';
+
 
 class CameraNavigator extends Component {
   static navigationOptions = {
@@ -34,6 +38,15 @@ class CameraNavigator extends Component {
       });
     }
     this.backhandler = BackHandler.addEventListener('hardwareBackPress', this.pressBack.bind(this));
+    Permissions.check('photo').then(response => {
+      if (response === 'authorized') {
+        this.props.setPermission({ photo: true });
+      } else if (response === 'undetermined') {
+        this.requestCameraPermission();
+      } else {
+        this.props.setPermission({ photo: false });
+      }
+    });
   }
 
   componentWillUnmount() {
@@ -45,17 +58,34 @@ class CameraNavigator extends Component {
     return true;
   }
 
+  requestCameraPermission() {
+    Permissions.request('photo').then(response => {
+      if (response === 'authorized') {
+        this.props.setPermission({ photo: true });
+      } else {
+        this.props.setPermission({ photo: false });
+      }
+    });
+  }
+
   render() {
     if (!this.props.loginState || this.props.loginState.isAnonymous) {
       return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
     }
-    return (
-      <View style={{ flex: 1 }}>
-        <CameraNav
-          screenProps={this.screenProps}
-        />
-      </View>
-    );
+    switch (this.props.permissions.photo) {
+      case true:
+        return (
+          <View style={{ flex: 1 }}>
+            <CameraNav
+              screenProps={this.screenProps}
+            />
+          </View>
+        );
+      case false:
+        return <MissingPermission type='camera' />;
+      default:
+        return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
+    }
   }
 }
 
@@ -72,8 +102,8 @@ const CameraNav = StackNavigator({
   cardStyle: { backgroundColor: 'white' }
 });
 
-function mapStateToProps({ loginState }) {
-  return { loginState };
+function mapStateToProps({ loginState, permissions }) {
+  return { loginState, permissions };
 }
 
-export default connect(mapStateToProps)(CameraNavigator);
+export default connect(mapStateToProps, { setPermission })(CameraNavigator);

@@ -30,16 +30,20 @@ import request from '../../helpers/axioshelper';
 import { changeNameRequest } from '../../helpers/URL';
 
 class SignupForm extends Component {
-  state = {
-    first: '',
-    last: '',
-    email: '',
-    pass: '',
-    error: '',
-    loading: false,
-    displayTop: true,
-    fbLoading: false
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      first: '',
+      last: '',
+      email: '',
+      pass: '',
+      error: '',
+      loading: false,
+      displayTop: true,
+      fbLoading: false
+    };
+    this.deactivateButtons = false;
+  }
 
   componentWillMount() {
     if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -48,7 +52,9 @@ class SignupForm extends Component {
   }
 
   onSignupButtonPress() {
-    if (this.state.fbLoading || this.state.loading) return;    
+    if (this.deactivateButtons) return;
+    this.deactivateButtons = true;
+    //if (this.state.fbLoading || this.state.loading) return;    
     const { email, pass } = this.state;
     this.setState({ error: '', loading: true });
     if (this.props.loginState && this.props.loginState.isAnonymous) {
@@ -97,6 +103,7 @@ class SignupForm extends Component {
   }
 
   pressBackButton() {
+    if (this.deactivateButtons) return;
     if (this.props.screenProps.anonymousAccount) {
       this.props.screenProps.onSkip();
     } else {
@@ -109,7 +116,11 @@ class SignupForm extends Component {
     return (
       <Button
         style={{ marginVertical: 8 }}
-        onPress={() => this.props.screenProps.onSkip()}
+        onPress={() => {
+          if (this.deactivateButtons) return;
+          this.deactivateButtons = true;
+          this.props.screenProps.onSkip();
+        }}
         colors={{ text: '#ff7f00', fill: '#fff', border: '#ff7f00' }}
         text={'Sign Up Later'}
         round
@@ -125,6 +136,8 @@ class SignupForm extends Component {
         <Button
           style={{ marginVertical: 8 }}
           onPress={() => {
+            if (this.deactivateButtons) return;
+            this.deactivateButtons = true;
             this.setState({ fbLoading: true });
             this.props.screenProps.logInWithFacebook();
           }}
