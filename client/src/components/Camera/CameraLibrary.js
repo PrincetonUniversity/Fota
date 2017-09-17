@@ -55,9 +55,9 @@ class CameraLibrary extends Component {
   requestLibraryPermission() {
     Permissions.request('photo').then(response => {
       if (response === 'authorized') {
-        this.props.setPermission({ camera: true });
+        this.props.setPermission({ photo: true });
       } else {
-        this.props.setPermission({ camera: false });
+        this.props.setPermission({ photo: false });
       }
     });
   }
