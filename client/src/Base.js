@@ -75,7 +75,7 @@ class Base extends Component {
       } else if (response === 'undetermined') {
         this.requestLocationPermission();
       } else {
-        this.setState({ location: false });
+        this.props.setPermission({ location: false });
       }
     });
   }
@@ -90,9 +90,9 @@ class Base extends Component {
   requestLocationPermission() {
     Permissions.request('location').then(response => {
       if (response === 'authorized') {
-        this.setState({ location: true });
+        this.props.setPermission({ location: true });
       } else {
-        this.setState({ location: false });
+        this.props.setPermission({ location: false });
       }
     });
   }

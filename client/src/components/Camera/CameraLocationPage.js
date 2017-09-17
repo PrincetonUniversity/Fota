@@ -72,14 +72,17 @@ class CameraLocationPage extends Component {
       hidePhoto: false,
       saveState: -1,
       submitting: false,
-      firebaseURL: null,
-      labels: [],
       error: null,
       markForDelete: false
     };
     this.submitting = false;
     this.selectedID = null;
     this.firebaseRef = null;
+    this.firebaseRefSmall = null;
+    this.firebaseURL = null;
+    this.firebaseSmallURL = null;
+    this.reuri = null;
+    this.labels = [];
     this.lat = null;
     this.lng = null;
   }
@@ -102,16 +105,20 @@ class CameraLocationPage extends Component {
     const path = this.props.navigation.state.params.path;
     this.setState({ uploadPath: path });
     this.generateFileNames();
+    console.log('uploading big photo to firebase');
     this.uploadPhotoToFirebase(path, this.firebaseRef)
     .then(url => {
+      console.log('Finished uploading big photo to firebase. Checking big photo');
       request.post(checkPhotoRequest(), { url })
       .then(response => {
+        console.log('Finished checking big photo');
         if (this.state.markForDelete) {
           this.deletePhotoFromFirebase();
-        } else if (this.state.submitting) {
-          this.submitPhoto(url, response.data.matchingCategories);
+        } else if (this.state.submitting && this.firebaseSmallURL) {
+          this.submitPhoto(url, this.firebaseSmallURL, response.data.matchingCategories);
         } else {
-          this.setState({ firebaseURL: url, labels: response.data.matchingCategories });
+          this.firebaseURL = url;
+          this.labels = response.data.matchingCategories;
         }
       })
       .catch(e => {
@@ -124,13 +131,33 @@ class CameraLocationPage extends Component {
             request.showErrorAlert(e);
           }
         } else if (e.etype === 1 && e.response.status === 400) {
-          this.setState({ firebaseURL: url, error: e.response.data.error });
+          this.firebaseURL = url;
+          this.setState({ error: e.response.data.error });
         } else {
-          this.setState({ firebaseURL: url, error: 'OTHER' });
+          this.firebaseURL = url;
+          this.setState({ error: 'OTHER' });
         }
       });
     })
     .catch(() => cameraErrorAlert());
+
+    console.log('resizing image');
+    ImageResizer.createResizedImage(path, 250, 500, 'JPEG', 100).then(reuri => {
+      console.log('Finished resizing image. Uploading small photo to firebase');
+      this.reuri = reuri;
+      this.uploadPhotoToFirebase(reuri, this.firebaseRefSmall)
+      .then(urlSmall => {
+        console.log('Finished uploading small photo to firebase');
+        if (this.state.markForDelete) {
+          this.deletePhotoFromFirebase();
+        } else if (this.state.submitting && this.firebaseURL) {
+          this.submitPhoto(this.firebaseURL, urlSmall, this.labels);
+        } else {
+          this.firebaseSmallURL = urlSmall;
+        }
+      })
+      .catch(() => cameraErrorAlert());
+    }).catch(() => cameraErrorAlert());
   }
 
   onViewableItemsChanged = ({ viewableItems }) => {
@@ -236,42 +263,42 @@ class CameraLocationPage extends Component {
   }
 
   deletePhotoFromFirebase() {
-    if (!this.firebaseRef) return;
-    const deleteRef = firebase.storage().ref().child(this.firebaseRef);
-    deleteRef.delete();
+    if (this.firebaseRef) {
+      const deleteRef = firebase.storage().ref().child(this.firebaseRef);
+      deleteRef.delete();
+    }
+    if (this.firebaseRefSmall) {
+      const deleteSmallRef = firebase.storage().ref().child(this.firebaseRefSmall);
+      deleteSmallRef.delete();
+    }
   }
 
   pressUploadButton() {
     if (this.submitting) return;
     this.submitting = true;
     this.setState({ hidePhoto: false, submitting: true });
-    if (this.state.firebaseURL) {
+    if (this.firebaseURL) {
       if (this.state.error) {
         this.showNotFoodAlert(this.state.error);
       } else {
-        this.submitPhoto(this.state.firebaseURL, this.state.labels);
+        this.submitPhoto(this.firebaseURL, this.labels);
       }
     }
   }
 
-  submitPhoto(url, labels) {
-    ImageResizer.createResizedImage(this.state.uploadPath, 250, 500, 'JPEG', 100).then(reuri => {
-      this.uploadPhotoToFirebase(reuri, this.firebaseRefSmall)
-      .then(urlSmall => {
-        request.post(uploadPhotoRequest(), {
-          url,
-          urlSmall,
-          restaurantId: this.state.selected.id,
-          matchingCategories: labels
-        }).then(() => {
-          deleteImage(reuri);
-          this.cleanup();
-          this.props.screenProps.onCameraClose();
-          this.props.navigateToHome();
-          this.props.navigateToNew(true);
-        }).catch(error => request.showErrorAlert(error));
-      }).catch(() => cameraErrorAlert());
-    }).catch(() => cameraErrorAlert());
+  submitPhoto(url, urlSmall, labels) {
+    request.post(uploadPhotoRequest(), {
+      url,
+      urlSmall,
+      restaurantId: this.state.selected.id,
+      matchingCategories: labels
+    }).then(() => {
+      deleteImage(this.reuri);
+      this.cleanup();
+      this.props.screenProps.onCameraClose();
+      this.props.navigateToHome();
+      this.props.navigateToNew(true);
+    }).catch(error => request.showErrorAlert(error));
   }
 
   showNotFoodAlert(error) {
@@ -484,7 +511,7 @@ class CameraLocationPage extends Component {
                   style={backButtonStyle}
                   onPress={() => {
                     if (this.submitting) return;
-                    if (this.state.firebaseURL) {
+                    if (this.firebaseURL) {
                       this.deletePhotoFromFirebase();
                     } else {
                       this.setState({ markForDelete: true });
