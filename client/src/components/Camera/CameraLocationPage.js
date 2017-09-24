@@ -13,7 +13,7 @@
 import React, { Component } from 'react';
 import {
   View, Image, Text, FlatList, TouchableWithoutFeedback, CameraRoll,
-  Keyboard, TouchableOpacity, Alert, LayoutAnimation, Platform, AsyncStorage
+  Keyboard, TouchableOpacity, Alert, LayoutAnimation, Platform
 } from 'react-native';
 import { connect } from 'react-redux';
 import RNFetchBlob from 'react-native-fetch-blob';
@@ -205,13 +205,21 @@ class CameraLocationPage extends Component {
     rlist = rlist.filter(restaurant => {
       const arr = restaurant.name.toLowerCase().split(' ');
       for (const word of arr) {
-        if (word.includes(current)) return true;
+        if (word.startsWith(current) || qarr.length === 0 && word.includes(current)) return true;
       }
       return false;
     });
     rlist = rlist.slice(0, 20);
     if (rlist.length === 0) {
       this.setState({ query });
+      if (!this.lat && !this.lng) {
+        Alert.alert(
+          'Oops!',
+          'We had trouble finding your location. Please restart the app and try again.',
+          [{ text: 'OK' }]
+        );
+        return;
+      }
       const fQuery = encodeURIComponent(query);
       request.get(searchRequest(this.lat, this.lng, fQuery))
       .then(response => {
@@ -388,14 +396,14 @@ class CameraLocationPage extends Component {
           if (this.submitting) return;
           if (chosen) {
             this.setState({ selected: null, index: -1 });
-            this.updateQuery(this.state.query);
+            //this.updateQuery(this.state.query);
           } else {
             if (Platform.OS === 'ios') {
               this.handleSelectOnIOS(restaurant, index);
             } else {
               this.handleSelectOnAndroid(restaurant, index);
             }
-            this.updateQuery(this.state.query);
+            //this.updateQuery(this.state.query);
           }
         }}
       >

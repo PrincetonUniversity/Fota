@@ -35,7 +35,7 @@ class App extends Component {
   render() {
     const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
     AsyncStorage.getItem('SearchRadius').then(radius => {
-      if (radius == null) AsyncStorage.setItem('SearchRadius', '1');
+      if (radius == null) AsyncStorage.setItem('SearchRadius', '10');
     });
 
     return (

@@ -62,7 +62,7 @@ class ProfilePage extends Component {
 
   updateWithDeletedPhoto(id) {
     const newUploaded = this.state.uploaded.filter(photo => photo.id !== id);
-    //this.props.navigateToNew(false); // Update redux table !!
+    this.props.navigateToNew(false); // Update redux table !!
     this.setState({ uploaded: newUploaded });
   }
 

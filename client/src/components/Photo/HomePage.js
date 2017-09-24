@@ -16,7 +16,7 @@
 
 import React, { Component } from 'react';
 import {
-  Text, View, TouchableOpacity, Dimensions,
+  Text, View, TouchableOpacity, Dimensions, Alert,
   Platform, Modal, AsyncStorage, Image
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -123,7 +123,14 @@ class HomePage extends Component {
         const lng = position.coords.longitude;
         this.sendPhotoRequest(lat, lng);
       },
-      e => request.showErrorAlert(e),
+      e => {
+        this.setState({ refreshing: false });
+        Alert.alert(
+          'Oops!',
+          'We had trouble finding your location. Please restart the app and try again.',
+          [{ text: 'OK' }]
+        );
+      },
     /*{ enableHighAccuracy: Platform.OS === 'ios', timeout: 5000, maximumAge: 10000 }*/);
     }
   }
@@ -134,10 +141,22 @@ class HomePage extends Component {
         if (response.data.hotPhotos.length === 0) {
           this.setState({ noPhotos: true, refreshing: false });
         } else {
+          this.setState({ hotList: [], newList: [] });
           this.props.makePhotoTable(response.data.hotPhotos);
-          this.setState({ hotList: response.data.hotPhotos, newList: response.data.newPhotos, refreshing: false });
+          this.setState({
+            hotList: response.data.hotPhotos,
+            newList: response.data.newPhotos,
+            refreshing: false
+          });
         }
-      }).catch(e => request.showErrorAlert(e));
+      }).catch(e => { this.setState({ refreshing: false }); request.showErrorAlert(e); });
+    }).catch(e => {
+      this.setState({ refreshing: false });
+      Alert.alert(
+        'Oops!',
+        'Something went wrong. Please restart the app and try again.',
+        [{ text: 'OK' }]
+      );
     });
   }
 
@@ -155,10 +174,12 @@ class HomePage extends Component {
     if (this.state.filter) {
       if (this.state.filterList.length > 0) {
         return <PhotoList list={this.state.filterList} name='search' />;
-      } 
+      }
       return (
         <NotFoundText
-          text='No photos of that filter were found in your area. Try searching another term or increasing your search radius through your profile settings.'
+          text='No photos of that filter were found in your area.
+                Try searching another term or increasing your search
+                radius through your profile settings.'
         />
       );
     }

@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>We will never ask for this permission.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>We will never ask for this permission.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>We will never ask for this permission.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -30,7 +36,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>0.1.5</string>
+	<string>0.1.7</string>
 	<key>FacebookAppID</key>
 	<string>1520743691320619</string>
 	<key>FacebookDisplayName</key>
