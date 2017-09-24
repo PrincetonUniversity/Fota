@@ -339,11 +339,14 @@ class CommentDetail extends Component {
 
   render() {
     const comment = this.props.comment;
-    const rawAuthor = comment.author.split(' ');
-    const author = rawAuthor.map((name, index) => {
-      if (index === 0) return name;
-      return ` ${name[0]}.`;
-    });
+    let author = '';
+    if (comment.author) {
+      author = comment.author.split(' ').map((name, index) => {
+        if (index === 0) return name;
+        return ` ${name[0]}.`;
+      });
+    }
+
     moment.updateLocale('en', {
       relativeTime: {
         m: 'a min',

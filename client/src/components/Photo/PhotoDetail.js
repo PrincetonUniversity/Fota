@@ -70,9 +70,6 @@ class PhotoDetail extends PureComponent {
       const id = newProps.photo.id;
       if (this.props.photoTable && newProps.photoTable[id] !== this.props.photoTable[id]) {
         const photo = newProps.photoTable[id];
-        // if (photo.rest_id === 'cafe-vivian-princeton') {
-        //   console.log(photo);
-        // }
         const userHasVoted = photo.user_upvote || photo.user_downvote;
         this.setState({
           userLiked: photo.user_upvote,

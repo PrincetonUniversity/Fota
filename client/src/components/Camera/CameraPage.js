@@ -71,8 +71,8 @@ const {
 
 export function cameraErrorAlert() {
   Alert.alert(
-    'Error',
-    'Oops! Something went wrong. Please restart the app and try again.',
+    'Oops!',
+    'Something went wrong. Please restart the app and try again.',
     [{ text: 'OK' }]
   );
 }
@@ -109,7 +109,7 @@ class CameraPage extends Component {
   }
 
   resizeImage(uri, del) {
-    ImageResizer.createResizedImage(uri, 800, 1600, 'JPEG', 100).then(reuri => {
+    ImageResizer.createResizedImage(uri, 600, 1200, 'JPEG', 100).then(reuri => {
       this.props.navigation.navigate('Location', { full: uri, path: reuri, del });
       setTimeout(() => { this.pictureTaken = false; }, 200);
     }).catch(() => cameraErrorAlert());
