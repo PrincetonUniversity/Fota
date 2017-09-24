@@ -16,7 +16,7 @@
 
 import React, { Component } from 'react';
 import {
-  View, Dimensions, StatusBar, TouchableOpacity,
+  View, Dimensions, StatusBar, TouchableOpacity, ImageEditor,
   Alert, UIManager, LayoutAnimation
 } from 'react-native';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
@@ -110,9 +110,18 @@ class CameraPage extends Component {
 
   resizeImage(uri, del) {
     ImageResizer.createResizedImage(uri, 600, 1200, 'JPEG', 100).then(reuri => {
-      this.props.navigation.navigate('Location', { full: uri, path: reuri, del });
-      setTimeout(() => { this.pictureTaken = false; }, 200);
-    }).catch(() => cameraErrorAlert());
+      ImageEditor.cropImage(reuri, {
+          offset: { x: 0, y: 0 },
+          size: { width: 600, height: 600 }
+        },
+        uri2 => {
+          console.log(uri2);
+          this.props.navigation.navigate('Location', { full: uri, path: uri2, del });
+          setTimeout(() => { this.pictureTaken = false; }, 200);
+        },
+        (e) => console.log(e)
+      );
+    }).catch((e) => { console.log(e); cameraErrorAlert(); });
   }
 
   renderCamera() {

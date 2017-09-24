@@ -53,10 +53,10 @@ const deleteImage = (path) => {
   .then((result) => {
     if (result) {
       return RNFetchBlob.fs.unlink(filepath)
-      .catch(() => cameraErrorAlert());
+      .catch((e) => { console.log(e); cameraErrorAlert(); });
     }
   })
-  .catch(() => cameraErrorAlert());
+  .catch((e) => { console.log(e); cameraErrorAlert(); });
 };
 
 class CameraLocationPage extends Component {
@@ -105,6 +105,8 @@ class CameraLocationPage extends Component {
     const path = this.props.navigation.state.params.path;
     this.setState({ uploadPath: path });
     this.generateFileNames();
+    console.log(this.firebaseRef);
+    console.log(path);
     this.uploadPhotoToFirebase(path, this.firebaseRef)
     .then(url => {
       request.post(checkPhotoRequest(), { url })
@@ -136,7 +138,7 @@ class CameraLocationPage extends Component {
         }
       });
     })
-    .catch(() => cameraErrorAlert());
+    .catch((e) => { console.log(e); cameraErrorAlert(); });
     ImageResizer.createResizedImage(path, 250, 500, 'JPEG', 100).then(reuri => {
       this.reuri = reuri;
       this.uploadPhotoToFirebase(reuri, this.firebaseRefSmall)
@@ -149,8 +151,8 @@ class CameraLocationPage extends Component {
           this.firebaseSmallURL = urlSmall;
         }
       })
-      .catch(() => cameraErrorAlert());
-    }).catch(() => cameraErrorAlert());
+      .catch((e) => { console.log(e); cameraErrorAlert(); });
+    }).catch((e) => { console.log(e); cameraErrorAlert(); });
   }
 
   onViewableItemsChanged = ({ viewableItems }) => {
@@ -172,14 +174,14 @@ class CameraLocationPage extends Component {
 
   sendLocationRequest(lat, lng) {
     request.get(nearbyRestRequest(lat, lng)).then(response => {
-      this.totalList = response.data;        
+      this.totalList = response.data;
       if (this.props.lastUploaded) {
         const now = new Date();
         if (now.getTime() - this.props.lastUploaded.time <= 300000) {
           this.setState({ selected: this.props.lastUploaded.restaurant });
         }
       }
-      this.updateQuery('');        
+      this.updateQuery('');
     })
     .catch(e => request.showErrorAlert(e));
   }
@@ -332,8 +334,9 @@ class CameraLocationPage extends Component {
     this.setState({ saveState: 0 });
     CameraRoll.saveToCameraRoll(this.props.navigation.state.params.full)
     .then(() => this.setState({ saveState: 1 }))
-    .catch(() => {
+    .catch((e) => {
       this.setState({ saveState: -1 });
+      console.log(e);
       cameraErrorAlert();
     });
   }
@@ -503,7 +506,6 @@ class CameraLocationPage extends Component {
   }
 
   render() {
-    console.log(this.state);
     if (this.state.uploadPath) {
       let listHeight = rDisplayHeight * 4;
       if (this.state.hidePhoto) {
