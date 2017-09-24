@@ -13,7 +13,7 @@
 import React, { Component } from 'react';
 import {
   View, Image, Text, FlatList, TouchableWithoutFeedback, CameraRoll,
-  Keyboard, TouchableOpacity, Alert, LayoutAnimation, Platform
+  Keyboard, TouchableOpacity, Alert, LayoutAnimation, Platform, AsyncStorage
 } from 'react-native';
 import { connect } from 'react-redux';
 import RNFetchBlob from 'react-native-fetch-blob';
@@ -25,6 +25,7 @@ import firebase from 'firebase';
 import uuid from 'uuid/v1';
 import { Header, Button, Input, Spinner } from '../common';
 import { cameraErrorAlert } from './CameraPage';
+import { setLastUploaded } from '../../actions';
 import request from '../../helpers/axioshelper';
 import {
   nearbyRestRequest, checkPhotoRequest, uploadPhotoRequest, searchRequest
@@ -65,7 +66,6 @@ class CameraLocationPage extends Component {
       uploadPath: null,
       query: '',
       rlist: [],
-      totalList: [],
       selected: null,
       index: -1,
       nearBottom: false,
@@ -75,8 +75,8 @@ class CameraLocationPage extends Component {
       error: null,
       markForDelete: false
     };
+    this.totalList = [];
     this.submitting = false;
-    this.selectedID = null;
     this.firebaseRef = null;
     this.firebaseRefSmall = null;
     this.firebaseURL = null;
@@ -171,16 +171,21 @@ class CameraLocationPage extends Component {
   }
 
   sendLocationRequest(lat, lng) {
-    request.get(nearbyRestRequest(lat, lng))
-    .then(response => {
-      this.setState({ totalList: response.data });
-      this.updateQuery('');
+    request.get(nearbyRestRequest(lat, lng)).then(response => {
+      this.totalList = response.data;        
+      if (this.props.lastUploaded) {
+        const now = new Date();
+        if (now.getTime() - this.props.lastUploaded.time <= 300000) {
+          this.setState({ selected: this.props.lastUploaded.restaurant });
+        }
+      }
+      this.updateQuery('');        
     })
     .catch(e => request.showErrorAlert(e));
   }
 
   updateQuery(query) {
-    let rlist = this.state.totalList;
+    let rlist = this.totalList;
     const qarr = query.toLowerCase().split(' ');
     if (qarr.length === 0 || qarr[0] === '') {
       rlist = rlist.slice(0, 20);
@@ -283,9 +288,15 @@ class CameraLocationPage extends Component {
     request.post(uploadPhotoRequest(), {
       url,
       urlSmall,
-      restaurantId: this.state.selected.id,
+      restaurantId: this.state.selected,
       matchingCategories: labels
     }).then(() => {
+      const now = new Date();
+      console.log('setting');
+      this.props.setLastUploaded({
+        time: now.getTime(),
+        restaurant: this.state.selected
+      });
       deleteImage(this.reuri);
       this.cleanup();
       this.props.screenProps.onCameraClose();
@@ -353,12 +364,12 @@ class CameraLocationPage extends Component {
         this.flatListRef.scrollToIndex({ animated: true, index });
       }
     }
-    this.setState({ selected: restaurant, index, hidePhoto: false });
+    this.setState({ selected: restaurant.id, index, hidePhoto: false });
   }
 
   handleSelectOnAndroid(restaurant, index) {
     const needTimeout = (this.state.hidePhoto && this.state.rlist.length > 4 && index > this.state.rlist.length - 4);
-    this.setState({ selected: restaurant, index, hidePhoto: false });
+    this.setState({ selected: restaurant.id, index, hidePhoto: false });
     if (needTimeout) {
       setTimeout(() => {
         this.flatListRef.scrollToIndex({ animated: true, index });
@@ -377,7 +388,6 @@ class CameraLocationPage extends Component {
           if (this.submitting) return;
           if (chosen) {
             this.setState({ selected: null, index: -1 });
-            this.selectedID = null;
             this.updateQuery(this.state.query);
           } else {
             if (Platform.OS === 'ios') {
@@ -385,7 +395,6 @@ class CameraLocationPage extends Component {
             } else {
               this.handleSelectOnAndroid(restaurant, index);
             }
-            this.selectedID = restaurant.id;
             this.updateQuery(this.state.query);
           }
         }}
@@ -486,6 +495,7 @@ class CameraLocationPage extends Component {
   }
 
   render() {
+    console.log(this.state);
     if (this.state.uploadPath) {
       let listHeight = rDisplayHeight * 4;
       if (this.state.hidePhoto) {
@@ -564,7 +574,7 @@ class CameraLocationPage extends Component {
                   keyExtractor={restaurant => restaurant.id}
                   renderItem={restaurant => this.renderRestaurant(
                     restaurant.item,
-                    restaurant.item.id === this.selectedID,
+                    restaurant.item.id === this.state.selected,
                     restaurant.index
                   )}
                   getItemLayout={(data, index) => (
@@ -730,8 +740,8 @@ const {
   restaurantSubtextStyle
 } = styles;
 
-function mapStateToProps({ loginState, browsingPrinceton, navigateToHome, navigateToNew }) {
-  return { loginState, browsingPrinceton, navigateToHome, navigateToNew };
+function mstp({ loginState, browsingPrinceton, navigateToHome, navigateToNew, lastUploaded }) {
+  return { loginState, browsingPrinceton, navigateToHome, navigateToNew, lastUploaded };
 }
 
-export default connect(mapStateToProps)(CameraLocationPage);
+export default connect(mstp, { setLastUploaded })(CameraLocationPage);

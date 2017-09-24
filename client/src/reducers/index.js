@@ -8,6 +8,7 @@ import ListsReducer from './scrollingList';
 import HomeNavReducer from './navigateToNew';
 import BaseNavReducer from './navigateToHome';
 import PermissionReducer from './permission';
+import LastUploadReducer from './lastUploaded';
 
 export default combineReducers({
     loginState: LoginReducer,
@@ -18,5 +19,6 @@ export default combineReducers({
     lists: ListsReducer,
     navigateToNew: HomeNavReducer,
     navigateToHome: BaseNavReducer,
-    permissions: PermissionReducer
+    permissions: PermissionReducer,
+    lastUploaded: LastUploadReducer
 });
