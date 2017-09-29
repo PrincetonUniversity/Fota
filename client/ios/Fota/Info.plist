@@ -2,12 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>We will never ask for this permission.</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>We will never ask for this permission.</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>We will never ask for this permission.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -36,7 +30,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>0.1.7</string>
+	<string>0.1.11</string>
 	<key>FacebookAppID</key>
 	<string>1520743691320619</string>
 	<key>FacebookDisplayName</key>
@@ -61,12 +55,18 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>We will never ask for this permission.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>We will never ask for this permission.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Upload photos to Fota!</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>See the best food around you!</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Upload photos from your camera library to Fota!</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>We will never ask for this permission.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
