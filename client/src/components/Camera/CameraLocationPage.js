@@ -12,7 +12,7 @@
 
 import React, { Component } from 'react';
 import {
-  View, Image, Text, FlatList, TouchableWithoutFeedback, CameraRoll, ImageEditor,
+  View, Image, Text, FlatList, TouchableWithoutFeedback, CameraRoll, ImageStore,
   Keyboard, TouchableOpacity, Alert, LayoutAnimation, Platform
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -137,7 +137,7 @@ class CameraLocationPage extends Component {
         }
       });
     })
-    .catch((e) => { cameraErrorAlert(); });
+    .catch((e) => { console.log(e); cameraErrorAlert(); });
     ImageResizer.createResizedImage(path, 250, 500, 'JPEG', 100).then(reuri => {
       this.reuri = reuri;
       this.uploadPhotoToFirebase(reuri, this.firebaseRefSmall)
@@ -168,7 +168,11 @@ class CameraLocationPage extends Component {
     if (this.props.navigation.state.params.del) {
       deleteImage(this.props.navigation.state.params.full);
     }
-    deleteImage(this.state.uploadPath);
+    if (this.state.uploadPath.startsWith('rct-image-store')) {
+      ImageStore.removeImageForTag(this.state.uploadPath);
+    } else {
+      deleteImage(this.state.uploadPath);
+    }
   }
 
   sendLocationRequest(lat, lng) {
@@ -250,25 +254,49 @@ class CameraLocationPage extends Component {
     return new Promise((resolve, reject) => {
       let uploadBlob = null;
       const imageRef = firebase.storage().ref().child(firebasePath);
-      fs.readFile(filepath, 'base64')
-        .then((data) => (
-           Blob.build(data, { type: `x${mime};BASE64` })
-        ))
-        .then((blob) => {
-          uploadBlob = blob;
-          return imageRef.put(blob, { contentType: mime });
-        })
-        .then(() => {
-          uploadBlob.close();
-          return imageRef.getDownloadURL();
-        })
-        .then((url) => {
-          resolve(url);
-        })
-        .catch((error) => {
-          console.log(error);
-          reject(error);
-        });
+      if (path.startsWith('rct-image-store')) {
+        ImageStore.getBase64ForTag(path,
+          (data) => {
+            Blob.build(data, { type: `x${mime};BASE64` })
+            .then((blob) => {
+              uploadBlob = blob;
+              return imageRef.put(blob, { contentType: mime });
+            })
+            .then(() => {
+              uploadBlob.close();
+              return imageRef.getDownloadURL();
+            })
+            .then((url) => {
+              resolve(url);
+            })
+            .catch((error) => {
+              console.log(error);
+              reject(error);
+            });
+          },
+        (e) => console.log(e)
+        );
+      } else {
+        fs.readFile(filepath, 'base64')
+          .then((data) => (
+             Blob.build(data, { type: `x${mime};BASE64` })
+          ))
+          .then((blob) => {
+            uploadBlob = blob;
+            return imageRef.put(blob, { contentType: mime });
+          })
+          .then(() => {
+            uploadBlob.close();
+            return imageRef.getDownloadURL();
+          })
+          .then((url) => {
+            resolve(url);
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
+          });
+      }
     });
   }
 
