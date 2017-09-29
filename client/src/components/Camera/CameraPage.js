@@ -16,8 +16,8 @@
 
 import React, { Component } from 'react';
 import {
-  View, Dimensions, StatusBar, TouchableOpacity, ImageEditor,
-  Alert, UIManager, LayoutAnimation
+  View, Dimensions, StatusBar, TouchableOpacity, ImageEditor, ImageStore,
+  Alert, UIManager, LayoutAnimation, Image, NativeModules
 } from 'react-native';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import { TabNavigator, TabBarTop } from 'react-navigation';
@@ -110,16 +110,27 @@ class CameraPage extends Component {
 
   resizeImage(uri, del) {
     ImageResizer.createResizedImage(uri, 600, 1200, 'JPEG', 100).then(reuri => {
-      ImageEditor.cropImage(reuri, {
-          offset: { x: 0, y: 0 },
-          size: { width: 600, height: 600 }
-        },
-        uri2 => {
-          console.log(uri2);
-          this.props.navigation.navigate('Location', { full: uri, path: uri2, del });
-          setTimeout(() => { this.pictureTaken = false; }, 200);
-        },
-        (e) => console.log(e)
+      Image.getSize(reuri,
+        (height, width) => {
+          ImageEditor.cropImage(reuri, {
+              offset: { x: height / 2 - 300, y: width / 2 - 300 },
+              size: { width: 600, height: 600 },
+              //displaySize: { width: 600, height: 600 },
+              resizeMode: 'contain'
+            },
+            uri2 => {
+              // Image.RCTImageStoreManager.getImageDataForTag(uri2,
+              //   success => {
+              //     console.log(success);
+              //   },
+              //   e => console.log(e)
+              // );
+              this.props.navigation.navigate('Location', { full: uri, path: uri2, del });
+              setTimeout(() => { this.pictureTaken = false; }, 200);
+            },
+            (e) => console.log(e)
+          );
+        }
       );
     }).catch((e) => { console.log(e); cameraErrorAlert(); });
   }

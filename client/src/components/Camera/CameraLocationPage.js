@@ -12,7 +12,7 @@
 
 import React, { Component } from 'react';
 import {
-  View, Image, Text, FlatList, TouchableWithoutFeedback, CameraRoll,
+  View, Image, Text, FlatList, TouchableWithoutFeedback, CameraRoll, ImageEditor,
   Keyboard, TouchableOpacity, Alert, LayoutAnimation, Platform
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -106,7 +106,6 @@ class CameraLocationPage extends Component {
     this.setState({ uploadPath: path });
     this.generateFileNames();
     console.log(this.firebaseRef);
-    console.log(path);
     this.uploadPhotoToFirebase(path, this.firebaseRef)
     .then(url => {
       request.post(checkPhotoRequest(), { url })
@@ -138,7 +137,7 @@ class CameraLocationPage extends Component {
         }
       });
     })
-    .catch((e) => { console.log(e); cameraErrorAlert(); });
+    .catch((e) => { cameraErrorAlert(); });
     ImageResizer.createResizedImage(path, 250, 500, 'JPEG', 100).then(reuri => {
       this.reuri = reuri;
       this.uploadPhotoToFirebase(reuri, this.firebaseRefSmall)
@@ -245,13 +244,15 @@ class CameraLocationPage extends Component {
   }
 
   uploadPhotoToFirebase(path, firebasePath, mime = 'image/jpg') {
+    console.log(path);
     const filepath = path.replace(/^(file:)/, '');
+    //const filepath = ImageEditor.getImageDataForTag(path);
     return new Promise((resolve, reject) => {
       let uploadBlob = null;
       const imageRef = firebase.storage().ref().child(firebasePath);
       fs.readFile(filepath, 'base64')
         .then((data) => (
-           Blob.build(data, { type: `${mime};BASE64` })
+           Blob.build(data, { type: `x${mime};BASE64` })
         ))
         .then((blob) => {
           uploadBlob = blob;
@@ -265,8 +266,9 @@ class CameraLocationPage extends Component {
           resolve(url);
         })
         .catch((error) => {
+          console.log(error);
           reject(error);
-      });
+        });
     });
   }
 
