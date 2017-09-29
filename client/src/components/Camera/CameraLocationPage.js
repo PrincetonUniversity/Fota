@@ -105,7 +105,6 @@ class CameraLocationPage extends Component {
     const path = this.props.navigation.state.params.path;
     this.setState({ uploadPath: path });
     this.generateFileNames();
-    console.log(this.firebaseRef);
     this.uploadPhotoToFirebase(path, this.firebaseRef)
     .then(url => {
       request.post(checkPhotoRequest(), { url })
@@ -248,9 +247,7 @@ class CameraLocationPage extends Component {
   }
 
   uploadPhotoToFirebase(path, firebasePath, mime = 'image/jpg') {
-    console.log(path);
     const filepath = path.replace(/^(file:)/, '');
-    //const filepath = ImageEditor.getImageDataForTag(path);
     return new Promise((resolve, reject) => {
       let uploadBlob = null;
       const imageRef = firebase.storage().ref().child(firebasePath);
@@ -270,7 +267,6 @@ class CameraLocationPage extends Component {
               resolve(url);
             })
             .catch((error) => {
-              console.log(error);
               reject(error);
             });
           },
@@ -293,7 +289,6 @@ class CameraLocationPage extends Component {
             resolve(url);
           })
           .catch((error) => {
-            console.log(error);
             reject(error);
           });
       }
@@ -332,7 +327,6 @@ class CameraLocationPage extends Component {
       matchingCategories: labels
     }).then(() => {
       const now = new Date();
-      console.log('setting');
       this.props.setLastUploaded({
         time: now.getTime(),
         restaurant: this.state.selected

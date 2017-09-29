@@ -16,8 +16,8 @@
 
 import React, { Component } from 'react';
 import {
-  View, Dimensions, StatusBar, TouchableOpacity, ImageEditor, ImageStore,
-  Alert, UIManager, LayoutAnimation, Image, NativeModules
+  View, Dimensions, StatusBar, TouchableOpacity, ImageEditor,
+  Alert, UIManager, LayoutAnimation, Image, Platform
 } from 'react-native';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import { TabNavigator, TabBarTop } from 'react-navigation';
@@ -110,28 +110,26 @@ class CameraPage extends Component {
 
   resizeImage(uri, del) {
     ImageResizer.createResizedImage(uri, 600, 1200, 'JPEG', 100).then(reuri => {
-      Image.getSize(reuri,
-        (height, width) => {
-          ImageEditor.cropImage(reuri, {
-              offset: { x: height / 2 - 300, y: width / 2 - 300 },
-              size: { width: 600, height: 600 },
-              //displaySize: { width: 600, height: 600 },
-              resizeMode: 'contain'
-            },
-            uri2 => {
-              // Image.RCTImageStoreManager.getImageDataForTag(uri2,
-              //   success => {
-              //     console.log(success);
-              //   },
-              //   e => console.log(e)
-              // );
-              this.props.navigation.navigate('Location', { full: uri, path: uri2, del });
-              setTimeout(() => { this.pictureTaken = false; }, 200);
-            },
-            (e) => console.log(e)
-          );
-        }
-      );
+      if (!del && Platform.OS === 'android') {
+        this.props.navigation.navigate('Location', { full: uri, path: reuri, del });
+        setTimeout(() => { this.pictureTaken = false; }, 200);
+      } else {
+        Image.getSize(reuri,
+          (height, width) => {
+            ImageEditor.cropImage(reuri, {
+                offset: { x: height / 2 - 300, y: width / 2 - 300 },
+                size: { width: 600, height: 600 },
+              },
+              uri2 => {
+                this.props.navigation.navigate('Location', { full: uri, path: uri2, del });
+                setTimeout(() => { this.pictureTaken = false; }, 200);
+              },
+              (e) => console.log(e)
+            );
+          },
+          (e) => console.log(e)
+        );
+      }
     }).catch((e) => { console.log(e); cameraErrorAlert(); });
   }
 
@@ -199,7 +197,7 @@ const PictureNavigator = TabNavigator({
   tabBarComponent: TabBarTop,
   swipeEnabled: false,
   animationEnabled: false,
-  lazy: true,
+  //lazy: true,
   backBehavior: 'none',
   tabBarOptions: {
     showIcon: true,
