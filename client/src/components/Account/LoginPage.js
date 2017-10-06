@@ -12,7 +12,7 @@
  ******************************************************************************/
 
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Alert } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import firebase from 'firebase';
 import LoginWelcome from './LoginWelcome';
@@ -48,20 +48,33 @@ class LoginPage extends Component {
     }
   }
 
-  logInWithFacebook() {
+  logInWithFacebook(onFail) {
     FBLoginManager.loginWithPermissions(['email'], (error, data) => {
       if (!error) {
         const credential = firebase.auth.FacebookAuthProvider.credential(data.credentials.token);
         firebase.auth().signInWithCredential(credential)
         .then(user => {
           request.patch(changeNameRequest(encodeURIComponent(user.displayName), user.uid))
-            .catch(e => request.showErrorAlert(e));
+            .catch(() => request.showErrorAlert({
+              etype: -1,
+              title: 'Setting Name Error',
+              text: 'You should never see this error. If you do, please let us know immediately.' 
+            }));
           if (this.screenProps.onLoginFinished) this.screenProps.onLoginFinished();          
-        }).catch(() => { /* handle error */ });
+        }).catch(e => { this.facebookErrorAlert(e, onFail); });
       } else {
-        // handle error
+        this.facebookErrorAlert(error, onFail);
       }
     });
+  }
+
+  facebookErrorAlert(error, onFail) {
+    console.log(error);
+    Alert.alert(
+      'Login Error',
+      'We had some trouble logging you in with Facebook.',
+      [{ text: 'OK', onPress: () => onFail() }]
+    );
   }
 
   render() {
@@ -71,7 +84,7 @@ class LoginPage extends Component {
         <View style={{ flex: 1, backgroundColor: '#fff' }}>
           <SignupNavigator
             screenProps={{
-              logInWithFacebook: () => this.logInWithFacebook(),
+              logInWithFacebook: (onFail) => this.logInWithFacebook(onFail),
               anonymousAccount: true,
               ...this.screenProps
             }}
@@ -84,7 +97,7 @@ class LoginPage extends Component {
         <View style={{ flex: 1, backgroundColor: '#fff' }}>
           <LoginNavigator
             screenProps={{
-              logInWithFacebook: () => this.logInWithFacebook(),
+              logInWithFacebook: (onFail) => this.logInWithFacebook(onFail),
               anonymousAccount: true,
               ...this.screenProps
             }}
@@ -96,7 +109,7 @@ class LoginPage extends Component {
       <View style={{ flex: 1, backgroundColor: '#fff' }}>
         <FullNavigator
           screenProps={{
-            logInWithFacebook: () => this.logInWithFacebook(),
+            logInWithFacebook: (onFail) => this.logInWithFacebook(onFail),
             anonymousAccount: false,
             ...this.screenProps
           }}

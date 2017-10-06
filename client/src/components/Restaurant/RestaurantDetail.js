@@ -90,6 +90,7 @@ class RestaurantDetail extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.restaurant !== this.props.restaurant) {
       const r = nextProps.restaurant;
+      const m = nextProps.mapsData || { walking: true, distance: '', walkTime: '--', driveTime: '--' };
       this.photosHeight = Math.ceil(r.photos.length / 3) * PHOTO_HEIGHT + 5;
       this.commentsHeight = 0;
       this.currentPhotoScrollPosition = 0;
@@ -99,10 +100,10 @@ class RestaurantDetail extends Component {
         restaurant: r,
         photos: r.photos,
         comments: nextProps.comments,
-        walking: nextProps.mapsData.walking,
-        distance: nextProps.mapsData.distance,
-        walkTime: nextProps.mapsData.walkTime,
-        driveTime: nextProps.mapsData.driveTime,
+        walking: m.walking,
+        distance: m.distance,
+        walkTime: m.walkTime,
+        driveTime: m.driveTime,
         userBookmarked: r.user_bookmarked,
         yesCount: r.recommend_yes_count,
         noCount: r.recommend_no_count,
@@ -405,6 +406,9 @@ class RestaurantDetail extends Component {
 
   renderHeader(headerScrollDistance, pageY) {
     const restaurant = this.state.restaurant;
+    const addressString = this.state.distance.length > 0 ?
+      `${restaurant.location.display_address[0]} | ${this.state.distance}` :
+      `${restaurant.location.display_address[0]}`;
     const nameTranslateY = this.state.scrollY.interpolate({
       inputRange: [0, headerScrollDistance],
       outputRange: [0, headerScrollDistance / 3 * 0.5],
@@ -434,7 +438,7 @@ class RestaurantDetail extends Component {
             >
               <Animated.View style={[titleContainerStyle, { opacity }]}>
                 <Text style={addressStyle}>
-                  {`${restaurant.location.display_address[0]} | ${this.state.distance}`}
+                  {addressString}
                 </Text>
               </Animated.View>
 

@@ -18,6 +18,7 @@ import { connect } from 'react-redux';
 import Modal from 'react-native-modal';
 import RestaurantDetail from './RestaurantDetail';
 import request from '../../helpers/axioshelper';
+import location from '../../helpers/geohelper';
 import { restRequest, restCommentRequest, directionsRequest, coordinateRequest } from '../../helpers/URL';
 import { pcoords } from '../../Base';
 
@@ -82,13 +83,15 @@ class RestaurantModal extends Component {
     if (this.props.browsingPrinceton) {
       this.sendNavigationRequest(pcoords.lat, pcoords.lng);
     } else {
-      navigator.geolocation.getCurrentPosition(position => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        this.sendNavigationRequest(lat, lng);
-      },
-      e => request.showErrorAlert(e),
-      /*{ enableHighAccuracy: Platform.OS === 'ios', timeout: 5000, maximumAge: 10000 }*/);
+      location.get(
+        position => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          this.sendNavigationRequest(lat, lng);
+        },
+        () => this.sendNavigationRequestWithoutLocation(),
+        false
+      );
     }
     //this.setModalVisible(true);
     Animated.timing(this.state.position, {
@@ -119,8 +122,22 @@ class RestaurantModal extends Component {
           loading: false,
           mapsData: { walking: showWalk, walkTime, driveTime, distance }
         });
-      }).catch(e => request.showErrorAlert(e));
-    }).catch(e => request.showErrorAlert(e));
+      }).catch(e => { request.showErrorAlert(e, () => this.setState({ modalVisible: false })); });
+    }).catch(e => { request.showErrorAlert(e, () => this.setState({ modalVisible: false })); });
+  }
+
+  sendNavigationRequestWithoutLocation() {
+    const promises = [
+      request.get(restRequest(this.props.restaurantid)),
+      request.get(restCommentRequest(this.props.restaurantid)),
+    ];
+    Promise.all(promises).then(result => {
+      this.setState({
+        restaurant: result[0].data,
+        comments: result[1].data,
+        loading: false,
+      });
+    }).catch(e => { request.showErrorAlert(e, () => this.setState({ modalVisible: false })); });
   }
 
   resetPosition() {
