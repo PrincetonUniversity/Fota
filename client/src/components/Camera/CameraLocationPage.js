@@ -27,6 +27,7 @@ import { Header, Button, Input, Spinner } from '../common';
 import { cameraErrorAlert } from './CameraPage';
 import { setLastUploaded } from '../../actions';
 import request from '../../helpers/axioshelper';
+import location from '../../helpers/geohelper';
 import {
   nearbyRestRequest, checkPhotoRequest, uploadPhotoRequest, searchRequest
 } from '../../helpers/URL';
@@ -73,7 +74,6 @@ class CameraLocationPage extends Component {
       saveState: -1,
       submitting: false,
       error: null,
-      markForDelete: false
     };
     this.totalList = [];
     this.submitting = false;
@@ -81,6 +81,8 @@ class CameraLocationPage extends Component {
     this.firebaseRefSmall = null;
     this.firebaseURL = null;
     this.firebaseSmallURL = null;
+    this.markForDelete = false;
+    this.markSmallForDelete = false;
     this.reuri = null;
     this.labels = [];
     this.lat = null;
@@ -91,13 +93,11 @@ class CameraLocationPage extends Component {
     if (this.props.browsingPrinceton) {
       this.sendLocationRequest(pcoords.lat, pcoords.lng);
     } else {
-      navigator.geolocation.getCurrentPosition(position => {
+      location.get(position => {
         this.lat = position.coords.latitude;
         this.lng = position.coords.longitude;
         this.sendLocationRequest(this.lat, this.lng);
-      },
-      e => request.showErrorAlert(e),
-      /*{ enableHighAccuracy: Platform.OS === 'ios', timeout: 5000, maximumAge: 10000 }*/);
+      });
     }
   }
 
@@ -109,8 +109,8 @@ class CameraLocationPage extends Component {
     .then(url => {
       request.post(checkPhotoRequest(), { url })
       .then(response => {
-        if (this.state.markForDelete) {
-          this.deletePhotoFromFirebase();
+        if (this.markForDelete) {
+          this.deletePhotoFromFirebase(false);
         } else if (this.state.submitting && this.firebaseSmallURL) {
           this.submitPhoto(url, this.firebaseSmallURL, response.data.matchingCategories);
         } else {
@@ -119,13 +119,13 @@ class CameraLocationPage extends Component {
         }
       })
       .catch(e => {
-        if (this.state.markForDelete) {
-          this.deletePhotoFromFirebase();
+        if (this.markForDelete) {
+          this.deletePhotoFromFirebase(false);
         } else if (this.state.submitting) {
           if (e.etype === 1 && e.response.status === 400) {
             this.showNotFoodAlert(e.response.data.error);
           } else {
-            request.showErrorAlert(e);
+            request.showErrorAlert(e, () => { this.cleanup(); this.props.navigation.goBack(); });
           }
         } else if (e.etype === 1 && e.response.status === 400) {
           this.firebaseURL = url;
@@ -141,8 +141,8 @@ class CameraLocationPage extends Component {
       this.reuri = reuri;
       this.uploadPhotoToFirebase(reuri, this.firebaseRefSmall)
       .then(urlSmall => {
-        if (this.state.markForDelete) {
-          this.deletePhotoFromFirebase();
+        if (this.markSmallForDelete) {
+          this.deletePhotoFromFirebase(true);
         } else if (this.state.submitting && this.firebaseURL) {
           this.submitPhoto(this.firebaseURL, urlSmall, this.labels);
         } else {
@@ -216,23 +216,11 @@ class CameraLocationPage extends Component {
     rlist = rlist.slice(0, 20);
     if (rlist.length === 0) {
       this.setState({ query });
-      if (!this.lat && !this.lng) {
-        Alert.alert(
-          'Oops!',
-          'We had trouble finding your location. Please restart the app and try again.',
-          [{ text: 'OK' }]
-        );
-        return;
-      }
+      if (!this.lat && !this.lng) return;
       const fQuery = encodeURIComponent(query);
       request.get(searchRequest(this.lat, this.lng, fQuery))
-      .then(response => {
-        this.setState({
-          rlist: response.data.restaurants,
-        });
-      })
-      .catch(e => request.showErrorAlert(e));
-      //set rlist to the search result
+      .then(response => this.setState({ rlist: response.data.restaurants }))
+      .catch(() => this.setState({ rlist: [] }));
     } else {
       this.setState({ query, rlist });
     }
@@ -295,14 +283,19 @@ class CameraLocationPage extends Component {
     });
   }
 
-  deletePhotoFromFirebase() {
-    if (this.firebaseRef) {
+  deletePhotoFromFirebase(small) {
+    if (small) {
+      if (this.firebaseRefSmall) {
+        const deleteSmallRef = firebase.storage().ref().child(this.firebaseRefSmall);
+        deleteSmallRef.getDownloadURL().then(() => {
+          deleteSmallRef.delete();
+        }).catch(() => {});
+      }
+    } else if (this.firebaseRef) {
       const deleteRef = firebase.storage().ref().child(this.firebaseRef);
-      deleteRef.delete();
-    }
-    if (this.firebaseRefSmall) {
-      const deleteSmallRef = firebase.storage().ref().child(this.firebaseRefSmall);
-      deleteSmallRef.delete();
+      deleteRef.getDownloadURL().then(() => {
+        deleteRef.delete();
+      }).catch(() => {});
     }
   }
 
@@ -336,10 +329,15 @@ class CameraLocationPage extends Component {
       this.props.screenProps.onCameraClose();
       this.props.navigateToHome();
       this.props.navigateToNew(true);
-    }).catch(error => request.showErrorAlert(error));
+    }).catch(e => request.showErrorAlert(e, () => {
+      this.cleanup();
+      this.deletePhotoFromFirebase(false);
+      this.deletePhotoFromFirebase(true);
+      this.props.navigation.goBack();
+    }));
   }
 
-  showNotFoodAlert(error) {
+  showNotFoodAlert() {
     Alert.alert(
       'Invalid Photo',
       'You may have uploaded an invalid photo. Please make sure you submit a picture of food.',
@@ -347,7 +345,8 @@ class CameraLocationPage extends Component {
         text: 'OK',
         onPress: () => {
           this.cleanup();
-          this.deletePhotoFromFirebase();
+          this.deletePhotoFromFirebase(false);
+          this.deletePhotoFromFirebase(true);
           this.props.navigation.goBack();
         }
       }]
@@ -549,9 +548,14 @@ class CameraLocationPage extends Component {
                   onPress={() => {
                     if (this.submitting) return;
                     if (this.firebaseURL) {
-                      this.deletePhotoFromFirebase();
+                      this.deletePhotoFromFirebase(false);
                     } else {
-                      this.setState({ markForDelete: true });
+                      this.markForDelete = true;
+                    }
+                    if (this.firebaseSmallURL) {
+                      this.deletePhotoFromFirebase(true);
+                    } else {
+                      this.markSmallForDelete = true;
                     }
                     this.cleanup();
                     this.props.navigation.goBack();

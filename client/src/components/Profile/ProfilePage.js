@@ -31,11 +31,10 @@ class ProfilePage extends Component {
       upvoted: [],
       uploaded: [],
       comments: [],
-      deleting: false,
       loading: true,
-      refreshing: false
+      refreshing: false,
+      noInternet: false
     };
-    this.deleting = false;
   }
 
   componentWillMount() {
@@ -58,7 +57,10 @@ class ProfilePage extends Component {
         loading: false,
         refreshing: false
       });
-    }).catch(e => request.showErrorAlert(e));
+    }).catch(e => {
+      this.setState({ loading: false, refreshing: false, noInternet: true });
+      request.showErrorAlert(e);
+    });
   }
 
   updateWithDeletedPhoto(id) {
@@ -75,7 +77,7 @@ class ProfilePage extends Component {
     let uploadInfo = 'posts';
     let upvoteInfo = 'upvotes';
     let commentInfo = 'comments';
-    if (!this.state.loading) {
+    if (!this.state.loading && !this.state.noInternet) {
       uploadtext = this.state.uploaded.length.toString();
       upvotetext = this.state.upvoted.length.toString();
       commenttext = this.state.comments.length.toString();

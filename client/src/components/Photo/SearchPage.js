@@ -25,34 +25,44 @@ import { Input, NotFoundText } from '../common';
 import RestaurantModal from '../Restaurant/RestaurantModal';
 import { pcoords } from '../../Base';
 import icoMoonConfig from '../../selection.json';
+import location from '../../helpers/geohelper';
 
 const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
 class SearchPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { lat: pcoords.lat, lng: pcoords.lng, query: '', restaurants: [], categories: [], searching: true };
+    this.state = { query: '', restaurants: [], categories: [], searching: true };
+    this.lat = pcoords.lat;
+    this.lng = pcoords.lng;
+    this.gotLocation = false;
     this.timer = null;
   }
 
 
   componentWillMount() {
     if (!this.props.browsingPrinceton) {
-      navigator.geolocation.getCurrentPosition(position => {
-        this.setState({ lat: position.coords.latitude, lng: position.coords.longitude });
-      },
-      e => request.showErrorAlert(e),
-      /*{ enableHighAccuracy: Platform.OS === 'ios', timeout: 5000, maximumAge: 10000 }*/);
+      location.get(position => {
+        this.gotLocation = true;
+        this.lat = position.coords.latitude;
+        this.lng = position.coords.longitude;
+      });
+    } else {
+      this.gotLocation = true;
     }
   }
 
   updateQuery(query) {
+    if (!this.gotLocation) {
+      this.setState({ query, restaurants: [], categories: [] });
+      return;
+    }
     this.setState({ query, restaurants: [], categories: [], searching: true });
     if (query) {
       const search = () => {
         this.timer = null;
         const fQuery = encodeURIComponent(query);
-        request.get(searchRequest(this.state.lat, this.state.lng, fQuery))
+        request.get(searchRequest(this.lat, this.lng, fQuery))
         .then(response => {
           if (this.state.query) {
             this.setState({

@@ -33,19 +33,22 @@ function isNetworkConnected() {
 function request(method, url, data, resolve, reject) {
   isNetworkConnected().then(isConnected => {
     if (isConnected) {
+      const timer = setTimeout(() => reject({ etype: 2 }), 15000);
       AsyncStorage.getItem('JWT').then((idToken) => {
         axios({ method, url, data, headers: { Authorization: `Bearer ${idToken}` } })
         .then(response => resolve(response))
         .catch(e => {
           if (e.response.status === 401) {
-            firebase.auth().currentUser.getToken(true).then((idTokenNew) => {
+            firebase.auth().currentUser.getToken(true)
+            .then((idTokenNew) => {
               AsyncStorage.setItem('JWT', idTokenNew);
               axios({ method, url, data, headers: { Authorization: `Bearer ${idTokenNew}` } })
-              .then(response => resolve(response))
-              .catch(e3 => reject({ etype: 1, ...e3 }));
+              .then(response => { clearTimeout(timer); resolve(response); })
+              .catch(e3 => { clearTimeout(timer); reject({ etype: 1, ...e3 }); });
             })
-            .catch(e2 => reject({ etype: 1, ...e2 }));
+            .catch(e2 => { clearTimeout(timer); reject({ etype: 1, ...e2 }); });
           } else {
+            clearTimeout(timer);
             reject({ etype: 1, ...e });
           }
         });
@@ -53,7 +56,7 @@ function request(method, url, data, resolve, reject) {
     } else {
       reject({ etype: 0 });
     }
-  }).catch(e => console.log(e));
+  }).catch(() => reject({ etype: 0 }));
 }
 
 const exports = module.exports = {};
@@ -94,18 +97,30 @@ exports.delete = (url, data = null) => (
   }
 };*/
 
-exports.showErrorAlert = (error) => {
-  if (error.etype === 0) {
-    Alert.alert(
-      'No Connection',
-      'You are not online right now. Please connect to the Internet and try again.',
-      [{ text: 'OK' }]
-    );
-  } else if (error.etype === 1) {
-    Alert.alert(
-      'Server Error',
-      'Something went wrong. Please try again.',
-      [{ text: 'OK' }]
-    );
+exports.showErrorAlert = (error, onPress = () => {}) => {
+  switch (error.etype) {
+    case 0:
+      Alert.alert(
+        'No Connection',
+        'You are not online right now. Please connect to the Internet and try again.',
+        [{ text: 'OK', onPress }]
+      );
+      break;
+    case 1:
+      Alert.alert(
+        'Internal Error',
+        'Something went wrong. Please restart the app and try again.',
+        [{ text: 'OK', onPress }]
+      );
+      break;
+    case 2: 
+      Alert.alert(
+        'Request Timed Out',
+        'We had some trouble reaching the server. Please check your connection and try again.',
+        [{ text: 'OK', onPress }]
+      );
+      break;
+    default:
+      Alert.alert(error.title, error.text, [{ text: 'OK', onPress }]);
   }
 };

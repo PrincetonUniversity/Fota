@@ -116,7 +116,10 @@ class LoginForm extends Component {
                 if (this.deactivateButtons) return;
                 this.deactivateButtons = true;
                 this.setState({ fbLoading: true });
-                this.props.screenProps.logInWithFacebook();
+                this.props.screenProps.logInWithFacebook(() => {
+                  this.deactivateButtons = false;
+                  this.setState({ fbLoading: false });
+                });
               }}
               colors={{ text: '#fff', fill: '#2494ff', border: '#2494ff' }}
               text={text}

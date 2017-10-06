@@ -29,6 +29,7 @@ import { NotFoundText } from '../common';
 import { tabWidth, tabHeight, horizontalPadding, pcoords } from '../../Base';
 import { browseFromPrinceton, makePhotoTable, setLoading, saveNavNew } from '../../actions';
 import request from '../../helpers/axioshelper';
+import location from '../../helpers/geohelper';
 import { photoRequest, filterRequest } from '../../helpers/URL';
 import icoMoonConfig from '../../selection.json';
 
@@ -99,13 +100,14 @@ class HomePage extends Component {
     if (this.props.browsingPrinceton) {
       this.sendFilteredPhotoRequest(fFilter, filterDisplay, pcoords.lat, pcoords.lng);
     } else {
-      navigator.geolocation.getCurrentPosition(position => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        this.sendFilteredPhotoRequest(fFilter, filterDisplay, lat, lng);
-      },
-      e => request.showErrorAlert(e),
-      /*{ enableHighAccuracy: Platform.OS === 'ios', timeout: 5000, maximumAge: 10000 }*/);
+      location.get(
+        position => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          this.sendFilteredPhotoRequest(fFilter, filterDisplay, lat, lng);
+        },
+        () => this.setState({ modalVisible: false }),
+      );
     }
   }
 
@@ -118,20 +120,16 @@ class HomePage extends Component {
     if (this.props.browsingPrinceton) {
       this.sendPhotoRequest(pcoords.lat, pcoords.lng);
     } else {
-      navigator.geolocation.getCurrentPosition(position => {
+      location.get(position => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         this.sendPhotoRequest(lat, lng);
       },
-      e => {
+      () => {
+        this.props.setLoading(false);
         this.setState({ refreshing: false });
-        Alert.alert(
-          'Oops!',
-          'We had trouble finding your location. Please restart the app and try again.',
-          [{ text: 'OK' }]
-        );
       },
-    /*{ enableHighAccuracy: Platform.OS === 'ios', timeout: 5000, maximumAge: 10000 }*/);
+      { timeout: 5000 });
     }
   }
 
@@ -149,14 +147,11 @@ class HomePage extends Component {
             refreshing: false
           });
         }
-      }).catch(e => { this.setState({ refreshing: false }); request.showErrorAlert(e); });
-    }).catch(e => {
-      this.setState({ refreshing: false });
-      Alert.alert(
-        'Oops!',
-        'Something went wrong. Please restart the app and try again.',
-        [{ text: 'OK' }]
-      );
+      }).catch(e => {
+        this.props.setLoading(false);
+        this.setState({ refreshing: false }); 
+        request.showErrorAlert(e);
+      });
     });
   }
 
@@ -177,9 +172,7 @@ class HomePage extends Component {
       }
       return (
         <NotFoundText
-          text='No photos of that filter were found in your area.
-                Try searching another term or increasing your search
-                radius through your profile settings.'
+          text='No photos of that filter were found in your area. Try searching another term or increasing your search radius through your profile settings.'
         />
       );
     }

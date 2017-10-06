@@ -73,7 +73,11 @@ class SignupForm extends Component {
     const displayName = `${this.state.first} ${this.state.last}`;
     user.updateProfile({ displayName });
     request.patch(changeNameRequest(encodeURIComponent(displayName), user.uid))
-      .catch(e => request.showErrorAlert(e));
+      .catch(() => request.showErrorAlert({
+        etype: -1,
+        title: 'Setting Name Error',
+        text: 'You should never see this error. If you do, please let us know immediately.' 
+      }));
     this.setState({ first: '', last: '', email: '', pass: '', loading: false });
     if (this.props.screenProps.onLoginFinished) {
       this.props.screenProps.onLoginFinished();
@@ -139,7 +143,10 @@ class SignupForm extends Component {
             if (this.deactivateButtons) return;
             this.deactivateButtons = true;
             this.setState({ fbLoading: true });
-            this.props.screenProps.logInWithFacebook();
+            this.props.screenProps.logInWithFacebook(() => {
+              this.deactivateButtons = false;
+              this.setState({ fbLoading: false });
+            });
           }}
           colors={{ text: '#fff', fill: '#2494ff', border: '#2494ff' }}
           text={text}

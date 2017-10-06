@@ -95,10 +95,12 @@ class PhotoDetail extends PureComponent {
       this.timer = null;
       this.oldValue = null;
       if (temp === type) return;
-      if (this.props.shouldRenderWithRedux) {
-        this.props.voteOnPhotoTable(this.state.photo.id, newCount, newLike, newDislike);
-      }
       request.patch(photoVote(this.state.photo.id, type))
+        .then(() => {
+          if (this.props.shouldRenderWithRedux) {
+            this.props.voteOnPhotoTable(this.state.photo.id, newCount, newLike, newDislike);
+          }
+        })
         .catch(e => request.showErrorAlert(e));
     };
     if (this.timer) clearTimeout(this.timer);
