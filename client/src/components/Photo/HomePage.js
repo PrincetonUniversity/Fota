@@ -147,7 +147,11 @@ class HomePage extends Component {
             refreshing: false
           });
         }
-      }).catch(e => { this.setState({ refreshing: false }); request.showErrorAlert(e); });
+      }).catch(e => {
+        this.props.setLoading(false);
+        this.setState({ refreshing: false }); 
+        request.showErrorAlert(e);
+      });
     });
   }
 
