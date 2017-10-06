@@ -14,6 +14,7 @@ import { Text, View, Platform, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Ionicon from 'react-native-vector-icons/Ionicons';
+import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 import BookmarkedRestaurants from './BookmarkedRestaurants';
 import UpvotedPhotos from './UpvotedPhotos';
 import UploadedPhotos from './UploadedPhotos';
@@ -105,18 +106,30 @@ class ProfilePage extends Component {
                 <Text style={infoTextStyle}>Beta Tester</Text>
               </View>
             </View>
-            <TouchableOpacity
-              onPress={() => this.props.navigation.navigate('Settings')}
-            >
-              <Ionicon
-                name={'md-settings'}
-                backgroundColor={'#fff'}
-                color={'rgba(0,0,0,0.15)'}
-                size={27}
-                style={{ marginTop: 17 }}
-              />
-            </TouchableOpacity>
-
+            <View style={{ flexDirection: 'row', marginTop: 17 }}>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('Rewards')}
+              >
+                <SimpleLineIcon
+                  name={'present'}
+                  backgroundColor={'#fff'}
+                  color={'rgba(0,0,0,0.15)'}
+                  size={27}
+                  style={{ marginRight: 12 }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('Settings')}
+              >
+                <Ionicon
+                  name={'md-settings'}
+                  backgroundColor={'#fff'}
+                  color={'rgba(0,0,0,0.15)'}
+                  size={27}
+                  style={{ marginLeft: 12 }}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
 
           <View style={statContainerStyle}>

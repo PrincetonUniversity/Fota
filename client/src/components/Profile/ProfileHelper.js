@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import { StackNavigator } from 'react-navigation';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import ProfilePage from './ProfilePage';
+import RewardsPage from './RewardsPage';
 import RequestSignup from '../Account/RequestSignup';
 import SettingsPage from '../Settings/SettingsPage';
 import { SettingsRadius, TermsOfService, PrivacyPolicy } from '../Settings/SettingsIndex';
@@ -47,7 +48,7 @@ class ProfileHelper extends Component {
             //    navigation.navigate('Account');
             //    if (screenProps.reloadProfile) screenProps.reloadProfile();
             //  }
-            //} 
+            //}
             //else {
             //  navigation.navigate('Login', { onLoginFinished: 'openAccount' });
             //}
@@ -70,8 +71,8 @@ class ProfileHelper extends Component {
   render() {
     if (!this.props.loginState || this.props.loginState.isAnonymous) {
       return (
-        <RequestSignup 
-          navigation={this.props.navigation} 
+        <RequestSignup
+          navigation={this.props.navigation}
           onLoginFinished='openAccount'
           text={'You don\'t have an account yet!'}
         />
@@ -90,6 +91,7 @@ class ProfileHelper extends Component {
 
 const ProfileNavigator = StackNavigator({
   Profile: { screen: ProfilePage },
+  Rewards: { screen: RewardsPage },
   Settings: { screen: SettingsPage },
   Radius: { screen: SettingsRadius },
   TOS: { screen: TermsOfService },
