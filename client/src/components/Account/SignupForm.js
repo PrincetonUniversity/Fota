@@ -54,7 +54,7 @@ class SignupForm extends Component {
   onSignupButtonPress() {
     if (this.deactivateButtons) return;
     this.deactivateButtons = true;
-    //if (this.state.fbLoading || this.state.loading) return;    
+    //if (this.state.fbLoading || this.state.loading) return;
     const { email, pass } = this.state;
     this.setState({ error: '', loading: true });
     if (this.props.loginState && this.props.loginState.isAnonymous) {
@@ -76,7 +76,7 @@ class SignupForm extends Component {
       .catch(() => request.showErrorAlert({
         etype: -1,
         title: 'Setting Name Error',
-        text: 'You should never see this error. If you do, please let us know immediately.' 
+        text: 'You should never see this error. If you do, please let us know immediately.'
       }));
     this.setState({ first: '', last: '', email: '', pass: '', loading: false });
     if (this.props.screenProps.onLoginFinished) {
@@ -203,17 +203,15 @@ class SignupForm extends Component {
       >
         <View style={{ flex: 1, justifyContent: 'space-between' }}>
           <View style={loginStyles.pageStart}>
-            <View style={loginStyles.header}>
-              <TouchableOpacity onPress={() => this.pressBackButton()}>
-                <Icon
-                  name='chevron-left'
-                  color='rgba(0, 0, 0, 0.75)'
-                  size={20}
-                  style={{ height: 20, marginRight: 15 }}
-                />
-              </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.pressBackButton()} style={loginStyles.header}>
+              <Icon
+                name='chevron-left'
+                color='rgba(0, 0, 0, 0.75)'
+                size={20}
+                style={{ height: 20, marginRight: 15 }}
+              />
               <Text style={loginStyles.headerText}>Sign up</Text>
-            </View>
+            </TouchableOpacity>
 
             {this.renderFacebookAndSkip()}
             <View style={{ backgroundColor: 'white', zIndex: 2 }}>
