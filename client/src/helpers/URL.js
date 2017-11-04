@@ -69,6 +69,14 @@ export function profileRequest() {
   return `${USER_REQ}/?key=${CLIENT_API_KEY}`;
 }
 
+export function rewardRequest() {
+  return `${USER_REQ}/rewards?key=${CLIENT_API_KEY}`;
+}
+
+export function redeemRequest() {
+  return `${USER_REQ}/redeem?key=${CLIENT_API_KEY}`;
+}
+
 export function changeNameRequest(displayName, uid) {
   return `${USER_REQ}/?displayName=${displayName}&uid=${uid}&key=${CLIENT_API_KEY}`;
 }

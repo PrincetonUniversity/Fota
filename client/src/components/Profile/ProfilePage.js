@@ -21,7 +21,9 @@ import UploadedPhotos from './UploadedPhotos';
 import SubmittedComments from './SubmittedComments';
 import { setProfileReloader } from '../../actions';
 import request from '../../helpers/axioshelper';
-import { profileRequest } from '../../helpers/URL';
+import { profileRequest, rewardRequest } from '../../helpers/URL';
+
+import { NECESSARY_REVIEWS, NECESSARY_UPLOADS, NECESSARY_UPVOTES } from './RewardsPage';
 
 class ProfilePage extends Component {
   constructor(props) {
@@ -48,14 +50,27 @@ class ProfilePage extends Component {
     } else {
       this.setState({ loading: true });
     }
-    request.get(profileRequest()).then(response => {
+    const promises = [
+      request.get(profileRequest()),
+      request.get(rewardRequest()),
+    ];
+    Promise.all(promises).then(result => {
       this.setState({
-        bookmarked: response.data.bookmarks,
-        upvoted: response.data.upvoted_photos,
-        uploaded: response.data.uploaded_photos,
-        comments: response.data.written_comments,
+        bookmarked: result[0].data.bookmarks,
+        upvoted: result[0].data.upvoted_photos,
+        uploaded: result[0].data.uploaded_photos,
+        comments: result[0].data.written_comments,
         loading: false,
         refreshing: false
+      });
+      const uv = parseInt(result[1].data.upvotes);
+      const up = parseInt(result[1].data.uploads);
+      const rv = parseInt(result[1].data.comments);
+      this.props.screenProps.setRewardState({
+        upvotes: Math.min(NECESSARY_UPVOTES, uv),
+        uploads: Math.min(NECESSARY_UPLOADS, up),
+        reviews: Math.min(NECESSARY_REVIEWS, rv),
+        complete: uv >= NECESSARY_UPVOTES && up >= NECESSARY_UPLOADS && rv >= NECESSARY_REVIEWS
       });
     }).catch(e => {
       this.setState({ loading: false, refreshing: false, noInternet: true });
@@ -92,6 +107,8 @@ class ProfilePage extends Component {
       }
     }
 
+    const rewardColor = this.props.screenProps.rewardState.complete ? '#ff7f00' : 'rgba(0,0,0,0.15)';
+
     return (
       <View style={{ backgroundColor: '#fff', flex: 1 }}>
         <View style={headerStyle}>
@@ -115,7 +132,7 @@ class ProfilePage extends Component {
                 <SimpleLineIcon
                   name={'present'}
                   backgroundColor={'#fff'}
-                  color={'rgba(0,0,0,0.15)'}
+                  color={rewardColor}
                   size={27}
                   style={{ marginRight: 12 }}
                 />

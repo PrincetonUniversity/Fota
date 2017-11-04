@@ -68,6 +68,8 @@ class ProfileHelper extends Component {
     }
   });
 
+  state = { rewardState: null };
+
   render() {
     if (!this.props.loginState || this.props.loginState.isAnonymous) {
       return (
@@ -82,6 +84,8 @@ class ProfileHelper extends Component {
       <ProfileNavigator
         screenProps={{
           user: this.props.loginState,
+          rewardState: this.state.rewardState || { upvotes: '--', uploads: '--', reviews: '--', complete: false },
+          setRewardState: rewardState => { this.setState({ rewardState }); },
           changeFocusedTab: this.props.screenProps.changeFocusedTab
         }}
       />

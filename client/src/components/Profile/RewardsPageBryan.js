@@ -1,117 +1,186 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, Platform, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, Platform, Dimensions, AsyncStorage } from 'react-native';
 import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
+import request from '../../helpers/axioshelper';
+import { redeemRequest } from '../../helpers/URL';
 import icoMoonConfig from '../../selection.json';
 
 const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
-const RewardBox = ({ current, required, color, style }) => (
-  <View style={[rewardBoxStyle, { borderColor: color }, style]}>
-    <Text style={{ fontSize: 16, fontWeight: '500', color }}>
-      <Text>
-        {current}
+export const NECESSARY_REVIEWS = 5;
+export const NECESSARY_UPLOADS = 10;
+export const NECESSARY_UPVOTES = 50;
+
+const BOBA_REWARD = 'ewr23deewyty';
+const DISCOUNT_REWARD = 'weft5rwee';
+const BOBA_ACTIVATED = '930423dfijo';
+const DISCOUNT_ACTIVATED = 'u98r3jfgker';
+
+const RewardBox = ({ current, required, style }) => {
+  const color = (current === required) ? '#ff7f00' : 'rgba(0,0,0,0.7)';
+  return (
+    <View style={[rewardBoxStyle, { borderColor: color }, style]}>
+      <Text style={{ fontSize: 16, fontWeight: '500', color }}>
+        <Text>{current}</Text>
+        <Text>/</Text>
+        <Text>{required}</Text>
       </Text>
-      <Text>
-        /
-      </Text>
-      <Text>
-        {required}
-      </Text>
-    </Text>
-  </View>
-);
+    </View>
+  );
+};
 
 class RewardsPage extends Component {
-  state = { upvotes: 50, uploads: 10, reviews: 5, redeem: false, activate: false }
+  constructor(props) {
+    super(props);
+    this.state = { loading: true, redeemStage: 0 };
+    this.buttonPressed = false;
+  }
 
-  renderReward(necessaryUpvotes, necessaryUploads, necessaryReviews, upvoteBoxColor,
-    uploadBoxColor, reviewBoxColor) {
-    if (this.state.redeem) {
+  componentWillMount() {
+    AsyncStorage.getItem('Reward').then(reward => {
+      let redeemStage = 0;
+      if (reward === BOBA_REWARD) {
+        redeemStage = 1;        
+      } else if (reward === DISCOUNT_REWARD) {
+        redeemStage = 2;        
+      } else if (reward === BOBA_ACTIVATED) {
+        redeemStage = 3;
+      } else if (reward === DISCOUNT_ACTIVATED) {
+        redeemStage = 4;
+      }
+      this.setState({ loading: false, redeemStage });
+    }).catch(() => {
+      this.setState({ loading: false });
+    });
+  }
+
+  redeemReward() {
+    this.buttonPressed = true;
+    const randomValue = Math.floor(Math.random() * 5);
+    console.log(randomValue);
+    if (randomValue === 0) {
+      AsyncStorage.setItem('Reward', BOBA_REWARD).then(() => {
+        this.setState({ redeemStage: 1 });
+        this.buttonPressed = false;
+      });
+    } else {
+      AsyncStorage.setItem('Reward', DISCOUNT_REWARD).then(() => {
+        this.setState({ redeemStage: 2 });
+        this.buttonPressed = false;        
+      });
+    }
+  }
+
+  activateReward() {
+    this.buttonPressed = true;
+//  request.post(redeemRequest()).then(() => {
+      if (this.state.redeemStage === 1) {
+        AsyncStorage.setItem('Reward', BOBA_ACTIVATED).then(() => {
+          this.setState({ redeemStage: 3 });
+          this.buttonPressed = false;
+        });
+      } else if (this.state.redeemStage === 2) {
+        AsyncStorage.setItem('Reward', DISCOUNT_ACTIVATED).then(() => {
+          this.setState({ redeemStage: 4 });
+          this.buttonPressed = false;
+        });
+      }
+/*  }).catch(e => { 
+      this.buttonPressed = false;
+      request.showErrorAlert(e);
+    });*/
+  }
+
+  renderReward() {
+    if (this.state.loading) {
+      return null;
+    }
+    if (this.state.redeemStage > 0) {
+      let message = 'You got free boba!';
+      let icon = 'cup';
+      if (this.state.redeemStage === 2) {
+        message = 'You got a 10% discount from Fruity Yogurt!';
+        icon = 'tag';
+      }
       return (
         <View>
           <View style={{ justifyContent: 'center', alignItems: 'center' }}>
             <SimpleLineIcon
-              name={'cup'}
+              name={icon}
               backgroundColor={'#fff'}
               color={'#ff7f00'}
               size={40}
               style={{ marginRight: 12 }}
             />
-            <Text style={{ marginTop: 5 }}>
-              You won a free boba!
+            <Text style={{ marginTop: 5, ...posItemTextStyle }}>
+              {message}
             </Text>
           </View>
         </View>
-
       );
     }
     return (
       <View>
         <View style={rewardItemContainerStyle}>
           <RewardBox
-            current={this.state.upvotes}
-            required={necessaryUpvotes}
-            color={upvoteBoxColor}
+            current={this.props.screenProps.rewardState.upvotes}
+            required={NECESSARY_UPVOTES}
           />
-          <Text style={rewardItemTextStyle}>
-            {this.renderUpvoteReqText(necessaryUpvotes)}
-          </Text>
+          <Text style={rewardItemTextStyle}>{this.renderUpvoteReqText()}</Text>
         </View>
 
         <View style={rewardItemContainerStyle}>
           <RewardBox
-            current={this.state.uploads}
-            required={necessaryUploads}
-            color={uploadBoxColor}
+            current={this.props.screenProps.rewardState.uploads}
+            required={NECESSARY_UPLOADS}
           />
-          <Text style={rewardItemTextStyle}>
-            {this.renderUploadReqText(necessaryUploads)}
-          </Text>
+          <Text style={rewardItemTextStyle}>{this.renderUploadReqText()}</Text>
         </View>
 
         <View style={rewardItemContainerStyle}>
           <RewardBox
-            current={this.state.reviews}
-            required={necessaryReviews}
-            color={reviewBoxColor}
+            current={this.props.screenProps.rewardState.reviews}
+            required={NECESSARY_REVIEWS}
           />
-          <Text style={rewardItemTextStyle}>
-            {this.renderReviewReqText(necessaryReviews)}
-          </Text>
+          <Text style={rewardItemTextStyle}>{this.renderReviewReqText()}</Text>
         </View>
       </View>
     );
   }
 
-  renderUpvoteReqText(necessaryUpvotes) {
-    if (this.state.upvotes === necessaryUpvotes) {
-      return 'Upvotes completed.';
-    }
-    return 'Upvotes until next reward.';
+  renderUpvoteReqText() {
+    return (this.props.screenProps.rewardState.upvotes === NECESSARY_UPVOTES) ?
+    'Upvotes completed.' : 'Upvotes until next reward.';
   }
 
-  renderUploadReqText(necessaryUploads) {
-    if (this.state.uploads === necessaryUploads) {
-      return 'Uploads completed.';
-    }
-    return 'Uploads until next reward.';
+  renderUploadReqText() {
+    return (this.props.screenProps.rewardState.uploads === NECESSARY_UPLOADS) ?
+    'Uploads completed.' : 'Uploads until next reward.';
   }
 
-  renderReviewReqText(necessaryReviews) {
-    if (this.state.reviews === necessaryReviews) {
-      return 'Reviews completed.';
-    }
-    return 'Reviews until next reward.';
+  renderReviewReqText() {
+    return (this.props.screenProps.rewardState.reviews === NECESSARY_REVIEWS) ?
+    'Reviews completed.' : 'Reviews until next reward.';
   }
 
-  renderRedeem(allComplete, redeemColor) {
+  renderRedeem(allComplete) {
+    if (this.state.loading) {
+      return null;
+    }
     let redeemText = 'REDEEM';
-    let onPress = () => { if (allComplete) this.setState({ redeem: true }); };
-    if (this.state.redeem) {
+    let onPress = () => {
+      if (this.buttonPressed) return;
+      if (allComplete) this.redeemReward(); 
+    };
+    if (this.state.redeemStage > 0) {
       redeemText = 'ACTIVATE';
-      onPress = () => { this.setState({ activate: true }); };
+      onPress = () => { 
+        if (this.buttonPressed) return;
+        this.activateReward(); 
+      };
     }
+    const redeemColor = allComplete ? '#ff7f00' : 'rgba(0,0,0,0.15)';
     return (
       <TouchableOpacity
         onPress={onPress}
@@ -126,33 +195,40 @@ class RewardsPage extends Component {
   }
 
   render() {
-    const necessaryUpvotes = 50;
-    const necessaryUploads = 10;
-    const necessaryReviews = 5;
-    let upvoteBoxColor = 'rgba(0,0,0,0.7)';
-    let uploadBoxColor = 'rgba(0,0,0,0.7)';
-    let reviewBoxColor = 'rgba(0,0,0,0.7)';
     let upvoteComplete = false;
     let uploadComplete = false;
     let reviewComplete = false;
-    let redeemColor = 'rgba(0,0,0,0.15)';
     let allComplete = false;
-    if (this.state.upvotes === necessaryUpvotes) {
+    if (this.props.screenProps.rewardState.upvotes === NECESSARY_UPVOTES) {
       upvoteComplete = true;
-      upvoteBoxColor = '#ff7f00';
     }
-    if (this.state.uploads === necessaryUploads) {
+    if (this.props.screenProps.rewardState.uploads === NECESSARY_UPLOADS) {
       uploadComplete = true;
-      uploadBoxColor = '#ff7f00';
     }
-    if (this.state.reviews === necessaryReviews) {
+    if (this.props.screenProps.rewardState.reviews === NECESSARY_REVIEWS) {
       reviewComplete = true;
-      reviewBoxColor = '#ff7f00';
     }
     if (upvoteComplete && uploadComplete && reviewComplete) {
       allComplete = true;
-      redeemColor = '#ff7f00';
     }
+
+    if (this.state.redeemStage >= 3) {
+      const text = (this.state.redeemStage === 4) ? 'discount' : 'boba';
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <TouchableOpacity 
+            onPress={() => {
+              AsyncStorage.setItem('Reward', 'None').then(() => {
+                this.setState({ redeemStage: 0 });
+              });              
+            }}
+          >
+            <View><Text>{`You redeemed a ${text} reward!`}</Text></View>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+
     return (
       <View style={{ flex: 1, backgroundColor: 'white' }}>
         <View style={headerStyle}>
@@ -204,18 +280,10 @@ class RewardsPage extends Component {
               style={{ marginRight: 12 }}
             />
             <Text style={posItemTextStyle}>
-              <Text style={{ fontWeight: '700' }}>
-                {'1 '}
-              </Text>
-              <Text>
-                {'in '}
-              </Text>
-              <Text style={{ fontWeight: '700' }}>
-                {'5 '}
-              </Text>
-              <Text>
-                chance of free boba.
-              </Text>
+              <Text style={{ fontWeight: '700' }}>{'1 '}</Text>
+              <Text>{'in '}</Text>
+              <Text style={{ fontWeight: '700' }}>{'5 '}</Text>
+              <Text>chance of free boba.</Text>
             </Text>
           </View>
           <View style={[posItemStyle, { marginTop: 10 }]}>
@@ -227,30 +295,14 @@ class RewardsPage extends Component {
               style={{ marginRight: 12 }}
             />
             <Text style={posItemTextStyle}>
-              <Text style={{ fontWeight: '700' }}>
-                {'100% '}
-              </Text>
-              <Text>
-                chance of a food discount.
-              </Text>
+              <Text style={{ fontWeight: '700' }}>{'100% '}</Text>
+              <Text>chance of a food discount.</Text>
             </Text>
           </View>
         </View>
 
-        <View style={rewardContainerStyle}>
-          {this.renderReward(
-            necessaryUpvotes,
-            necessaryUploads,
-            necessaryReviews,
-            upvoteBoxColor,
-            uploadBoxColor,
-            reviewBoxColor
-          )}
-        </View>
-
-        <View>
-          {this.renderRedeem(allComplete, redeemColor)}
-        </View>
+        <View style={rewardContainerStyle}>{this.renderReward()}</View>
+        <View>{this.renderRedeem(allComplete)}</View>
       </View>
     );
   }
@@ -272,6 +324,7 @@ const styles = {
   },
   titleTextStyle: {
     textAlign: 'center',
+    color: 'rgba(0, 0, 0, 0.8)',    
     fontSize: 28,
     fontWeight: '900'
   },
@@ -285,11 +338,13 @@ const styles = {
   },
   infoPromptStyle: {
     textAlign: 'center',
+    color: 'rgba(0, 0, 0, 0.8)',    
     fontSize: 20,
     fontWeight: '700'
   },
   infoAnswerStyle: {
     marginTop: 5,
+    color: 'rgba(0, 0, 0, 0.8)',    
     textAlign: 'center',
     fontSize: 14
   },
@@ -307,6 +362,7 @@ const styles = {
   },
   posItemTextStyle: {
     fontSize: 14,
+    color: 'rgba(0, 0, 0, 0.8)',    
     textAlign: 'center'
   },
   rewardContainerStyle: {
@@ -322,6 +378,7 @@ const styles = {
   },
   rewardItemTextStyle: {
     marginLeft: 15,
+    color: 'rgba(0, 0, 0, 0.8)',    
     textAlign: 'center',
     fontWeight: '500',
     fontSize: 14
