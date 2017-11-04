@@ -108,7 +108,8 @@ const styles = {
     alignItems: 'center'
   },
   graphicStyle: {
-    flex: 1,
+    height: 250,
+    width: 250
   },
   captionStyle: {
     fontSize: 20,

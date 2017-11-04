@@ -93,22 +93,20 @@ class LoginForm extends Component {
   }
 
   render() {
-    const text = this.state.fbLoading ? 'Logging you in...' : 'Continue with Facebook';    
+    const text = this.state.fbLoading ? 'Logging you in...' : 'Continue with Facebook';
     return (
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={{ flex: 1, justifyContent: 'space-between' }}>
           <View style={loginStyles.pageStart}>
-            <View style={loginStyles.header}>
-              <TouchableOpacity onPress={() => this.pressBackButton()}>
-                <Icon
-                  name='chevron-left'
-                  color='rgba(0, 0, 0, 0.75)'
-                  size={20}
-                  style={{ height: 20, marginRight: 15 }}
-                />
-              </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.pressBackButton()} style={loginStyles.header}>
+              <Icon
+                name='chevron-left'
+                color='rgba(0, 0, 0, 0.75)'
+                size={20}
+                style={{ height: 20, marginRight: 15 }}
+              />
               <Text style={loginStyles.headerText}>Log in</Text>
-            </View>
+            </TouchableOpacity>
 
             <Button
               style={{ marginTop: 8, marginBottom: 20 }}
