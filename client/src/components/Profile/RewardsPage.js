@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, Platform, Dimensions, AsyncStorage } from 'react-native';
 import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
+import moment from 'moment';
 import request from '../../helpers/axioshelper';
 import { redeemRequest } from '../../helpers/URL';
 import icoMoonConfig from '../../selection.json';
+import { Timer } from '../common';
 
 const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
@@ -33,7 +35,7 @@ const RewardBox = ({ current, required, style }) => {
 class RewardsPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { loading: true, redeemStage: 0 };
+    this.state = { loading: true, redeemStage: 0, secondsLeft: 0, rewardEnd: null };
     this.buttonPressed = false;
   }
 
@@ -41,9 +43,9 @@ class RewardsPage extends Component {
     AsyncStorage.getItem('Reward').then(reward => {
       let redeemStage = 0;
       if (reward === BOBA_REWARD) {
-        redeemStage = 1;        
+        redeemStage = 1;
       } else if (reward === DISCOUNT_REWARD) {
-        redeemStage = 2;        
+        redeemStage = 2;
       } else if (reward === BOBA_ACTIVATED) {
         redeemStage = 3;
       } else if (reward === DISCOUNT_ACTIVATED) {
@@ -53,6 +55,12 @@ class RewardsPage extends Component {
     }).catch(() => {
       this.setState({ loading: false });
     });
+    AsyncStorage.getItem('endReward').then(rewardEnd => {
+      const now = moment(new Date());
+      const timeLeft = moment(rewardEnd).diff(now);
+      console.log(timeLeft);
+      this.setState({ secondsLeft: timeLeft, rewardEnd });
+    }).catch(() => {});
   }
 
   redeemReward() {
@@ -67,29 +75,39 @@ class RewardsPage extends Component {
     } else {
       AsyncStorage.setItem('Reward', DISCOUNT_REWARD).then(() => {
         this.setState({ redeemStage: 2 });
-        this.buttonPressed = false;        
+        this.buttonPressed = false;
       });
     }
   }
 
   activateReward() {
     this.buttonPressed = true;
-//  request.post(redeemRequest()).then(() => {
+    const endTime = moment().add(2, 'h');
+    AsyncStorage.setItem('endReward', endTime);
+    const now = moment(new Date());
+    const secondsLeft = moment(endTime).diff(now);
+    request.post(redeemRequest()).then(() => {
+      this.props.screenProps.setRewardState({
+        upvotes: '0',
+        uploads: '0',
+        reviews: '0',
+        complete: false
+      });
       if (this.state.redeemStage === 1) {
         AsyncStorage.setItem('Reward', BOBA_ACTIVATED).then(() => {
-          this.setState({ redeemStage: 3 });
+          this.setState({ redeemStage: 3, secondsLeft });
           this.buttonPressed = false;
         });
       } else if (this.state.redeemStage === 2) {
         AsyncStorage.setItem('Reward', DISCOUNT_ACTIVATED).then(() => {
-          this.setState({ redeemStage: 4 });
+          this.setState({ redeemStage: 4, secondsLeft });
           this.buttonPressed = false;
         });
       }
-/*  }).catch(e => { 
+    }).catch(e => {
       this.buttonPressed = false;
       request.showErrorAlert(e);
-    });*/
+    });
   }
 
   renderReward() {
@@ -171,13 +189,13 @@ class RewardsPage extends Component {
     let redeemText = 'REDEEM';
     let onPress = () => {
       if (this.buttonPressed) return;
-      if (allComplete) this.redeemReward(); 
+      if (allComplete) this.redeemReward();
     };
     if (this.state.redeemStage > 0) {
       redeemText = 'ACTIVATE';
-      onPress = () => { 
+      onPress = () => {
         if (this.buttonPressed) return;
-        this.activateReward(); 
+        this.activateReward();
       };
     }
     const redeemColor = allComplete ? '#ff7f00' : 'rgba(0,0,0,0.15)';
@@ -194,7 +212,8 @@ class RewardsPage extends Component {
     );
   }
 
-  render() {
+  renderPageContent() {
+    console.log(this.state);
     let upvoteComplete = false;
     let uploadComplete = false;
     let reviewComplete = false;
@@ -211,56 +230,58 @@ class RewardsPage extends Component {
     if (upvoteComplete && uploadComplete && reviewComplete) {
       allComplete = true;
     }
-
     if (this.state.redeemStage >= 3) {
-      const text = (this.state.redeemStage === 4) ? 'discount' : 'boba';
+      console.log(this.state.secondsLeft);
+      let icon = 'cup';
+      let message = 'You got free boba!';
+      if (this.state.redeemStage === 4) {
+        icon = 'tag';
+        message = 'You got a 10% discount from Fruity Yogurt!';
+      }
       return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <TouchableOpacity 
-            onPress={() => {
-              AsyncStorage.setItem('Reward', 'None').then(() => {
-                this.setState({ redeemStage: 0 });
-              });              
-            }}
-          >
-            <View><Text>{`You redeemed a ${text} reward!`}</Text></View>
-          </TouchableOpacity>
-        </View>
-      );
-    }
-
-    return (
-      <View style={{ flex: 1, backgroundColor: 'white' }}>
-        <View style={headerStyle}>
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity
-              onPress={() => this.props.navigation.goBack()}
-            >
-              <Icon
-                name={'close'}
-                backgroundColor='white'
-                color='black'
-                size={16}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View style={titleContainerStyle}>
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+          <View style={[infoContainerStyle, { alignItems: 'center' }]}>
+            <Text style={{ fontWeight: '700', fontSize: 16, marginBottom: 10 }}>
+              Congrats!
+            </Text>
             <SimpleLineIcon
-              name={'present'}
+              name={icon}
               backgroundColor={'#fff'}
               color={'#ff7f00'}
               size={40}
-              style={{ marginRight: 12 }}
+              style={{ marginBottom: 10 }}
             />
-            <Text style={titleTextStyle}>
-              REWARDS
+            <Text>
+              {message}
             </Text>
           </View>
+          <View style={{ flex: 1, paddingVertical: 15, marginHorizontal: 25, alignItems: 'center' }}>
+            <Timer totalTime={this.state.secondsLeft} />
 
-          <View style={{ flex: 1 }} />
+            <Text style={{ fontWeight: '700', fontSize: 16, marginBottom: 40 }}>
+              before your reward expires!
+            </Text>
+
+            <TouchableOpacity
+              onPress={() => {
+                AsyncStorage.removeItem('endReward');
+                AsyncStorage.setItem('Reward', 'None').then(() => {
+                  this.setState({ redeemStage: 0 });
+                });
+              }}
+            >
+              <View style={[redeemButtonStyle, { backgroundColor: '#ff7f00' }]}>
+                <Text style={{ fontSize: 15, color: 'white', fontWeight: '700' }}>
+                  DONE
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
-
+      );
+    }
+    return (
+      <View style={{ flex: 1, backgroundColor: 'white' }}>
         <View style={infoContainerStyle}>
           <Text style={infoPromptStyle}>
             Want to get free food and discounts?
@@ -306,6 +327,78 @@ class RewardsPage extends Component {
       </View>
     );
   }
+
+  render() {
+    let upvoteComplete = false;
+    let uploadComplete = false;
+    let reviewComplete = false;
+    let allComplete = false;
+    if (this.props.screenProps.rewardState.upvotes === NECESSARY_UPVOTES) {
+      upvoteComplete = true;
+    }
+    if (this.props.screenProps.rewardState.uploads === NECESSARY_UPLOADS) {
+      uploadComplete = true;
+    }
+    if (this.props.screenProps.rewardState.reviews === NECESSARY_REVIEWS) {
+      reviewComplete = true;
+    }
+    if (upvoteComplete && uploadComplete && reviewComplete) {
+      allComplete = true;
+    }
+
+    // if (this.state.redeemStage >= 3) {
+    //   const text = (this.state.redeemStage === 4) ? 'discount' : 'boba';
+    //   return (
+    //     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    //       <TouchableOpacity
+    //         onPress={() => {
+    //           AsyncStorage.setItem('Reward', 'None').then(() => {
+    //             this.setState({ redeemStage: 0 });
+    //           });
+    //         }}
+    //       >
+    //         <View><Text>{`You redeemed a ${text} reward!`}</Text></View>
+    //       </TouchableOpacity>
+    //     </View>
+    //   );
+    // }
+
+    return (
+      <View style={{ flex: 1, backgroundColor: 'white' }}>
+        <View style={headerStyle}>
+          <View style={{ flex: 1 }}>
+            <TouchableOpacity
+              onPress={() => this.props.navigation.goBack()}
+            >
+              <Icon
+                name={'close'}
+                backgroundColor='white'
+                color='black'
+                size={16}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View style={titleContainerStyle}>
+            <SimpleLineIcon
+              name={'present'}
+              backgroundColor={'#fff'}
+              color={'#ff7f00'}
+              size={40}
+              style={{ marginRight: 12 }}
+            />
+            <Text style={titleTextStyle}>
+              REWARDS
+            </Text>
+          </View>
+
+          <View style={{ flex: 1 }} />
+        </View>
+
+        {this.renderPageContent()}
+      </View>
+    );
+  }
 }
 
 const styles = {
@@ -324,7 +417,7 @@ const styles = {
   },
   titleTextStyle: {
     textAlign: 'center',
-    color: 'rgba(0, 0, 0, 0.8)',    
+    color: 'rgba(0, 0, 0, 0.8)',
     fontSize: 28,
     fontWeight: '900'
   },
@@ -338,13 +431,13 @@ const styles = {
   },
   infoPromptStyle: {
     textAlign: 'center',
-    color: 'rgba(0, 0, 0, 0.8)',    
+    color: 'rgba(0, 0, 0, 0.8)',
     fontSize: 20,
     fontWeight: '700'
   },
   infoAnswerStyle: {
     marginTop: 5,
-    color: 'rgba(0, 0, 0, 0.8)',    
+    color: 'rgba(0, 0, 0, 0.8)',
     textAlign: 'center',
     fontSize: 14
   },
@@ -362,7 +455,7 @@ const styles = {
   },
   posItemTextStyle: {
     fontSize: 14,
-    color: 'rgba(0, 0, 0, 0.8)',    
+    color: 'rgba(0, 0, 0, 0.8)',
     textAlign: 'center'
   },
   rewardContainerStyle: {
@@ -378,7 +471,7 @@ const styles = {
   },
   rewardItemTextStyle: {
     marginLeft: 15,
-    color: 'rgba(0, 0, 0, 0.8)',    
+    color: 'rgba(0, 0, 0, 0.8)',
     textAlign: 'center',
     fontWeight: '500',
     fontSize: 14
