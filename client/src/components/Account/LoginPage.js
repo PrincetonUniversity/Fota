@@ -50,19 +50,22 @@ class LoginPage extends Component {
 
   logInWithFacebook(onFail) {
     FBLoginManager.loginWithPermissions(['email'], (error, data) => {
+      console.log('here1');
       if (!error) {
         const credential = firebase.auth.FacebookAuthProvider.credential(data.credentials.token);
         firebase.auth().signInWithCredential(credential)
         .then(user => {
+          console.log('here4');
           request.patch(changeNameRequest(encodeURIComponent(user.displayName), user.uid))
             .catch(() => request.showErrorAlert({
               etype: -1,
               title: 'Setting Name Error',
-              text: 'You should never see this error. If you do, please let us know immediately.' 
+              text: 'You should never see this error. If you do, please let us know immediately.'
             }));
-          if (this.screenProps.onLoginFinished) this.screenProps.onLoginFinished();          
-        }).catch(e => { this.facebookErrorAlert(e, onFail); });
+          if (this.screenProps.onLoginFinished) this.screenProps.onLoginFinished();
+        }).catch(e => { console.log('here2'); this.facebookErrorAlert(e, onFail); });
       } else {
+        console.log('here3');
         this.facebookErrorAlert(error, onFail);
       }
     });
@@ -70,10 +73,11 @@ class LoginPage extends Component {
 
   facebookErrorAlert(error, onFail) {
     console.log(error);
+    onFail();
     Alert.alert(
       'Login Error',
       'We had some trouble logging you in with Facebook.',
-      [{ text: 'OK', onPress: () => onFail() }]
+      [{ text: 'OK' }]
     );
   }
 
@@ -90,7 +94,7 @@ class LoginPage extends Component {
             }}
           />
         </View>
-      ); 
+      );
     }
     if (goto === 'Login') {
       return (

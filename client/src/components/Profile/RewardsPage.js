@@ -11,7 +11,7 @@ const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
 export const NECESSARY_REVIEWS = 0;
 export const NECESSARY_UPLOADS = 0;
-export const NECESSARY_UPVOTES = 0;
+export const NECESSARY_UPVOTES = 1;
 
 const BOBA_REWARD = 'ewr23deewyty';
 const DISCOUNT_REWARD = 'weft5rwee';
