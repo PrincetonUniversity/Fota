@@ -93,6 +93,7 @@ class SignupForm extends Component {
     } else if (error.code === 'auth/weak-password') {
       message = 'Password is too weak.';
     }
+    this.deactivateButtons = false;
     this.setState({ error: message, loading: false, editing: false });
   }
 

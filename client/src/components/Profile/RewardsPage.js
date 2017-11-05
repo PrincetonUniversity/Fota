@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, Platform, Dimensions, AsyncStorage } from 'react-native';
+import { 
+  View, Text, TouchableOpacity, Platform,
+  Dimensions, AsyncStorage, Alert
+} from 'react-native';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import moment from 'moment';
 import request from '../../helpers/axioshelper';
@@ -9,9 +12,9 @@ import { Timer } from '../common';
 
 const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
-export const NECESSARY_REVIEWS = 0;
-export const NECESSARY_UPLOADS = 0;
-export const NECESSARY_UPVOTES = 0;
+export const NECESSARY_REVIEWS = 3;
+export const NECESSARY_UPLOADS = 5;
+export const NECESSARY_UPVOTES = 25;
 
 const BOBA_REWARD = 'ewr23deewyty';
 const DISCOUNT_REWARD = 'weft5rwee';
@@ -64,7 +67,7 @@ class RewardsPage extends Component {
 
   redeemReward() {
     this.buttonPressed = true;
-    const randomValue = Math.floor(Math.random() * 5);
+    const randomValue = Math.floor(Math.random() * 10);
     console.log(randomValue);
     if (randomValue === 0) {
       AsyncStorage.setItem('Reward', BOBA_REWARD).then(() => {
@@ -138,7 +141,7 @@ class RewardsPage extends Component {
       );
     }
     return (
-      <View>
+      <View style={{ paddingLeft: 20 }}>
         <View style={rewardItemContainerStyle}>
           <RewardBox
             current={this.props.screenProps.rewardState.upvotes}
@@ -186,18 +189,24 @@ class RewardsPage extends Component {
       return null;
     }
     let redeemText = 'REDEEM';
+    let buttonOrange = allComplete;
     let onPress = () => {
       if (this.buttonPressed) return;
       if (allComplete) this.redeemReward();
     };
     if (this.state.redeemStage > 0) {
       redeemText = 'ACTIVATE';
+      buttonOrange = true;
       onPress = () => {
         if (this.buttonPressed) return;
-        this.activateReward();
+        Alert.alert(
+          'Activate Reward?',
+          'Once you activate this reward, you will have two hours to cash it in. Do you want to activate the reward?',
+          [{ text: 'OK', onPress: this.activateReward.bind(this) }, { text: 'Cancel' }]
+        );
       };
     }
-    const redeemColor = allComplete ? '#ff7f00' : 'rgba(0,0,0,0.15)';
+    const redeemColor = buttonOrange ? '#ff7f00' : 'rgba(0,0,0,0.15)';
     return (
       <TouchableOpacity
         onPress={onPress}
@@ -262,10 +271,17 @@ class RewardsPage extends Component {
 
             <TouchableOpacity
               onPress={() => {
-                AsyncStorage.removeItem('endReward');
-                AsyncStorage.setItem('Reward', 'None').then(() => {
-                  this.setState({ redeemStage: 0 });
-                });
+                const finish = () => {
+                  AsyncStorage.removeItem('endReward');
+                  AsyncStorage.setItem('Reward', 'None').then(() => {
+                    this.setState({ redeemStage: 0 });
+                  });
+                };
+                Alert.alert(
+                  'Exit Reward?',
+                  'Have you completed this reward? Once you exit you will not be able to access this anymore.',
+                  [{ text: 'OK', onPress: finish }, { text: 'Cancel' }]
+                );
               }}
             >
               <View style={[redeemButtonStyle, { backgroundColor: '#ff7f00' }]}>
@@ -301,7 +317,7 @@ class RewardsPage extends Component {
             <Text style={posItemTextStyle}>
               <Text style={{ fontWeight: '700' }}>{'1 '}</Text>
               <Text>{'in '}</Text>
-              <Text style={{ fontWeight: '700' }}>{'5 '}</Text>
+              <Text style={{ fontWeight: '700' }}>{'10 '}</Text>
               <Text>chance of free boba.</Text>
             </Text>
           </View>
@@ -442,7 +458,7 @@ const styles = {
     flex: 1,
     marginHorizontal: 25,
     paddingVertical: 12,
-    paddingLeft: 20,
+    //paddingLeft: 20,
     justifyContent: 'space-between',
   },
   rewardItemContainerStyle: {

@@ -41,6 +41,7 @@ const DollarSign = () => (
 );
 
 const PHOTO_HEIGHT = (Dimensions.get('window').width - 14) / 3;
+const PAGE_HEIGHT = Dimensions.get('window').height - 250;
 
 class RestaurantDetail extends Component {
   constructor(props) {
@@ -1000,10 +1001,11 @@ class RestaurantDetail extends Component {
   }
 
   render() {
+    console.log(PAGE_HEIGHT);
     if (this.state.loading) {
       return <LoadingRestaurants />;
     }
-    let height = 440;
+    let height = PAGE_HEIGHT;
     let headerScrollDistance = 158;
     const newHeight = height + headerScrollDistance / 3;
     if (this.state.showRecommend) {

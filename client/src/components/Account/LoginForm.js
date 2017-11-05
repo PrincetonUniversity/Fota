@@ -54,6 +54,7 @@ class LoginForm extends Component {
     } else if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
       message = 'Incorrect email or password.';
     }
+    this.deactivateButtons = false;    
     this.setState({ error: message, loading: false });
   }
 
