@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   View, Text, FlatList, TextInput, ScrollView, TouchableOpacity,
-  Platform, LayoutAnimation, UIManager, Keyboard
+  Platform, LayoutAnimation, UIManager, Keyboard, Alert
 } from 'react-native';
 import { connect } from 'react-redux';
 import CommentDetail from './CommentDetail';
@@ -153,8 +153,12 @@ class RestaurantComments extends Component {
 
   renderEditBox() {
     let paddingBottom = 20;
+    let placeholderText = 'Add a review...';
     if (this.state.editing) {
       paddingBottom = 15;
+    }
+    if (this.props.loginState.isAnonymous) {
+      placeholderText = 'Sign up or log in to write a review.';
     }
     return (
       <TouchableOpacity activeOpacity={1}>
@@ -162,9 +166,10 @@ class RestaurantComments extends Component {
           <TextInput
             style={{ height: this.state.height, ...editorStyle }}
             value={this.state.message}
-            placeholder='Add a review...'
+            placeholder={placeholderText}
             placeholderTextColor='rgba(0,0,0,0.31)'
             multiline
+            editable={!this.props.loginState.isAnonymous}
             onFocus={this.openEditorBox.bind(this)}
             onBlur={() => {
               if (this.state.message.length === 0) {

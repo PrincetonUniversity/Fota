@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, Platform, Dimensions, AsyncStorage } from 'react-native';
-import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import moment from 'moment';
 import request from '../../helpers/axioshelper';
@@ -10,9 +9,9 @@ import { Timer } from '../common';
 
 const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
-export const NECESSARY_REVIEWS = 5;
-export const NECESSARY_UPLOADS = 10;
-export const NECESSARY_UPVOTES = 50;
+export const NECESSARY_REVIEWS = 0;
+export const NECESSARY_UPLOADS = 0;
+export const NECESSARY_UPVOTES = 0;
 
 const BOBA_REWARD = 'ewr23deewyty';
 const DISCOUNT_REWARD = 'weft5rwee';
@@ -116,7 +115,7 @@ class RewardsPage extends Component {
     }
     if (this.state.redeemStage > 0) {
       let message = 'You got free boba!';
-      let icon = 'cup';
+      let icon = 'boba';
       if (this.state.redeemStage === 2) {
         message = 'You got a 10% discount from Fruity Yogurt!';
         icon = 'tag';
@@ -124,14 +123,14 @@ class RewardsPage extends Component {
       return (
         <View>
           <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-            <SimpleLineIcon
+            <Icon
               name={icon}
               backgroundColor={'#fff'}
               color={'#ff7f00'}
               size={40}
-              style={{ marginRight: 12 }}
+              style={{ marginVertical: 20 }}
             />
-            <Text style={{ marginTop: 5, ...posItemTextStyle }}>
+            <Text style={posItemTextStyle}>
               {message}
             </Text>
           </View>
@@ -169,7 +168,7 @@ class RewardsPage extends Component {
 
   renderUpvoteReqText() {
     return (this.props.screenProps.rewardState.upvotes === NECESSARY_UPVOTES) ?
-    'Upvotes completed.' : 'Upvotes until next reward.';
+    'Votes completed.' : 'Votes until next reward.';
   }
 
   renderUploadReqText() {
@@ -232,7 +231,7 @@ class RewardsPage extends Component {
     }
     if (this.state.redeemStage >= 3) {
       console.log(this.state.secondsLeft);
-      let icon = 'cup';
+      let icon = 'boba';
       let message = 'You got free boba!';
       if (this.state.redeemStage === 4) {
         icon = 'tag';
@@ -241,24 +240,23 @@ class RewardsPage extends Component {
       return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
           <View style={[infoContainerStyle, { alignItems: 'center' }]}>
-            <Text style={{ fontWeight: '700', fontSize: 16, marginBottom: 10 }}>
+            <Text style={{ fontWeight: '700', fontSize: 16, marginBottom: 10, color: 'rgba(0, 0, 0, 0.8)' }}>
               Congrats!
             </Text>
-            <SimpleLineIcon
+            <Icon
               name={icon}
               backgroundColor={'#fff'}
               color={'#ff7f00'}
-              size={40}
-              style={{ marginBottom: 10 }}
+              size={60}
+              style={redeemedRewardIconStyle}
             />
-            <Text>
+            <Text style={posItemTextStyle}>
               {message}
             </Text>
           </View>
           <View style={{ flex: 1, paddingVertical: 15, marginHorizontal: 25, alignItems: 'center' }}>
             <Timer totalTime={this.state.secondsLeft} />
-
-            <Text style={{ fontWeight: '700', fontSize: 16, marginBottom: 40 }}>
+            <Text style={{ fontWeight: '700', fontSize: 16, marginBottom: 40, color: 'rgba(0, 0, 0, 0.8)' }}>
               before your reward expires!
             </Text>
 
@@ -287,18 +285,18 @@ class RewardsPage extends Component {
             Want to get free food and discounts?
           </Text>
           <Text style={infoAnswerStyle}>
-            Simply upload, upvote, and review.
+            Simply upload, vote, and review.
           </Text>
         </View>
 
         <View style={posRewardsContainerStyle}>
           <View style={posItemStyle}>
-            <SimpleLineIcon
-              name={'cup'}
+            <Icon
+              name={'boba'}
               backgroundColor={'#fff'}
               color={'#ff7f00'}
               size={40}
-              style={{ marginRight: 12 }}
+              style={{ width: 40, height: 40, marginRight: 12, textAlign: 'center' }}
             />
             <Text style={posItemTextStyle}>
               <Text style={{ fontWeight: '700' }}>{'1 '}</Text>
@@ -308,12 +306,12 @@ class RewardsPage extends Component {
             </Text>
           </View>
           <View style={[posItemStyle, { marginTop: 10 }]}>
-            <SimpleLineIcon
+            <Icon
               name={'tag'}
               backgroundColor={'#fff'}
               color={'#ff7f00'}
               size={40}
-              style={{ marginRight: 12 }}
+              style={{ width: 40, height: 40, marginRight: 12, textAlign: 'center' }}
             />
             <Text style={posItemTextStyle}>
               <Text style={{ fontWeight: '700' }}>{'100% '}</Text>
@@ -329,23 +327,6 @@ class RewardsPage extends Component {
   }
 
   render() {
-    let upvoteComplete = false;
-    let uploadComplete = false;
-    let reviewComplete = false;
-    let allComplete = false;
-    if (this.props.screenProps.rewardState.upvotes === NECESSARY_UPVOTES) {
-      upvoteComplete = true;
-    }
-    if (this.props.screenProps.rewardState.uploads === NECESSARY_UPLOADS) {
-      uploadComplete = true;
-    }
-    if (this.props.screenProps.rewardState.reviews === NECESSARY_REVIEWS) {
-      reviewComplete = true;
-    }
-    if (upvoteComplete && uploadComplete && reviewComplete) {
-      allComplete = true;
-    }
-
     // if (this.state.redeemStage >= 3) {
     //   const text = (this.state.redeemStage === 4) ? 'discount' : 'boba';
     //   return (
@@ -362,7 +343,6 @@ class RewardsPage extends Component {
     //     </View>
     //   );
     // }
-
     return (
       <View style={{ flex: 1, backgroundColor: 'white' }}>
         <View style={headerStyle}>
@@ -380,8 +360,8 @@ class RewardsPage extends Component {
           </View>
 
           <View style={titleContainerStyle}>
-            <SimpleLineIcon
-              name={'present'}
+            <Icon
+              name={'rewards'}
               backgroundColor={'#fff'}
               color={'#ff7f00'}
               size={40}
@@ -461,12 +441,14 @@ const styles = {
   rewardContainerStyle: {
     flex: 1,
     marginHorizontal: 25,
-    paddingVertical: 15,
-    paddingLeft: 20
+    paddingVertical: 12,
+    paddingLeft: 20,
+    justifyContent: 'space-between',
   },
   rewardItemContainerStyle: {
     flexDirection: 'row',
-    marginTop: 15,
+    marginTop: 5,
+    marginBottom: 5,
     alignItems: 'center'
   },
   rewardItemTextStyle: {
@@ -497,6 +479,17 @@ const styles = {
     width: 110,
     height: 31,
     borderRadius: 17
+  },
+  redeemedRewardIconStyle: {
+    width: 110,
+    height: 110,
+    paddingVertical: 25,
+    textAlign: 'center',
+    marginTop: 10,
+    marginBottom: 20,
+    borderColor: '#ff7f00',
+    borderWidth: 3,
+    borderRadius: 10
   }
 };
 
@@ -514,7 +507,8 @@ const {
   rewardItemContainerStyle,
   rewardItemTextStyle,
   rewardBoxStyle,
-  redeemButtonStyle
+  redeemButtonStyle,
+  redeemedRewardIconStyle
 } = styles;
 
 export default RewardsPage;

@@ -14,7 +14,7 @@ import { Text, View, Platform, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import Ionicon from 'react-native-vector-icons/Ionicons';
-import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
+import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import BookmarkedRestaurants from './BookmarkedRestaurants';
 import UpvotedPhotos from './UpvotedPhotos';
 import UploadedPhotos from './UploadedPhotos';
@@ -22,8 +22,10 @@ import SubmittedComments from './SubmittedComments';
 import { setProfileReloader } from '../../actions';
 import request from '../../helpers/axioshelper';
 import { profileRequest, rewardRequest } from '../../helpers/URL';
-
 import { NECESSARY_REVIEWS, NECESSARY_UPLOADS, NECESSARY_UPVOTES } from './RewardsPage';
+import icoMoonConfig from '../../selection.json';
+
+const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
 class ProfilePage extends Component {
   constructor(props) {
@@ -107,7 +109,7 @@ class ProfilePage extends Component {
       }
     }
 
-    const rewardColor = this.props.screenProps.rewardState.complete ? '#ff7f00' : 'rgba(0,0,0,0.15)';
+    //const rewardColor = this.props.screenProps.rewardState.complete ? '#ff7f00' : 'rgba(0,0,0,0.15)';
 
     return (
       <View style={{ backgroundColor: '#fff', flex: 1 }}>
@@ -125,17 +127,19 @@ class ProfilePage extends Component {
                 <Text style={infoTextStyle}>Beta Tester</Text>
               </View>
             </View>
-            <View style={{ flexDirection: 'row', marginTop: 17 }}>
+            <View style={{ flexDirection: 'row', marginTop: 10 }}>
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate('Rewards')}
               >
-                <SimpleLineIcon
-                  name={'present'}
-                  backgroundColor={'#fff'}
-                  color={rewardColor}
-                  size={27}
-                  style={{ marginRight: 12 }}
-                />
+                <View style={{ backgroundColor: '#ff5522', width: 40, height: 40, borderRadius: 20 }}>
+                  <Icon
+                    name={'rewards'}
+                    backgroundColor={'transparent'}
+                    color={'#fff'}
+                    size={25}
+                    style={{ marginTop: 7, textAlign: 'center' }}
+                  />
+                </View>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate('Settings')}
@@ -145,7 +149,7 @@ class ProfilePage extends Component {
                   backgroundColor={'#fff'}
                   color={'rgba(0,0,0,0.15)'}
                   size={27}
-                  style={{ marginLeft: 12 }}
+                  style={{ marginLeft: 15, marginTop: 7 }}
                 />
               </TouchableOpacity>
             </View>

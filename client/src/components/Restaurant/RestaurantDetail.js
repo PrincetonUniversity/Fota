@@ -473,7 +473,7 @@ class RestaurantDetail extends Component {
       <View>
         <View style={{ flexDirection: 'row' }}>
           <View style={{ flex: 1 }} />
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1.25 }}>
             <TouchableWithoutFeedback onPress={() => this.changeRecommendDisplay()}>
               <View style={ratingSectionStyle}>
                 <View style={{ height: 20, width: 20, marginRight: 15 }} />
@@ -1211,7 +1211,8 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
-    paddingHorizontal: 7
+    paddingLeft: 10,
+    paddingRight: 5
   },
   hasVotedBoxStyle: {
     justifyContent: 'center',
@@ -1223,7 +1224,7 @@ const styles = {
     fontSize: 14,
     flex: 1,
     color: 'rgba(0, 0, 0, 0.31)',
-    marginLeft: 15
+    marginLeft: 0
   },
   recommendVoteStyle: {
     fontSize: 12,
