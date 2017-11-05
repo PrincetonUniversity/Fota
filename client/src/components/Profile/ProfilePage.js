@@ -131,7 +131,7 @@ class ProfilePage extends Component {
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate('Rewards')}
               >
-                <View style={{ backgroundColor: '#ff5522', width: 40, height: 40, borderRadius: 20 }}>
+                <View style={{ backgroundColor: '#ff5522', width: 40, height: 40, borderRadius: 20, overflow: 'hidden' }}>
                   <Icon
                     name={'rewards'}
                     backgroundColor={'transparent'}

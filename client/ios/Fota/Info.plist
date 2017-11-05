@@ -30,7 +30,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>0.1.11</string>
+	<string>0.1.12</string>
 	<key>FacebookAppID</key>
 	<string>1520743691320619</string>
 	<key>FacebookDisplayName</key>
@@ -67,26 +67,23 @@
 	<string>Upload photos from your camera library to Fota!</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>We will never ask for this permission.</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
 		<string>EvilIcons.ttf</string>
 		<string>FontAwesome.ttf</string>
 		<string>Foundation.ttf</string>
+		<string>icomoon.ttf</string>
 		<string>Ionicons.ttf</string>
+		<string>MaterialCommunityIcons.ttf</string>
 		<string>MaterialIcons.ttf</string>
 		<string>Octicons.ttf</string>
-		<string>Roboto_medium.ttf</string>
-		<string>Roboto.ttf</string>
-		<string>rubicon-icon-font.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
-		<string>icomoon.ttf</string>
-		<string>MaterialCommunityIcons.ttf</string>
-	</array>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>armv7</string>
 	</array>
 	<key>UIRequiresFullScreen</key>
 	<false/>
