@@ -10,3 +10,4 @@ export * from './MissingPermission';
 export * from './NotFoundText';
 export * from './PhotoGallery';
 export * from './Spinner';
+export * from './Timer';
