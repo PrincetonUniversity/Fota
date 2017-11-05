@@ -9,7 +9,7 @@
 
 import React, { Component } from 'react';
 import {
-  View, Text, Animated, Linking, LayoutAnimation, Dimensions, Platform,
+  View, Text, Animated, Linking, LayoutAnimation, Dimensions, Platform, AsyncStorage,
   TouchableWithoutFeedback, TouchableOpacity, UIManager, StatusBar, Keyboard
 } from 'react-native';
 import { TabNavigator } from 'react-navigation';
@@ -41,7 +41,7 @@ const DollarSign = () => (
 );
 
 const PHOTO_HEIGHT = (Dimensions.get('window').width - 14) / 3;
-const PAGE_HEIGHT = Dimensions.get('window').height - 250;
+const PAGE_HEIGHT = Platform.OS === 'ios' ? Dimensions.get('window').height - 226 : Dimensions.get('window').height - 248;
 
 class RestaurantDetail extends Component {
   constructor(props) {
@@ -51,6 +51,7 @@ class RestaurantDetail extends Component {
       restaurant: null,
       photos: [],
       comments: [],
+      showHelp: false,
       userBookmarked: false,
       yesCount: 0,
       noCount: 0,
@@ -86,6 +87,13 @@ class RestaurantDetail extends Component {
 
   componentWillMount() {
     UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+    AsyncStorage.getItem('rHelp').then(() => {
+      this.setState({ showHelp: false });
+    }).catch(() => {
+      AsyncStorage.setItem('rHelp', true).then(() => {
+        this.setState({ showHelp: true });
+      });
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -1001,7 +1009,6 @@ class RestaurantDetail extends Component {
   }
 
   render() {
-    console.log(PAGE_HEIGHT);
     if (this.state.loading) {
       return <LoadingRestaurants />;
     }
