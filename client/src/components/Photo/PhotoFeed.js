@@ -3,6 +3,8 @@ import { View, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import PhotoList from './PhotoList';
 import LoadingPhotos from './LoadingPhotos';
+import request from '../../helpers/axioshelper';
+import { reportAsSpam } from '../../helpers/URL';
 
 class PhotoFeed extends Component {
   render() {
@@ -17,11 +19,14 @@ class PhotoFeed extends Component {
           shouldRenderWithRedux
           options={[{
             name: 'Report as Spam',
-            onClick: () => Alert.alert(
-              '',
-              'This photo has been reported. Thanks for letting us know!',
-              [{ text: 'OK' }]
-            )
+            onClick: id => {
+              request.patch(reportAsSpam(id));
+              Alert.alert(
+                '',
+                'This photo has been reported. Thanks for letting us know!',
+                [{ text: 'OK' }]
+              );
+            }
           }]}
         />
       </View>

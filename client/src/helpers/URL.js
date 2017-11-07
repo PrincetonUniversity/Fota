@@ -21,6 +21,10 @@ export function photoDelete(id) {
   return `${PHOTO_REQ}/${id}?key=${CLIENT_API_KEY}`;
 }
 
+export function reportAsSpam(id) {
+  return `${PHOTO_REQ}/${id}/report?key=${CLIENT_API_KEY}`;
+}
+
 export function searchRequest(lat, lng, term) {
   return `${SEARCH_REQ}?key=${CLIENT_API_KEY}&latitude=${lat}&longitude=${lng}&term=${term}`;
 }
