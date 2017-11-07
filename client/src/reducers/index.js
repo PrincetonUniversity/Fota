@@ -9,6 +9,7 @@ import HomeNavReducer from './navigateToNew';
 import BaseNavReducer from './navigateToHome';
 import PermissionReducer from './permission';
 import LastUploadReducer from './lastUploaded';
+import VoteBubbleReducer from './voteBubble';
 
 export default combineReducers({
     loginState: LoginReducer,
@@ -20,5 +21,6 @@ export default combineReducers({
     navigateToNew: HomeNavReducer,
     navigateToHome: BaseNavReducer,
     permissions: PermissionReducer,
-    lastUploaded: LastUploadReducer
+    lastUploaded: LastUploadReducer,
+    showVoteBubble: VoteBubbleReducer
 });

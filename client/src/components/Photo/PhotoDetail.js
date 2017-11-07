@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 import React, { PureComponent } from 'react';
-import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import * as Animatable from 'react-native-animatable';
@@ -95,6 +95,18 @@ class PhotoDetail extends PureComponent {
       this.timer = null;
       this.oldValue = null;
       if (temp === type) return;
+      if (type !== 'clear') {
+        AsyncStorage.getItem('VoteHelpBubble').then(result => {
+          if (result === null) {
+            AsyncStorage.setItem('VoteHelpBubble', 'seen');
+            this.props.showVoteBubble();
+          }
+        })
+        .catch(() => {
+          AsyncStorage.setItem('WelcomeHelpBubbles', 'seen');
+          this.props.showVoteBubble();
+        });
+      }
       request.patch(photoVote(this.state.photo.id, type))
         .then(() => {
           if (this.props.shouldRenderWithRedux) {
@@ -302,8 +314,8 @@ const {
   voteTextStyle,
 } = styles;
 
-function mapStateToProps({ photoTable }) {
-  return { photoTable };
+function mapStateToProps({ photoTable, showVoteBubble }) {
+  return { photoTable, showVoteBubble };
 }
 
 export default connect(mapStateToProps, { voteOnPhotoTable })(PhotoDetail);
