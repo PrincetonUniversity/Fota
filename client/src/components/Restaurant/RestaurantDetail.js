@@ -9,8 +9,8 @@
 
 import React, { Component } from 'react';
 import {
-  View, Text, Animated, Linking, LayoutAnimation, Dimensions, Platform,
-  TouchableWithoutFeedback, TouchableOpacity, UIManager, StatusBar, Keyboard
+  View, Text, Animated, Linking, LayoutAnimation, Dimensions, Platform, AsyncStorage,
+  TouchableWithoutFeedback, TouchableOpacity, UIManager, StatusBar, Keyboard, Modal
 } from 'react-native';
 import { TabNavigator } from 'react-navigation';
 import FoundationIcon from 'react-native-vector-icons/Foundation';
@@ -25,6 +25,7 @@ import FilterBar from './FilterBar';
 import RestaurantPhotos from './RestaurantPhotos';
 import RestaurantComments from './RestaurantComments';
 import LoadingRestaurants from './LoadingRestaurants';
+import { RestaurantHelpBubble } from '../HelpBubbles';
 import { Banner } from '../common';
 import request from '../../helpers/axioshelper';
 import { restBookmarkRequest, directionsURL, restRecommendRequest } from '../../helpers/URL';
@@ -41,7 +42,7 @@ const DollarSign = () => (
 );
 
 const PHOTO_HEIGHT = (Dimensions.get('window').width - 14) / 3;
-const PAGE_HEIGHT = Dimensions.get('window').height - 250;
+const PAGE_HEIGHT = Platform.OS === 'ios' ? Dimensions.get('window').height - 226 : Dimensions.get('window').height - 248;
 
 class RestaurantDetail extends Component {
   constructor(props) {
@@ -51,6 +52,7 @@ class RestaurantDetail extends Component {
       restaurant: null,
       photos: [],
       comments: [],
+      showHelp: false,
       userBookmarked: false,
       yesCount: 0,
       noCount: 0,
@@ -86,6 +88,13 @@ class RestaurantDetail extends Component {
 
   componentWillMount() {
     UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+    AsyncStorage.getItem('rHelp').then(() => {
+      this.setState({ showHelp: false });
+    }).catch(() => {
+      AsyncStorage.setItem('rHelp', true).then(() => {
+        this.setState({ showHelp: true });
+      });
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -112,8 +121,10 @@ class RestaurantDetail extends Component {
         userDisliked: r.user_recommended_no,
         userHasVoted: r.user_recommended_yes || r.user_recommended_no,
         loading: nextProps.loading,
-        listHeight: this.photosHeight
+        listHeight: this.photosHeight,
+        helpBubble: 0
       });
+      setTimeout(this.loadHelpBubbles.bind(this), 1000);
       //this.getNavigation(nextProps.restaurant);
     }
   }
@@ -169,41 +180,6 @@ class RestaurantDetail extends Component {
       overnight: filteredHours[0].is_overnight
     };
   }
-
-  // sendNavigationRequest(address, lat, lng) {
-  //   request.get(directionsRequest(lat, lng, address, 'walking'))
-  //   .then(response => {
-  //     request.get(directionsRequest(lat, lng, address, 'driving'))
-  //     .then(response2 => {
-  //       const walkDirections = response.data;
-  //       const driveDirections = response2.data;
-  //       const walkTime = walkDirections.routes[0].legs[0].duration.text.replace(/s$/, '');
-  //       const driveTime = driveDirections.routes[0].legs[0].duration.text.replace(/s$/, '');
-  //       const distance = walkDirections.routes[0].legs[0].distance.text;
-  //       if (!walkTime.includes('hour') && parseInt(walkTime) <= 15) {
-  //         this.setState({
-  //           navLoading: false,
-  //           driving: false,
-  //           walking: true,
-  //           walkTime,
-  //           driveTime,
-  //           distance
-  //         });
-  //       } else {
-  //         this.setState({
-  //           navLoading: false,
-  //           driving: true,
-  //           walking: false,
-  //           walkTime,
-  //           driveTime,
-  //           distance
-  //         });
-  //       }
-  //     })
-  //     .catch(e => request.showErrorAlert(e));
-  //   })
-  //   .catch(e => request.showErrorAlert(e));
-  // }
 
   timeUntilCloseLabel(hoursArray) {
     if (!hoursArray) {
@@ -402,6 +378,34 @@ class RestaurantDetail extends Component {
         this.clearYesVoteNo();
         this.setState({ userLiked: false, userDisliked: true, userHasVoted: true });
       }
+    }
+  }
+
+  loadHelpBubbles() {
+    // AsyncStorage.removeItem('RestaurantHelpBubble');
+    AsyncStorage.getItem('RestaurantHelpBubble').then(result => {
+      if (result === null) {
+        AsyncStorage.setItem('RestaurantHelpBubble', 'seen');
+        this.setState({ helpBubble: 1 });
+      }
+    })
+    .catch(() => {
+      AsyncStorage.setItem('RestaurantHelpBubble', 'seen');
+      this.setState({ helpBubble: 1 });
+    });
+  }
+
+  renderHelpBubble() {
+    if (this.state.helpBubble === 1) {
+      return (
+        <TouchableOpacity
+          style={{ flex: 1 }}
+          onPress={() => this.setState({ helpBubble: 0 })}
+          activeOpacity={1}
+        >
+          <RestaurantHelpBubble />
+        </TouchableOpacity>
+      );
     }
   }
 
@@ -1001,7 +1005,6 @@ class RestaurantDetail extends Component {
   }
 
   render() {
-    console.log(PAGE_HEIGHT);
     if (this.state.loading) {
       return <LoadingRestaurants />;
     }
@@ -1030,6 +1033,13 @@ class RestaurantDetail extends Component {
     return (
       <View style={pageStyle}>
         <StatusBar barStyle='light-content' />
+        <Modal
+          transparent
+          visible={this.state.helpBubble !== 0}
+          onRequestClose={() => this.setState({ helpBubble: 0 })}
+        >
+          {this.renderHelpBubble()}
+        </Modal>
         <View style={backContainerStyle}>
           <TouchableOpacity
             style={backButtonStyle}

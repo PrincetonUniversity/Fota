@@ -18,6 +18,7 @@ export const NAV_TO_NEW = '98z8xh3,x98ekjn';
 export const NAV_TO_HOME = '9z8ijx,qmnsdjhfoiux';
 export const PERMISSION = 'hialbertitsbenny';
 export const LAST_UPLOADED = 'LAST_UPLOADED';
+export const VOTE_BUBBLE = 'bryanwilliamzhu';
 
 export function makePhotoTable(list) {
   return {
@@ -94,5 +95,12 @@ export function setLastUploaded(obj) {
   return {
     type: LAST_UPLOADED,
     payload: obj
+  };
+}
+
+export function setShowVoteBubbleFunction(func) {
+  return {
+    type: VOTE_BUBBLE,
+    payload: func
   };
 }

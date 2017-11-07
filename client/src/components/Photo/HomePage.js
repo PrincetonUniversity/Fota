@@ -24,10 +24,14 @@ import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 import { TabNavigator, TabBarTop } from 'react-navigation';
 import PhotoFeed from './PhotoFeed';
 import PhotoList from './PhotoList';
+import { LocationHelpBubble, UploadHelpBubble, VoteHelpBubble } from '../HelpBubbles';
 import SearchPage from './SearchPage';
 import { NotFoundText } from '../common';
 import { tabWidth, tabHeight, horizontalPadding, pcoords } from '../../Base';
-import { browseFromPrinceton, makePhotoTable, setLoading, saveNavNew } from '../../actions';
+import {
+  browseFromPrinceton, makePhotoTable, setLoading,
+  saveNavNew, setShowVoteBubbleFunction
+} from '../../actions';
 import request from '../../helpers/axioshelper';
 import location from '../../helpers/geohelper';
 import { photoRequest, filterRequest } from '../../helpers/URL';
@@ -76,6 +80,7 @@ class HomePage extends Component {
     filterList: [],
     hotList: [],
     newList: [],
+    helpBubble: 0,
     modalVisible: false,
     filter: '',
     refreshing: false
@@ -83,6 +88,7 @@ class HomePage extends Component {
 
   componentWillMount() {
     this.loadPhotos(false);
+    this.props.setShowVoteBubbleFunction(() => this.setState({ helpBubble: 3 }));
   }
 
   componentDidMount() {
@@ -133,6 +139,20 @@ class HomePage extends Component {
     }
   }
 
+  loadHelpBubbles() {
+    //AsyncStorage.removeItem('WelcomeHelpBubbles');
+    AsyncStorage.getItem('WelcomeHelpBubbles').then(result => {
+      if (result === null) {
+        AsyncStorage.setItem('WelcomeHelpBubbles', 'seen');
+        this.setState({ helpBubble: 1 });
+      }
+    })
+    .catch(() => {
+      AsyncStorage.setItem('WelcomeHelpBubbles', 'seen');
+      this.setState({ helpBubble: 1 });
+    });
+  }
+
   sendPhotoRequest(lat, lng) {
     AsyncStorage.getItem('SearchRadius').then(radius => {
       request.get(photoRequest('hot', lat, lng, parseInt(radius, 10))).then(response => {
@@ -146,10 +166,12 @@ class HomePage extends Component {
             newList: response.data.newPhotos,
             refreshing: false
           });
+
+          setTimeout(this.loadHelpBubbles.bind(this), 1000);
         }
       }).catch(e => {
         this.props.setLoading(false);
-        this.setState({ refreshing: false }); 
+        this.setState({ refreshing: false });
         request.showErrorAlert(e);
       });
     });
@@ -163,6 +185,40 @@ class HomePage extends Component {
       })
       .catch(e => request.showErrorAlert(e));
     });
+  }
+
+  renderHelpBubble() {
+    if (this.state.helpBubble === 1) {
+      return (
+        <TouchableOpacity
+          style={{ flex: 1 }}
+          onPress={() => this.setState({ helpBubble: 2 })}
+          activeOpacity={1}
+        >
+          <LocationHelpBubble />
+        </TouchableOpacity>
+      );
+    } else if (this.state.helpBubble === 2) {
+      return (
+        <TouchableOpacity
+          style={{ flex: 1 }}
+          onPress={() => this.setState({ helpBubble: 0 })}
+          activeOpacity={1}
+        >
+          <UploadHelpBubble />
+        </TouchableOpacity>
+      );
+    } else if (this.state.helpBubble === 3) {
+      return (
+        <TouchableOpacity
+          style={{ flex: 1 }}
+          onPress={() => this.setState({ helpBubble: 0 })}
+          activeOpacity={1}
+        >
+          <VoteHelpBubble />
+        </TouchableOpacity>
+      );
+    }
   }
 
   renderList() {
@@ -214,8 +270,15 @@ class HomePage extends Component {
     return (
       <View style={pageStyle}>
         <Modal
-          animationType='fade'
           transparent
+          visible={this.state.helpBubble !== 0}
+          onRequestClose={() => this.setState({ helpBubble: 0 })}
+        >
+          {this.renderHelpBubble()}
+        </Modal>
+        <Modal
+          animationType='fade'
+          // transparent
           visible={this.state.modalVisible}
           onRequestClose={() => this.setState({ modalVisible: false, filter: '' })}
         >
@@ -363,4 +426,4 @@ function mapStateToProps({ browsingPrinceton }) {
   return { browsingPrinceton };
 }
 
-export default connect(mapStateToProps, { browseFromPrinceton, makePhotoTable, setLoading, saveNavNew })(HomePage);
+export default connect(mapStateToProps, { browseFromPrinceton, makePhotoTable, setLoading, saveNavNew, setShowVoteBubbleFunction })(HomePage);
