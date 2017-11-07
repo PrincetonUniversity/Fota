@@ -115,7 +115,7 @@ class ProfilePage extends Component {
       <View style={{ backgroundColor: '#fff', flex: 1 }}>
         <View style={headerStyle}>
           <View style={headerSectionStyle} >
-            <View style={{ justifyContent: 'center' }}>
+            <View style={{ justifyContent: 'center', marginTop: 10 }}>
               <Text style={nameTextStyle}>{name}</Text>
             </View>
             <View style={{ flexDirection: 'row', marginTop: 10 }}>
@@ -239,7 +239,7 @@ const styles = {
     borderColor: 'rgba(0, 0, 0, 0.09)',
     borderBottomWidth: 1,
     paddingTop: 10,
-    paddingBottom: 5,
+    paddingBottom: 10,
     marginHorizontal: 40,
     flexDirection: 'row',
     justifyContent: 'space-between',
