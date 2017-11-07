@@ -96,6 +96,20 @@ class SearchPage extends Component {
   }
 
   renderFilters() {
+    if (this.state.query.length === 0) {
+      return (
+        <View style={{ marginTop: 120 }}>
+          <Text style={styles.searchPromptStyle}>
+            Search for filters and restaurants.
+          </Text>
+          <View style={{ alignSelf: 'center' }}>
+            <Text style={styles.searchExampleStyle}>Ex. Burgers</Text>
+            <Text style={styles.searchExampleStyle}>Ex. Noodles</Text>
+            <Text style={styles.searchExampleStyle}>Ex. Pizza</Text>
+          </View>
+        </View>
+      );
+    };
     if (!this.state.searching) {
       if (this.state.categories.length > 0) {
         return (
@@ -114,7 +128,7 @@ class SearchPage extends Component {
         );
       }
       if (this.state.restaurants.length === 0) {
-        return <NotFoundText height={150} text='No results found.' />;
+        return <NotFoundText height={200} text='No results found.' />;
       }
     }
   }
@@ -141,6 +155,7 @@ class SearchPage extends Component {
   }
 
   renderRestaurants() {
+    if (this.state.query.length === 0) return;
     if (!this.state.searching && this.state.restaurants.length > 0) {
       return (
         <FlatList
@@ -238,6 +253,20 @@ const styles = {
   searchResultInfoStyle: {
     fontSize: 11,
     color: 'rgba(0,0,0,0.3)'
+  },
+  searchPromptStyle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: 'rgba(0,0,0,0.5)',
+    textAlign: 'center',
+    marginBottom: 3
+  },
+  searchExampleStyle: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: 'rgba(0,0,0,0.5)',
+    //textAlign: 'center',
+    marginTop: 5
   }
 };
 
