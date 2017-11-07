@@ -10,7 +10,7 @@ const VoteHelpBubble = () => (
         Rewards!
       </Text>
       <Text style={{ color: 'rgba(0,0,0,0.8)', textAlign: 'center', fontSize: 14 }}>
-        Congrats on your first vote! Keep going to earn free food and discounts.
+        Congrats on your first vote! Keep going to earn free food and discounts. You can keep track of your progress on your profile page.
       </Text>
       <Image
         source={rewardProgress}
