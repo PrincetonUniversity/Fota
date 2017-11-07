@@ -115,17 +115,8 @@ class ProfilePage extends Component {
       <View style={{ backgroundColor: '#fff', flex: 1 }}>
         <View style={headerStyle}>
           <View style={headerSectionStyle} >
-            <View>
+            <View style={{ justifyContent: 'center' }}>
               <Text style={nameTextStyle}>{name}</Text>
-              <View style={{ flexDirection: 'row', paddingBottom: 10 }} >
-                <Ionicon
-                  name={'md-star'}
-                  color={'#ff7f00'}
-                  size={17}
-                  style={{ alignSelf: 'center', paddingRight: 5 }}
-                />
-                <Text style={infoTextStyle}>Beta Tester</Text>
-              </View>
             </View>
             <View style={{ flexDirection: 'row', marginTop: 10 }}>
               <TouchableOpacity
