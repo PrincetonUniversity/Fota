@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Image, Dimensions, TouchableOpacity, Platform } from 'react-native';
 import { Pages } from 'react-native-pages';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -62,7 +62,7 @@ const styles = {
   photoStyle: {
     width: Dimensions.get('window').width - 50,
     height: Dimensions.get('window').width - 50,
-    backgroundColor: '#d3d3d3',
+    backgroundColor: Platform.OS === 'ios' ? '#d3d3d3' : 'transparent',
     borderRadius: 9
   }
 };
